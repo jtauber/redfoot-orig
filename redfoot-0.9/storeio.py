@@ -8,8 +8,8 @@ class StoreIO:
     def getStore(self):
         return self.store
 
-    def visit(self, visitor, subject=None, property=None, value=None):
-        self.getStore().visit(visitor, subject, property, value)
+    def visit(self, callback, subject=None, property=None, value=None):
+        self.getStore().visit(callback, subject, property, value)
         
     def get(self, subject=None, property=None, value=None):
         return self.getStore().get(subject, property, value)
@@ -89,6 +89,9 @@ class StoreIO:
 
 
 # $Log$
+# Revision 2.0  2000/10/14 01:14:04  jtauber
+# next version
+#
 # Revision 1.14  2000/10/08 07:15:50  jtauber
 # fixed bug where get on storeio was not returning
 #

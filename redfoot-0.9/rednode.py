@@ -14,9 +14,9 @@ class MultiStore:
     def getStores(self):
         return self.stores.keys()
 
-    def visit(self, visitor, subject=None, property=None, value=None):
+    def visit(self, callback, subject=None, property=None, value=None):
         for store in self.getStores():
-            store.visit(visitor, subject, property, value)
+            store.visit(callback, subject, property, value)
 
     def get(self, subject=None, property=None, value=None):
         class Visitor:
@@ -28,7 +28,7 @@ class MultiStore:
 
         visitor = Visitor()
 
-        self.visit(visitor, subject, property, value)
+        self.visit(visitor.callback, subject, property, value)
         
 	return visitor.list
         
@@ -80,10 +80,9 @@ class StoreNode:
     def _connectTo(self, store):
         self.stores.addStore(store)
 
-    def visit(self, visitor, subject=None, property=None, value=None):
-        # TODO: have get call this
-        self.store.visit(visitor, subject, property, value);
-        self.stores.visit(visitor, subject, property, value)
+    def visit(self, callback, subject=None, property=None, value=None):
+        self.store.visit(callback, subject, property, value);
+        self.stores.visit(callback, subject, property, value)
         
 
     def get(self, subject=None, property=None, value=None):
@@ -95,7 +94,7 @@ class StoreNode:
                 self.list.append((subject, property, value))
 
         visitor = Visitor()
-        self.visit(visitor, subject, property, value);
+        self.visit(visitor.callback, subject, property, value);
 	return visitor.list
 
     def remove(self, subject=None, property=None, value=None):
@@ -141,12 +140,12 @@ class StoreNode:
                 visitor = Visitor(self.processResource)
 
                 from redfoot.query import QueryStore
-                self.store.visit(visitor, None, QueryStore.TYPE, subject)
+                self.store.visit(visitor.callback, None, QueryStore.TYPE, subject)
 
         visitor = Visitor(self.store, processClass, processResource)
 
         from redfoot.query import QueryStore
-        self.visit(visitor, None, QueryStore.TYPE, QueryStore.CLASS)
+        self.visit(visitor.callback, None, QueryStore.TYPE, QueryStore.CLASS)
 
 
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
@@ -161,6 +160,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 # $Log$
+# Revision 2.1  2000/10/16 04:45:48  jtauber
+# resourcesByClassV on query and rednode now only call processClass if the class has instances
+#
 # Revision 2.0  2000/10/14 01:14:04  jtauber
 # next version
 #

@@ -40,7 +40,7 @@ class TripleStore:
                 self.list.append((subject, property, value))
 
         visitor = Visitor()
-        self.visit(visitor, subject, property, value)
+        self.visit(visitor.callback, subject, property, value)
 
 	return visitor.list
 
@@ -54,47 +54,50 @@ class TripleStore:
                 del self.store.pvs[property][value][subject]
 
         visitor = Visitor(self)
-        self.visit(visitor, subject, property, value)
+        self.visit(visitor.callback, subject, property, value)
 
-    def visit(self, visitor, subject=None, property=None, value=None):
+    def visit(self, callback, subject=None, property=None, value=None):
         if subject!=None:
             if self.spv.has_key(subject):
                 if property!=None:
                     if self.spv[subject].has_key(property):
                         if value!=None:
                             if self.spv[subject][property].has_key(value):
-                                visitor.callback(subject, property, value)
+                                callback(subject, property, value)
                         else:
                             for v in self.spv[subject][property].keys():
-                                visitor.callback(subject, property, v)
+                                callback(subject, property, v)
                 else:
                     for p in self.spv[subject].keys():
-                        self.visit(visitor, subject, p, value) # recurse for now
+                        self.visit(callback, subject, p, value) # recurse for now
         else:
             if property!=None:
                 if self.pvs.has_key(property):
                     if value!=None:
                         if self.pvs[property].has_key(value):
                             for s in self.pvs[property][value].keys():
-                                visitor.callback(s, property, value)
+                                callback(s, property, value)
                     else:
                         for v in self.pvs[property].keys():
                             for s in self.pvs[property][v].keys():
-                                visitor.callback(s, property, v)
+                                callback(s, property, v)
             else:
                 if value!=None:
                     for p in self.pvs.keys():
                         if self.pvs[p].has_key(value):
                             for s in self.pvs[p][value]:
-                                visitor.callback(s, p, value)
+                                callback(s, p, value)
                 else:
                     for s in self.spv.keys():
                         for p in self.spv[s].keys():
                             for v in self.spv[s][p].keys():
-                                visitor.callback(s, p, v)
+                                callback(s, p, v)
                     
 
 # $Log$
+# Revision 2.0  2000/10/14 01:14:04  jtauber
+# next version
+#
 # Revision 1.18  2000/10/08 04:49:11  eikeon
 # reimplemented visit method to be much more efficient... was just a first pass implementation before ;(
 #
