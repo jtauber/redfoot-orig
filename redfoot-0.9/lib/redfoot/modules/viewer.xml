@@ -16,17 +16,7 @@ def handle_request(self, request, response):
     parameters = request.get_parameters()        
     path_info = request.get_path_info()
 
-    if path_info == "/triples":
-        s = parameters['subject']
-        if s=="": s=None
-        p = parameters['predicate']
-        if p=="": p=None
-        o = parameters['object']
-        if o=="": o=None
-        self.triples(s,p,o)
-    elif path_info == "/css":
-        self.css()
-    elif path_info == "/view":
+    if path_info == "/view":
         self.view(parameters['uri'])
     elif path_info == "/test":
         self.test(parameters['search'])
@@ -41,22 +31,19 @@ def getNodeInScope(self):
     else:
         return self.rednode
 
-def css(self):
-    self.response.write("body { color: blue }")
+<r:response name="/css">
+body { color: blue }
+</r:response>
 
-def menuBar(self):
-    self.response.write("""
-        <P CLASS="MENUBAR"><B>VIEW</B>
-         : <A HREF="classList">Resources by Class</A>
-         | <A HREF="fullsubclass">Full Subclass Tree</A>
-         | <A HREF="subclass">Partial Subclass Tree</A>
-         | <A HREF=".">HOME</A>
-         | <A HREF="triples">Triples</A>
-        </P>
-    """)
-
-def mainPage(self):
-    self.subclass(RESOURCE, 0)
+<r:response name="menuBar">
+<P CLASS="MENUBAR"><B>VIEW</B>
+  : <A HREF="classList">Resources by Class</A>
+  | <A HREF="fullsubclass">Full Subclass Tree</A>
+  | <A HREF="subclass">Partial Subclass Tree</A>
+  | <A HREF=".">HOME</A>
+  | <A HREF="triples">Triples</A>
+</P>
+</r:response>
 
 def header(self, title):
     self.response.write("""
@@ -68,7 +55,7 @@ def header(self, title):
           <BODY>
             <H1>RedFoot</H1>
     """ % title)
-    self.menuBar()
+    self.menuBar(request, response)
     self.response.write("""
             <H2>%s</H2>
     """ % title)
@@ -295,25 +282,31 @@ node.output(response, None, s, p, o)
 </r:exec>
 </r:response>
 
-def triples(self, subject=None, predicate=None, object=None):
-    self.header("Triples")
-    self.response.write("""
-        <TABLE>
-    """)
-
-    def triple(s, p, o, write=self.response.write):            
-        write("""
-          <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
-        """ % (s, p, o))
-    if self.showNeighbours==1:
-        self.rednode.neighbourhood.visit(triple, subject, predicate, object)
-    else:
-        self.rednode.local.visit(triple, subject, predicate, object)
-
-    self.response.write("""
-        </TABLE>
-    """)
-    self.footer()
+<r:response name="/triples">
+<r:exec>
+parameters = request.get_parameters()
+s = parameters['subject']
+if s=="": s=None
+p = parameters['predicate']
+if p=="": p=None
+o = parameters['object']
+if o=="": o=None
+</r:exec>
+<r:exec>self.header("Triples")</r:exec>
+<TABLE>
+<r:exec>
+def triple(s, p, o, write=self.response.write):            
+    write("""
+      <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
+    """ % (s, p, o))
+if self.showNeighbours==1:
+    self.rednode.neighbourhood.visit(triple, subject, predicate, object)
+else:
+    self.rednode.local.visit(triple, subject, predicate, object)
+</r:exec>
+</TABLE>
+<r:exec>self.footer()</r:exec>
+</r:response>
 
 def test(self, search):
     self.header("Test")
