@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PYTHONPATH=.:../lib
+export PYTHONPATH=../lib
 
 python ../lib/redfoot/server.py $*
 
