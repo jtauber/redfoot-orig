@@ -2,6 +2,9 @@
 from rdf.literal import literal, un_literal, is_literal
 from rdf.const import *
 
+_s_ = lambda s, p, o: [s,]
+_o_ = lambda s, p, o: [o,]
+
 class QueryBase:
 
     def query(self, visitor, subject=None, predicate=None, object=None):
@@ -57,12 +60,12 @@ class QueryBase:
     # TODO: need a visitor version
     def getByType(self, type, predicate, object):
         listBuilder = ListBuilder()
-        query = Query(self.query, (listBuilder, lambda s, p, o: (s,), predicate, object))
+        query = Query(self.query, (listBuilder, _s_, predicate, object))
         self.query(query, None, TYPE, type)
         return listBuilder.list
 
     def visitByType(self, visitor, type, predicate, object):
-        query = Query(self.query, (visitor, lambda s, p, o: (s,), predicate, object))
+        query = Query(self.query, (visitor, _s_, predicate, object))
         self.query(query, None, TYPE, type)
 
     def visitResourcesByType(self, processClass, processResource):
@@ -89,7 +92,7 @@ class QueryBase:
         def adapter(callback, subject, getFirst):
             callback(subject, getFirst(subject, PREDICATE, None)[2], getFirst(subject, OBJECT, None)[2])
 
-        visitor = Query(adapter, (callback, lambda s, p, o: (s,), self.getFirst))
+        visitor = Query(adapter, (callback, _s_, self.getFirst))
         self.visitByType(visitor, STATEMENT, SUBJECT, subject)
 
     # should perhaps just autogenerate statement_uri
@@ -287,7 +290,7 @@ class QueryStore(QueryBase):
         return objectSetBuilder.set.keys()
 
     def visitTransitiveSuperTypes(self, callback, type):
-        trans = And(callback, Query(self.visitTransitiveSuperTypes, (callback, lambda s, p, o: (o,))))
+        trans = And(callback, Query(self.visitTransitiveSuperTypes, (callback, _o_)))
         self.query(trans, type, SUBCLASSOF, None)
 
     def getTransitiveSubTypes(self, type):
@@ -297,7 +300,7 @@ class QueryStore(QueryBase):
         return subjectSetBuilder.set.keys()
 
     def visitTransitiveSubTypes(self, callback, type):
-        trans = And(callback, Query(self.visitTransitiveSubTypes, (callback, lambda s, p, o: (s,))))
+        trans = And(callback, Query(self.visitTransitiveSubTypes, (callback, _s_)))
         self.query(trans, None, SUBCLASSOF, type)
 
     def getRootClasses(self):
@@ -318,12 +321,12 @@ class QueryStore(QueryBase):
         class_callback(type, currentDepth, recurse)
 
         if recurse:
-            query = Query(self.visitSubclasses, (class_callback, instance_callback, lambda s, p, o: (s,), currentDepth+1))
+            query = Query(self.visitSubclasses, (class_callback, instance_callback, _s_, currentDepth+1))
         else:
-            query = Query(class_callback, (lambda s, p, o: (s,), currentDepth+1, 0))
+            query = Query(class_callback, (_s_, currentDepth+1, 0))
         self.query(query, None, SUBCLASSOF, type)
         
-        instanceQuery = Query(instance_callback, (lambda s, p, o: (s,), currentDepth, recurse))
+        instanceQuery = Query(instance_callback, (_s_, currentDepth, recurse))
         self.query(instanceQuery, None, TYPE, type)
 
     def getPossibleValues(self, property):
@@ -368,6 +371,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 6.1  2001/03/03 01:05:50  jtauber
+#~ refactored the way Query objects take args so you don't have to make pre/post distinction
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
 #~
