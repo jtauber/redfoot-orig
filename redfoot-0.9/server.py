@@ -132,7 +132,7 @@ def runServer():
     # defaults
 
     port = 8000
-    location = "tests/example.rdf"
+    location = "local.rdf"
     uri = None
     interface = "PeerEditor"
     
@@ -179,6 +179,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.20  2000/10/09 19:40:27  jtauber
+# server now defaults URI using the actual hostname and port
+#
 # Revision 1.19  2000/10/09 06:26:32  jtauber
 # location, uri, port and web interface class are now specified using command-line options
 #
