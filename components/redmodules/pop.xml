@@ -36,6 +36,9 @@
         <P>username <INPUT NAME="username" TYPE="TEXT"/></P>
         <P>password <INPUT NAME="password" TYPE="PASSWORD"/></P>
         <INPUT VALUE="Retrieve" TYPE="SUBMIT"/>
+        <input name='module_instance' 
+               type='HIDDEN' 
+               value="{self.module_instance}"/>
         <INPUT NAME="processor" VALUE="connect_pop" TYPE="hidden"/>
       </FORM>
     </red:facet>

@@ -90,6 +90,9 @@
     <red:facet name="add">
      <H1>Add News Item</H1>
      <form name="news" method="post" action="">
+       <input name='module_instance' 
+              type='HIDDEN' 
+              value="{self.module_instance}"/>
        <input type="hidden" name="processor" value="do_add_news"/>        
      <table>
       <tr>

@@ -35,6 +35,11 @@
             <FORM METHOD="POST" ACTION="">
               <INPUT TYPE="SUBMIT" VALUE="done"/>
               <INPUT TYPE="HIDDEN" NAME="task_uri" VALUE="{subject}"/>
+
+              <input name='module_instance' 
+                     type='HIDDEN' 
+                     value="{self.module_instance}"/>
+
               <INPUT TYPE="HIDDEN" NAME="processor" VALUE="task_done"/>
             </FORM>
           </TD>
@@ -45,6 +50,11 @@
           <TD>
             <FORM NAME="task" METHOD="POST" ACTION="">
               <INPUT SIZE="30" TYPE="TEXT" NAME="new_task"/>
+
+              <input name='module_instance' 
+                     type='HIDDEN' 
+                     value="{self.module_instance}"/>
+
               <INPUT TYPE="HIDDEN" NAME="processor" VALUE="add_task"/>
             </FORM>
           </TD>
@@ -75,6 +85,11 @@
         </TABLE>
         <INPUT TYPE="SUBMIT" VALUE="update"/>
         <INPUT TYPE="HIDDEN" NAME="subject" VALUE="{subject}"/>
+
+        <input name='module_instance' 
+               type='HIDDEN' 
+               value="{self.module_instance}"/>
+
         <INPUT TYPE="HIDDEN" NAME="processor" VALUE="do_update"/>
       </FORM>
     </red:facet>

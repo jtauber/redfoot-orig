@@ -92,6 +92,9 @@
                     <red:if test="self.authentication.authenticated()">
                       Welcome,
                       <red:eval>self.authentication.get_username()</red:eval> |
+                      <input name='module_instance' 
+                             type='HIDDEN' 
+                             value="{self.module_instance}"/>
                       <input name="processor" type="hidden" value=""/>
                       <a href="javascript: form=document.getElementById('login'); form.processor.value='do_logout'; form.submit()">Logout
                       </a>

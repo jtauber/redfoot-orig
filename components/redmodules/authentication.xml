@@ -165,6 +165,9 @@
               <td align="left"><input value="Cancel" type="reset"/></td>
             </tr>
           </table>
+          <input name='module_instance' 
+                 type='HIDDEN' 
+                 value="{self.module_instance}"/>
           <input name="processor" value="do_create_user" type="hidden"/>
           <input name="view" value="create" type="hidden"/>          
         </form>

@@ -39,6 +39,9 @@
 
         <FORM name="other" method="POST" style="margin: 0">
           <INPUT name="uri" value="" type="hidden"/>
+          <input name='module_instance' 
+                 type='HIDDEN' 
+                 value="{self.module_instance}"/>
           <INPUT name="processor" value="" type="hidden"/>          
           <TABLE>
 
