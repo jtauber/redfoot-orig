@@ -95,12 +95,11 @@ class Editor(Viewer):
                     <OPTION value="">Select a new Property to add</OPTION>
             """)
 
-            for type in self.qstore.neighbourhood.get(subject, TYPE, None):
-                for superType in self.qstore.neighbourhood.transitiveSuperTypes(type[2]):
-                    for domain in self.qstore.neighbourhood.get(None, DOMAIN, superType):
-                        self.response.write("""
-                        <OPTION value="%s">%s</OPTION>
-                        """ % (domain[0], self.qstore.neighbourhood.label(domain[0])))
+            def possibleProperty(s, p, o, self=self):
+                self.response.write("""
+                    <OPTION value="%s">%s</OPTION>
+                                    """ % (s, self.qstore.neighbourhood.label(s)))
+            self.qstore.neighbourhood.getPossiblePropertiesForSubject(subject, possibleProperty)
 
 
             def option(s, p, o, write=self.response.write, neighbourhood=self.qstore.neighbourhood):
@@ -277,12 +276,14 @@ class Editor(Viewer):
             """ % (type, self.link(type)))
 
             # TODO: make this a func... getProperties for subject?
-            for superType in self.qstore.neighbourhood.transitiveSuperTypes(type):
-                for domain in self.qstore.neighbourhood.get(None, DOMAIN, superType):
-                    property = domain[0]
-                    if len(self.qstore.neighbourhood.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
-                        self.editProperty(property, "", 0)
-            
+
+            def possibleProperty(s, p, o, self=self):
+                property = s
+                if len(self.qstore.neighbourhood.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
+                    self.editProperty(property, "", 0)
+
+            self.qstore.neighbourhood.getPossibleProperties(type, possibleProperty)
+
         self.response.write("""
                 </TD>
               </TR>
@@ -431,6 +432,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.8  2000/12/05 22:43:30  eikeon
+# moved constants to rdf.const
+#
 # Revision 4.7  2000/12/05 07:11:27  eikeon
 # finished refactoring rednode refactor of the local / neighbourhood split
 #
