@@ -13,4 +13,9 @@
 
 	Removed auto reloading of python and redcode modules.
 
-	
+
+See also:
+	redfoot-core/CHANGELOG
+	redfoot-components/CHANGELOG
+	redfoot-doc/CHANGELOG
+	redfoot-examples/CHANGELOG
