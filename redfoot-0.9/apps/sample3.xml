@@ -1,70 +1,439 @@
-<r:module name="sample3" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
+<r:module name="sample2" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
 
-from redfoot.modules.base import Base
-from redfoot.modules.common import Common
+import string
+import sys
+
+from rdf.query import Query
 
 from rdf.const import *
 from rdf.literal import *
-from redfoot.util import *
 
-TASK = "http://redfoot.sourceforge.net/2001/04/#Task"
+#from redfoot.util import *
 
-  <r:class name="UI" bases="Base Common">
+from redfoot.modules.authentication import Authentication
+from redfoot.modules.common import Common
+from redfoot.modules.editor import Editor
+from redfoot.modules.neighbours import Neighbours
+from redfoot.modules.rss import RSS
 
-    <r:response name="/">
 
-      <HTML>
-        <HEAD>
-          <TITLE>Task Demo</TITLE>
-          <LINK REL="STYLESHEET" HREF="/css"/>
-        </HEAD>
-        <BODY onLoad="document.task.new_task.focus()">
-          <H1>Task Demo</H1>
-          <TABLE>
-            <r:exec>self.list(request, response, self.rednode.get(None, TYPE, TASK), self.task_row)</r:exec>
-            <TR>
-              <TD>
-                <FORM NAME="task" METHOD="POST" ACTION="/">
-                  <INPUT SIZE="30" TYPE="TEXT" NAME="new_task"/>
-                  <INPUT TYPE="HIDDEN" NAME="processor" VALUE="add_task"/>
-                </FORM>
+<r:class name="UI" bases="Authentication RSS Common Editor Neighbours">
+
+def __init__(self, rednode):
+    self.rednode = rednode
+    Authentication.__init__(self, rednode)
+    Editor.__init__(self, rednode)
+    RSS.__init__(self, rednode)
+    #Common.__init__(self, rednode)
+    self.editor = None
+
+
+def getEditor(self):
+    if self.editor==None:
+        self.editor = Editor(self.rednode)
+        self.editor.showNeighbours = 1
+    return self.editor
+
+
+def handle_request(self, request, response):
+    # For now, write log to stderr.
+    path_info = request.getPathInfo()
+    sys.stderr.write(path_info+"\n")
+    sys.stderr.flush()
+
+    # Call handle_request on base classes
+    bases = self.__class__.__bases__
+    for base in bases:
+        if hasattr(base, 'handle_request_init') and base.handle_request_init(self, request, response):
+            # if completely handled then return now
+            return
+
+    # invoke the processor
+    processor = request.getParameters()['processor']
+    if hasattr(self, processor):
+        apply(getattr(self, processor), (request, response))
+
+    if hasattr(self, path_info):
+        apply(getattr(self, path_info), (request, response))
+        return
+
+    if path_info in ['/css', '/classList', '/fullsubclass', '/subclass', '/triples', '/add',  '/view', '/edit']:
+        self.getEditor().handle_request(request, response)
+    else:
+        self.page(request, response, self.content)
+        #self.page(globals(), locals())        
+        
+
+
+<r:response name="/">
+  <r:exec>self.page(request, response, getattr(self, 'rss'))</r:exec>
+</r:response>
+
+
+<!--
+<r:response name="/adsf">
+  <r:call name="page">
+    <r:arg name="header">
+      a response method.
+    </r:arg>
+    Stuff
+  </r:call>
+</r:response>
+
+<r:response name="/a">
+  <r:call name="page"/>
+    <r:call name="rss"/>
+  </r:call>
+</r:response>
+-->
+
+
+<r:response name="/robots.txt">
+  <r:exec>response.setHeader("Content-Type", "text/plain")</r:exec>
+  <r:exec>response.write("\n")</r:exec>
+</r:response>
+
+
+
+<r:response name="page" args="content=None">
+<HTML>
+  <HEAD>
+    <TITLE>Sample2</TITLE>
+
+        <script language="javascript">
+function myOnLoad() {
+    if (document.main) {
+        if (document.main.q) {
+            document.main.q.focus()
+        }
+        if (document.main.title) {
+            document.main.title.focus()
+        }
+        if (document.main.username) {
+            document.main.username.focus()
+        }
+    }
+}
+        </script>
+    <STYLE>
+      body {
+        font-family: Verdana;
+        font-size:   10pt;
+      }
+
+      A {
+           color: #000000;
+      }
+
+      A:visited {
+           color: #000000; 
+      }
+
+      A:hover {
+          color: #990000;
+      }
+
+      A.image:hover {
+          color: #990000;
+      }
+
+div.nav {
+  color: #FFF;
+  background: #990000;
+  border-width: 0px 0px 1px 0px;
+  border-style: solid;
+  border-color: #FFFFFF;
+}
+
+div.nav td {
+  color: #FFF;
+  font-size: 8pt;
+}
+
+div.nav a {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+div.nav a:visited {
+  color: #FFFFFF;
+}
+
+div.nav a:hover {
+  color: #CC0000;
+}
+
+.content_area {
+  margin: 0px 4px 4px 4px;
+  padding: 0px 4px 4px 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  background: #FFFFFF;
+}
+
+.content_area DT {
+  font-size: 12pt;
+}
+
+.content_area DD {
+  font-size: 10pt;
+}
+
+.content_header {
+  font-size: 18pt;
+}
+
+p.copyright-footer A {
+  color: #990000;  text-decoration: none; font-weight: bold; 
+}
+p.copyright-footer A:visited {
+ color: #990000; text-decoration: none; font-weight: bold; 
+}
+p.copyright-footer A:hover {
+  color: #990000; font-weight: bold; text-decoration: underline;
+}
+p.copyright-footer {
+  font-size: 8pt;
+  margin: 0px 0px 0px 0px;
+  padding: 2px 2px 4px 2px;
+  background:  #000000;
+  color:       #FFFFFF;
+  text-align: center;
+}
+
+DL.news DD P {
+  margin: 2px 0px;
+
+}
+
+    </STYLE>
+  </HEAD>
+  <BODY onLoad="myOnLoad()" bgcolor="#CFCFCF" topmargin="0" alink="#000000" link="#000000" leftmargin="0" text="#000000" vlink="#000000"> 
+
+    <div style="color: #ffffff; background: #000000">
+      <div class="nav">
+        <TABLE width="100%">
+          <TR>
+            <TD>
+<r:exec>
+parts = string.split(request.getPathInfo(), '/')
+depth = len(parts)-2
+parts = parts[1:-1]        
+</r:exec>
+            <A href="{'../' * depth}"><r:eval>self.rednode.local.URI</r:eval></A>
+
+
+        <r:for item="p" list="parts">
+          <r:if test="p!=''">
+<r:exec>
+depth = depth - 1
+path = '../' * depth
+</r:exec>
+ | <A href="{path}"><r:eval>p</r:eval></A>
+          </r:if>
+        </r:for>
+            </TD>         
+        <r:if test="self.authenticated()">
+            <TD ALIGN="RIGHT">
+              <FORM name="logout" style="margin: 0" action="" method="POST">
+                Welcome,
+            <A title="Update your information" HREF="/personal/">
+              <r:eval>self.get_username()</r:eval>
+            </A> :
+
+        <r:if test="self.authenticated()">
+            <A HREF="/create_news_item">Create News Item</A> |
+            <A HREF="/subclass">editor</A> |
+        </r:if>
+
+        <r:if test="self.authorized()">
+            <A HREF="/subclass">Editor</A> |            
+        </r:if>
+            <INPUT name="processor" value="logout" type="hidden"/>
+            <A href="javascript: document.logout.submit()">Logout</A>
+  &amp;nbsp;</FORM>
+            </TD> 
+	    <r:else>
+              <TD ALIGN="RIGHT"><FORM name="login" style="margin: 0" action="" method="POST"><INPUT name="display" value="login_page" type="hidden"/><A href="javascript: document.login.submit()">Login</A> | <A HREF="/personal/">Create User</A>&amp;nbsp;</FORM>
               </TD>
-            </TR>
-          </TABLE>
-          <P><A HREF="/classList">Go to editor</A></P>
-        </BODY>
-      </HTML>
+            </r:else>
+          </r:if>
 
-    </r:response>
+          </TR>
+        </TABLE>
+      </div>
+      <div style="font-size: 14pt; padding: 5px 2px;"><r:exec>self.getBanner(request, response)</r:exec></div>
+    </div>
 
-    <r:response name="task_row" args="triple row">
-
-      <r:exec>subject = triple[0]</r:exec>
-      <TR>
-        <TD><a href="view?uri={encodeURI(subject)}"><r:eval>self.rednode.label(subject)</r:eval></a></TD>
+    <TABLE bgcolor="#CFCFCF" border="0" width="100%" height="400" cellpadding="0" cellspacing="0" style="margin-top: 4; margin-bottom: 4;">
+      <TR valign="top">
         <TD>
-          <FORM METHOD="POST" ACTION="/">
-            <INPUT TYPE="SUBMIT" VALUE="done"/>
-            <INPUT TYPE="HIDDEN" NAME="task_uri" VALUE="{subject}"/>
-            <INPUT TYPE="HIDDEN" NAME="processor" VALUE="task_done"/>
-          </FORM>
+
+<r:exec>if content: content(request, response)</r:exec>
+
         </TD>
-      </TR>
+     </TR>
+   </TABLE>
+
+    <P class="copyright-footer">This site stands on <A href="http://redfoot.sourceforge.net">redfeet</A> and is being served up by eikeon's bare naked HTTP server.</P>
+  </BODY>
+</HTML>
+</r:response>
+
+<r:response name="content">
+
+<!-- start -->
+
+    <r:exec>path_info = request.getPathInfo()</r:exec>
+    <r:if test="request.getParameters()['display']=='login_page' and not self.authenticated()">
+        <r:exec>self.login_page(request, response)</r:exec>
+      <r:else>
+
+<r:exec>
+content_function_name = self.get_content_function_name(path_info)
+uri = self.rednode.local.URI + path_info
+if not content_function_name:
+    s = self.rednode.getFirst(uri, "http://eikeon.com/2001/03/#contentFuncName", None)
+    if s:
+        content_function_name = un_literal(s[2])
+</r:exec>
+
+       <r:if test="content_function_name!=None">
+
+<r:exec>
+args = (request, response)
+contentFunc = getattr(self, content_function_name, None)
+if contentFunc:
+    apply(contentFunc, args)
+</r:exec>
+
+
+        <r:else>
+No content found for specified location.
+        </r:else> 
+
+       </r:if>
+
+      </r:else>
+    </r:if>
+
+<!-- end -->
+</r:response>
+
+
+<r:response name="root">
+
+<r:exec>netscape = None
+if request.getHeaders()['user-agent'].find('Mozilla/4.7')>=0:
+    netscape = "you bastard"
+</r:exec>
+
+<r:if test="self.authorized()">
+    <DIV class="content_area"> <!-- Search Google -->
+        <FORM name="main" style="margin: 0px;" 
+              method="GET" action="http://www.google.com/search">
+          <TABLE bgcolor="#FFFFFF">
+            <tr>
+              <td>
+                <A HREF="http://www.google.com/search">
+<IMG SRC="http://www.google.com/logos/Logo_40wht.gif" border="0"
+     ALT="Google" align="absmiddle"/></A>
+
+        <INPUT TYPE="text" name="q" size="21" maxlength="255" value=""/>
+              </td>
+            </tr>
+          </TABLE>
+        </FORM>
+    </DIV>
+
+  </r:if>
 
 </r:response>
 
-def add_task(self, request, response):
-    parameters = request.getParameters()
-    uri = self.rednode.local.URI + generateURI()
-    self.rednode.local.add(uri, TYPE, TASK)
-    self.rednode.local.add(uri, LABEL, literal(parameters['new_task']))
 
-def task_done(self, request, response):
-    parameters = request.getParameters()
-    task_uri = parameters['task_uri']
-    self.rednode.local.remove(task_uri)
+<r:response name="option" args="subject=None">
+    <option value="{subject}">
+      <r:eval>self.rednode.label(subject)</r:eval>
+    </option>
+</r:response>
+
+
+def get_content_function_name(self, path_info):
+    if path_info=="/":
+        return "root"
+    elif path_info=="/create_news_item":
+        return "create_news_item_page"
+    elif path_info=="/news/":
+        return "news"
+    elif path_info=="/rss/":
+        return "rss"
+    else:
+	# TODO: should loop through bases?
+	content_function_name = Authentication.get_content_function_name(self, path_info)
+	if content_function_name == None:
+		return Neighbours.get_content_function_name(self, path_info)
+
+
+<r:response name="getBanner">
+
+<r:exec>
+parameters = request.getParameters()
+which = parameters['which']
+pathInfo = request.getPathInfo()
+subject = "http://eikeon.com" + pathInfo    
+</r:exec>
+
+    <r:if test="which==''">
+      <r:eval>self.rednode.label(subject, '&amp;nbsp;')</r:eval>
+      <r:else>
+<r:eval>self.rednode.label(subject, '')</r:eval> : <r:eval>self.rednode.label(which, "")</r:eval>
+      </r:else>
+    </r:if>
+
+</r:response>
+
+
+
+def get_property_value(self, subject, predicate, default="", resource=0):
+    t = self.rednode.getFirst(subject, predicate, None)
+    if t!=None:
+        if resource:
+            result = t[2]
+        else:
+            result = un_literal(t[2])
+    else:
+        result = default
+
+    return result
+
+
+def is_instance_of(self, resource, type):
+    if resource==None:
+        return 0
+    for type in self.rednode.getTransitiveSubTypes(type):
+        if self.rednode.isOfType(resource, type):
+            return 1
+    return 0
+
+def get_instances_of(self, type):
+    class StatementSetBuilder:
+        def __init__(self):
+            self.set = {}
+        def visit(self, s, p, o):
+            self.set[(s, p, o)] = 1
+        def flush(self):
+            pass
+
+    visitor = StatementSetBuilder()
+    ofTypeVisitor = Query(self.rednode.query, (visitor, lambda type, p, o: [None, TYPE, type]))
+    self.rednode.visitTransitiveSubTypes(ofTypeVisitor, type)
+    self.rednode.query(visitor, None, TYPE, type) # trans sub types must not include itself.
+    return visitor.set.keys()
+
+    
+
 
 </r:class>
 
 </r:module>
-
