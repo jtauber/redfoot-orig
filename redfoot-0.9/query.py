@@ -27,9 +27,11 @@ class QueryStore:
     def getStore(self):
         return self.store
 
-    # TODO: need to have visitor version of this
-    def get(self, subject, predicate, object):
+    def get(self, subject=None, predicate=None, object=None):
         return self.store.get(subject, predicate, object)
+
+    def visit(self, visitor, subject=None, predicate=None, object=None):
+        self.store.visit(visitor, subject, predicate, object)
 
     def label(self, subject):
         l = self.get(subject, QueryStore.LABEL, None)
@@ -193,6 +195,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 2.1  2000/10/16 04:45:48  jtauber
+# resourcesByClassV on query and rednode now only call processClass if the class has instances
+#
 # Revision 2.0  2000/10/14 01:14:04  jtauber
 # next version
 #
