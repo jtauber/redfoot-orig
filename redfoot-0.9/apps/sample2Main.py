@@ -71,8 +71,9 @@ def _pull(interval):
 
 from redfoot.rednode import RedNode
 storeNode = RedNode()
-storeNode.local = JournalingStoreLocal()
-storeNode.local.load("sample2.rdf", SELF)
+local = JournalingStoreLocal()
+local.load("sample2.rdf", SELF)
+storeNode.set_local(local)
 bookkeeping = Local()
 bookkeeping.load("bookkeeping.rdf", SELF)
 storeNode.neighbours.addNeighbour(bookkeeping)

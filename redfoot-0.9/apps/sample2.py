@@ -17,8 +17,8 @@ class Sample2(Editor):
     def handle_request(self, request, response):
         path_info = request.getPathInfo()
 
-        sys.stderr.write("path_info: %s" % path_info)
-        sys.stderr.write("headers: %s" % request.getHeaders())
+        sys.stderr.write("path_info: %s\n" % path_info)
+        sys.stderr.write("headers: %s\n" % request.getHeaders())
         sys.stderr.flush()
 
         if path_info=="/" and request.getHeaders()['accept-language']=='rdf':

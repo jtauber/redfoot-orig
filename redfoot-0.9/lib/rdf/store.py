@@ -27,7 +27,7 @@ class SN:
             self.time_path = time_path
 
 
-        s = self.time_path + "%.0004s" % self.sn
+        s = self.time_path + "%.004d" % self.sn
         return s
 
     
@@ -167,7 +167,8 @@ class JournalingStore:
 
     def __init__(self):
         self.store = TripleStore()
-        self.sn = 0
+        self.sn = SN()
+
 
     def chron(self, a, b):
         date_a = self.journal.getFirst(a[0], TIMESTAMP, None)
@@ -184,12 +185,8 @@ class JournalingStore:
 
         return cmp(date_a, date_b)
 
-    def _tmp(self, subject, predicate, object):
-        del self.spo[subject][predicate][object]
-        del self.pos[predicate][object][subject]
-
     def set_journal(self, journal):
-        self.visit(self._tmp, None, None, None)
+        self.store.remove(None, None, None)
         self.journal = journal
         statements = self.journal.get(None, TYPE, STATEMENT)
         statements.sort(self.chron)
@@ -215,8 +212,8 @@ class JournalingStore:
                 self.store.remove(s, p, o)
 
         
-    def generateURI(self, sn=SN()):
-        return self.URI + sn.date_time_path()
+    def generateURI(self):
+        return self.URI + self.sn.date_time_path()
 
     def add(self, subject, predicate, object):
         self.store.add(subject, predicate, object)
@@ -228,10 +225,10 @@ class JournalingStore:
         self.journal.add(statement_uri, OBJECT, object)
         self.journal.add(statement_uri, OPERATION, ADD)
         self.journal.add(statement_uri, SOURCE, self.URI)
-        self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
+        self.journal.add(statement_uri, TIMESTAMP, literal(self.sn.date_time_path()))
         
     def _remove(self, subject, predicate, object):
-        self.store._remove(subject, predicate, object)
+        self.store.remove(subject, predicate, object)
 
         statement_uri = self.generateURI()
         self.journal.add(statement_uri, TYPE, STATEMENT)
@@ -240,19 +237,22 @@ class JournalingStore:
         self.journal.add(statement_uri, OBJECT, object)
         self.journal.add(statement_uri, OPERATION, DELETE)
         self.journal.add(statement_uri, SOURCE, self.URI)
-        self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
+        self.journal.add(statement_uri, TIMESTAMP, literal(self.sn.date_time_path()))
 
     def remove(self, subject=None, predicate=None, object=None):
-        self.store.remove(subject, predicate, object)
+        self.visit(self._remove, subject, predicate, object)
 
     def visit(self, callback, subject=None, predicate=None, object=None):
-        self.store.visit(callback, subject, predicate, object)
+        return self.store.visit(callback, subject, predicate, object)
 
     def visit_subjects(self, callback):
         self.store.visit_subjects(callback)
 
         
 #~ $Log$
+#~ Revision 6.4  2001/03/02 15:47:40  eikeon
+#~ added SOURCE property to journal statements
+#~
 #~ Revision 6.3  2001/03/02 06:22:23  eikeon
 #~ JournalingStore no longer has TripleStore as a base
 #~
