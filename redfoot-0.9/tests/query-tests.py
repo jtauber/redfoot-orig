@@ -53,3 +53,6 @@ print "root classes: ", qstore.rootClasses()
 
 print 79*"-"
 print qstore.subClassV(qstore.RESOURCE, cDisplay, rDisplay)
+
+print 79*"-"
+print qstore.getPossibleValues(qstore.RANGE)
