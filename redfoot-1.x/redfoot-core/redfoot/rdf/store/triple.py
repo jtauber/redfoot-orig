@@ -37,11 +37,16 @@ class TripleStore(object):
         del self.spo[subject][predicate][object]
         del self.pos[predicate][object][subject]
 
-    # TODO: remove should take a triple not three args
     def remove(self, subject=ANY, predicate=ANY, object=ANY):
         self.visit(self.__remove, (subject, predicate, object))
 
     def visit(self, callback, (subject, predicate, object)):
+        """
+        Visit all the triples that match the given triple mask by
+        calling callback. The triple mask is a triple where any or all
+        of subject, predicate, object may be ANY (AKA None).
+        """
+        
         if subject!=ANY: # subject is given
             spo = self.spo
             if subject in spo:
@@ -117,7 +122,10 @@ class TripleStore(object):
                         if stop:
                             return stop
 
-    # TODO: this method might get refactored back into visit
+    # Alternative triple store implementations need not implement this
+    # method as it can be implemented on top of the others. Although
+    # it will likely be more efficient to implement at the triple
+    # store level. 
     def visit_subjects(self, callback):
         """
         Experimental -- may change, depend on it at your own risk
