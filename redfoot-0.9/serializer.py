@@ -18,6 +18,10 @@ def splitProperty(property):
 class Serializer:
     rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
+    def __init__(self):
+        self.namespaces = {}
+        self.namespaceCount = 0
+
     def setStream(self, stream):
         self.stream = stream
 
@@ -26,11 +30,8 @@ class Serializer:
         self.base = base
 
     def registerProperty(self, property):
-        self.namespaces = {}
-        self.namespaceCount = 0
-
         uri = splitProperty(property)[0]
-        if not uri in self.namespaces.keys():
+        if not self.namespaces.has_key(uri):
             self.namespaceCount = self.namespaceCount + 1
             prefix = "n%s" % self.namespaceCount
             self.namespaces[uri] = prefix
