@@ -1,0 +1,171 @@
+<r:module name="eikeon" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
+
+from rdf.query import Query
+from rdf.const import *
+from rdf.literal import *
+
+from redfoot.util import *
+
+import sys
+
+CONTENT_TYPE_PROP = "http://eikeon.com/2001/03/25/T23/56/11Z"
+CONTENT_TYPE_CLASS = "http://eikeon.com/2000/11/2001/03/15/T15/58/28Z"
+CONTENT_TYPE_VALUE = "http://eikeon.com/2001/03/26/T00/03/03Z"
+
+
+<r:class name="Common">
+
+
+def handle_request(self, request, response):
+    parameters = request.getParameters()
+    processor = parameters['processor']
+
+    if processor=="upload":
+        uploaded_path = "static/%s" % date_time_filename()
+        stream = open(uploaded_path, 'wb')
+        stream.write(parameters["uploaded_file"])
+        stream.close()
+        uploaded_label = parameters["uploaded_label"]
+        uploaded_uri = "http://eikeon.com/%s" % uploaded_path
+        self.rednode.local.add(uploaded_uri, LABEL, literal(uploaded_label))
+        self.rednode.local.add(uploaded_uri, TYPE, LINK)
+        self.rednode.local.add(uploaded_uri, CONTENT_TYPE_PROP, parameters["Content-Type"])
+
+    path_info = request.getPathInfo()
+
+    if path_info.find("/static")>=0 and path_info.find("..")&lt;0:
+        type = self.rednode.getFirst("http://eikeon.com"+path_info, CONTENT_TYPE_PROP, None)
+        if type==None:
+            type = "text/plain"
+        else:
+            type = un_literal(self.rednode.getFirst(type[2], CONTENT_TYPE_VALUE, None)[2])
+        sys.stderr.write("Type: %s" % type)
+        sys.stderr.flush()
+        response.setHeader("Content-Type", type)
+        import shutil
+        source = open("."+path_info, 'rb')
+        destination = response
+        shutil.copyfileobj(source, destination)
+        source.close()
+        return 1
+
+
+<r:response name="upload" args="subject=None">
+  <div class="content_area">
+    <form name="main" method="post" enctype="multipart/form-data" action="">
+      <table>
+        <tr>
+          <td align="right">Label:</td>
+          <td><input type="input" name="uploaded_label" size="50"/></td>
+        </tr>
+        <tr>
+          <td align="right">File:</td>
+          <td><input type="file" name="uploaded_file" size="50" /></td>
+        </tr>
+        <tr>
+          <td align="right">Type:</td>
+          <td>
+            <select name="Content-Type">
+              <option selected="true" 
+                      value="text/plain">Select a Content-Type</option>
+
+<r:exec>
+callback = Query(self.option, (lambda s, p, o, request=request, response=response: [request, response, s],))
+self.rednode.query(callback, None, TYPE, CONTENT_TYPE_CLASS)
+</r:exec>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="hidden" name="processor" value="upload"/></td>
+          <td>
+            <input type="submit" value="Submit" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</r:response>
+
+<r:response name="link"
+            args="subject">
+    <A href="?which={encodeURI(subject)}">
+      <r:eval>self.rednode.label(subject, "")</r:eval>
+    </A> | 
+</r:response>
+
+
+<r:response name="subclass" 
+            args="defaultRoot rowFunc sort=None filter=None">
+<r:exec>
+parameters = request.getParameters()
+which = parameters['which']
+if which=="":
+    which = defaultRoot
+</r:exec>
+
+<div class="content_area">
+
+<div>
+Broader Categories: 
+<r:exec>
+
+visitor = Query(self.link, (request, response, lambda s, p, o: [o,]))
+self.rednode.query(visitor, which, SUBCLASSOF, None) 
+</r:exec>
+</div>
+
+<div>
+Narrower Categories:
+<r:exec>
+visitor = Query(self.link, (request, response, lambda s, p, o: [s,]))
+self.rednode.query(visitor, None, SUBCLASSOF, which) 
+</r:exec>
+</div>
+
+<div>
+<r:exec>
+triples = self.rednode.get(None, TYPE, which)
+self.list(request, response, triples, rowFunc, sort=sort, filter=filter)
+</r:exec>
+</div>
+</div>
+</r:response>
+
+
+def alpha_by_label(self, a, b):
+    label_a = self.rednode.label(a[0])
+    label_b = self.rednode.label(b[0])            
+    return cmp(label_a, label_b)
+
+<r:response name="list" 
+            args="triples li=None filter=None sort=None title=''">
+
+
+<r:exec>
+if not filter:
+    list = triples
+else:
+    list = []
+    for triple in triples:
+        if filter(triple)==0:
+            list.append(triple)
+
+if sort!=None:
+    list.sort(sort)
+i = 0
+</r:exec>
+
+<r:for item="triple" list="list">
+  <r:exec>i = i + 1</r:exec>
+  <r:if test="li">
+    <r:eval>li(request, response, triple, row=i)</r:eval>
+    <r:else>
+        <li><r:eval>self.rednode.label(triple[0])</r:eval></li>
+    </r:else>
+  </r:if>
+</r:for>
+
+</r:response>
+</r:class>
+</r:module>

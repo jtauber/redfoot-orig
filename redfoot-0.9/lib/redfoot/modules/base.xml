@@ -8,7 +8,7 @@ from rdf.query import Query
 from rdf.const import *
 from rdf.literal import *
 
-from util import *
+from redfoot.util import *
 
 from redfoot import redpage
 
