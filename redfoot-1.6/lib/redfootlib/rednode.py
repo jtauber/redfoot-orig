@@ -11,6 +11,8 @@ from redfootlib.node import NodeStore, Node
 
 from rdflib.nodes import URIRef
 
+from redfootlib.rdf.query.visit import Visit
+
 LISTEN_ON = URIRef("http://redfoot.net/2002/05/listen_on")
 ADDRESS = URIRef("http://redfoot.net/2002/05/Address")
 HOST = URIRef("http://redfoot.net/2002/05/host")
@@ -22,7 +24,7 @@ APP_CLASS = URIRef("http://redfoot.net/2002/05/app_class")
 
 sn = 0
 
-class RedNode(NeighbourManager, AutoSave, TripleStore):
+class RedNode(Visit, NeighbourManager, AutoSave, TripleStore):
     """
     A RedNode is a store that is queryable via high level queries, can
     manage its neighbour connections, [automatically] save to RDF/XML
@@ -36,9 +38,9 @@ class RedNode(NeighbourManager, AutoSave, TripleStore):
     def __init__(self):
         super(RedNode, self).__init__()
         neighbours = Neighbours()
-        #neighbours.append_store(rdf_files.schema)
-        #neighbours.append_store(rdf_files.syntax)
-        #neighbours.append_store(rdf_files.builtin)
+        neighbours.append_store(rdf_files.schema)
+        neighbours.append_store(rdf_files.syntax)
+        neighbours.append_store(rdf_files.builtin)
         self.neighbourhood = RedNeighbourhood(self, neighbours)
         self.neighbours = neighbours
 
@@ -152,14 +154,14 @@ class RedNode(NeighbourManager, AutoSave, TripleStore):
     
 
 
-class Neighbours(Schema, CompositeStore):
+class Neighbours(Visit, Schema, CompositeStore):
     """
     A store of the neighbours that is queryable via high level
     queries.
     """
 
 
-class RedNeighbourhood(Schema, Neighbourhood):
+class RedNeighbourhood(Visit, Schema, Neighbourhood):
     """
     A store of the neighbourhood that is queryable via high level
     queries.
