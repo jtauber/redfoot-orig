@@ -49,12 +49,12 @@ class Module:
             #print "first: '%s'  path: '%s'" % (first, path)            
             self.apply(first)
 
-    def create_rednode(self, uri=None):
+    def create_rednode(self, uri=None, autosave=1):
         mod_class = self.__class__
         from redfoot.rednode import RedNode
         if not uri:
             uri = "http://redfoot.sourceforge.net/2001/09/module/%s/" % mod_class.__module__
-        mod_rednode = RedNode(uri)
+        mod_rednode = RedNode(uri, autosave)
         rdf = "%s.rdf" % mod_class.__module__.split('.')[-1]
         rdf = to_URL(mod_class.__module__, rdf)
 
