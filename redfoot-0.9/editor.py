@@ -118,6 +118,72 @@ class Editor(Viewer):
               </TR>
         """)
 
+    def add(self, type):
+        self.writer.write("""
+          <HTML>
+            <HEAD>
+              <TITLE>ReDFoot: Add</TITLE>
+              <LINK REL="stylesheet" HREF="css"/>
+            </HEAD>
+            <BODY>
+              <H1>ReDFoot</H1>""")
+        self.menuBar()
+        self.writer.write("""
+          <FORM NAME="form" ACTION="edit" METHOD="GET">
+            <TABLE BORDER="1">
+              <TR>
+                <TD VALIGN="TOP">URI</TD>
+                <TD>&nbsp;</TD>
+                <TD>
+                  <INPUT TYPE="TEXT" SIZE="60" NAME="uri" value="%s"/>
+                </TD>
+              </TR>""" % self.generateURI())
+        self.writer.write("""
+              <TR>
+                <TD VALIGN="TOP">label</TD>
+                <TD>Literal</TD>
+                <TD>
+                  <INPUT TYPE="TEXT" SIZE="60" NAME="label" />
+                </TD>
+              </TR>
+
+              <TR>
+                <TD VALIGN="TOP">type</TD>
+                <TD>Class</TD>
+                <TD>""")
+        if type == None:
+            self.writer.write("""
+                  <SELECT SIZE="1" NAME="type">
+            """)
+            for klass in self.qstore.get(None, self.qstore.TYPE, self.qstore.CLASS):
+                self.writer.write("""
+                    <OPTION vluae="%s">%s</OPTION>
+                """ % (klass[0], self.qstore.label(klass[0])))
+            self.writer.write("""
+                  </SELECT>
+            """)
+        else:
+            self.writer.write("""
+                  <INPUT TYPE="HIDDEN" NAME="type" VALUE="%s"/>
+                  %s
+            """ % (type, self.link(type)))
+        self.writer.write("""
+                </TD>
+              </TR>
+        """)
+        self.writer.write("""
+          </TABLE>
+          <INPUT TYPE="HIDDEN" NAME="processor"  VALUE="create"/>
+          <INPUT TYPE="SUBMIT"                   VALUE="create"/>
+        """)
+        self.writer.write("""
+        </FORM>
+
+              <P><A HREF="./">Return to List (without adding a Resource)</A></P>
+            </BODY>
+          </HTML>
+        """)
+
     def update(self, params):
         subject = params["uri"][0]
         count = params["prop_count"][0]
@@ -138,3 +204,6 @@ class Editor(Viewer):
             newProperty = params["newProperty"][0]
             if newProperty!=None and newProperty!="":
                 self.qstore.getStore().add(subject, newProperty, "")
+
+    def generateURI(self):
+        return "#foo"

@@ -80,6 +80,12 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             viewer.view(args['uri'][0]) # TODO: check why values of args are lists
         elif path_info == "/edit":
             viewer.edit(args['uri'][0]) # TODO: check why values of args are lists
+	elif path_info == "/add":
+            if args.has_key("type"):
+                type = args["type"][0]
+            else:
+                type = None
+            viewer.add(type)
         else:
             # make a proper 404
             self.wfile.write("unknown PATH")
@@ -138,6 +144,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.10  2000/10/05 01:02:19  jtauber
+# server now knows how to call update on editor
+#
 # Revision 1.9  2000/10/03 22:12:57  eikeon
 # Fixed up ^
 #
