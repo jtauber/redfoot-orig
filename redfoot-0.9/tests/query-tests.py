@@ -1,16 +1,15 @@
 import pyexpat
 
-from redfoot.parser import *
-from redfoot.store import *
+from redfoot.storeio import *
 from redfoot.query import *
 
 store = TripleStore()
 
-rdfParser = RDFParser()
-rdfParser.setAdder(store.add)
+storeIO = StoreIO()
+storeIO.setStore(store)
 
-rdfParser.parse("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-rdfParser.parse("rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
+storeIO.load("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+storeIO.load("rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
 
 qstore = QueryStore()
 qstore.setStore(store)
