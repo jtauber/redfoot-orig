@@ -1,0 +1,174 @@
+$Header$
+
+
+REDFOOT USER MANUAL
+
+    Redfoot is a framework for building web applications and sites
+    that are driven by RDF and are possibly peer-to-peer.
+
+REQUIREMENTS
+
+    You must be running Python 2.0 including pyexpat.
+
+INTRODUCTION
+
+    Typically, an application or site will consist of:
+        - Redfoot itself
+        - Custom UI (written in Python)
+        - RDF data
+
+    If all you are interested in doing is viewing and editing RDF, you
+    don't need any custom UI. Redfoot includes a generic,
+    browser-based viewer and editor.
+
+STARTING REDFOOT WITH GENERIC UI
+
+    Just run redfoot.sh or redfoot.bat and Redfoot will start up. By
+    default, Redfoot will be running on port 8000 and will be using
+    local.rdf as the RDF data.
+
+    If you open a browser and go to
+        http://localhost:8000/
+    the RDF will be displayed in its raw XML serialization.
+
+    To access the viewer/editor, try going to
+        http://www.localhost:8000/classList
+
+    Often, it is not desirable for Redfoot to run at the root of the
+    server's URI space. The -P option allows you to specify the path
+    on which Redfoot should operate. For example
+        redfoot.sh -P /2000/11/redfoot
+    would mean that the RDF is available at
+        http://localhost:8000/2000/11/redfoot
+    and the viewer/editor at
+        http://localhost:8000/2000/11/redfoot/classList
+
+STARTING REDFOOT WITH A CUSTOM UI
+
+    Typically, a custom UI will be provided as a python class which is
+    a subclass of BaseUI. A special file will be run to start up
+    Redfoot with that particular UI. See sample/sample.sh for an
+    example.
+
+    Note that in almost all cases, a Redfoot with a custom UI will
+    have the -P path specified. The generic Redfoot UI will then be
+    available at that path with the rest of server's URI space
+    available for the custom UI.
+
+    Often, the generic UI will be retained for editing the RDF,
+    although the custom UI may provide custom editing as well as
+    custom views.
+
+STARTUP COMMANDLINE OPTIONS
+
+    The following options may be passed to the Redfoot server on the
+    commandline at startup:
+
+        -l location of RDF file to use as local
+           (eg myrdf.rdf. defaults to local.rdf)
+
+        -u uri to treat that file as
+           (eg http://redfoot.sourceforge.net/2000/10/.
+            defaults to http://hostname.domain:port/path)
+
+        -p port number to run on
+           (defaults to 8000)
+
+        -P path from server root to actual RDF
+           (eg /2000/10/redfoot. defaults to /)
+
+USING GENERIC UI: VIEWS
+
+    There are five different views of the RDF provided by the generic
+    Redfoot UI:
+
+        - Resources by Class
+        - Full Subclass Tree
+        - Partial Subclass Tree
+        - RDF
+        - Triples
+
+    All are available under VIEW in the black menu bar.
+
+    Resources by Class     - lists the resources categorized by their
+                             type(s)
+
+    Full Subclass Tree     - shows the hierarchy of classes along with the
+                             resources in each class
+
+    Partial Subclass Tree  - similar to above, but only shows one
+                             level at a time will the ability to drill
+                             down and back up
+
+    RDF                    - the raw RDF serialized as XML
+
+    Triples                - the RDF in triple form displayed in a
+                             table
+
+USING GENERIC UI: VIEWING RESOURCE PROPERTIES
+
+    If you click on a resource, you will see a view of the properties
+    of that resource that are known by the Redfoot.
+
+    The left column indicates the property and the right column the
+    value. Clicking on a property will take you to the property
+    definition. If the value of a property is a resource, clicking on
+    a value will take you to the view of that resource.
+
+    Reified statements about the given resource are displayed in white
+    with a red border and additionally include a link to the reified
+    statement.
+
+USING GENERIC UI: EDITING RESOURCE PROPERTIES
+
+    You can switch between editing and viewing by clicking one of
+    view | edit
+
+    [TODO: Need to have explained concept of neighbourhood to explain
+     why some property values can't be changed]
+
+    Properties whose values are known but not stated locally cannot be
+    changed and they appear just like when viewing the resource
+    properties.
+
+    However, if a property's value is stated locally, its value may be
+    changed. There will be a column between the property's name and
+    its value that gives the property's range. If the range of the
+    property is Literal, an input box will be provided. If the range
+    of the property is a particular class, then a drop down will be
+    provided that lists the known instances of that class (including
+    subclasses).
+
+    Note that once a new value has been entered or selected, the
+    change won't be made until you press the update button.
+
+    Properties may also be deleted and reified.
+
+    At the bottom left of the table is a drop down where you can
+    select a new property to add. This list is of those properties
+    known to have a domain of the resource you are currently looking
+    at. Note that, in the current version of Redfoot, you will need to
+    click the update button in order to be able to specify a value for
+    the new property.
+
+    Finally, you may delete all local properties stated of a resource.
+
+USING GENERIC UI: ADDING A RESOURCE
+
+    To make a statement about a resource not currently known, or to
+    create a new resource, click on Add a Resource in the EDIT menu.
+
+    By default, Redfoot will assume that the resource is internal to
+    the Redfoot (ie the URI for the resource is just the URI of the
+    Redfoot as a whole + # + a local ID). The local ID will be
+    autogenerated based on the time.
+
+    You can change this to an external resource, or to a more
+    appropriate local ID (but it must be unique).
+
+    At this stage, you must also specify a label and a type for the
+    resource.
+
+[TODO: PEER stuff]
+
+$Log$
