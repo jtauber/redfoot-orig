@@ -11,7 +11,6 @@ from redfoot.modules.common import Common
 from redfoot.modules.neighbours import Neighbours
 from redfoot.modules.rss import RSS
 
-
 <r:class name="UI" bases="RSS Common Neighbours">
 
 def __init__(self, rednode):
@@ -28,6 +27,7 @@ def handle_request(self, request, response):
 
     # invoke the processor
     processor = request.getParameters()['processor']
+
     if hasattr(self, processor):
         apply(getattr(self, processor), (request, response))
 
@@ -52,231 +52,25 @@ def authorized(self):
 <r:response name="page" args="content=None">
 <HTML>
   <HEAD>
-    <TITLE>Sample2</TITLE>
-
-        <script language="javascript">
-function myOnLoad() {
-    if (document.main) {
-        if (document.main.q) {
-            document.main.q.focus()
-        }
-        if (document.main.title) {
-            document.main.title.focus()
-        }
-        if (document.main.username) {
-            document.main.username.focus()
-        }
-    }
-}
-        </script>
-    <STYLE>
-      body {
-        font-family: Verdana;
-        font-size:   10pt;
-      }
-
-      A {
-           color: #000000;
-      }
-
-      A:visited {
-           color: #000000; 
-      }
-
-      A:hover {
-          color: #990000;
-      }
-
-      A.image:hover {
-          color: #990000;
-      }
-
-div.nav {
-  color: #FFF;
-  background: #990000;
-  border-width: 0px 0px 1px 0px;
-  border-style: solid;
-  border-color: #FFFFFF;
-}
-
-div.nav td {
-  color: #FFF;
-  font-size: 8pt;
-}
-
-div.nav a {
-  color: #FFFFFF;
-  text-decoration: none;
-}
-
-div.nav a:visited {
-  color: #FFFFFF;
-}
-
-div.nav a:hover {
-  color: #CC0000;
-}
-
-.content_area {
-  margin: 0px 4px 4px 4px;
-  padding: 0px 4px 4px 4px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #000000;
-  background: #FFFFFF;
-}
-
-.content_area DT {
-  font-size: 12pt;
-}
-
-.content_area DD {
-  font-size: 10pt;
-}
-
-.content_header {
-  font-size: 18pt;
-}
-
-p.copyright-footer A {
-  color: #990000;  text-decoration: none; font-weight: bold; 
-}
-p.copyright-footer A:visited {
- color: #990000; text-decoration: none; font-weight: bold; 
-}
-p.copyright-footer A:hover {
-  color: #990000; font-weight: bold; text-decoration: underline;
-}
-p.copyright-footer {
-  font-size: 8pt;
-  margin: 0px 0px 0px 0px;
-  padding: 2px 2px 4px 2px;
-  background:  #000000;
-  color:       #FFFFFF;
-  text-align: center;
-}
-
-DL.news DD P {
-  margin: 2px 0px;
-
-}
-
-    </STYLE>
+    <TITLE>Redfoot Sample 3</TITLE>
   </HEAD>
-  <BODY onLoad="myOnLoad()" bgcolor="#CFCFCF" topmargin="0" alink="#000000" link="#000000" leftmargin="0" text="#000000" vlink="#000000"> 
+  <BODY>
 
-    <div style="color: #ffffff; background: #000000">
-      <div class="nav">
-        <TABLE width="100%">
-          <TR>
-            <TD>
-<r:exec>
-parts = string.split(request.getPathInfo(), '/')
-depth = len(parts)-2
-parts = parts[1:-1]        
-</r:exec>
-            <A href="{'../' * depth}"><r:eval>self.rednode.local.URI</r:eval></A>
+    <DIV CLASS="nav">
+      <TABLE WIDTH="100%">
+        <TR>
+          <TD><A HREF="/">Home</A></TD>
+        </TR>
+      </TABLE>
+    </DIV>
+      
+    <H1>Redfoot Sample 3</H1>
 
+    <r:exec>if content: content(request, response)</r:exec>
 
-        <r:for item="p" list="parts">
-          <r:if test="p!=''">
-<r:exec>
-depth = depth - 1
-path = '../' * depth
-</r:exec>
- | <A href="{path}"><r:eval>p</r:eval></A>
-          </r:if>
-        </r:for>
-            </TD>         
-
-          </TR>
-        </TABLE>
-      </div>
-      <div style="font-size: 14pt; padding: 5px 2px;"><r:exec>self.getBanner(request, response)</r:exec></div>
-    </div>
-
-    <TABLE bgcolor="#CFCFCF" border="0" width="100%" height="400" cellpadding="0" cellspacing="0" style="margin-top: 4; margin-bottom: 4;">
-      <TR valign="top">
-        <TD>
-
-<r:exec>if content: content(request, response)</r:exec>
-
-        </TD>
-     </TR>
-   </TABLE>
-
-    <P class="copyright-footer">This site stands on <A href="http://redfoot.sourceforge.net">redfeet</A> and is being served up by eikeon's bare naked HTTP server.</P>
   </BODY>
 </HTML>
 </r:response>
-
-
-
-<r:response name="option" args="subject=None">
-    <option value="{subject}">
-      <r:eval>self.rednode.label(subject)</r:eval>
-    </option>
-</r:response>
-
-
-<r:response name="getBanner">
-
-<r:exec>
-parameters = request.getParameters()
-which = parameters['which']
-pathInfo = request.getPathInfo()
-subject = "http://eikeon.com" + pathInfo    
-</r:exec>
-
-    <r:if test="which==''">
-      <r:eval>self.rednode.label(subject, '&amp;nbsp;')</r:eval>
-      <r:else>
-<r:eval>self.rednode.label(subject, '')</r:eval> : <r:eval>self.rednode.label(which, "")</r:eval>
-      </r:else>
-    </r:if>
-
-</r:response>
-
-
-
-def get_property_value(self, subject, predicate, default="", resource=0):
-    t = self.rednode.getFirst(subject, predicate, None)
-    if t!=None:
-        if resource:
-            result = t[2]
-        else:
-            result = un_literal(t[2])
-    else:
-        result = default
-
-    return result
-
-
-def is_instance_of(self, resource, type):
-    if resource==None:
-        return 0
-    for type in self.rednode.getTransitiveSubTypes(type):
-        if self.rednode.isOfType(resource, type):
-            return 1
-    return 0
-
-def get_instances_of(self, type):
-    class StatementSetBuilder:
-        def __init__(self):
-            self.set = {}
-        def visit(self, s, p, o):
-            self.set[(s, p, o)] = 1
-        def flush(self):
-            pass
-
-    visitor = StatementSetBuilder()
-    ofTypeVisitor = Query(self.rednode.query, (visitor, lambda type, p, o: [None, TYPE, type]))
-    self.rednode.visitTransitiveSubTypes(ofTypeVisitor, type)
-    self.rednode.query(visitor, None, TYPE, type) # trans sub types must not include itself.
-    return visitor.set.keys()
-
-    
-
 
 </r:class>
 
