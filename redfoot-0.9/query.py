@@ -144,7 +144,7 @@ class QueryStore:
 
     def reifiedV(self, subject, processStatement):
         for statement in self.getByType(QueryStore.STATEMENT, QueryStore.SUBJECT, subject):
-            processStatement(statement[0], self.store.get(prop[0], QueryStore.PREDICATE, None)[0][2], self.store.get(prop[0], QueryStore.OBJECT, None)[0][2])
+            processStatement(statement[0], self.store.get(statement[0], QueryStore.PREDICATE, None)[0][2], self.store.get(statement[0], QueryStore.OBJECT, None)[0][2])
 
     # should perhaps just autogenerate statement_uri
     def reify(self, statement_uri, subject, predicate, object):
