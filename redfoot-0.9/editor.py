@@ -320,8 +320,9 @@ class PeerEditor(Editor):
               <H2>Connect Neighbour</H2>
         
               <FORM NAME="form" ACTION="." METHOD="GET">
-                <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri"></P>
+                <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri" SIZE="60">
                 <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
+                </P>
               </FORM>
             </BODY>
           </HTML>
@@ -329,7 +330,7 @@ class PeerEditor(Editor):
 
     def connect(self, params):
         if params.has_key("uri"):
-            self.qstore.getStore().connectTo(param["uri"][0])
+            self.qstore.getStore().connectTo(params["uri"][0])
 
 
 
