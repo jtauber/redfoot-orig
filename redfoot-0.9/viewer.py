@@ -406,45 +406,8 @@ class Viewer:
 
 
 # $Log$
+# Revision 2.1  2000/10/16 01:45:32  eikeon
+# moved viewer request handling code from server to viewer
+#
 # Revision 2.0  2000/10/14 01:14:04  jtauber
 # next version
-#
-# Revision 1.26  2000/10/13 21:49:03  eikeon
-# added code for when value does not have a value ;)
-#
-# Revision 1.25  2000/10/10 05:20:54  eikeon
-# added show/hide neighbour logic
-#
-# Revision 1.24  2000/10/10 04:31:21  jtauber
-# work-around in string joining between non-unicode and unicode for 2.0b
-#
-# Revision 1.23  2000/10/10 04:29:56  eikeon
-# call resourceByClassV and subClassV on storeNode so that we see only what is in the local store for now
-#
-# Revision 1.22  2000/10/09 22:34:31  jtauber
-# RDF is now default view
-#
-# Revision 1.21  2000/10/09 06:37:24  jtauber
-# view and edit now clearly say which they are on screen
-#
-# Revision 1.20  2000/10/08 23:29:06  jtauber
-# collapsed subclass view now includes link(s) to parent(s)
-#
-# Revision 1.19  2000/10/08 22:40:25  jtauber
-# edit/view/reified displays line up better now
-#
-# Revision 1.18  2000/10/08 06:19:15  eikeon
-# Changed default view to be the collapsed subclass view
-#
-# Revision 1.17  2000/10/07 02:24:46  jtauber
-# futzed around a little with fonts and colors; if redfoot doesn't have anything about a queried resource, viewer now says so; reified properties now have a link to the statement
-#
-# Revision 1.16  2000/10/05 19:32:03  jtauber
-# refactored out HTML for resource header
-#
-# Revision 1.15  2000/10/01 03:58:10  eikeon
-# fixed up all the places where I put CVS keywords as keywords in omments... duh
-#
-# Revision 1.14  2000/10/01 03:07:23  eikeon
-# changed viewer to now take a StoreNode; RDF now only outputs the RDF for the StoreNode's store; added Header and Log CVS keywords
-#

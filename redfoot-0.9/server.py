@@ -103,77 +103,8 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 2.1  2000/10/16 01:45:32  eikeon
+# moved viewer request handling code from server to viewer
+#
 # Revision 2.0  2000/10/14 01:14:04  jtauber
 # next version
-#
-# Revision 1.29  2000/10/13 14:00:28  eikeon
-# added newline to end of startup message
-#
-# Revision 1.28  2000/10/13 04:23:23  eikeon
-# added startup message that shows port number etc back in
-#
-# Revision 1.27  2000/10/13 04:10:43  eikeon
-# now depends on BNH server... as we where having stability problems with BaseHTTPServer and company that we could not track down
-#
-# Revision 1.24  2000/10/10 05:20:54  eikeon
-# added show/hide neighbour logic
-#
-# Revision 1.23  2000/10/10 04:10:33  jtauber
-# POST is now used for form submission (finally)
-#
-# Revision 1.22  2000/10/09 22:34:31  jtauber
-# RDF is now default view
-#
-# Revision 1.21  2000/10/09 19:51:00  jtauber
-# default location is now local.rdf
-#
-# Revision 1.20  2000/10/09 19:40:27  jtauber
-# server now defaults URI using the actual hostname and port
-#
-# Revision 1.19  2000/10/09 06:26:32  jtauber
-# location, uri, port and web interface class are now specified using command-line options
-#
-# Revision 1.18  2000/10/09 06:08:30  jtauber
-# the UI to use is now specified in a variable (preempting the ability to set it via a command-line option
-#
-# Revision 1.17  2000/10/08 06:27:41  jtauber
-# switched over to using PeerEditor and added handling of connect page and connect processor
-#
-# Revision 1.16  2000/10/08 06:19:15  eikeon
-# Changed default view to be the collapsed subclass view
-#
-# Revision 1.15  2000/10/08 06:05:03  eikeon
-# UNKNOWN PATH now indicates the value of the unknown path
-#
-# Revision 1.14  2000/10/07 02:22:16  jtauber
-# added handling of processor HTTP parameter for deletion and reification buttons
-#
-# Revision 1.13  2000/10/06 02:44:56  jtauber
-# added save functionality but note it doesn't work yet
-#
-# Revision 1.12  2000/10/05 18:48:30  jtauber
-# add now actually creates the resource entry
-#
-# Revision 1.11  2000/10/05 02:42:35  jtauber
-# implemented UI for 'add' in editor
-#
-# Revision 1.10  2000/10/05 01:02:19  jtauber
-# server now knows how to call update on editor
-#
-# Revision 1.9  2000/10/03 22:12:57  eikeon
-# Fixed up ^
-#
-# Revision 1.8  2000/10/01 07:41:09  eikeon
-# fixed missing imports etc from previous premature checkin ;(
-#
-# Revision 1.7  2000/10/01 07:31:47  eikeon
-# StoreNode now does the loading of the rdf-syntax and rdf-schema; the runServer function now creates the Editor and gives it to the RedfootHTTPRequestHandler
-#
-# Revision 1.6  2000/10/01 03:58:10  eikeon
-# fixed up all the places where I put CVS keywords as keywords in omments... duh
-#
-# Revision 1.5  2000/10/01 03:13:18  eikeon
-# storeNode now contains a storeIO as its store; a StoreNode now gets passed in to the Editor's constructor... as Viewers (hence an Editor) now take storeNodes
-#
-# Revision 1.4  2000/10/01 02:25:09  eikeon
-# modified to use the new StoreNode class; added Header and Log CVS keywords
