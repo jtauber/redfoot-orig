@@ -30,6 +30,9 @@ def _start_thread(notMoreOftenThan=15):
         
 LASTRETRIEVED = "http://redfoot.sourceforge.net/2001/01/30/#lastRetrieved"
 
+SELF = "http://localhost:8001/"
+FRIEND = "http://localhost:8002/"
+
 def _pull(interval):
     while 1:
         import time
@@ -41,8 +44,8 @@ def _pull(interval):
         headers = {}
         headers['Accept-Language'] = 'rdf'
 
-        last = storeNode.local.getFirst("http://localhost:8002/", LASTRETRIEVED, None)
-        url = "http://localhost:8002/"
+        last = storeNode.getFirst(FRIEND, LASTRETRIEVED, None)
+        url = FRIEND
         if last!=None:
             url = url + "?since=%s" % encodeURI(last[2])
         request = Request(url, None, headers)
@@ -50,13 +53,17 @@ def _pull(interval):
         # For now just put the current time...
         # Later we should put the time of the last timestamp we get back from the query
         timestamp = storeNode.local.generateURI()
-        storeNode.local.remove("http://localhost:8002/", LASTRETRIEVED, timestamp)
-        storeNode.local.add("http://localhost:8002/", LASTRETRIEVED, timestamp)        
+        bookkeeping.remove(FRIEND, LASTRETRIEVED, None)
+        bookkeeping.add(FRIEND, LASTRETRIEVED, timestamp)        
 
-        f = urlopen(request)
-        storeNode.local.update_journal(f, "http://localhost:8002/")
+        try:
+            f = urlopen(request)
+            storeNode.local.update_journal(f, FRIEND)
 
-        f.close()
+            f.close()
+        except:
+            sys.stderr.write(".")
+            sys.stderr.flush()
         
 
 
@@ -65,7 +72,10 @@ def _pull(interval):
 from redfoot.rednode import RedNode
 storeNode = RedNode()
 storeNode.local = JournalingStoreLocal()
-storeNode.local.load("sample2.rdf", "http://localhost:8001/")
+storeNode.local.load("sample2.rdf", SELF)
+bookkeeping = Local()
+bookkeeping.load("bookkeeping.rdf", SELF)
+storeNode.neighbours.addNeighbour(bookkeeping)
 
 _start_thread()
 
