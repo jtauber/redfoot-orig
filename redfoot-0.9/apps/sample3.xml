@@ -53,6 +53,28 @@ def authorized(self):
 <HTML>
   <HEAD>
     <TITLE>Redfoot Sample 3</TITLE>
+
+    <STYLE>
+      body {
+        font-family: "sans-serif";
+      }
+      dl {
+        margin: 0px; padding: 2px 5px;
+      }
+      dl.rss_item_0 {
+	 background: #DDFFDD;
+      }
+      dl.rss_item_1 {
+	 background: #DDDDFF;
+      } 
+      dt {
+        padding: 0px; margin: 0px; font-weight: bold;
+      }
+      dd div {
+        padding-bottom: 10px;
+      }
+    </STYLE>
+
   </HEAD>
   <BODY>
 
