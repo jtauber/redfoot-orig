@@ -36,6 +36,7 @@ class Serializer:
         self.namespaces = {}
         self.namespaceCount = 0
         self.currentSubject = None
+        self.baseURI = None
 
     def setStream(self, stream):
         self.stream = stream
@@ -69,7 +70,7 @@ class Serializer:
 
     def subjectStart(self, subject):
         self.stream.write( "  <%s:Description" % self.namespaces[self.rdfns] )
-        if subject[0:len(self.baseURI)+1]==self.baseURI+"#":
+        if self.baseURI and subject[0:len(self.baseURI)+1]==self.baseURI+"#":
             self.stream.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.baseURI)+1:]) )
         else:
             self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], encode(subject)) )
@@ -88,7 +89,7 @@ class Serializer:
         if is_literal(object):
             self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(un_literal(object)), self.namespaces[namespace], localName) )
         else:
-            if object[0:len(self.baseURI)+1]==self.baseURI+"#":
+            if self.baseURI and object[0:len(self.baseURI)+1]==self.baseURI+"#":
                 object = object[len(self.baseURI):]
             self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], encode(object)) )
 
@@ -101,6 +102,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 5.4  2000/12/17 20:55:27  eikeon
+#~ pulled len(property) out of loop
+#~
 #~ Revision 5.3  2000/12/17 20:41:22  eikeon
 #~ removed log message prior to currently worked on release
 #~
