@@ -31,7 +31,7 @@ other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, T
 </r:exec>
 
   <DIV class="content_area">
-    <SPAN class="content_header">Connected</SPAN>
+    <H2 CLASS="content_header">Connected</H2>
   <TABLE>
 
 
@@ -52,7 +52,7 @@ other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, T
   </DIV>
 
   <DIV class="content_area">
-    <SPAN class="content_header">Other Known</SPAN>
+    <H2 class="content_header">Other Known</H2>
 
 <TABLE>
 <r:for item="neighbour" list="other_known_neighbours">
