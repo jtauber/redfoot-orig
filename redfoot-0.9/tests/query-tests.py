@@ -40,3 +40,11 @@ print qstore.typeInh("car")
 print qstore.transitiveSuperTypes("car")
 
 print qstore.transitiveSubTypes("vehicle")
+
+def cDisplay(c):
+    print c
+
+def rDisplay(r):
+    print "   ",r
+
+print qstore.resourcesByClassV(cDisplay, rDisplay)
