@@ -12,12 +12,12 @@ class ServerConnection:
         self.handler = handler
         self.context = context
         
-    def handleRequest(self, server, clientSocket):
+    def handle_request(self, server, clientSocket):
         try:
             try:
-                self.request._setClientSocket(clientSocket)
-                self.response._setClientSocket(clientSocket)
-                self.handler.handleRequest(self.request, self.response)
+                self.request._set_client_socket(clientSocket)
+                self.response._set_client_socket(clientSocket)
+                self.handler.handle_request(self.request, self.response)
                 self.request.close()
                 self.response.close()                
                 clientSocket.shutdown(1)
@@ -51,14 +51,14 @@ class Request:
     def __init__(self, connection):
         self.connection = connection
 
-    def _setClientSocket(self, clientSocket):
+    def _set_client_socket(self, clientSocket):
         self._rfile = clientSocket.makefile('rb', 0)
         self._firstline = None
         self._parameters = None
         self._headers = None
 
 
-    def _getFirstLine(self):
+    def _get_first_line(self):
         if not self._firstline:
             self._firstline = self._rfile.readline()
             words = string.split(self._firstline)
@@ -78,7 +78,7 @@ class Request:
         return self._firstline
     
     def getPathInfo(self):
-        self._getFirstLine()
+        self._get_first_line()
         return self._pathInfo
 
     def setPathInfo(self, pathInfo):
@@ -86,7 +86,7 @@ class Request:
 
     def getParameters(self):
         if self._parameters==None:
-            self._getFirstLine()        
+            self._get_first_line()        
 
             import cgi
             parameters = cgi.parse_qs(self._queryString)
@@ -165,7 +165,7 @@ class Response:
     def __init__(self, connection):
         self.connection = connection
 
-    def _setClientSocket(self, clientSocket):
+    def _set_client_socket(self, clientSocket):
         self._wfile = clientSocket.makefile('wb', 0)
         self.head_sent = 0
         self._header = {'Server': "eikeon's Bare Naked HTTP Server",
@@ -262,6 +262,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 5.6  2000/12/19 05:34:57  eikeon
+#~ removed debug output
+#~
 #~ Revision 5.5  2000/12/18 18:59:44  eikeon
 #~ added support for content type of multipart/form-data
 #~

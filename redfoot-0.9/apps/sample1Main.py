@@ -16,7 +16,7 @@ if __name__ == '__main__':
     def load(server):
         import sample1
         handler = sample1.Sample1UI()
-        server.setHandler(handler)
+        server.set_handler(handler)
         server.start()
         return sample1
 

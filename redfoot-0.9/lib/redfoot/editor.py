@@ -7,7 +7,7 @@ from rdf.const import *
 
 class Editor(Viewer):
 
-    def handleRequest(self, request, response):
+    def handle_request(self, request, response):
         self.response = response
         self.request = request
         
@@ -42,7 +42,7 @@ class Editor(Viewer):
             self.connectPage()
         else:
             request.setPathInfo(path_info)
-            Viewer.handleRequest(self, request, response)
+            Viewer.handle_request(self, request, response)
 
     def menuBar(self):
         Viewer.menuBar(self)
@@ -410,6 +410,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.11  2000/12/20 04:04:39  jtauber
+#~ fixed typo in encodeAttributeValue name
+#~
 #~ Revision 5.10  2000/12/20 03:35:28  jtauber
 #~ can now delete empty properties of range LITERAL
 #~

@@ -11,7 +11,7 @@ class Viewer:
         self.path = path
         self.showNeighbours = 0
         
-    def handleRequest(self, request, response):
+    def handle_request(self, request, response):
         self.response = response
         
         parameters = request.getParameters()        
@@ -452,6 +452,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.16  2000/12/20 04:04:39  jtauber
+#~ fixed typo in encodeAttributeValue name
+#~
 #~ Revision 5.15  2000/12/20 03:14:48  jtauber
 #~ added encoding of special chars in attribute values and character data
 #~

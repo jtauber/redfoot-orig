@@ -49,7 +49,7 @@ if __name__ == '__main__':
     storeNode.local.load(location, uri)
 
     server = RedServer(('', port))
-    server.setHandler(PeerEditor(storeNode, path))
+    server.set_handler(PeerEditor(storeNode, path))
     server.start()
 
     sys.stderr.write("REDFOOT: serving %s (%s) on port %s...\n" % (location, uri, port))

@@ -28,7 +28,7 @@ class Sample1UI:
         request._pathInfo = request.getPathInfo()[len(self.path):]
         self.getEditor().handleRequest(request, response)
 
-    def handleRequest(self, request, response):
+    def handle_request(self, request, response):
         path_info = request.getPathInfo()
 
 	if path_info[:-1]==self.path:
@@ -116,6 +116,9 @@ class Sample1UI:
              
 
 # $Log$
+# Revision 5.0  2000/12/08 08:34:52  eikeon
+# new release
+#
 # Revision 1.5  2000/12/08 05:05:10  jtauber
 # fixed HTML errors in sample login
 #

@@ -20,13 +20,13 @@ class Server:
         receiver = Receiver(serverAddress, self.connection_cubby)
         receiver.start()
         
-    def setHandler(self, handler):
+    def set_handler(self, handler):
         self.handler = handler
 
     def start(self):
-        serverConnection = ServerConnection(self.handler, self.context)
+        server_connection = ServerConnection(self.handler, self.context)
         import threading
-        t = threading.Thread(target = self._handleRequest, args = (serverConnection,))
+        t = threading.Thread(target = self._handle_request, args = (server_connection,))
         self.thread = t
         t.setDaemon(1)
         t.start()
@@ -36,17 +36,20 @@ class Server:
         self.connection_cubby.notify()
         self.thread.join() # wait for pending request to finish
 
-    def _handleRequest(self, serverConnection):
+    def _handle_request(self, server_connection):
         self.running = 1            
         connection_cubby = self.connection_cubby
         while self.running==1 or not connection_cubby.empty():
-            clientSocket = connection_cubby.get()
-            if clientSocket!=None:
-                serverConnection.handleRequest(self, clientSocket)
+            client_socket = connection_cubby.get()
+            if client_socket!=None:
+                server_connection.handle_request(self, client_socket)
             else:
                 connection_cubby.wait() 
 
 #~ $Log$
+#~ Revision 5.6  2000/12/17 23:35:53  eikeon
+#~ split off ServerConnection and company into their own module
+#~
 #~ Revision 5.5  2000/12/17 22:33:10  eikeon
 #~ changing names to _ style names; moved ConnectionCubby to its own module
 #~

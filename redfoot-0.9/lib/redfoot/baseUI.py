@@ -23,8 +23,11 @@ class BaseUI:
 
     def call_editor(self, request, response):
         request._pathInfo = request.getPathInfo()[len(self.path):]
-        self.getEditor().handleRequest(request, response)
+        self.getEditor().handle_request(request, response)
 
 #~ $Log$
+#~ Revision 5.1  2000/12/17 23:41:58  eikeon
+#~ removed of log messages
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release

@@ -17,7 +17,7 @@ class Receiver:
         self.server_address = server_address
         self.connection_cubby = connection_cuby
 
-    def _getSocket(self):
+    def _get_socket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
         sys.stderr.write("Attempting to bind to socket")
@@ -38,13 +38,13 @@ class Receiver:
         return self.socket
         
 
-    def _acceptRequests(self):
-        serverSocket = self._getSocket()
+    def _accept_requests(self):
+        server_socket = self._get_socket()
         connection_cubby = self.connection_cubby
         while 1:
             try:
-                clientSocket, client_address = serverSocket.accept()
-                connection_cubby.put(clientSocket)
+                client_socket, client_address = server_socket.accept()
+                connection_cubby.put(client_socket)
             except socket.error:
                 #TODO: log
                 break
@@ -59,7 +59,7 @@ class Receiver:
         sys.stderr.flush()
         self.running = 1
         import threading
-        t = threading.Thread(target = self._acceptRequests, args = ())
+        t = threading.Thread(target = self._accept_requests, args = ())
         self.thread = t
         t.setDaemon(1)
         t.start()
@@ -71,6 +71,9 @@ class Receiver:
     
 
 #~ $Log$
+#~ Revision 5.6  2000/12/17 22:33:10  eikeon
+#~ changing names to _ style names; moved ConnectionCubby to its own module
+#~
 #~ Revision 5.5  2000/12/17 21:19:10  eikeon
 #~ removed old log messages
 #~

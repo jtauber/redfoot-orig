@@ -16,7 +16,7 @@ class ExampleHandler:
         import threading
         self.lock = threading.Lock()
 
-    def handleRequest(self, request, response):
+    def handle_request(self, request, response):
         parameters = request.getParameters()
         headers = request.getHeaders()
         cookies = request.getCookies()
@@ -84,7 +84,7 @@ if __name__ == '__main__':
             port = string.atoi(value)
             
     server = Server(('', port))
-    server.setHandler(ExampleHandler())
+    server.set_handler(ExampleHandler())
     server.start()
 
     sys.stderr.write("EXAMPLE: serving requests on port %s...\n" % port)
@@ -99,5 +99,8 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 5.1  2000/12/17 21:19:10  eikeon
+#~ removed old log messages
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
