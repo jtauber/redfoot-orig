@@ -122,12 +122,12 @@ class RedSerializer(Serializer, object):
     
     def triple(self, s, p, o):
         if o.is_literal():
-            Serializer.triple(self, s.uri, p.uri, o.value, 1)
+            Serializer.triple(self, s, p, o, 1)
         else:
-            Serializer.triple(self, s.uri, p.uri, o.uri, 0)
+            Serializer.triple(self, s, p, o, 0)
 
     def register_property(self, s, p, o):
-        return Serializer.register_property(self, p.uri)
+        return Serializer.register_property(self, p)
 
     def output(self, stream, URI=None, subject=None, predicate=None, object=None, absolute=0):
         if URI==None:
