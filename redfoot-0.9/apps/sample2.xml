@@ -198,6 +198,7 @@ p.copyright-footer {
 
 DL.news DD P {
   margin: 2px 0px;
+
 }
 
     </STYLE>
@@ -362,8 +363,10 @@ def get_content_function_name(self, path_info):
     elif path_info=="/rss/":
         return "rss"
     else:
-        return Authentication.get_content_function_name(self, path_info)
-
+	# TODO: should loop through bases?
+	content_function_name = Authentication.get_content_function_name(self, path_info)
+	if content_function_name == None:
+		return Neighbours.get_content_function_name(self, path_info)
 
 
 <r:response name="getBanner">

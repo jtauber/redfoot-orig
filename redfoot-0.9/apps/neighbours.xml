@@ -26,14 +26,22 @@ def __init__(self, rednode):
 #        location = location.encode('ascii') # TODO: ?
 #        self.rednode.connectTo(location)
 
-<r:response name="/neighbours">
+def get_content_function_name(self, path_info):
+    if path_info=="/neighbours/":
+        return "neighbours_page"
+    else:
+        return None
+
+
+<r:response name="neighbours_page">
   <H1>Neighbours</H1>
 <r:exec>
 connected_neighbours = [neighbour.URI for neighbour in self.rednode.neighbours.stores.stores.keys()]
 other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, TYPE, NEIGHBOUR) if not neighbour[0] in connected_neighbours]
 </r:exec>
 
-  <H2>Connected</H2>
+  <DIV class="content_area">
+    <SPAN class="content_header">Connected</SPAN>
   <TABLE>
 
 
@@ -51,8 +59,10 @@ other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, T
     </FORM>
 </r:for>
   </TABLE>
+  </DIV>
 
-  <H2>Other Known</H2>
+  <DIV class="content_area">
+    <SPAN class="content_header">Other Known</SPAN>
 
 <TABLE>
 <r:for item="neighbour" list="other_known_neighbours">
@@ -73,7 +83,7 @@ other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, T
     </FORM>
 </r:for>
 </TABLE>
-
+  </DIV>
 
   <DIV class="content_area">
     <SPAN class="content_header">Add Neighbour</SPAN>
