@@ -1,7 +1,5 @@
-from redfootlib.rdf.query.visit import Visit
 
-
-class Query(Visit):
+class Query(object):
     
     def exists(self, subject, predicate, object):
         for triple in self.triples(subject, predicate, object):

@@ -6,6 +6,7 @@ from redfootlib.rdf.store.storeio import LoadSave
 from redfootlib.rdf.store.autosave import AutoSave
 from redfootlib.neighbour_manager import NeighbourManager
 from redfootlib.rdf.query.schema import SchemaQuery
+from redfootlib.rdf.query.visit import Visit
 from redfootlib import rdf_files
 
 from redfootlib.node import NodeStore, Node
@@ -23,7 +24,7 @@ APP_CLASS = resource("http://redfoot.net/2002/05/app_class")
 
 sn = 0
 
-class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
+class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
     """
     A RedNode is a store that is queryable via high level queries, can
     manage its neighbour connections, [automatically] save to RDF/XML
@@ -150,7 +151,7 @@ class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
     
 
 
-class Neighbours(SchemaQuery, MultiStore):
+class Neighbours(Visit, SchemaQuery, MultiStore):
     """
     A store of the multiple stores, the neighbours, that is queryable
     via high level queries.
@@ -160,7 +161,7 @@ class Neighbours(SchemaQuery, MultiStore):
     """
 
 
-class RedNeighbourhood(SchemaQuery, Neighbourhood):
+class RedNeighbourhood(Visit, SchemaQuery, Neighbourhood):
     """
     A store of the neighbourhood that is queryable via high level
     queries.

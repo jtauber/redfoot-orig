@@ -79,11 +79,12 @@ class Sniffer(object):
         
 
 from redfootlib.rdf.query.schema import SchemaQuery
+from redfootlib.rdf.query.visit import Visit
 from redfootlib.rdf.store.triple import TripleStore
 from redfootlib.rdf.store.autosave import AutoSave
 from redfootlib.rdf.store.storeio import LoadSave
 
-class SnifferNode(Sniffer, SchemaQuery, AutoSave, LoadSave, TripleStore):
+class SnifferNode(Sniffer, Visit, SchemaQuery, AutoSave, LoadSave, TripleStore):
     """Default pre mixed Sniffer Node"""
 
     def __init__(self):

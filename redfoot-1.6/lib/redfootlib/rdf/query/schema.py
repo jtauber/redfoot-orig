@@ -1,9 +1,8 @@
+from redfootlib.rdf.query.core import Query
 
-from redfootlib.rdf.query.functors import *
-from redfootlib.rdf.query.core import *
-from redfootlib.rdf.query.builders import *
-
-from redfootlib.rdf.const import *
+from redfootlib.rdf.const import LABEL, COMMENT
+from redfootlib.rdf.const import TYPE, STATEMENT
+from redfootlib.rdf.const import SUBJECT, PREDICATE, OBJECT
 
 
 class SchemaQuery(Query):

@@ -141,8 +141,10 @@ class RedSerializer(Serializer, object):
         if absolute!=1:
             self.set_base_URI(URI)
 
-        self.visit(self.register_property, (subject, predicate, object))
+        for s, p, o in self:
+            self.register_property(s, p, o)
 
         self.start()
-        self.visit(self.triple, (subject, predicate, object))
+        for s, p, o in self:
+            self.triple(s, p, o)
         self.end()

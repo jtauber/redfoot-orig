@@ -5,6 +5,7 @@ from redfootlib.util import encode_as_single_line as encode
 from redfootlib.util import decode_from_single_line as decode
 
 from redfootlib.rdf.query.schema import SchemaQuery
+from redfootlib.rdf.query.visit import Visit
 from redfootlib.rdf.store.triple import TripleStore
 from redfootlib.rdf.store.storeio import LoadSave
 
@@ -244,7 +245,7 @@ class ProxyNode(Proxy):
 
 
 import asyncore    
-class Node(Neighbours, AbstractNode, SchemaQuery, LoadSave, TripleStore,
+class Node(Neighbours, AbstractNode, Visit, SchemaQuery, LoadSave, TripleStore,
            asyncore.dispatcher):
     
     def add(self, s, p, o):
