@@ -13,7 +13,7 @@ import sys
 class Boot(App):
     def __init__(self, rednode):
         App.__init__(self, rednode)
-        self.server = server = RedServer('', 80)
+        self.server = None
         self.current = None
         
     def handle_request(self, request, response):
@@ -57,6 +57,8 @@ class Boot(App):
         response.close()
         
     def do_update(self, request, response):
+        if not self.server:
+            self.server = RedServer('', 80)
         app_uri = request.get_parameter('app_uri', None)
         rednode = self.rednode
         if app_uri:
