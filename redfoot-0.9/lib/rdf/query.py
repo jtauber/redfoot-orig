@@ -1,22 +1,9 @@
 # $Header$
 from rdf.literal import literal, un_literal, is_literal
-        
-class QueryStore:
 
-    TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    CLASS = "http://www.w3.org/2000/01/rdf-schema#Class"
-    PROPERTY = "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
-    RESOURCE = "http://www.w3.org/2000/01/rdf-schema#Resource"
-    SUBCLASSOF = "http://www.w3.org/2000/01/rdf-schema#subClassOf"
-    LABEL = "http://www.w3.org/2000/01/rdf-schema#label"
-    COMMENT = "http://www.w3.org/2000/01/rdf-schema#comment"
-    RANGE = "http://www.w3.org/2000/01/rdf-schema#range"
-    DOMAIN = "http://www.w3.org/2000/01/rdf-schema#domain"
-    LITERAL = "http://www.w3.org/2000/01/rdf-schema#Literal"
-    STATEMENT = "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"
-    SUBJECT = "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"
-    PREDICATE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"
-    OBJECT = "http://www.w3.org/1999/02/22-rdf-syntax-ns#object"
+from rdf.const import *
+
+class QueryStore:
 
     def label(self, subject, default=None):
         list = []
@@ -24,7 +11,7 @@ class QueryStore:
             list.append((subject, property, value))
             return 0 # tell the visitor to stop
         
-        self.visit(callback, subject, QueryStore.LABEL, None)
+        self.visit(callback, subject, LABEL, None)
 
         if len(list) > 0:
             return un_literal(list[0][2])     # TODO: currently only returns first label
@@ -37,7 +24,7 @@ class QueryStore:
             list.append((subject, property, value))
             return 0 # tell the visitor to stop
         
-        self.visit(callback, subject, QueryStore.COMMENT, None)
+        self.visit(callback, subject, COMMENT, None)
 
         if len(list) > 0:
             return un_literal(list[0][2])     # TODO: currently only returns first label
@@ -46,7 +33,7 @@ class QueryStore:
 
     def getByType(self, type, predicate, object):
         l = []
-        for s in self.get(None, QueryStore.TYPE, type):
+        for s in self.get(None, TYPE, type):
             l.extend(self.get(s[0], predicate, object))
         return l
 
@@ -59,7 +46,7 @@ class QueryStore:
 
     # TODO: should we have a version of this that answers for subclasses too?
     def isOfType(self, resource, type):
-        for s in self.get(resource, QueryStore.TYPE, None):
+        for s in self.get(resource, TYPE, None):
             if s[2] == type:
                 return 1
         return 0
@@ -89,7 +76,7 @@ class QueryStore:
     #TODO: remove typeInh as it is no longer being used
     def typeInh(self, t):
         l = []
-        for s in self.get(t, QueryStore.SUBCLASSOF, None):
+        for s in self.get(t, SUBCLASSOF, None):
             l.extend(self.typeInh(s[2]))
         return [t,l]
 
@@ -97,7 +84,7 @@ class QueryStore:
         set = {}
         set[type] = 1
 
-        for subclassStatement in self.get(type, QueryStore.SUBCLASSOF, None):
+        for subclassStatement in self.get(type, SUBCLASSOF, None):
             for item in self.transitiveSuperTypes(subclassStatement[2]):
                 set[item] = 1
 
@@ -107,7 +94,7 @@ class QueryStore:
         set = {}
         set[type] = 1
 
-        for subclassStatement in self.get(None, QueryStore.SUBCLASSOF, type):
+        for subclassStatement in self.get(None, SUBCLASSOF, type):
             for item in self.transitiveSubTypes(subclassStatement[0]):
                 set[item] = 1
 
@@ -116,16 +103,16 @@ class QueryStore:
     def rootClasses(self):
         """returns those classes that aren't a subclass of anything"""
         result = []
-        for klass in self.get(None, QueryStore.TYPE, QueryStore.CLASS):
-            if len(self.get(klass[0], QueryStore.SUBCLASSOF, None))==0:
+        for klass in self.get(None, TYPE, CLASS):
+            if len(self.get(klass[0], SUBCLASSOF, None))==0:
                 result.append(klass[0])
         return result
                 
     # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
-        for klass in self.get(None, QueryStore.TYPE, QueryStore.CLASS):
+        for klass in self.get(None, TYPE, CLASS):
             first = 1
-            for resource in self.get(None, QueryStore.TYPE, klass[0]):
+            for resource in self.get(None, TYPE, klass[0]):
                 if first:
                     processClass(klass[0])
                     first = 0
@@ -133,7 +120,7 @@ class QueryStore:
 
     def parentTypesV(self, type, processType):
         self.visit(lambda s, p, o, processType=processType: processType(o),\
-                   type, QueryStore.SUBCLASSOF, None)
+                   type, SUBCLASSOF, None)
 
     def propertyValuesV(self, subject, processPropertyValue):
         def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
@@ -152,32 +139,32 @@ class QueryStore:
                 self.subClassV(s, processClass, processInstance, currentDepth+1)
             else:
                 processClass(s, currentDepth+1, recurse)                
-        self.visit(subclassStatement, None, QueryStore.SUBCLASSOF, type)
+        self.visit(subclassStatement, None, SUBCLASSOF, type)
         def instanceStatement(s, p, o, \
                               currentDepth=currentDepth, \
                               recurse=recurse, \
                               processInstance=processInstance):
             processInstance(s, currentDepth, recurse)            
-        self.visit(instanceStatement, None, QueryStore.TYPE, type)
+        self.visit(instanceStatement, None, TYPE, type)
     
     # REIFICATION STUFF
 
     def reifiedV(self, subject, processStatement):
-        for statement in self.getByType(QueryStore.STATEMENT, QueryStore.SUBJECT, subject):
-            processStatement(statement[0], self.get(statement[0], QueryStore.PREDICATE, None)[0][2], self.get(statement[0], QueryStore.OBJECT, None)[0][2])
+        for statement in self.getByType(STATEMENT, SUBJECT, subject):
+            processStatement(statement[0], self.get(statement[0], PREDICATE, None)[0][2], self.get(statement[0], OBJECT, None)[0][2])
 
     # should perhaps just autogenerate statement_uri
     def reify(self, statement_uri, subject, predicate, object):
-        self.add(statement_uri, QueryStore.TYPE, QueryStore.STATEMENT)
-        self.add(statement_uri, QueryStore.SUBJECT, subject)
-        self.add(statement_uri, QueryStore.PREDICATE, predicate)
-        self.add(statement_uri, QueryStore.OBJECT, object)
+        self.add(statement_uri, TYPE, STATEMENT)
+        self.add(statement_uri, SUBJECT, subject)
+        self.add(statement_uri, PREDICATE, predicate)
+        self.add(statement_uri, OBJECT, object)
 
     # TODO: not sure this makes sense to have - jkt
     def dereify(self, statement_uri):
-        subject = self.get(statement, QueryStore.SUBJECT, None)[0][2]
-        predicate = self.get(statement, QueryStore.PREDICATE, None)[0][2]
-        object = self.get(statement, QueryStore.OBJECT, None)[0][2]
+        subject = self.get(statement, SUBJECT, None)[0][2]
+        predicate = self.get(statement, PREDICATE, None)[0][2]
+        object = self.get(statement, OBJECT, None)[0][2]
         self.add(subject, predicate, object)
         #self.removeAll(statement)
 
@@ -196,13 +183,16 @@ class QueryStore:
     def getPossibleValuesV(self, property, possibleValue):        
         def rangeitem(s, p, o, self=self, qstore=self, possibleValue=possibleValue):
             for type in qstore.transitiveSubTypes(o):
-                qstore.visit(possibleValue, None, QueryStore.TYPE, type)
+                qstore.visit(possibleValue, None, TYPE, type)
 
-        self.visit(rangeitem, property, QueryStore.RANGE, None)
+        self.visit(rangeitem, property, RANGE, None)
         
 
 
 #~ $Log$
+#~ Revision 4.5  2000/12/05 03:49:07  eikeon
+#~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
+#~
 #~ Revision 4.4  2000/12/05 00:02:25  eikeon
 #~ fixing some of the local / neighbourhood stuff
 #~

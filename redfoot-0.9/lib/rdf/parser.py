@@ -15,7 +15,7 @@ def parseRDF(adder, location, baseURI=None):
     parser.ParseFile(f)
     f.close()
 
-rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+from rdf.const import *
 
 from rdf.literal import literal, is_literal
 
@@ -44,7 +44,7 @@ class RootHandler(HandlerBase):
         HandlerBase.__init__(self, parser, adder, parent)
 
     def child(self, name, atts):
-        if name==rdfns+"RDF":
+        if name==RDFNS+"RDF":
             RDFHandler(self.parser, self.adder, self)
         else:
             pass
@@ -63,7 +63,7 @@ class RDFHandler(HandlerBase):
         self.parser.EndElementHandler = self.end
 
     def child(self, name, atts):
-        if name==rdfns+"Description":
+        if name==RDFNS+"Description":
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
             TypedNodeHandler(self.parser, self.adder, self, name, atts)
@@ -77,12 +77,12 @@ class DescriptionHandler(HandlerBase):
             self.subject = atts["about"]
         elif atts.has_key("ID"):
             self.subject = self.parser.GetBase() + "#" + atts["ID"]
-        elif atts.has_key(rdfns+"about"):
-            self.subject = atts[rdfns+"about"]
-        elif atts.has_key(rdfns+"ID"):
-            self.subject = self.parser.GetBase() + "#" + atts[rdfns+"ID"]
+        elif atts.has_key(RDFNS+"about"):
+            self.subject = atts[RDFNS+"about"]
+        elif atts.has_key(RDFNS+"ID"):
+            self.subject = self.parser.GetBase() + "#" + atts[RDFNS+"ID"]
         for att in atts.keys():
-            if att=="about" or att=="ID" or att==rdfns+"about" or att==rdfns+"ID":
+            if att=="about" or att=="ID" or att==RDFNS+"about" or att==RDFNS+"ID":
                 pass
             else:
                 self.adder(self.subject, att, literal(atts[att]))
@@ -99,7 +99,7 @@ class DescriptionHandler(HandlerBase):
 class TypedNodeHandler(DescriptionHandler):
     def __init__(self, parser, adder, parent, name, atts):
         DescriptionHandler.__init__(self, parser, adder, parent, atts)
-        self.adder(self.subject, rdfns+"type", name)
+        self.adder(self.subject, RDFNS+"type", name)
 
 
 class PropertyHandler(HandlerBase):
@@ -115,12 +115,12 @@ class PropertyHandler(HandlerBase):
                     pass
                 else:
                     self.adder(self.object, att, literal(atts[att]))
-        elif atts.has_key(rdfns+"resource"):
-            self.object = atts[rdfns+"resource"]
+        elif atts.has_key(RDFNS+"resource"):
+            self.object = atts[RDFNS+"resource"]
             if self.object[0]=="#":
                 self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
-                if att == rdfns+"resource":
+                if att == RDFNS+"resource":
                     pass
                 else:
                     self.adder(self.object, att, literal(atts[att]))
@@ -133,7 +133,7 @@ class PropertyHandler(HandlerBase):
         self.parser.EndElementHandler = self.end
 
     def child(self, name, atts):
-        if name==rdfns+"Description":
+        if name==RDFNS+"Description":
             self.object = atts["about"]
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
@@ -147,6 +147,9 @@ class PropertyHandler(HandlerBase):
         self.parent.setHandlers()
 
 #~ $Log$
+#~ Revision 4.5  2000/12/03 23:05:51  eikeon
+#~ refactored common handler code into HandlerBase class
+#~
 #~ Revision 4.4  2000/12/03 22:24:10  jtauber
 #~ no longer checks for baseURI=None; uses rdf.literal
 #~
