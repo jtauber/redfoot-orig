@@ -34,6 +34,20 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     server_version = "RedfootHTTP/" + __version__
 
+    def do_POST(self):
+        length = int(self.headers.getheader('content-length'))
+        data = self.rfile.read(length)
+        self.send_head()
+
+        i = string.find(self.path, "?")
+        if i==-1:
+            path_info = self.path
+        else:
+            path_info = self.path[:i]
+            
+        args = cgi.parse_qs(data)
+        self.process(args, path_info)
+
     def do_GET(self):
         """Serve a GET request."""
 
@@ -48,6 +62,9 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             query_string = self.path[i+1:]
             
         args = cgi.parse_qs(query_string)
+        self.process(args, path_info)
+        
+    def process(self, args, path_info):
 
         viewer = self.viewer
         viewer.setWriter(self.wfile)
@@ -176,6 +193,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.22  2000/10/09 22:34:31  jtauber
+# RDF is now default view
+#
 # Revision 1.21  2000/10/09 19:51:00  jtauber
 # default location is now local.rdf
 #

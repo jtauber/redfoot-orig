@@ -36,7 +36,7 @@ class Editor(Viewer):
         self.resourceHeader(subject)
         self.writer.write("""
             <H3>Edit</H3>
-            <FORM NAME="form" ACTION="edit?uri=%s" METHOD="GET">
+            <FORM NAME="form" ACTION="edit?uri=%s" METHOD="POST">
               <INPUT NAME="uri" TYPE="HIDDEN" VALUE="%s">
               <TABLE>
         """ % (subject, subject))
@@ -164,7 +164,7 @@ class Editor(Viewer):
               <H1>ReDFoot</H1>""")
         self.menuBar()
         self.writer.write("""
-          <FORM NAME="form" ACTION="edit" METHOD="GET">
+          <FORM NAME="form" ACTION="edit" METHOD="POST">
             <TABLE>
               <TR>
                 <TD VALIGN="TOP">URI</TD>
@@ -320,7 +320,7 @@ class PeerEditor(Editor):
         self.writer.write("""
               <H2>Connect Neighbour</H2>
         
-              <FORM NAME="form" ACTION="." METHOD="GET">
+              <FORM NAME="form" ACTION="." METHOD="POST">
                 <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri" SIZE="60">
                 <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
                 </P>
