@@ -8,14 +8,17 @@ Building Release from CVS
 
   - update CHANGELOG 
   - tag the release 
-    - cvs tag RELEASE_X_XX_XX 
+    - cvs tag RELEASE_XX_XX_XX 
   - up CVS major revision (so 2.0 = first release, 3.0 = second release, etc) 
     - cvs commit -m "NEW RELEASE" -r y.0 
     - cvs update -A 
   - export to a new directory 
-    - cd ..; cvs export -r HEAD -d foo-X.X.X foo 
+    - cvs -d eikeon@cvs.redfoot.sourceforge.net:/cvsroot/redfoot export -r RELEASE_01_XX_XX -d redfoot-X.X.X redfoot-1.x
+
+  - 
+
   - tar 
-    - tar cvzf foo-X.X.X.tgz foo-X.X.X 
+    - tar -cvz --exclude=CVS_README --exclude=.cvsignore -f redfoot-1.5.0.tgz redfoot-1.5.0 
 
   - release on sourceforge (or whereever hosted) 
   - send freshmeat announcement 
