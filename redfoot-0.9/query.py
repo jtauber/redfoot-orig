@@ -51,6 +51,12 @@ class QueryStore:
                 return 1
         return 0
 
+    def getResources(self):
+        result = {}
+        for s in self.store.get(None, None, None):
+            result[s[0]] = 1
+        return result.keys()
+
     def typeInh(self, t):
         l = []
         for s in self.get(t, QueryStore.SUBCLASSOF, None):
