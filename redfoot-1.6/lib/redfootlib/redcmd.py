@@ -243,15 +243,10 @@ work. """
         importer.install()
 
     def do_from(self, arg):
-        pattern = re.compile(r"^(https?://[^ ]+) import ([^ ]+)$")
-        result = pattern.findall(arg)
-        if result:
-            uri, module_name = result[0]
-            rednode = self.context.redstore
-            self.context.__dict__[module_name] = rednode.load_module(uri)
-        else:
-            raise Exception("Not Yet Supported")
-            
+        try:
+            self.__exec("from %s" % arg)
+        except Exception, e:
+            print e
 
     def do_add_app(self, arg):
         """\
