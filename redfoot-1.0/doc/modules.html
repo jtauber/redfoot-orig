@@ -7,12 +7,14 @@
     <DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./">Documentation</A></DIV>
     <H1>Writing Redfoot Modules</H1>
 
-    <P><B>NOTE</B>: This tutorial makes use of a feature introduced in 0.9.99-pre2.</P>
+    <P><B>NOTE</B>: This tutorial makes use of a feature introduced in 0.9.99-pre2, the 
+       <CODE>visit</CODE> element. Appendix A shows the module without the use of <CODE>visit</CODE>.</P>
 
     <P>This is a brief tutorial on writing Redfoot modules in Redcode. Modules are the 
        reusable building blocks of a Redfoot application. They can be written in straight Python
        but Redcode makes it easier to combine HTML and Python and so that's what we'll
-       use here.</P>
+       use here. Appendix B will show an equivalent of the final module written entirely
+       in Python.</P>
 
     <P>In this tutorial we'll be writing a module that displays the RSS items known to a 
        Rednode. Typically, this module would be mixed with something like the Neighbour
@@ -215,6 +217,103 @@
   &lt;/red:module>
 
 &lt;/red:code></PRE>
+
+    <H2>APPENDIX A: Module Without <CODE>red:visit</CODE> Element</H2>
+
+    <P>This is the same module but without the use of the <CODE>red:visit</CODE> element. This version
+       will run on 0.9.9 and 0.9.99-pre1 (as well as 0.9.99-pre2)</P>
+
+    <P>This version makes use of the <CODE>red:exec</CODE> element which works like <CODE>red:eval</CODE>
+       but is for executing Python statements rather than evalutating Python expressions.</P>
+
+    <P>Note also the use of a second facet as the callback to the visit. Because facets are internally
+       methods, they can be referred to as <CODE>self.<VAR>name_of_facet</VAR></CODE> within the same
+       Redcode module.</P>
+
+    <P>The <CODE>s()</CODE> functor is used so the callback needs only take a single argument - the
+       subject of the triples that match.</P>
+
+    <PRE CLASS="code_sample">
+&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.rdf.objects import resource
+  from redfoot.rdf.const import TYPE
+  from redfoot.rdf.query.functors import s
+
+  RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+  RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+  RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+  RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+  &lt;red:module name="RSS">
+
+    &lt;red:facet name="display_rss">
+      &lt;DL CLASS="RSS_ITEM">
+        &lt;red:exec>
+          self.app.rednode.visit(s(self.display_row), (None, TYPE, RSS_ITEM))
+        &lt;/red:exec>
+      &lt;/DL>
+    &lt;/red:facet>
+
+    &lt;red:facet name="display_row" args="item">
+      &lt;DT>
+        &lt;red:eval>
+          self.app.rednode.get_first_value(item, RSS_TITLE, '')
+        &lt;/red:eval>
+      &lt;/DT>
+      &lt;DD>
+        &lt;DIV>
+          &lt;red:eval>
+            self.app.rednode.get_first_value(item, RSS_DESCRIPTION, '')
+          &lt;/red:eval>
+        &lt;/DIV>
+        &lt;DIV>
+          &lt;A HREF="{self.app.rednode.get_first_value(item, RSS_LINK, '')}">Read Story&lt;/A>
+        &lt;/DIV>
+      &lt;/DD>
+    &lt;/red:facet>
+
+  &lt;/red:module>
+
+&lt;/red:code></PRE>
+
+    <H2>APPENDIX B: Python Version</H2>
+
+    <P>It is entirely possible to write modules in straight Python rather than Redcode and
+       a Python version of the RSS module has been included below. A comparison between
+       this and our completed Redcode example will demonstrate the advantages and disadvantages
+       of a Redcode approach.</P>
+
+    <PRE CLASS="code_sample">
+from redfoot.rdf.objects import resource
+from redfoot.rdf.const import TYPE
+from redfoot.rdf.query.functors import s
+
+from redfoot.util import encode_character_data
+
+from redfoot.module import Module
+
+RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+class RSS(Module):
+    
+    def display_rss(self):
+        self.app.response.write("&lt;DL CLASS='RSS_ITEM'>")
+        self.app.rednode.visit(s(self.display_row), (None, TYPE, RSS_ITEM))
+        self.app.response.write("&lt;/DL>")
+
+    def display_row(self, item):
+        self.app.response.write("&lt;DT>%s&lt;/DT>" %
+            encode_character_data(self.app.rednode.get_first_value(item, RSS_TITLE, '')))
+        self.app.response.write("&lt;DD>&lt;DIV>%s&lt;/DIV>" %
+            encode_character_data(self.app.rednode.get_first_value(item, RSS_DESCRIPTION, '')))
+        self.app.response.write("&lt;DIV>")
+        self.app.response.write("&lt;A HREF='%s'>Read Story&lt;/A>" %
+            self.app.rednode.get_first_value(item, RSS_LINK, ''))
+        self.app.response.write("&lt;/DIV>&lt;/DD>")</PRE>
 
     <P CLASS="cvs_id">$Id$</P>
   </BODY>
