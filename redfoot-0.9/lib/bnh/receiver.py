@@ -22,23 +22,35 @@ class Receiver:
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
         self.socket.bind(self.server_address)
         self.socket.listen(5)
+        serverSocket = self.socket
+        handlerCubby = self.handlerCubby
         while 1:
             try:
-                clientSocket, client_address = self.socket.accept()
-                self.handlerCubby.put(clientSocket)
+                clientSocket, client_address = serverSocket.accept()
+                handlerCubby.put(clientSocket)
             except socket.error:
                 #TODO: log
                 break
-
+            except:
+                import traceback
+                traceback.print_exc()
+                sys.stderr.flush()
+                sys.exit()
+        
     def start(self):
         sys.stderr.write("Started eikeon's Bare Naked HTTP Server.\n")
         sys.stderr.flush()
+        self.running = 1
         import threading
         t = threading.Thread(target = self._acceptRequests, args = ())
+        self.thread = t
         t.setDaemon(1)
         t.start()
 
 
+    def stop(self):
+        #self.socket.close()
+        del self.socket
 
 from threading import RLock
 from threading import Condition
@@ -84,6 +96,9 @@ class HandlerCubby:
     
 
 #~ $Log$
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
+#~
 #~ Revision 4.2  2000/12/04 15:00:30  eikeon
 #~ cleaned up imports
 #~

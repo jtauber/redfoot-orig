@@ -27,8 +27,8 @@ class Server:
         t.start()
 
     def stop(self):
+        self.receiver.stop()
         self.running = 0
-        
 
     def _handleRequest(self, serverConnection):
         handlerCubby = self.receiver.handlerCubby
@@ -40,6 +40,9 @@ class Server:
                 handlerCubby.wait(0.05) # TODO: can we make this wait()?
 
 #~ $Log$
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
+#~
 #~ Revision 4.7  2000/12/07 20:19:07  eikeon
 #~ fixing up autoreload after server refactors
 #~

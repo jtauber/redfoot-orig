@@ -24,4 +24,10 @@ if __name__ == '__main__':
     sys.stderr.write("Sample1: listening on port %s...\n" % port)
     sys.stderr.write("... try hitting http://localhost:%s/\n" % port)    
     sys.stderr.flush()
-    redserver.keepReloading(load)
+    try:
+        redserver.keepReloading(load)
+    except KeyboardInterrupt:
+        sys.stderr.write("Shutting down Sample1\n")
+        sys.stderr.flush()
+
+        redserver.stop()
