@@ -4,16 +4,8 @@
    xmlns:n1="http://redfoot.sourceforge.net/2001/04/neighbour#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
-  <rdf:Description rdf:about="http://eikeon.com/">
-    <n1:Connected rdf:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#NO"/>
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://this is a test/%7Efoo/bar">
-    <n1:Connected rdf:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#NO"/>
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
-  </rdf:Description>
   <rdf:Description rdf:about="http://redfoot.sourceforge.net/rss_feeds.rdf">
-    <n1:Connected rdf:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#NO"/>
     <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
+    <n1:Connected rdf:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#NO"/>
   </rdf:Description>
 </rdf:RDF>
