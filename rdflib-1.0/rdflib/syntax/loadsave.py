@@ -69,6 +69,7 @@ class LoadSave(NTParser, Parser, Serializer, object):
             self.parse_URI(self.location, self.uri)
 
     def save(self, location=None, uri=None):
+        print "In Save", location, uri
         try:
             self.__lock.acquire()
             location = location or self.location
@@ -87,6 +88,9 @@ class LoadSave(NTParser, Parser, Serializer, object):
                 os.remove(location)
             shutil.copy(name, location)
             os.unlink(name)
+        except Exception, e:
+            from traceback import print_exc
+            print_exc()
         finally:
             self.__lock.release()
         
