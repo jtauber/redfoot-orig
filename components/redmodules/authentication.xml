@@ -24,22 +24,21 @@
   PERSON = resource(AUTH_URI + "person")
   CREATED = resource(AUTH_URI + "created")
   
+  from redfoot.module import ParentModule
+  
   <red:module name="Authentication">
 
     <red:sub-module instance="session" class="Session"/>
+
+    def handle_request(self, request, response):
+        # TODO: This is on behalf of Authentication module
+        self.status = ''
+        ParentModule.handle_request(self, request, response)
 
     def create_link(self):
         # TODO: this could be done instead by telling Authentication
         # module where it has been 'installed' (part before /create)
         return "/create"    
-
-    def get_status(self):
-        if not hasattr(self, 'status'):
-            self.status = ''
-        return self.status
-
-    def set_status(self, status):
-        self.status = status
 
     def set_identity(self, identity):
         self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
@@ -74,15 +73,15 @@
 
             if md5_hex_digest and md5(password).hexdigest()==md5_hex_digest.value:
                 self.set_identity(s.subject)
-                self.set_status('Welcome, %s' % username)
+                self.status = 'Welcome, %s' % username
             else:
-                self.set_status('Unknown username, password')
+                self.status = 'Unknown username, password'
         else:
-            self.set_status('Unknown username')
+            self.status = 'Unknown username'
 
     def do_logout(self):
         self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
-        self.set_status('')
+        self.status = ''
             
     def do_create_user(self):
         username = self.app.request.get_parameter('username')
@@ -101,15 +100,15 @@
                 self.app.rednode.add(uri, CREATED, literal(time))
                 
                 self.set_identity(uri)
-                self.set_status("Welcome, %s" % username)
+                self.status = "Welcome, %s" % username
             else:
-                self.set_status("password and verify did not match")
+                self.status = "password and verify did not match"
         else:
-            self.set_status("Already user with username '%s'" % username)
+            self.status = "Already user with username '%s'" % username
                 
     
 
-    <red:facet name="">
+    <red:facet name="summary">
       <H2>Authentication Info</H2>
       <DL>
         <DT>Current Username:</DT>
@@ -117,6 +116,16 @@
           <red:eval>self.get_username("Unknown")</red:eval>
         </DD>
       </DL>
+      <red:exec>self.session.summary()</red:exec>
+    </red:facet>
+
+    <red:facet name="people">
+      <H2>People</H2>
+      <UL>
+        <red:visit args="(None, TYPE, PERSON)">
+          <LI><red:eval>self.app.rednode.get_first_value(subject, USERNAME, '?')</red:eval></LI>
+        </red:visit>
+      </UL>
     </red:facet>
 
     <red:facet name="create">
@@ -125,7 +134,7 @@
       <DIV class="content_area">
     
         <DIV style="colored: #990000;">
-          <red:eval>self.get_status()</red:eval>
+          <red:eval>self.status</red:eval>
         </DIV>
     
         <FORM name="main" action=""
@@ -171,7 +180,7 @@
         <FORM name="main" method="POST" style="margin: 0">
 
         <DIV style="colored: #990000;">
-          <red:eval>self.get_status()</red:eval>
+          <red:eval>self.status</red:eval>
         </DIV>
         
           <TABLE>
@@ -185,7 +194,6 @@
             </TR>
             <TR>
               <TD align="right">
-                <!--<INPUT value="Login" type="submit"/>-->
                 <INPUT value="Login" type="submit"/>
               </TD>
               <TD align="left">

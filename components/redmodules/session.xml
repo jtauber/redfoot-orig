@@ -25,7 +25,7 @@ VIA = resource(SESSION_URI+"via")
 
   <red:module name="Session">
 
-    <red:facet name="">
+    <red:facet name="summary">
         <DL>
           <DT>Current Session URI:</DT>
           <DD>
@@ -107,9 +107,6 @@ VIA = resource(SESSION_URI+"via")
         self.sessions.local.save()
 
     def handle_request(self, request, response):
-        # TODO: This is on behalf of Authentication module
-        self.status = ''
-
         self.app.request = request
         self.app.response = response
 
