@@ -61,7 +61,11 @@ class RedServer:
             self.hs.remove_handler(app)
 
     def run(self):
-        become_nobody()
+        try:
+            become_nobody()
+        except:
+            # TODO: 
+            print "WARNING: exception trying to become nobody;"
 
         # Finally, start up the server loop!  This loop will not exit until
         # all clients and servers are closed.  You may cleanly shut the system
