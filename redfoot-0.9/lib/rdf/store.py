@@ -162,10 +162,10 @@ TIMESTAMP = "http://redfoot.sourceforge.net/2001/01/30/#timestamp"
 
 #from rdf.query import QueryStore
 #class JournalingStore(TripleStore, QueryStore):
-class JournalingStore(TripleStore):
+class JournalingStore:
 
     def __init__(self):
-        TripleStore.__init__(self)
+        self.store = TripleStore()
         self.sn = 0
 
     def chron(self, a, b):
@@ -209,16 +209,16 @@ class JournalingStore(TripleStore):
             if operation!=None:
                 operation = operation[2]
             if operation==ADD:
-                TripleStore.add(self, s, p, o)
+                self.store.add(s, p, o)
             elif operation==DELETE:
-                TripleStore.remove(self, s, p, o)
+                self.store.remove(s, p, o)
 
         
     def generateURI(self, sn=SN()):
         return self.URI + sn.date_time_path()
 
     def add(self, subject, predicate, object):
-        TripleStore.add(self, subject, predicate, object)
+        self.store.add(subject, predicate, object)
 
         statement_uri = self.generateURI()
         self.journal.add(statement_uri, TYPE, STATEMENT)
@@ -230,7 +230,7 @@ class JournalingStore(TripleStore):
         self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
         
     def _remove(self, subject, predicate, object):
-        TripleStore._remove(self, subject, predicate, object)
+        self.store._remove(subject, predicate, object)
 
         statement_uri = self.generateURI()
         self.journal.add(statement_uri, TYPE, STATEMENT)
@@ -241,9 +241,20 @@ class JournalingStore(TripleStore):
 
         self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
 
+    def remove(self, subject=None, predicate=None, object=None):
+        self.store.remove(subject, predicate, object)
 
+    def visit(self, callback, subject=None, predicate=None, object=None):
+        self.store.visit(callback, subject, predicate, object)
 
+    def visit_subjects(self, callback):
+        self.store.visit_subjects(callback)
+
+        
 #~ $Log$
+#~ Revision 6.2  2001/02/27 22:31:59  eikeon
+#~ fixed up subject URI's used in Journal Store and fixed up timestamps used in Journal Store
+#~
 #~ Revision 6.1  2001/02/26 22:32:00  eikeon
 #~ a bit more work on the journaling store stuff
 #~
