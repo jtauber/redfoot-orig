@@ -1,2 +1,7 @@
 redcode on
+
+# need to run redfoot.py from this directory if you want to load
+# rss.rdf file from this directory.
+load rss.rdf http://redfoot.net/2002/22/
+
 add_app rss.RSSApp

@@ -88,7 +88,7 @@
               </TD>
 
               <!-- Make the status red -->
-              <TD><red:eval>self.status.get(neighbour.uri, '')</red:eval></TD>
+              <TD><red:eval>self.status.get(neighbour, '')</red:eval></TD>
             </TR>
     </red:facet>
 

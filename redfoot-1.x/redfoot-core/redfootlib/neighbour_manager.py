@@ -20,7 +20,7 @@ class NeighbourManager(object):
         self.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
 
     def _connect(self, neighbour, p, o):
-        self.connect_to(neighbour.uri)
+        self.connect_to(neighbour)
 
     def connect_to(self, location, uri=None):
         neighbour = Neighbour()        
