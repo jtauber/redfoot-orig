@@ -1,0 +1,39 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.rdf.objects import resource, literal
+  from redfoot.util import encode_URI
+  from redfoot.rdf.const import *
+  from redfoot.rdf.query.functors import *
+
+  PERSON = resource("http://xmlns.com/foaf/0.1/Person")
+  FIRSTNAME = resource("http://xmlns.com/foaf/0.1/firstName")
+  SURNAME = resource("http://xmlns.com/foaf/0.1/surname")
+
+  <red:module name="FOAF">
+
+    def __init__(self, app):
+      from redfoot.module import ParentModule
+      ParentModule.__init__(self, app)
+      app.rednode.connect_to("http://xmlns.com/foaf/0.1/")
+
+    <red:sub-module instance="editor" class="Editor" from="redmodules.editor"/>
+    <red:sub-module instance="neighbours" class="Neighbours" from="redmodules.neighbours"/>
+
+    <red:facet name="">
+      <red:visit match="(None, TYPE, PERSON)">
+        <TABLE>
+          <TR><TD COLSPAN="2" CLASS="name_cell">
+            <red:eval>self.app.rednode.get_first_value(subject, FIRSTNAME, "")</red:eval>&#160;<red:eval>self.app.rednode.get_first_value(subject, SURNAME, "")</red:eval>
+          </TD></TR>
+          <red:exec>
+            self.app.rednode.visit(po(self.editor.viewer.display_property_value), (subject, None, None))
+          </red:exec>
+          <TR><TD COLSPAN="2" CLASS="edit_cell"><A HREF="edit?subject={encode_URI(subject)}">Edit</A></TD></TR>
+        </TABLE>
+      </red:visit>
+      <P><A HREF="add?type={encode_URI(PERSON)}">Add Person</A></P>
+    </red:facet>
+
+  </red:module>
+
+</red:code>  
