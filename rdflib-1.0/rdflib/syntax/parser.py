@@ -1,23 +1,21 @@
-ns_separator = ""
-
 from rdflib.nodes import URIRef, Literal, BNode
 from rdflib.const import RDFNS, TYPE
 from rdflib import exception
 
-RDF = RDFNS + ns_separator + "RDF"
-DESCRIPTION = RDFNS + ns_separator + "Description"
-ABOUT = RDFNS + ns_separator + "about"
-ABOUT_EACH = RDFNS + ns_separator + "aboutEach"
-ABOUT_EACH_PREFIX = RDFNS + ns_separator + "aboutEachPrefix"
-ID = RDFNS + ns_separator + "ID"
-RESOURCE = RDFNS + ns_separator + "resource"
+RDF = URIRef(RDFNS + "RDF")
+DESCRIPTION = URIRef(RDFNS + "Description")
+ABOUT = URIRef(RDFNS + "about")
+ABOUT_EACH = URIRef(RDFNS + "aboutEach")
+ABOUT_EACH_PREFIX = URIRef(RDFNS + "aboutEachPrefix")
+ID = URIRef(RDFNS + "ID")
+RESOURCE = URIRef(RDFNS + "resource")
 
-SEQ = RDFNS + ns_separator + "Seq"
-BAG = RDFNS + ns_separator + "Bag"
-ALT = RDFNS + ns_separator + "Alt"
-LI = RDFNS + ns_separator + "li"
-BAG_ID = RDFNS + ns_separator + "bagID"
-PARSE_TYPE = RDFNS + ns_separator + "parseType"
+SEQ = URIRef(RDFNS + "Seq")
+BAG = URIRef(RDFNS + "Bag")
+ALT = URIRef(RDFNS + "Alt")
+LI = URIRef(RDFNS + "li")
+BAG_ID = URIRef(RDFNS + "bagID")
+PARSE_TYPE = URIRef(RDFNS + "parseType")
 
 def all_whitespace(data):
     for char in data:
@@ -29,7 +27,6 @@ class DocumentHandler(object):
     def __init__(self, parser, add):
         self.parser = parser
         self.add = add
-        #self.base = parser.GetBase()
         parser.StartElementHandler = self.child
         parser.CharacterDataHandler = self.char
         parser.EndElementHandler = self.end
@@ -106,7 +103,6 @@ class DocumentHandler(object):
 
 
     def typed_node(self, name, atts):
-        #self.subject = None
         if atts.has_key(ABOUT):
             self.subject_stack[-1] = URIRef(self.absolutize(atts[ABOUT]))
         elif atts.has_key(ID):
@@ -129,7 +125,6 @@ class DocumentHandler(object):
     def description(self, name, atts):
         self.subject_stack.append(None)        
         self.typed_node(name, atts)
-        #print "www:", self.subject_stack[-1], TYPE, URIRef(name)
         #self.add(self.subject_stack[-1], TYPE, URIRef(name))
 
     def description_child(self, name, atts):
@@ -236,19 +231,16 @@ class DocumentHandler(object):
 
     def bag(self, name, atts):
         self.container(name, atts)
-        BAG = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag")
         self.add(self.subject_stack[-1], TYPE, Literal(BAG))        
 
     def alt(self, name, atts):
         self.container(name, atts)
-        ALT = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt")
         self.add(self.subject_stack[-1], TYPE, Literal(ALT))        
         
 
     def sequence(self, name, atts):
         self.container(name, atts)
-        SEQUENCE = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq")
-        self.add(self.subject_stack[-1], TYPE, SEQUENCE)        
+        self.add(self.subject_stack[-1], TYPE, SEQ)        
         
 
     def li(self, name, atts):
@@ -283,7 +275,7 @@ class Parser(object):
 
     def parse(self, file, baseURI):
         from xml.parsers.expat import ParserCreate        
-        parser = ParserCreate(namespace_separator=ns_separator)
+        parser = ParserCreate(namespace_separator="")
         parser.returns_unicode = 0
         dh = DocumentHandler(parser, self.add)
         dh.set_base(baseURI)        

@@ -16,8 +16,8 @@ def resolve(rel):
     return "http://www.w3.org/2000/10/rdf-tests/rdfcore/" + rel
 
 manifest = TripleStore()
-#manifest.load("http://www.w3.org/2000/10/rdf-tests/rdfcore/Manifest.rdf")
-manifest.load("Manifest.rdf")        
+manifest.load("http://www.w3.org/2000/10/rdf-tests/rdfcore/Manifest.rdf")
+#manifest.load("Manifest.rdf")        
 
 class ParserTestCase(unittest.TestCase):
         
