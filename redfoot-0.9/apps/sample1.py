@@ -93,18 +93,19 @@ class Sample1UI:
   <BODY onLoad="document.loginForm.username.focus()">
     <H1>Username</H1>
     <FORM name="loginForm" method="POST">
-    <TABLE>
-      <TR>
-        <TD>Username:</TD>
-        <TD><INPUT name="username" type="text"> (Hint: any username will work)</TD>
-      </TR>
-      <TR>
-        <TD>Password:</TD>
-        <TD><INPUT name="password" type="password"> (Hint: redfoot)</TD>
-      </TR>
-      <TR>
-        <TD colspan=2"><INPUT value="Login" type="submit"></TD>
-      </TR>
+      <TABLE>
+        <TR>
+          <TD>Username:</TD>
+          <TD><INPUT name="username" type="text"> (Hint: any username will work)</TD>
+        </TR>
+        <TR>
+          <TD>Password:</TD>
+          <TD><INPUT name="password" type="password"> (Hint: redfoot)</TD>
+        </TR>
+        <TR>
+          <TD colspan="2"><INPUT value="Login" type="submit"></TD>
+        </TR>
+      </TABLE>
     </FORM>
   </BODY>                            
 </HTML>
@@ -115,6 +116,9 @@ class Sample1UI:
              
 
 # $Log$
+# Revision 1.4  2000/12/08 02:47:38  eikeon
+# added autoload functionality to sample1
+#
 # Revision 1.3  2000/12/07 21:33:25  jtauber
 # fixed commandline options and path bugs in sample1
 #
