@@ -1,5 +1,7 @@
 #from redfoot.store import *
 from redfoot.parser import *
+from redfoot.query import QueryStore
+from redfoot.serializer import Serializer
 
 class StoreIO:
 
@@ -27,15 +29,37 @@ class StoreIO:
 
     def saveAs(self, location, URI):
         
+        queryStore = QueryStore()
+        queryStore.setStore(self.getStore())
+        
         s = Serializer()
         s.setBase(self.URI)
 
-         
-        s.registerProperty("foo#author")
+        properties = queryStore.getProperties()
+
+        for property in properties:
+            s.registerProperty(property)
+
         s.start()
         
-        s.subjectStart("http://jtauber.com")
-        s.property("foo#author","^James Tauber")
-        s.subjectEnd()
+        resources = queryStore.getResources()
+        resources.sort() 
+
+        for resource in resources:
+            s.subjectStart(resource)
+
+            properties = queryStore.getProperties(resource)
+            properties.sort()
+            
+            for property in properties:
+
+                values = queryStore.getValues(resource, property)
+                values.sort()
+                
+                for value in values:
+                    s.property(property, value)
+
+            s.subjectEnd()
         
         s.end()
+
