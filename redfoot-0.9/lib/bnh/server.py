@@ -221,9 +221,6 @@ class ServerContext:
                     delta = session.getMaxInactiveInterval() -  idle
                     self.cubby.wait(delta)
                     
-            sys.stderr.write("# sessions %s\n" % len(self.sessions.keys()))
-            sys.stderr.flush()
-
 class Session:
     def __init__(self, id):
         now = time.time()
@@ -489,6 +486,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 4.3  2000/12/01 01:27:31  eikeon
+#~ added session reaper code
+#~
 #~ Revision 4.2  2000/11/28 15:35:04  eikeon
 #~ Move creation of ServerContext to Server
 #~
