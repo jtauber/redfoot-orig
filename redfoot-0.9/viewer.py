@@ -4,6 +4,9 @@ class Viewer:
         self.writer = writer;
         self.qstore = qstore;
 
+    def setWriter(self, writer):
+        self.writer = writer
+
     def css(self):
         self.writer.write("""
         body {

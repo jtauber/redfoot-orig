@@ -31,22 +31,15 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     server_version = "RedfootHTTP/" + __version__
 
-    def getViewer(self):
+    tripleStore = TripleStore()
 
-        if not hasattr(self, "viewer"):
-        
-            tripleStore = TripleStore()
+    storeIO = StoreIO()
+    storeIO.setStore(tripleStore)
+    storeIO.load("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
+    storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+    storeIO.load("tests/example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
 
-            storeIO = StoreIO()
-            storeIO.setStore(tripleStore)
-            storeIO.load("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
-            storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-            storeIO.load("tests/example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
-    #       storeIO.load("tests/software.rdf", "http://www.xmlsoftware.com/2000/09/28")
-
-            self.viewer = Editor(self.wfile, QueryStore(tripleStore))
-
-        return self.viewer
+    viewer = Editor(None, QueryStore(tripleStore))
 
     def do_GET(self):
         """Serve a GET request."""
@@ -63,7 +56,8 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             
         args = cgi.parse_qs(query_string)
 
-        viewer = self.getViewer()
+        viewer = self.viewer
+        viewer.setWriter(self.wfile)
         
         if path_info == "/":
             viewer.mainPage()
