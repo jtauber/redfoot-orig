@@ -137,6 +137,7 @@ class JournalingStoreIO(StoreIO, JournalingStore):
         StoreIO.load(self, location, URI)
 
     def load_journal(self, location, URI=None):
+        from redfoot.rednode import Local
         journal = Local()
         journal.load(location, URI)
         journal.dirtyBit.clear() # we just loaded... therefore we are clean
@@ -182,6 +183,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 6.2  2001/02/27 22:31:59  eikeon
+#~ fixed up subject URI's used in Journal Store and fixed up timestamps used in Journal Store
+#~
 #~ Revision 6.1  2001/02/26 22:32:00  eikeon
 #~ a bit more work on the journaling store stuff
 #~
