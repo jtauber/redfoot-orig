@@ -1,5 +1,11 @@
 # $Header$
 
+def literal(str):
+    return "^"+str
+
+def is_literal(str):
+    return str[0]=="^"
+
 class TripleStore:
 
     def __init__(self):
@@ -102,6 +108,9 @@ class TripleStore:
                     
 
 #~ $Log$
+#~ Revision 4.3  2000/12/03 21:21:49  jtauber
+#~ removed put; refactored remove to use callback function
+#~
 #~ Revision 4.2  2000/12/03 20:49:38  jtauber
 #~ refactored+documented visit function
 #~
