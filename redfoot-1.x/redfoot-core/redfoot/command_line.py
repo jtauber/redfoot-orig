@@ -49,6 +49,10 @@ def process_args():
         sys.exit(-1)
         
     for arg in args:
+        if len(arg)>4 and arg[-4:] == ".xml":
+            arg = arg[:-4]
+        elif len(arg)>3 and arg[-3:] == ".py":
+            arg = arg[:-3]
         __import__(arg)
     
     return (uri, rdf, address, port)
