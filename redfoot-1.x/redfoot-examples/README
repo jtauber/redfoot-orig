@@ -2,11 +2,10 @@ REDFOOT EXAMPLES README
 
   To start a Redfoot application, type:
 
-    python run.py <module-names>
+    python run.py <app-name> 
 
-  where <module-names> are the python module names (without the.py or
-xml extension) of Redfoot Apps/Modules. The modules will be imported
-and available to run from within Redfoot.
+  where <app-names> is the python module name of an App
+
 
   For example:
 
@@ -15,3 +14,8 @@ and available to run from within Redfoot.
   will run the application defined in generic.xml
 
 
+  See:
+
+    python run.py --help
+
+  for more information
