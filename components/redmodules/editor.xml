@@ -96,7 +96,7 @@
 
           <TR>
             <TD>
-              <SELECT TYPE='TEXT' NAME='new_property'>
+              <SELECT TYPE='TEXT' NAME='new_property' onChange="edit_form.processor.value='update'; edit_form.submit()">
                 <OPTION VALUE=''>Select a new Property to add</OPTION>
                 <red:exec>
                   self.rednode.visit_possible_properties_for_subject(self.display_property_option, subject)
@@ -171,7 +171,7 @@
               <!-- RESOURCE -->
               <red:if test="self.rednode.exists(property, RANGE, None)">
                 <INPUT TYPE='HIDDEN' NAME='prop{self.property_num}_is_literal' VALUE='no'/>
-                <SELECT NAME='prop{self.property_num}_value'>
+                <SELECT NAME='prop{self.property_num}_value' onChange="edit_form.processor.value='update'; edit_form.submit()">
                   <OPTION VALUE="">Select a value for this property</OPTION>
 
                   <red:exec>
@@ -199,7 +199,7 @@
                   </red:for>
                 </SELECT>
                 <red:else>
-                  <SELECT NAME='prop{self.property_num}_value'>
+                  <SELECT NAME='prop{self.property_num}_value' onChange="edit_form.processor.value='update'; edit_form.submit()">
                     <OPTION VALUE='{value}'>
                       <red:eval>self.rednode.label(value)</red:eval>
                     </OPTION>
