@@ -32,7 +32,7 @@ class ElementNode(Node):
         self.atts = atts
 
     def write(self, globals, locals):
-        write = locals['__write__']
+        write = locals['_RF_write']
         name = self.name
         write("<%s" % name)
         atts = self.atts
@@ -50,7 +50,7 @@ class TextNode(Node):
         self.value = text
 
     def write(self, globals, locals):
-        write = locals['__write__']
+        write = locals['_RF_write']
         write(self.value)
 
 
@@ -61,7 +61,7 @@ class EvalNode(Node):
     def write(self, globals, locals):
         result = __builtin__.eval(self.code, globals, locals)
         if result!=None:
-            write = locals['__write__']
+            write = locals['_RF_write']
             write(str(result))
 
 
@@ -73,7 +73,7 @@ class EncodedEvalNode(EvalNode):
     def write(self, globals, locals):
         result = __builtin__.eval(self.code, globals, locals)
         if result!=None:
-            write = locals['__write__']
+            write = locals['_RF_write']
             write(self.encode(result))
 
 

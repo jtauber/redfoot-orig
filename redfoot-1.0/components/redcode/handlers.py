@@ -9,6 +9,7 @@ from redfoot.xml.dom import ElementNode, EvalNode, EncodedEvalNode
 from redfoot.util import encode_attribute_value, encode_character_data
 
 from exceptions import SyntaxError
+from exceptions import Exception
 
 # TODO change names
 NS = u"http://redfoot.sourceforge.net/2001/06/^"
@@ -79,8 +80,9 @@ def adjust_indent(orig):
 class ElementHandler(HandlerBase):
     def __init__(self, parser, parent, name, atts):
         HandlerBase.__init__(self, parser, parent)
-        self.locals = self.parent.locals
-        self.globals = self.parent.globals
+        self.locals = parent.locals
+        self.globals = parent.globals
+        self.module = parent.module
         e_atts = {}
         for key in atts.keys():
             e_atts[key] = parse_attribute(atts[key])
@@ -110,6 +112,7 @@ class ElementHandler(HandlerBase):
 #                  return
         self.element.add(TextNode(data))
 
+
 class RedcodeRootHandler(HandlerBase):
 
     def __init__(self, parser, name):
@@ -129,6 +132,26 @@ class RedcodeRootHandler(HandlerBase):
         # override HandlerBase
         pass
 
+
+class RedCodeException(Exception):
+    def __init__(self, tag, exception, codestr, module):
+        self.tag = tag
+        self.exception = exception
+        self.codestr = codestr
+        self.module = module
+
+    def __str__(self):
+        return """
+    Where:
+      %s (in %s tag)
+    What:
+      %s: %s
+
+    Context:
+%s
+""" % (self.module.__name__, self.tag, self.exception.__class__.__name__, str(self.exception), self.codestr)
+
+
 class CodeHandler(HandlerBase):
 
     def __init__(self, parser, parent, name):
@@ -138,10 +161,16 @@ class CodeHandler(HandlerBase):
         self.locals = self.globals
         self.codestr = ""
 
+    def _exec(self, codestr):
+        try:
+            exec codestr+"\n" in self.globals, self.locals
+        except Exception, e:
+            raise RedCodeException(CODE, e, codestr, self.module)
+
     def child(self, name, atts):
         codestr = adjust_indent(self.codestr)
         if codestr!="":
-            exec codestr+"\n" in self.globals, self.locals
+            self._exec(codestr)
             self.codestr = ""
         if name==MODULE:
             if atts.has_key('bases'):
@@ -149,10 +178,10 @@ class CodeHandler(HandlerBase):
                 base_classes = eval(bases, self.globals, self.locals)
             else:
                 base_classes = (__import__('redfoot.module', self.globals, self.locals, ['ParentModule']).ParentModule, )
-            eh = PagesHandler(self.parser, self, atts['name'], base_classes)
+            eh = ModuleHandler(self.parser, self, atts['name'], base_classes)
         elif name==APP:
             base_classes = (__import__('redfoot.module', self.globals, self.locals, ['App']).App, )
-            eh = PagesHandler(self.parser, self, atts['name'], base_classes)
+            eh = ModuleHandler(self.parser, self, atts['name'], base_classes)
             
         else:
             raise SyntaxError, "\n" + str("\n\nUnexpeced element '%s'\n" % name)
@@ -162,10 +191,10 @@ class CodeHandler(HandlerBase):
 
     def end(self, name):
         HandlerBase.end(self, name)
-        exec adjust_indent(self.codestr)+"\n" in self.globals, self.locals
+        self._exec(adjust_indent(self.codestr)+"\n")
 
 
-class PagesHandler(HandlerBase):
+class ModuleHandler(HandlerBase):
 
     def __init__(self, parser, parent, name, base_classes):
         HandlerBase.__init__(self, parser, parent)
@@ -177,10 +206,17 @@ class PagesHandler(HandlerBase):
         self.module = parent.module
         self.base_classes = base_classes
             
+    def _exec(self, codestr):
+        try:
+            exec codestr+"\n" in self.globals, self.locals
+        except Exception, e:
+            raise RedCodeException(CODE, e, codestr, self.module)
+        
+
     def child(self, name, atts):
         if name==FACET:
             nh = Facet(self.parser, self, atts['name'], atts)
-            self.locals[atts['name'].encode('ascii')] = self.locals['__tmp__']
+            self.locals[atts['name'].encode('ascii')] = self.locals['_RF_facet']
         elif name==SUB_MODULE:
             SubModule(self.parser, self, atts)
         else:
@@ -191,12 +227,12 @@ class PagesHandler(HandlerBase):
 
     def end(self, name):
         HandlerBase.end(self, name)
-        exec adjust_indent(self.codestr)+"\n" in self.globals, self.locals
+        self._exec(adjust_indent(self.codestr)+"\n")
         classobj = new.classobj(self.name.encode('ascii'), self.base_classes, self.locals )
         module = self.module
         classobj.__module__ = module.__name__
         module.__dict__[classobj.__name__] = classobj
-        module.__dict__['__redpages__'] = classobj
+        module.__dict__['_RF_APP'] = classobj
 
 
 class SubModule(HandlerBase):
@@ -212,11 +248,18 @@ class SubModule(HandlerBase):
         class_name = atts['class']
         from_str = atts.get('from', None)
         if from_str:
-            module = self.parent.module
-            globals = module.__dict__
-            locals = globals
-            exec "from %s import %s" % (from_str, class_name) in globals, locals
+            self.module = self.parent.module
+            self.globals = self.module.__dict__
+            self.locals = self.globals
+            self._exec("from %s import %s" % (from_str, class_name))
         parent.locals['RF_sub_modules'].append((instance_name, class_name))
+
+
+    def _exec(self, codestr):
+        try:
+            exec codestr+"\n" in self.globals, self.locals
+        except Exception, e:
+            raise RedCodeException(SUB_MODULE, e, codestr, self.module)
 
 
     def child(self, name, atts):
@@ -228,8 +271,8 @@ class SubModule(HandlerBase):
 class If(ElementHandler):
     def __init__(self, parser, parent, name, atts):
         HandlerBase.__init__(self, parser, parent)
-        self.locals = self.parent.locals
-        self.globals = self.parent.globals
+        #self.locals = parent.locals
+        #self.globals = parent.globals
         test = atts['test']
         self.element = IfNodeList(test)
 
@@ -263,8 +306,8 @@ class IfNodeList(Node):
 class For(ElementHandler):
     def __init__(self, parser, parent, name, atts):
         HandlerBase.__init__(self, parser, parent)
-        self.locals = self.parent.locals
-        self.globals = self.parent.globals
+        #self.locals = self.parent.locals
+        #self.globals = self.parent.globals
         item = atts['item']
         list = atts['list']
         code = __builtin__.compile(list, list, "eval")                
@@ -290,24 +333,31 @@ class Facet(ElementHandler):
             args = "self, %s" % join(split(atts['args'], ","),",")
         else:
             args = "self"
-        args = args + ", __node__=__node__"
+        args = args + ", _RF_node=_RF_node"
         
-        self.locals['__node__'] = self.element.children
+        self.locals['_RF_node'] = self.element.children
 
         codestr = """\
-def __tmp__(%s):
-    __write__ = self.app.response.write
-    __node__.write(globals(), locals())
+def _RF_facet(%s):
+    _RF_write = self.app.response.write
+    _RF_node.write(globals(), locals())
 """ % args
 
-        exec codestr in self.globals, self.locals
+        self._exec(codestr)
 
+    def _exec(self, codestr):
+        try:
+            exec codestr+"\n" in self.globals, self.locals
+        except Exception, e:
+            raise RedCodeException(FACET, e, codestr, self.module)
+        
 
 class VisitNode(Node):
     def write(self, globals, locals):
         from new import instancemethod
-        locals['__callback__'] = instancemethod(self.callback, locals['self'], Node)
+        locals['_RF_callback'] = instancemethod(self.callback, locals['self'], Node)
         __builtin__.eval(self.code, globals, locals)
+
 
 class Visit(ElementHandler):
     def __init__(self, parser, parent, name, atts):
@@ -321,30 +371,35 @@ class Visit(ElementHandler):
         else:
             args = "(None, None, None)"
             
-        codestr = "%s(__callback__, %s)" % (atts.get('visit', 'self.app.rednode.visit'), args)
+        codestr = "%s(_RF_callback, %s)" % (atts.get('visit', 'self.app.rednode.visit'), args)
         code = __builtin__.compile(codestr, codestr, "eval")
         self.element.code = code
+
+    def _exec(self, codestr):
+        try:
+            exec codestr+"\n" in self.globals, self.locals
+        except Exception, e:
+            raise RedCodeException(VISIT, e, codestr, self.module)
 
     def child(self, name, atts):
         if self.first_child:
             self.first_child = 0
             
             if name==CALLBACK:
-                nh = Facet(self.parser, self, "TODO: remove", atts)
-                self.element.callback = self.locals['__tmp__']
+                nh = Facet(self.parser, self, "ANON", atts)
+                self.element.callback = self.locals['_RF_facet']
             else:
-                self.locals['__node__'] = self.element.children                
+                self.locals['_RF_node'] = self.element.children                
                 codestr = """\
-def __tmp__(self, subject, property, object, __node__=__node__):
-    __write__ = self.app.response.write
-    __node__.write(globals(), locals())
+def _RF_facet(self, subject, property, object, _RF_node=_RF_node):
+    _RF_write = self.app.response.write
+    _RF_node.write(globals(), locals())
 """
-                exec codestr in self.globals, self.locals
-                self.element.callback = self.locals['__tmp__']
+                self._exec(codestr)
+                self.element.callback = self.locals['_RF_facet']
                 ElementHandler.child(self, name, atts)         
         else:
             ElementHandler.child(self, name, atts)
-
 
 
 class Eval(HandlerBase):
@@ -381,6 +436,7 @@ class Exec(Eval):
         
     def kind(self):
         return "exec"
+
 
 class Apply(HandlerBase):
     def __init__(self, parser, parent, modules):

@@ -64,7 +64,7 @@ class RedDaemon(HTTPDaemon):
         self.module = module
         self.args = args
 
-        app_class = module.__redpages__
+        app_class = module._RF_APP
         instance = apply(app_class, args)
         module._app_instance = instance
         servername, port = self.server_address
