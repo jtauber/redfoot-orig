@@ -88,22 +88,23 @@ class Sample1UI:
   <HEAD>
     <TITLE>Username</TITLE>
   </HEAD>
-  <H1>Username</H1>
-  <FORM method="POST">
-  <TABLE>
-    <TR>
-      <TD>Username:</TD>
-      <TD><INPUT name="username" type="text"> (Hint: any username will work)</TD>
-    </TR>
-    <TR>
-      <TD>Password:</TD>
-      <TD><INPUT name="password" type="password"> (Hint: refoot)</TD>
-      </TD>
-    </TR>
-    <TR>
-      <TD colspan=2"><INPUT value="Login" type="submit"></TD>
-    </TR>
-  </FORM>
+  <BODY onLoad="document.loginForm.username.focus()">
+    <H1>Username</H1>
+    <FORM name="loginForm" method="POST">
+    <TABLE>
+      <TR>
+        <TD>Username:</TD>
+        <TD><INPUT name="username" type="text"> (Hint: any username will work)</TD>
+      </TR>
+      <TR>
+        <TD>Password:</TD>
+        <TD><INPUT name="password" type="password"> (Hint: redfoot)</TD>
+      </TR>
+      <TR>
+        <TD colspan=2"><INPUT value="Login" type="submit"></TD>
+      </TR>
+    </FORM>
+  </BODY>                            
 </HTML>
 """)
                 return 0
@@ -119,10 +120,19 @@ if __name__ == '__main__':
     server = RedServer(('', port))
     server.setHandler(Sample1UI())
     server.start()
+
+    import sys
+    sys.stderr.write("Sample1: listening on port %s...\n" % port)
+    sys.stderr.write("... try hitting http://localhost:%s/\n" % port)    
+    sys.stderr.flush()
+
     server.keepRunning()
 
 
 # $Log$
+# Revision 1.1  2000/12/07 19:04:20  eikeon
+# apps moved here from elsewhere
+#
 # Revision 4.3  2000/12/05 22:43:30  eikeon
 # moved constants to rdf.const
 #
