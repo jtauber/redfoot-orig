@@ -32,7 +32,7 @@ class RedServer(Server):
         self._uiargs = args
         self.modulename = modulename
         self._load()
-        self.start()
+#        self.start()
         try:
             self.keepRunning()
         except KeyboardInterrupt:
@@ -224,6 +224,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.5  2001/04/21 04:55:22  jtauber
+#~ changed shutdown message
+#~
 #~ Revision 7.4  2001/04/17 03:55:41  jtauber
 #~ fixed bug where redmodules weren't being added to sys.modules
 #~
