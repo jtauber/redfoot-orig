@@ -1,0 +1,31 @@
+
+The medusa sdist is expected to be a subdirectory of this one. At the moment, the version from project oedipus' CVS is required since it contains a needed bug fix to medusa-0.5.2. See:
+  http://oedipus.sourceforge.net/
+
+
+
+Building Release from CVS
+
+  - update CHANGELOG 
+  - tag the release 
+    - cvs tag RELEASE_XX_XX_XX 
+  - up CVS major revision (so 2.0 = first release, 3.0 = second release, etc) 
+    - cvs commit -m "NEW RELEASE" -r y.0 
+    - cvs update -A 
+  - export to a new directory 
+  cvs -d eikeon@eikco.com:/home/cvsroot/eikco export -r HEAD -d redfoot-1.5.1 redfoot
+
+
+  - remove some file:
+    CVS_README, .cvsignore(s) and lib/setup.py lib/setup-components.py
+
+  - extract medusa into redfoot-X.X.X/medusa/
+
+  - tar, zip
+    - tar -cvz -f redfoot-1.5.1.tgz redfoot-1.5.1 
+
+  - release on sourceforge (or whereever hosted) 
+  - send freshmeat announcement 
+  - announce elsewhere (relevant mailing lists, news groups, etc) 
+
+
