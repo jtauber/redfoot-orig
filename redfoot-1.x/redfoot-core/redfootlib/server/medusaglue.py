@@ -29,6 +29,8 @@ def split_uri (uri):
         _split_uri = m.groups()
     return _split_uri
 
+running = 0
+
 class RedServer:
     def __init__(self, address, port):
         rs = None # resolver.caching_resolver ('127.0.0.1')
@@ -61,6 +63,16 @@ class RedServer:
             self.hs.remove_handler(app)
 
     def run(self, background=0, daemon=1):
+
+        # TODO: allow for more than one server to be run. At the
+        # moment this will cause two asyncore loops to run at the same
+        # time... bad.
+        global running
+        if running:
+            print """\
+WARNING: Running multiple servers may be problematic, as it has not yet been tested."""  
+            return 
+        running = 1
         if background:
             import threading
             t = threading.Thread(target = self.__run, args = ())
@@ -97,17 +109,6 @@ def become_nobody():
             os.seteuid (uid)
 
 
-            #path, params, query, fragment = request.split_uri()
-            path, params, query = split_uri(self.__request.uri)            
-
-            self.path = path
-            self.params = (params or ';')[1:]
-            self.query = (query or '?')[1:]
-            
-            super(MedusaHandler, self).handle_request(self, self) 
-
-            self.state = NEW_REQUEST
-        
 from cgi import parse_qs, parse_header, parse_multipart
 from urllib import unquote
 
