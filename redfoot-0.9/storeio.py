@@ -13,9 +13,9 @@ class StoreIO:
         self.location = location
         self.URI = URI
         rdfParser = RDFParser()
-        rdfParser.setAdder(store.add)
+        rdfParser.setAdder(self.store.add)
 
-        rdfParser.parser(self.location, self.URI)
+        rdfParser.parse(self.location, self.URI)
 
     def save(self):
         self.saveAs(self.location, self.URI)
