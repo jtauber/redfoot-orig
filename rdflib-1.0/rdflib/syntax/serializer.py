@@ -96,7 +96,9 @@ class Serializer(object):
 
     def subject_start(self, subject):
         self.stream.write( "  <rdf:Description" )
-        if self.baseURI and subject[0:len(self.baseURI)+1]==self.baseURI+"#":
+        if isinstance(subject, BNode):
+            self.stream.write( " rdf:ID=\"%s\">\n" % subject)       
+        elif self.baseURI and subject[0:len(self.baseURI)+1]==self.baseURI+"#":
             self.stream.write( " rdf:ID=\"%s\">\n" % subject[len(self.baseURI)+1:])       
         else:
             self.stream.write( " rdf:about=\"%s\">\n" % encode_attribute_value(subject) )
@@ -115,7 +117,7 @@ class Serializer(object):
                 object = object[len(self.baseURI):]
             self.stream.write( "    <%s:%s rdf:resource=\"%s\"/>\n" % (prefix, localName, encode_attribute_value(object)) )
         elif isinstance(object, BNode):
-            raise exception.NotYetImplemented()
+            self.stream.write( "    <%s:%s rdf:resource=\"%s\"/>\n" % (prefix, localName, object) )
         else:            
             raise exception.UnexpectedTypeError(object)
 

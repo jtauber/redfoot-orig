@@ -34,6 +34,7 @@ class DocumentHandler(object):
         self.char_stack = [self.default_char,]
         self.end_stack = [self.look_end,]
         self.subject_stack = []
+        self.bnodes = {}
 
     def set_base(self, base):
         self.__base = base
@@ -106,7 +107,12 @@ class DocumentHandler(object):
         if atts.has_key(ABOUT):
             self.subject_stack[-1] = URIRef(self.absolutize(atts[ABOUT]))
         elif atts.has_key(ID):
-            self.subject_stack[-1] = URIRef(self.absolutize("#" + atts[ID]))
+            id = atts[ID]
+            if not id.startswith("_:"):
+                self.subject_stack[-1] = URIRef(self.absolutize("#" + atts[ID]))
+            else:
+                bNode = self.bnodes.setdefault(id, BNode())
+                self.subject_stack[-1] = bNode
         else:
             self.subject_stack[-1] = BNode()
 
