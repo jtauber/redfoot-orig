@@ -10,55 +10,7 @@ from bnh.server import Server
 import sys
 import string
 
-
-class RedServer:
-    def runServer(self, args):
-        # set default values
-        port = 8000
-        location = "local.rdf"
-        uri = None
-
-        path = ""
-        
-
-        import getopt
-        optlist, args = getopt.getopt(sys.argv[1:], 'l:p:u:P:')
-        for optpair in optlist:
-            opt, value = optpair
-            if opt=="-l":
-                location = value
-            elif opt=="-u":
-                uri = value
-            elif opt=="-p":
-                port = string.atoi(value)
-            elif opt=="-P":
-                if value[-1:]=='/':
-                    value = value[0:-1]
-                path = value
-            
-        # uri defaults to url when no uri is specified
-        if uri==None:
-            import socket
-            # method for calculating absolute hostname
-            #hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
-            hostname = socket.getfqdn('localhost')
-            uri = "http://%s:%s%s" % (hostname,port,path)
-
-        from redfoot.rednode import RedNode
-
-        storeNode = RedNode()
-        storeNode.local.load(location, uri)
-        
-    
-        server = Server(('', port))
-
-        self.server = server
-        self.path = path
-        self.storeNode = storeNode
-        
-        sys.stderr.write("REDFOOT: serving %s (%s) on port %s...\n" % (location, uri, port))
-        sys.stderr.write("... try hitting %s/classList for an editor\n" % uri)    
-        sys.stderr.flush()
+class RedServer(Server):
         
 
     def keepRunning(self):
@@ -147,6 +99,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.12  2000/12/07 15:58:23  eikeon
+#~ removed unused code
+#~
 #~ Revision 4.11  2000/12/06 23:26:55  eikeon
 #~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
 #~
