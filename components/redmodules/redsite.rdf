@@ -5,33 +5,58 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
   <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/name">
-    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/09/module/redmodules.redsite/2001/09/24/T22/13/04Z0000"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
     <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/09/module/redmodules.redsite/2001/09/24/T22/13/04Z0000"/>
     <rdfs:label>siteName</rdfs:label>
   </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/html">
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/link_hover">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/09/module/redmodules.redsite/2001/09/24/T22/13/04Z0000"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>link_hover</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/list_link">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdfs:label>List Link</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/background">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/09/module/redmodules.redsite/2001/09/24/T22/13/04Z0000"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>background</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/10/18/processor">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
     <n1:uiType rdf:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#TEXTAREA"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>processor</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/links_to">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdfs:label>Links To</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/link_color">
     <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/09/module/redmodules.redsite/2001/09/24/T22/13/04Z0000"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>link_color</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/html">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <n1:uiType rdf:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#TEXTAREA"/>
     <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
     <rdfs:label>HTML Content</rdfs:label>
   </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/links_to">
-    <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
-    <rdfs:label>Links To</rdfs:label>
-    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-  </rdf:Description>
   <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/module/redmodules.redsite/2001/09/24/T22/13/04Z0000">
     <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
     <rdfs:label>Red Site</rdfs:label>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/09/site/list_link">
-    <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
-    <rdfs:label>List Link</rdfs:label>
-    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
-    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
   </rdf:Description>
 </rdf:RDF>

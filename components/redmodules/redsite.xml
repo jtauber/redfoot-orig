@@ -9,10 +9,19 @@
   from redfoot.rdf.query.builders import ListBuilder
   from redfoot.rdf.query.functors import o
 
+  from redfoot.module import ParentModule  
+
   SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
+  SITE_DESCRIPTION = resource('http://redfoot.sourceforge.net/2001/09/site/description')
+  SITE_KEYWORDS = resource('http://redfoot.sourceforge.net/2001/09/site/keywords')
+  BACKGROUND = resource('http://redfoot.sourceforge.net/2001/09/site/background')
+  LINK_COLOR = resource('http://redfoot.sourceforge.net/2001/09/site/link_color')
+  LINK_HOVER = resource('http://redfoot.sourceforge.net/2001/09/site/link_hover')
   HTML = resource('http://redfoot.sourceforge.net/2001/09/site/html')
   LINKS_TO = resource('http://redfoot.sourceforge.net/2001/09/site/links_to')
   LIST_LINK = resource('http://redfoot.sourceforge.net/2001/09/site/list_link')
+
+  PROCESSOR = resource('http://redfoot.sourceforge.net/2001/10/18/processor')
 
   <red:module name="RedSite">
 
@@ -33,10 +42,24 @@
         self.generic.set_rednode(self.rednode)
         self.app.rednode.neighbours.add_store(self.rednode.local)
 
-        # TODO: move defaults into redsite.rdf
-        self.background = "#900"
-        self.link_color = "#006"
-        self.link_hover = "#66C"
+
+    def handle_request(self, request, response):
+        uri = request.get_parameter('processor', None)
+        if uri:
+            processor = self.app.rednode.get_first_value(resource(uri), PROCESSOR, None)
+            if processor:
+                import sys
+                globals = sys.modules[self.app.__class__.__module__].__dict__
+                locals = self.app.__class__.__dict__
+                lines = str(processor).split("\n")
+                codestr = "def _RF_Processor(self, request, response):\n"
+                for line in lines:
+                    codestr = codestr + "    " + line + "\n"
+                exec codestr+"\n" in globals, locals
+                # setsttr(self, uri, _RF_Processor)
+                self.app._RF_Processor(request, response)
+        ParentModule.handle_request(self, request, response)
+
 
     def stop(self):
         self.authentication.stop()
@@ -66,9 +89,9 @@
         <head>
           <title><red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_NAME, 'Home')</red:eval></title>
           <meta name="description"
-                content="{getattr(self, 'site_description', '')}"/>
+                content="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_DESCRIPTION, '')}"/>
           <meta name="keywords"
-                content="{getattr(self, 'site_keywords', '')}"/>
+                content="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_KEYWORDS, '')}"/>
           <link rel="STYLESHEET" 
                 type="text/css" 
                 href="{'../' * depth}css"/>
@@ -181,7 +204,7 @@ body {
 
 h1 {
   font-family: "Trebuchet MS", sans-serif;
-  background:  <red:eval>self.background</red:eval>;
+  background:  <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), BACKGROUND, "#900")</red:eval>;
   font-weight: normal;
   color:       #FFF;
   padding:     0px 10px;
@@ -190,7 +213,7 @@ h1 {
 
 h2, h3, h4, h5, h6 {
   font-family: "Trebuchet MS", sans-serif;
-  color: <red:eval>self.background</red:eval>;
+  color: <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), BACKGROUND, "#900")</red:eval>;
   margin: 5px 10px;
   xpadding:     0px 10px;
 }
@@ -241,11 +264,11 @@ table.NAV A:hover {
 }
 
 A {
-  color: <red:eval>self.link_color</red:eval>;
+  color: <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), LINK_COLOR, "#006")</red:eval>;
 }
 
 A:hover {
-  color: <red:eval>self.link_hover</red:eval>;
+  color: <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), LINK_HOVER, "#66C")</red:eval>;
 }
 
     </red:facet>
