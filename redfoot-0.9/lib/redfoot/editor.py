@@ -35,7 +35,7 @@ class Editor(Viewer):
             self.showNeighbours=0
     
         if path_info == "/edit":
-            self.edit(parameters['uri']) 
+            self.edit(parameters['uri'], parameters['type']) 
 	elif path_info == "/add":
             self.add(parameters['type'])
         elif path_info == "/connect":
@@ -48,7 +48,8 @@ class Editor(Viewer):
         Viewer.menuBar(self)
         self.response.write("""
             <P CLASS="MENUBAR"><B>EDIT</B>
-             : <A HREF="add">Add a Resource</A>
+             : <A HREF="add">Add an External Resource</A>
+             | <A HREF="edit">Create an Abstract Resource</A>
              | <A HREF="?processor=save">Save Node to Disk</A>
             </P>
         """)
@@ -59,11 +60,13 @@ class Editor(Viewer):
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
         """ % (self.encodeCharacterData(self.storeNode.label(subject)), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
-    def edit(self, subject):
+    def edit(self, subject, type):
         if subject==None or subject=="":
             subject = self.storeNode.local.URI + self.generateURI()
         elif subject[0]=="#":
             subject = self.storeNode.local.URI + subject
+        if type!=None and type!="":
+            self.storeNode.local.add(subject, TYPE, type)
 
         self.header("Edit")
         self.resourceHeader(subject)
@@ -206,7 +209,10 @@ class Editor(Viewer):
         """)
 
     def add(self, type):
-        self.header("Add")
+        h = "Add"
+        if type!=None and type!="":
+            h = "Add a " + self.storeNode.label(type)
+        self.header(h)
         self.response.write("""
           <FORM NAME="form" ACTION="edit" METHOD="POST">
             <TABLE>
@@ -214,65 +220,15 @@ class Editor(Viewer):
                 <TD VALIGN="TOP">URI</TD>
                 <TD>&nbsp;</TD>
                 <TD>
-                  <INPUT TYPE="TEXT" SIZE="60" NAME="uri" value="%s"/>
-                </TD>
-              </TR>""" % (self.generateURI()))
-        self.response.write("""
-              <TR>
-                <TD VALIGN="TOP">label</TD>
-                <TD>Literal</TD>
-                <TD>
-                  <INPUT TYPE="TEXT" SIZE="60" NAME="label" />
+                  <INPUT TYPE="TEXT" SIZE="60" NAME="uri">
                 </TD>
               </TR>
-
-              <TR>
-                <TD VALIGN="TOP">type</TD>
-                <TD>Class</TD>
-                <TD>""")
-
-        self.property_num = 0
-        if type == "":
-            self.response.write("""
-                  <SELECT SIZE="1" NAME="type">
-            """)
-            for klass in self.storeNode.get(None, TYPE, CLASS):
-                self.response.write("""
-                    <OPTION VALUE="%s">%s</OPTION>
-                """ % (klass[0], self.storeNode.label(klass[0])))
-            self.response.write("""
-                  </SELECT>
-            """)
-        else:
-            self.response.write("""
-                  <INPUT TYPE="HIDDEN" NAME="type" VALUE="%s"/>
-                  %s
-            """ % (type, self.link(type)))
-
-            # TODO: make this a func... getProperties for subject?
-
-            def possibleProperty(s, p, o, self=self):
-                property = s
-                if len(self.storeNode.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
-                    self.editProperty(property, "", 0)
-
-            self.storeNode.visitPossibleProperties(possibleProperty, type )
-
-        self.response.write("""
-                </TD>
-              </TR>
-        """)
-        self.response.write("""
           </TABLE>
-            <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s"/>
-            <INPUT TYPE="HIDDEN" NAME="processor"  VALUE="create"/>
-          <INPUT TYPE="SUBMIT"                   VALUE="create"/>
-        """ % self.property_num)
-        self.response.write("""
+          <INPUT TYPE="SUBMIT" VALUE="create">
+          <INPUT TYPE="HIDDEN" NAME="type" VALUE="%s">
         </FORM>
-
               <P><A HREF="subclass">Return to List (without adding a Resource)</A></P>
-        """)
+        """ % type)
         self.footer()
 
     def update(self, parameters):
@@ -324,36 +280,6 @@ class Editor(Viewer):
 	import time
         return "#T%s" % time.time()
 
-    def create(self, parameters):
-        subject = parameters['uri']
-
-        if subject[0]=="#":
-            subject = self.storeNode.local.URI + subject
-
-	self.storeNode.local.remove(subject)
-
-
-        # TODO: what to do in the case it already exists?
-        self.storeNode.local.add(subject, LABEL, literal(parameters['label']))
-        self.storeNode.local.add(subject, TYPE, parameters['type'])
-
-        count = parameters["prop_count"]
-        if count=="":
-            count=0
-        else:
-            count = int(count)
-        
-        i = 0
-        while i < count:
-            i = i + 1
-            property = parameters['prop%s_name' % i]
-            valueName = "prop%s_value" % i
-            value = parameters[valueName]
-            isLiteral = parameters['prop%s_isLiteral' % i]
-            if isLiteral == "yes":
-                value = literal(value)
-            self.storeNode.local.add(subject, property, value)
-
     def save(self):
         self.storeNode.local.save()
 
@@ -403,6 +329,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.14  2000/12/21 01:11:52  jtauber
+#~ calling edit with no subject, autogenerates a URI
+#~
 #~ Revision 5.13  2000/12/21 00:35:28  jtauber
 #~ can now add properties to an unknown resource using edit
 #~
