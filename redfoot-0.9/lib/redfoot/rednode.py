@@ -1,35 +1,58 @@
 # $Header$
 
-class MultiStore:
+from rdf.store import TripleStore
+from rdf.query import QueryStore
+from rdf.storeio import StoreIO
+
+class RedNode(QueryStore, StoreIO, TripleStore):
     ""
-    
+
     def __init__(self):
-        self.stores = {}
-
-    def addStore(self, store):
-        self.stores[store] = 1
-
-    def getStores(self):
-        return self.stores.keys()
-
-    def visit(self, callback, subject=None, property=None, value=None):
-        for store in self.getStores():
-            store.visit(callback, subject, property, value)
-
-    def get(self, subject=None, property=None, value=None):
-        class Visitor:
-            def __init__(self):
-                self.list = []
-
-            def callback(self, subject, property, value):
-                self.list.append((subject, property, value))
-
-        visitor = Visitor()
-
-        self.visit(visitor.callback, subject, property, value)
+        TripleStore.__init__(self)
         
-	return visitor.list
-        
+        def toRelativeURL(path):
+            import sys
+            from os.path import join, dirname
+            from urllib import pathname2url
+            libDir = dirname(sys.modules["redfoot.rednode"].__file__)
+            return pathname2url(join(libDir, path))
+
+        self.neighbourhood = Neighbourhood(self)
+
+        self.connectTo(toRelativeURL("rdfSchema.rdf"), "http://www.w3.org/2000/01/rdf-schema")
+        self.connectTo(toRelativeURL("rdfSyntax.rdf"), "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+        self.connectTo(toRelativeURL("builtin.rdf"), "http://redfoot.sourceforge.net/2000/10/06/builtin")
+
+    # TODO: when to call... used to call on setStore()
+    def _preCacheRemoteStores(self, baseDirectory=None):
+        rstores = self.neighbourhood.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://redfoot.sourceforge.net/2000/10/06/builtin#RemoteStore")
+	for rstore in rstores:
+	    locationlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#location", None)
+            if len(locationlist) == 0:
+                continue
+            location = locationlist[0][2][1:]
+            systemIDlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#systemID", None)
+            if len(systemIDlist) == 0:
+                systemID = None
+            else:
+                systemID = systemIDlist[0][2][1:]
+
+            from urllib import basejoin
+            self.connectTo(basejoin(self.location, location), systemID)
+
+    def connectTo(self, location, URI=None):
+        if URI==None:
+            URI=location
+
+        from rdf.storeio import TripleStoreIO
+
+        storeIO = TripleStoreIO()        
+        storeIO.load(location, URI)
+        self._connectTo(storeIO)
+
+    def _connectTo(self, store):
+        self.neighbourhood.addNeighbour(store)
+
 
 from rdf.literal import literal, un_literal, is_literal
 
@@ -129,60 +152,41 @@ class Neighbourhood:
         self.visit(rangeitem, property, QueryStore.RANGE, None)
 
             
-from rdf.store import TripleStore
-from rdf.query import QueryStore
-from rdf.storeio import StoreIO
-
-class StoreNode(QueryStore, StoreIO, TripleStore):
+class MultiStore:
     ""
-
+    
     def __init__(self):
-        TripleStore.__init__(self)
+        self.stores = {}
+
+    def addStore(self, store):
+        self.stores[store] = 1
+
+    def getStores(self):
+        return self.stores.keys()
+
+    def visit(self, callback, subject=None, property=None, value=None):
+        for store in self.getStores():
+            store.visit(callback, subject, property, value)
+
+    def get(self, subject=None, property=None, value=None):
+        class Visitor:
+            def __init__(self):
+                self.list = []
+
+            def callback(self, subject, property, value):
+                self.list.append((subject, property, value))
+
+        visitor = Visitor()
+
+        self.visit(visitor.callback, subject, property, value)
         
-        def toRelativeURL(path):
-            import sys
-            from os.path import join, dirname
-            from urllib import pathname2url
-            libDir = dirname(sys.modules["redfoot.rednode"].__file__)
-            return pathname2url(join(libDir, path))
-
-        self.neighbourhood = Neighbourhood(self)
-
-        self.connectTo(toRelativeURL("rdfSchema.rdf"), "http://www.w3.org/2000/01/rdf-schema")
-        self.connectTo(toRelativeURL("rdfSyntax.rdf"), "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-        self.connectTo(toRelativeURL("builtin.rdf"), "http://redfoot.sourceforge.net/2000/10/06/builtin")
-
-    # TODO: when to call... used to call on setStore()
-    def _preCacheRemoteStores(self, baseDirectory=None):
-        rstores = self.neighbourhood.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://redfoot.sourceforge.net/2000/10/06/builtin#RemoteStore")
-	for rstore in rstores:
-	    locationlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#location", None)
-            if len(locationlist) == 0:
-                continue
-            location = locationlist[0][2][1:]
-            systemIDlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#systemID", None)
-            if len(systemIDlist) == 0:
-                systemID = None
-            else:
-                systemID = systemIDlist[0][2][1:]
-
-            from urllib import basejoin
-            self.connectTo(basejoin(self.location, location), systemID)
-
-    def connectTo(self, location, URI=None):
-        if URI==None:
-            URI=location
-
-        from rdf.storeio import TripleStoreIO
-
-        storeIO = TripleStoreIO()        
-        storeIO.load(location, URI)
-        self._connectTo(storeIO)
-
-    def _connectTo(self, store):
-        self.neighbourhood.addNeighbour(store)
+	return visitor.list
+        
 
 #~ $Log$
+#~ Revision 4.5  2000/12/05 00:02:25  eikeon
+#~ fixing some of the local / neighbourhood stuff
+#~
 #~ Revision 4.4  2000/12/04 22:49:10  eikeon
 #~ refactored *All methods into Neighbourhood class
 #~

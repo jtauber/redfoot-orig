@@ -60,16 +60,9 @@ class RedServer:
             hostname = socket.getfqdn('localhost')
             uri = "http://%s:%s%s" % (hostname,port,path)
 
-        from redfoot.rednode import StoreNode
-#          from rdf.storeio import TripleStoreIO
-            
-#          storeIO = TripleStoreIO()
-#          storeIO.load(location, uri)
+        from redfoot.rednode import RedNode
 
-#          storeNode = StoreNode()
-#          storeNode.setStore(storeIO)
-
-        storeNode = StoreNode()
+        storeNode = RedNode()
         storeNode.load(location, uri)
         
     
@@ -170,6 +163,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.9  2000/12/04 22:00:59  eikeon
+#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
+#~
 #~ Revision 4.8  2000/12/04 05:26:11  eikeon
 #~ changed to use new server interface
 #~
