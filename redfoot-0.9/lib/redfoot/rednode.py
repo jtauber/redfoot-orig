@@ -69,12 +69,12 @@ class Local(QueryStore, AutoSaveStoreIO):
     # May need to move the following method elsewhere if we need
     # subClassV defined for all combinations and do not wish to
     # overload what it mean for Local
-    def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
+    def visitSubclasses(self, processClass, processInstance, type, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
         def subclass(s, p, o, self=self, currentDepth=currentDepth, recurse=recurse,\
                      processClass=processClass, processInstance=processInstance):
             if recurse:
-                self.subClassV(s, processClass, processInstance, currentDepth+1)
+                self.visitSubclasses(processClass, processInstance, s, currentDepth+1)
             else:
                 processClass(s, currentDepth+1, recurse)
         # show classes in neighbourhood as well
@@ -88,7 +88,7 @@ class Local(QueryStore, AutoSaveStoreIO):
     # May need to move the following method elsewhere if we need
     # resourcesByClassV defined for all combinations and do not wish to
     # overload what it mean for Local
-    def resourcesByClassV(self, processClass, processResource):
+    def visitResourcesByType(self, processClass, processResource):
         def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
             if self.getFirst(None, TYPE, s)!=None:
                 processClass(s)
@@ -151,6 +151,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
+#~
 #~ Revision 4.16  2000/12/08 02:50:11  eikeon
 #~ refactored unused method :(
 #~
