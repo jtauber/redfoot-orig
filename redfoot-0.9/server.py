@@ -72,7 +72,8 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 root = args["uri"][0] # TODO: check why values of args are lists
             else:
                 root = QueryStore.RESOURCE
-            viewer.subclassNonRecursive(root)
+#            viewer.subclassNonRecursive(root)
+            viewer.subclass(root, 0)
         elif path_info == "/RDF":
             viewer.RDF()
         elif path_info == "/Triples":

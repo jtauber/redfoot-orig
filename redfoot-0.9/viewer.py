@@ -134,7 +134,7 @@ class Viewer:
         </HTML>
         """)
 
-    def subclass(self, root):
+    def subclass(self, root, recurse=1):
         self.writer.write("""
         <HTML>
           <HEAD>
@@ -149,30 +149,8 @@ class Viewer:
               <DL>
         """)
 
-        self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource)
-        self.writer.write("""
-              </DL>
-            </DIV>
-          </BODY>
-        </HTML>
-        """)
-
-    def subclassNonRecursive(self, root):
-        self.writer.write("""
-        <HTML>
-          <HEAD>
-            <TITLE>ReDFoot Subclass View</TITLE>
-            <LINK REL="STYLESHEET" HREF="css"/>
-          </HEAD>
-          <BODY>
-            <H1>ReDFoot</H1>""")
-        self.menuBar()
-        self.writer.write("""
-            <DIV CLASS="box">
-              <DL>
-        """)
-
-        self.qstore.subClassV(root, self.displaySCNRClass, self.displaySCResource, recurse=0)
+        self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+            
         self.writer.write("""
               </DL>
             </DIV>
@@ -216,19 +194,21 @@ class Viewer:
         """ % self.link(resource))
 
     # TODO: rewrite to use lists
-    def displaySCClass(self, klass, depth):
+    def displaySCClass(self, klass, depth, recurse):
         self.writer.write(3*depth*"&nbsp;")
-        self.writer.write("<B>%s</B><BR>" % self.qstore.label(klass))
+
+        if recurse==0:
+            self.writer.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.qstore.comment(klass)))
+
+        self.writer.write("<B>%s</B>" % self.qstore.label(klass))
+
+        if recurse==0:
+            self.writer.write("</A>")
+
+        self.writer.write("<BR>")
 
     # TODO: rewrite to use lists
-    def displaySCNRClass(self, klass, depth):
-        self.writer.write(3*depth*"&nbsp;")
-        self.writer.write("""
-        <A HREF="subclassNR?uri=%s" TITLE="%s"><B>%s</B></A><BR>
-        """ % (self.encodeURI(klass), self.qstore.comment(klass), self.qstore.label(klass)))
-
-    # TODO: rewrite to use lists
-    def displaySCResource(self, resource, depth):
+    def displaySCResource(self, resource, depth, recurse):
         self.writer.write(3*(depth+1)*"&nbsp;")
         self.writer.write(self.link(resource)+"<BR>")
 

@@ -131,14 +131,14 @@ class QueryStore:
             processPropertyValue(property,value)
         
     def subClassV(self, type, processClass, processInstance, currentDepth=1, recurse=1):
-        processClass(type, currentDepth)
+        processClass(type, currentDepth, recurse)
         for subclassStatement in self.store.get(None, QueryStore.SUBCLASSOF, type):
             if recurse:
                 self.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
             else:
-                processClass(subclassStatement[0], currentDepth+1)
+                processClass(subclassStatement[0], currentDepth+1, recurse)
         for instanceStatement in self.store.get(None, QueryStore.TYPE, type):
-            processInstance(instanceStatement[0], currentDepth)
+            processInstance(instanceStatement[0], currentDepth, recurse)
 
     # REIFICATION STUFF
 
