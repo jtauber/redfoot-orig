@@ -105,7 +105,17 @@
 
     def add_neighbour(self):
        uri = self.app.request.get_parameter('uri')
-       uri = uri.replace("\\", "/") # be forgiving if user used backslashes
+
+       from urlparse import urlparse, urlunparse
+       from urllib import quote, quote_plus
+
+       scheme, netloc, url, params, query, fragment = urlparse(uri)
+       url = quote(url, safe="/%")
+       query = quote_plus(query, safe="=&amp;")
+       uri = urlunparse((scheme, netloc, url, params, query, fragment))
+       # TODO: check to see if uri has been further encoded by the
+       # above and if so, added a warning message to that effect.
+       
        self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)
        self.app.rednode.add(resource(uri), CONNECTED, NO)
 
