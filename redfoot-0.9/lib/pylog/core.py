@@ -2,6 +2,8 @@
 
 # This is pylog, an attempt to implement Prolog-like inference in Python
 
+test = 0
+
 # a _clause_ is expressed as a tuple
 # for example, "socrates is a man" could be expressed as
 # ("man","socrates")
@@ -20,9 +22,9 @@ def isFact(c):
     return len(c)==1
 
 # so isFact((('man', 'socrates'),)) should return 1
-print isFact((('man', 'socrates'),))
+if test: print isFact((('man', 'socrates'),)), 1
 # and isFact((("mortal","socrates"),("man","socrates"))) should return 0
-print isFact((("mortal","socrates"),("man","socrates")))
+if test: print isFact((("mortal","socrates"),("man","socrates"))), 0
 
 # conditionals may include variables
 # for example, "all men are mortals" could be expressed as
@@ -33,9 +35,9 @@ def isVariable(token):
     return token[0]=="_"
 
 # so, isVariable("foo") should return 0
-print isVariable("foo")
+if test: print isVariable("foo"), 0
 # and isVariable("_foo") should return 1
-print isVariable("_foo")
+if test: print isVariable("_foo"), 1
 
 # conditionals and facts are stored in a list called db
 db = []
@@ -45,13 +47,13 @@ def add(*conditional_or_fact):
     db.append(conditional_or_fact)
 
 # so, add(("man","socrates")) adds "socrates is a man"
-add(("man","socrates"))
+if test: add(("man","socrates"))
 # and add(("mortal","_X"),("man","_X")) adds "all men are mortal"
-add(("mortal","_X"),("man","_X"))
+if test: add(("mortal","_X"),("man","_X"))
 
 # and the result is that db should equal:
 # [(('man', 'socrates'),), (('mortal', '_X'), ('man', '_X'))]
-print db
+if test: print db
 
 # the match function is used to determine whether two clauses match
 # this will only be the case if each item of the tuple is equal
@@ -64,102 +66,163 @@ def match(clause1, clause2):
     return 0
 
 # so, match(("foo"),("bar")) should return 0
-print match(("foo"),("bar"))
+if test: print match(("foo"),("bar")), 0
 # so, match(("foo"),("foo")) should return 1
-print match(("foo"),("foo"))
+if test: print match(("foo"),("foo")), 1
 # so, match(("foo","bar"),("foo","baz")) should return 0
-print match(("foo","bar"),("foo","baz"))
+if test: print match(("foo","bar"),("foo","baz")), 0
 # so, match(("foo","bar"),("foo","bar")) should return 1
-print match(("foo","bar"),("foo","bar"))
+if test: print match(("foo","bar"),("foo","bar")), 1
 
 # the may_match function returns the variable binding(s) that must be
 #   true if the two given clauses are to match
 # a return of None means a match is impossible
 # a return of an empty dictionary means a match is possible regardless of
 #   variable binding(s)
-# at present the second clause may not contain variables
 def may_match(clause1, clause2):
-    binding = {}
+#    print "may_match", clause1, clause2
+    binding = ({},{})
     if len(clause1)==len(clause2):
         for i in range(0,len(clause1)):
             if clause1[i]!=clause2[i]:
                 if isVariable(clause1[i]):
-                    binding[clause1[i]] = clause2[i]
+                    if binding[0].has_key(clause1[i]) and binding[0][clause1[i]] != clause2[i]:
+                        return None
+                    else: 
+                        binding[0][clause1[i]] = clause2[i]
+                elif isVariable(clause2[i]):
+                    if binding[1].has_key(clause2[i]) and binding[1][clause2[i]] != clause1[i]:
+                        return None
+                    else: 
+                        binding[1][clause2[i]] = clause1[i]
                 else:
                     return None
         return binding
     return None
 
+test0 = 0
 # so, may_match(("foo","bar"),("foo","baz")) should return None
-print may_match(("foo","bar"),("foo","baz"))
-# so, may_match(("foo","bar"),("foo","bar")) should return {}
-print may_match(("foo","bar"),("foo","bar"))
-# so, may_match(("foo","_X"),("foo","bar")) should return {'_X': 'bar'}
-print may_match(("foo","_X"),("foo","bar"))
+if test0: print may_match(("foo","bar"),("foo","baz"))
+# so, may_match(("foo","bar"),("foo","bar")) should return ({},{})
+if test0: print may_match(("foo","bar"),("foo","bar"))
+# so, may_match(("foo","_X"),("foo","bar")) should return ({'_X': 'bar'},{})
+if test0: print may_match(("foo","_X"),("foo","bar"))
 # so, may_match(("_X","_Y"),("foo","bar")) should return
-#   {'_X': 'foo', '_Y': 'bar'}
-print may_match(("_X","_Y"),("foo","bar"))
+#   ({'_X': 'foo', '_Y': 'bar'},{})
+if test0: print may_match(("_X","_Y"),("foo","bar"))
+
+# so, may_match(("_X","_X"),("foo","bar")) should return None
+if test0: print may_match(("_X","_X"),("foo","bar"))
+# so, may_match(("_X","_X"),("foo","foo")) should return ({'_X': 'foo'},{})
+if test0: print may_match(("_X","_X"),("foo","foo"))
+
+# so, may_match(("foo","foo"),("_X","_X")) should return ({},{'_X': 'foo'})
+if test0: print may_match(("foo","foo"),("_X","_X"))
 
 # the substitute function takes a clause containing variables and a dictionary
 #   of bindings and performs variable substitution
 def substitute(clause, bindings):
     l = []
     for item in clause:
-        if isVariable(item):
+        if isVariable(item) and bindings.has_key(item):
             l.append(bindings[item])
         else:
             l.append(item)
     return tuple(l)
 
-# so substitute(("foo","_X"),{"_X":"bar"}) should return ("foo","bar")
-print substitute(("foo","_X"),{"_X":"bar"})
+# so substitute(("foo","_X"),{"_X":"bar"}) should return ('foo', 'bar')
+if test0: print substitute(("foo","_X"),{"_X":"bar"}), "('foo', 'bar')"
 # TODO handle exception of unknown variable
 
 # the goal function is used to find out whether something is true or not
 # at the moment, it can only take a single clause and it must not contain
-# variables
+# variables (but I'm working on variables now)
 def goal(clause, binding={}):
-    #print "testing to see if %s is true with binding %s" % (str(clause),binding)
+    print
+    print "testing to see if %s is true assuming %s" % (str(clause),binding)
+    solutions = []
     for c in db:
-        #print "checking against %s" % str(c),
+        print "  checking against %s" % str(c),
         if isFact(c):
-            #print "which is a fact"
-            if match(c[0],substitute(clause,binding)):
-                #print "match"
-                return 1
+            print "which is a fact"
+            b = may_match(c[0],substitute(clause,binding))
+            if b != None:
+                print "    a match, assuming", b
+                solutions.append(b[1])
+            else:
+                #pass
+                print "    no match"
+        else:
+            print "which is a conditional"
+            b = may_match(c[0],clause)
+            if b != None:
+                print "    a match, assuming", b
+                (lb,rb) = b
+                for cond in c[1:]:
+                    c = goal(cond, lb)
+                    if c==[]:
+                        print "  returning []"
+                        return []
+                    else:
+                        pass
+                        #solutions = solutions + c
+                print "adding a solution", rb
+                solutions.append(rb)
             else:
                 pass
-                #print "no match"
-        else:
-            #print "which is a conditional"
-            b = may_match(c[0],clause)
-            #print "binding = ", b
-            if b != None:
-                for cond in c[1:]:
-                    if not goal(cond, b):
-                        return 0
-                return 1
-    return 0
+                print "    no match"
+    print "  returning", solutions
+    return solutions
 # TODO conditional chaining will not work :-(
 
-# for example, goal(("man","socrates")) should return 1
-print goal(("man","socrates"))
-# and goal(("bird","socrates")) should return 0
-print goal(("bird","socrates"))
+test1 = 0
 
-# and goal(("human","socrates")) should return 1
-add(("human","socrates"),("man","socrates"))
-print goal(("human","socrates"))
+if test1: add(("man","socrates"))
+if test1: add(("mortal","_X"),("man","_X"))
 
-# and goal(("mortal","socrates")) should return 1
-print goal(("mortal","socrates"))
+# for example, goal(("man","socrates")) should return [{}]
+if test1: print goal(("man","socrates")), "[{}]"
+# and goal(("bird","socrates")) should return []
+if test1: print goal(("bird","socrates")), "[]"
 
-#~ $Log$
+# and goal(("human","socrates")) should return [{}]
+if test1: add(("human","socrates"),("man","socrates"))
+if test1: print goal(("human","socrates")), "[{}]"
+
+# and goal(("mortal","socrates")) should return [{}]
+if test1: print goal(("mortal","socrates")), "[{}]"
+
+test2 = 0
+
+if test2: add(("man","socrates"))
+if test2: add(("man","plato"))
+if test2: print goal(("_X","socrates")),"[{'_X': 'man'}]"
+if test2: print goal(("_X","plato")),"[{'_X': 'man'}]"
+if test2: print goal(("man","_X")),"[{'_X': 'socrates'}, {'_X': 'plato'}]"
+if test2: print goal(("bird","_X")),"[]"
+
+if test2: add(("foo","bar","baz"))
+if test2: print goal(("foo","_X","_Y")), "[{'_X': 'bar', '_Y': 'baz'}]"
+
+test3 = 0
+
+if test3: add(("foo","bar"))
+if test3: add(("foo","foo"))
+if test3: print goal(("_X","_Y"))
+if test3: print goal(("_X","_X"))
+
+test4 = 1
+
+if test4: add(("fred","type","turtle"))
+if test4: add(("_X","num-legs","4"),("_X","type","turtle"))
+if test4: print goal(("fred","num-legs","_X"))
+
+# $Log$
+# Revision 1.3  2000/11/02 21:48:26  eikeon
+# removed old log messages
+#
 # Revision 1.2  2000/10/31 06:30:28  eikeon
 # removed ^M's
 #
 # Revision 1.1  2000/10/31 06:15:45  jtauber
 # initial attempt at prolog-like inference in python
-#
-
-
