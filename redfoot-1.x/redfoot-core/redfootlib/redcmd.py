@@ -123,7 +123,9 @@ class RedCmd(object, Cmd):
             print e
 
     def do_visit(self, arg):
-        """visit <subject> <predicate> (<object>|"object")"""
+        """\
+visit <subject>|ANY <predicate>|ANY (<object>|"object"|ANY)
+"""
         def print_triple(s, p, o):
             print s, p, o
         st = self.get_triple(arg)
@@ -147,7 +149,10 @@ class RedCmd(object, Cmd):
             print "error"
 
     def do_load(self, arg):
-        """load <location> <uri>"""
+        """\
+load <location> <uri>
+
+Load a new RDF file using uri as the base URI, creating the file if it does not exist."""
 
         print "loading",  arg
         # Load RDF data from location using uri as the base URI, creating a
@@ -158,7 +163,12 @@ class RedCmd(object, Cmd):
         self.context.rednode.load(location, uri, 1)
 
     def do_server(self, arg):
-        """server <address>:<port>"""
+        """\
+server <address>:<port>
+
+Start a server listening on address:port with no apps running on
+it. Use add_app to add apps to the server. Currently it is recommended
+that only one server be run."""
 
         if arg.find(":")==-1:
             print "usage: server <address>:<port>"
@@ -170,7 +180,11 @@ class RedCmd(object, Cmd):
         self.context.server.run(background=1)
 
     def do_redcode(self, arg):
-        """redcode on/off"""
+        """\
+redcode on
+
+Turn on redcode support so that app/modules written in redcode can
+work. """
 
         # TODO: check arg and uninstall... for now install reguardless
         
@@ -178,7 +192,11 @@ class RedCmd(object, Cmd):
         importer.install()
 
     def do_add_app(self, arg):
-        """add_app package_name.app_name"""
+        """\
+add_app package_name.app_name
+
+Adds app defined in package_name.app_name to previously running server. If a server has not yet been started then one is started on :9090"""
+        
         parts = arg.split(" ")
         if not len(parts)==1:
             print "usage: add_app package_name.app_name"
