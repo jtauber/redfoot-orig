@@ -71,7 +71,6 @@ def unique_date_time(t=None):
     return s
 
 def encode_as_single_line(message):
-    orig = message
     message = '\\\\'.join(message.split('\\'))
     message = '\\n'.join(message.split('\n'))
     return message

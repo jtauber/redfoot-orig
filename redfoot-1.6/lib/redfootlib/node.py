@@ -174,7 +174,7 @@ class ReverseProxy(object):
             self.handle_close()
         elif data[:3] == "ADD":
             from redfootlib.rdf.objects import n3
-            s, p, o = map(n3, data[4:].split(" ", 2))
+            s, p, o = map(lambda v: n3(decode(v)), data[4:].split(" ", 2))
             self.reverse_add(s, p, o)
         elif data[:5] == "VISIT":
             s, p, o = None, None, None
