@@ -166,17 +166,17 @@ class QueryStore:
 
     # should perhaps just autogenerate statement_uri
     def reify(self, statement_uri, subject, predicate, object):
-        self.add(statement_uri, TYPE, STATEMENT)
-        self.add(statement_uri, SUBJECT, subject)
-        self.add(statement_uri, PREDICATE, predicate)
-        self.add(statement_uri, OBJECT, object)
+        self.local.add(statement_uri, TYPE, STATEMENT)
+        self.local.add(statement_uri, SUBJECT, subject)
+        self.local.add(statement_uri, PREDICATE, predicate)
+        self.local.add(statement_uri, OBJECT, object)
 
     # TODO: not sure this makes sense to have - jkt
     def dereify(self, statement_uri):
         subject = self.get(statement, SUBJECT, None)[0][2]
         predicate = self.get(statement, PREDICATE, None)[0][2]
         object = self.get(statement, OBJECT, None)[0][2]
-        self.add(subject, predicate, object)
+        self.local.add(subject, predicate, object)
         #self.removeAll(statement)
 
     def getPossibleValues(self, property):
@@ -218,6 +218,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 4.17  2000/12/07 19:57:03  eikeon
+#~ changed getTypes to visitTypes and made argument order etc more consistent with others
+#~
 #~ Revision 4.16  2000/12/06 21:45:13  eikeon
 #~ refactored gets to visits in subClassV and resourcesByClassV
 #~
