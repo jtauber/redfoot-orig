@@ -28,7 +28,7 @@ Warning: Redfoot is only known to work on version of medusa supplied, namely, 0.
 For now, you are on your own updating your version of medusa if needed.
 """
 except:
-    run_setup("medusa")
+    run_setup("medusa-0.5.2-rf1")
 
 
 # TODO: would it make sense for this to be a setup.py script as well
