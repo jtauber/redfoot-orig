@@ -29,9 +29,13 @@ REDFOOT README
     Redfoot currently uses a custom HTTP server which is included
     in the standard distribution.
 
-TO SEE WHAT REDFOOT IS LIKE
+TO RUN SOMETHING STRAIGHT AWAY
 
-    See apps/README
+    cd apps; python run.py generic
+
+    and go to http://localhost:8000/ with your browser
+
+    See apps/README for more details
 
 DOCUMENTATION
 
