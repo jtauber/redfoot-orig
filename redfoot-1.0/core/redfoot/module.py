@@ -49,6 +49,13 @@ class Module:
             #print "first: '%s'  path: '%s'" % (first, path)            
             self.apply(first)
 
+    def handle_request(self, request, response):
+        processor = request.get_parameter('processor', None)
+        if processor:
+            module_instance = request.get_parameter('module_instance', None)
+            if not module_instance or module_instance==getattr(self, 'module_instance', None):
+                apply(getattr(self, processor, lambda :None), ())
+
     def create_rednode(self, uri=None, autosave=1):
         mod_class = self.__class__
         from redfoot.rednode import RedNode
@@ -60,7 +67,7 @@ class Module:
 
         mod_rednode.load(rdf, uri, 1)
 
-        return mod_rednode            
+        return mod_rednode
 
 
 class ParentModule(Module):
@@ -95,12 +102,7 @@ class ParentModule(Module):
                 self.apply_next(path)
 
     def handle_request(self, request, response):
-        processor = request.get_parameter('processor', None)
-        if processor:
-            module_instance = request.get_parameter('module_instance', None)
-            if not module_instance or module_instance==getattr(self, 'module_instance', None):
-                apply(getattr(self, processor, lambda :None), ())
-
+        Module.handle_request(self, request, response)
         for module in self.modules:
             if hasattr(module, 'handle_request'):
                 module.handle_request(request, response)
