@@ -23,7 +23,7 @@
 
     def set_rednode(self, rednode):
         self.rednode = rednode
-        self.viewer.rednode = rednode
+        self.viewer.set_rednode(rednode)
 
     def alpha_by_label(self, a, b):
         label_a = self.rednode.label(a)
