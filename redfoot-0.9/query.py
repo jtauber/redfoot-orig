@@ -193,7 +193,7 @@ class QueryStore:
         def possibleSubject(subject, property, value, resultset=resultset):
             resultset[subject] = 1
 
-        def rangeitem(s, p, o, self=self, qstore=self, callback=callback):
+        def rangeitem(s, p, o, self=self, qstore=self, possibleSubject=possibleSubject):
             for type in qstore.transitiveSubTypes(o):
                 qstore.visit(possibleSubject, None, QueryStore.TYPE, type)
 
@@ -202,6 +202,9 @@ class QueryStore:
         return resultset.keys()
 
 # $Log$
+# Revision 2.4  2000/10/16 18:49:05  eikeon
+# converted a number of store.get()s to store.visit()s
+#
 # Revision 2.3  2000/10/16 17:23:35  eikeon
 # reimplemented parentTypesV to use visit instead of get
 #
