@@ -74,12 +74,31 @@ def handle_request(self, request, response):
         self.getEditor().handle_request(request, response)
     else:
         self.page(request, response, self.content)
+        #self.page(globals(), locals())        
         
 
 
 <r:response name="/">
   <r:exec>self.page(request, response, getattr(self, 'rss'))</r:exec>
 </r:response>
+
+
+<!--
+<r:response name="/adsf">
+  <r:call name="page">
+    <r:arg name="header">
+      a response method.
+    </r:arg>
+    Stuff
+  </r:call>
+</r:response>
+
+<r:response name="/a">
+  <r:call name="page"/>
+    <r:call name="rss"/>
+  </r:call>
+</r:response>
+-->
 
 
 <r:response name="/robots.txt">
@@ -387,24 +406,6 @@ subject = "http://eikeon.com" + pathInfo
 
 </r:response>
 
-
-def chron(self, a, b):
-    date_a = self.rednode.getFirst(a[0], CREATED, None)
-    if date_a!=None:
-        date_a = un_literal(date_a[2])
-    else:
-        date_a = ''
-
-    date_b = self.rednode.getFirst(b[0], CREATED, None)
-    if date_b!=None:
-        date_b = un_literal(date_b[2])
-    else:
-        date_b = ''
-
-    return cmp(date_a, date_b)
-
-def reverse_chron(self, a, b):
-    return -1*self.chron(a, b)
 
 
 def get_property_value(self, subject, predicate, default="", resource=0):

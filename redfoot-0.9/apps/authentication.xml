@@ -32,6 +32,8 @@ EIKEON = "http://eikeon.com/2001/03/25/T22/11/11Z"
 
 
 class Session:
+    def __init__(self, rednode):
+        print "location: '%s'" % self.rednode.local.location
 
     def handle_request(self, request, response):
         rednode = self.rednode
@@ -197,6 +199,7 @@ class Session:
 <r:class name="Authentication" bases="Session">
 
 def __init__(self, rednode):
+    Session.__init__(self, rednode)
     self.logger = Logger()
 
 def handle_request_init(self, request, response):
@@ -225,7 +228,7 @@ def people(self, request, response):
         self.subclass(request, response, PERSON, self.personRow)
 
 
-<r:response name="sessions">
+<r:response name="/sessions">
   <DL class="content_area">
 <r:exec>
 triples = self.rednode.get(None, TYPE, SESSION)
@@ -398,6 +401,24 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
     </FORM>
   </DIV>
 </r:response>
+
+def chron(self, a, b):
+    date_a = self.rednode.getFirst(a[0], CREATED, None)
+    if date_a!=None:
+        date_a = un_literal(date_a[2])
+    else:
+        date_a = ''
+
+    date_b = self.rednode.getFirst(b[0], CREATED, None)
+    if date_b!=None:
+        date_b = un_literal(date_b[2])
+    else:
+        date_b = ''
+
+    return cmp(date_a, date_b)
+
+def reverse_chron(self, a, b):
+    return -1*self.chron(a, b)
 
 </r:class>
 
