@@ -1,0 +1,22 @@
+2001/09/04
+	RELEASE 0.9.99-pre3
+
+	Illegal URIs now give error messages in neighbour connect.
+	
+	Set body colour / background in CSS for generic module and doc.
+
+	authentication method now returns true when user is logged in.
+
+
+2001/08/28
+	RELEASE 0.9.99-pre2
+
+	Better handling in Editor when a property is of an unknown range
+	or the given value is not known to be in range.
+
+
+2001/08/21
+	RELEASE 0.9.99-pre1
+
+	Neighbour connect now reports error message feedback to the right
+	of the connect remove buttons.

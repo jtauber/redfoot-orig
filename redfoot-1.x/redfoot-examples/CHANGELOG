@@ -1,0 +1,6 @@
+2001/09/04
+	RELEASE 0.9.99-pre3
+
+	rss_test app now knows about RDF file on redfoot.sourceforge.net
+	that lists sample RSS feeds to connect to.
+

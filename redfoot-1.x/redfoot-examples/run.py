@@ -1,3 +1,6 @@
+import sys
+sys.path.extend(("../redfoot-core", "../redfoot-components"))
+
 # 
 from redfoot.rednode import RedNode
 

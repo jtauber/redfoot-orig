@@ -1,9 +1,16 @@
 2002/04/11
 	RELEASE 1.5.0
 
-	RedDaemon now calls stop on the app when it is stopped. It used to
-	call save on the app's rednode, but an app may want to do other
-	things as well.
+	Replaced Redfoot's own HTTP server code with Medusa.
 
+	Changed directory structure to make division between core,
+	components, doc and examples more pronounced.
+
+	Added setup.py scripts to the various.
+
+	Cleaned up interface for getting a Rednode up and runing, as well
+	as command line options.
+
+	Removed auto reloading of python and redcode modules.
 
 	

@@ -1,0 +1,18 @@
+2001/09/04
+	RELEASE 0.9.99-pre3
+
+	Added contributed tutorial from David H. Jones.
+
+
+2001/08/28
+	RELEASE 0.9.99-pre2
+
+	Tutorial on writing modules included.
+
+	Documentation now describes how to configure proxy support.
+
+	Documented known issues relating to:
+	  - lack of threads in cygwin python distribution
+	  - Mac OS X hostname needing to be 127.0.0.1 rather than
+	    localhost
+	  - character encoding issues in POP example
