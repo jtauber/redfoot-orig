@@ -1,7 +1,5 @@
 # redcmd.py
 
-import dev_hack
-
 from cmd import Cmd
 from sys import exit
 from redfootlib.rdf.objects import resource, literal
@@ -72,7 +70,14 @@ class RedCmd(object, Cmd):
     def do_quit(self, arg):
         """Quit the Redfoot Command Line"""
         print "Saving rednode..."
-        self.context.rednode.save()
+        rednode = self.context.rednode
+        try:
+            self.context.rednode.save()
+        except:
+            print "Got the following exception while trying to save:"
+            from traceback import print_exc
+            print_exc()
+            
         print "done."
         print "Bye"
         exit(1)
