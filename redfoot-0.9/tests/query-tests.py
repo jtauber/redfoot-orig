@@ -4,7 +4,7 @@ from redfoot.parser import *
 from redfoot.store import *
 from redfoot.query import *
 
-store = RDFStore()
+store = TripleStore()
 
 parser = pyexpat.ParserCreate(namespace_separator="")
 parser.SetBase("http://www.w3.org/1999/02/22-rdf-syntax-ns")

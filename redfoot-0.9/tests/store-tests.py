@@ -22,7 +22,7 @@ def test_1():
     url = "rdfSchema.rdf"
     uri = url
 
-    store = RDFStore()
+    store = TripleStore()
 
     parser = RDFParser(uri, url, store.add)
 #    parser = RDFParser()

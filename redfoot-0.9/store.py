@@ -1,4 +1,4 @@
-class RDFStore:
+class TripleStore:
 
     def __init__(self):
 	# indexed by [subject][property][value]
