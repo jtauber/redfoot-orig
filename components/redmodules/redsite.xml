@@ -49,7 +49,7 @@
         return cmp(str(label_a), str(label_b))
         
 
-    <red:facet name="/">
+    <red:facet name="/" args="uri=None">
       <red:exec>
         parts = split(self.app.request.get_path_info(), '/')
         depth = len(parts)-2
@@ -130,7 +130,29 @@
               </tr>
             </table>  
           </form>
-          <red:exec>self._menu()</red:exec>
+
+      <!-- menu -->
+      <red:if test="self.authentication.authenticated()">
+          <red:exec>self._body(uri)</red:exec>                                
+        <red:else>
+          <red:exec>view = self.app.request.get_parameter('view', None)</red:exec>
+          <red:if test="view=='login'">
+            <h1>User</h1>
+            <red:eval>self.login()</red:eval>
+
+           <red:elif test="view=='create'">
+              <h1>User</h1>           
+              <red:eval>self.create()</red:eval>
+           </red:elif>
+           
+           <red:else>
+             <red:exec>self._body(uri)</red:exec>
+           </red:else>          
+          </red:if>
+
+        </red:else>
+      </red:if>
+
           
           <hr/>
             <div style="font-size: 8pt; text-align: center;">
@@ -229,32 +251,9 @@ A:hover {
     </red:facet>
 
 
-    <red:facet name="_menu">
-      <red:if test="self.authentication.authenticated()">
-          <red:exec>self._body()</red:exec>                                
-        <red:else>
-          <red:exec>view = self.app.request.get_parameter('view', None)</red:exec>
-          <red:if test="view=='login'">
-            <h1>User</h1>
-            <red:eval>self.login()</red:eval>
-
-           <red:elif test="view=='create'">
-              <h1>User</h1>           
-              <red:eval>self.create()</red:eval>
-           </red:elif>
-           
-           <red:else>
-             <red:exec>self._body()</red:exec>
-           </red:else>          
-          </red:if>
-
-        </red:else>
-      </red:if>
-    </red:facet>
-
-    <red:facet name="_body">
+    <red:facet name="_body" args="uri=None">
     <red:exec>
-      uri = resource(self.app.request.get_parameter('uri', None))
+      uri = uri or resource(self.app.request.get_parameter('uri', None))
       uri = uri or resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
     </red:exec>
       <h1>
