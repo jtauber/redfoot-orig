@@ -2,7 +2,7 @@ import string, sys, getopt, os
 
 def usage():
     print """\
-USAGE: run.py <options> <module name>
+USAGE: run.py <options> <app name>
 
     options:
            [-h,--hostname <host name>]
