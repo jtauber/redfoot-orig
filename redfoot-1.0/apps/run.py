@@ -5,7 +5,7 @@ def usage():
 import string, sys, getopt
 
 import os
-dir = "../" + os.sep
+dir = ".." + os.sep
 sys.path.extend((dir + "core", dir + "components"))
 
 # set default value
