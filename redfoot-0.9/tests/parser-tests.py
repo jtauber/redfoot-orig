@@ -9,14 +9,14 @@ def add(subject, predicate, object):
 
 def test(rdf):
     parser = pyexpat.ParserCreate(namespace_separator="")
-    rootHandler(parser, add, None)
+    RootHandler(parser, add, None)
     parser.Parse(rdf)
 
 def testFile(filename, baseURI=None):
     parser = pyexpat.ParserCreate(namespace_separator="")
     if baseURI!=None:
         parser.SetBase(baseURI)
-    rootHandler(parser, None)
+    RootHandler(parser, None)
     f = open(filename)
     parser.ParseFile(f)
     f.close()
