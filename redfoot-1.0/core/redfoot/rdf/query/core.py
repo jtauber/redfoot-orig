@@ -9,6 +9,9 @@ class Query:
         self.visit(first(s.accept), (subject, predicate, object))
         return (s.statement != None)
 
+    def not_exists(self, subject, predicate, object):
+        return not self.exists(subject, predicate, object)
+
     def get_first(self, subject, predicate, object):
         s = StatementBuilder()
         self.visit(first(s.accept), (subject, predicate, object))

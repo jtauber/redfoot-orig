@@ -1,6 +1,6 @@
 
-def s(func):
-    return lambda s, p, o, func=func: func(s)
+def s(func, *args):
+    return lambda s, p, o, func=func, args=args: apply(func, (s,) + args)
 
 def o(func):
     return lambda s, p, o, func=func: func(o)
@@ -19,12 +19,6 @@ def first(func):
 
 def filter(callback, condition):
     return lambda s, p, o, callback=callback, condition=condition: condition(s, p, o) and callback(s, p, o)
-
-def subject(func, *args):
-    return lambda s, p, o, func=func, args=args: apply(func, (s,) + args)
-
-def not_subject(func, *args):
-    return lambda s, p, o, func=func, args=args: not apply(func, (s,) + args)
 
 # TODO what to call this?
 def callback_subject(func, callback, *args):

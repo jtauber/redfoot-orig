@@ -13,10 +13,10 @@ class SchemaQuery(Query):
         return self.exists(res, TYPE, type)
 
     def visit_typeless_resources(self, callback):
-        self.visit_subjects(filter(s(callback), not_subject(self.exists, TYPE, None)))
+        self.visit_subjects(filter(s(callback), s(self.not_exists, TYPE, None)))
 
     def visit_by_type(self, callback, type, predicate, object):
-        self.visit(filter(callback, subject(self.is_of_type, type)), (None, predicate, object))
+        self.visit(filter(callback, s(self.is_of_type, type)), (None, predicate, object))
 
     # TODO: method to return all labels
     def label(self, subject, default=None):
@@ -48,7 +48,7 @@ class SchemaQuery(Query):
             return self.label(subject)
 
     def visit_root_classes(self, callback):
-        self.visit(filter(callback, not_subject(self.exists, SUBCLASSOF, None)), (None, TYPE, CLASS))
+        self.visit(filter(callback, s(self.not_exists, SUBCLASSOF, None)), (None, TYPE, CLASS))
 
     def visit_parent_types(self, callback, type):
         self.visit(callback, (type, SUBCLASSOF, None))
