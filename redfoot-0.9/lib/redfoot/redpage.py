@@ -10,6 +10,7 @@ RF_CLASS = RF_NS+u"class"
 RF_MODULE = RF_NS+u"module"
 RF_LOAD_MODULE = RF_NS+u"load-module"
 RF_EXEC = RF_NS+u"exec"
+RF_CALL = RF_NS+u"call"
 RF_EVAL = RF_NS+u"eval"
 RF_RESPONSE = RF_NS+u"response"
 
@@ -68,6 +69,12 @@ class HandlerBase:
     
     def end(self, name):
         self.parent.set_handlers()
+
+
+class IgnoreHandler(HandlerBase):
+    def child(self, name, atts):
+        print "Ignoring '%s'" % name
+        IgnoreHandler(self.parser, self.adder, self)
 
 
 class Root_Handler(HandlerBase):
@@ -205,7 +212,34 @@ class RF_EXEC_Handler(RF_EVAL_Handler):
         
     def kind(self):
         return "exec"
+
+
+class RF_CALL_Handler(HandlerBase):
+    def __init__(self, parser, parent):
+        HandlerBase.__init__(self, parser, parent)
+        self.locals = self.parent.locals
+        self.globals = self.parent.globals
+        self.codestr = u""
+        self.element = EvalNode()
+
+        
+        
+    def child(self, name, atts):
+        IgnoreHandler(self.parser, self)
     
+    def char(self, data):
+        self.codestr = self.codestr + data
+
+    def end(self, name):
+        HandlerBase.end(self, name)
+        self.codestr = "apply(getattr(self, '%s'), (request, response))" % self.func_name.encode('ascii')
+        #code = __builtin__.compile(self.codestr, "<string>", self.kind())
+        code = __builtin__.compile(self.codestr, self.codestr, self.kind())
+        self.element.code = code
+
+    def kind(self):
+        return "exec"
+
 
 def parse_attribute(str):
     open = string.find(str, '{')
@@ -240,6 +274,9 @@ class RF_Element(HandlerBase):
             h = RF_EVAL_Handler(self.parser, self)
         elif name==RF_EXEC:
             h = RF_EXEC_Handler(self.parser, self)
+        elif name==RF_CALL: # TODO: move to RF_RESPONSE
+            h = RF_CALL_Handler(self.parser, self)
+            h.func_name = atts['name']
         elif name==RF_IF:
             h = RF_If_Handler(self.parser, self, name, atts)
         elif name==RF_FOR:
@@ -400,6 +437,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.4  2001/04/11 16:06:17  jtauber
+#~ changed bases attr to take whitespace-delimited list; added load-module element
+#~
 #~ Revision 7.3  2001/04/09 22:29:26  eikeon
 #~ change <string>'s to the actual string... TODO: may want to change this back?
 #~
