@@ -43,18 +43,18 @@ class StoreIO:
 
         s.start()
         
-        resources = queryStore.getResources()
-        resources.sort() 
+        subjects = queryStore.getSubjects()
+        subjects.sort() 
 
-        for resource in resources:
-            s.subjectStart(resource)
+        for subject in subjects:
+            s.subjectStart(subject)
 
-            properties = queryStore.getProperties(resource)
+            properties = queryStore.getProperties(subject)
             properties.sort()
             
             for property in properties:
 
-                values = queryStore.getValues(resource, property)
+                values = queryStore.getValues(subject, property)
                 values.sort()
                 
                 for value in values:

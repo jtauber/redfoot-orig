@@ -51,7 +51,7 @@ class QueryStore:
                 return 1
         return 0
 
-    def getResources(self):
+    def getSubjects(self):
         result = {}
         for s in self.store.get(None, None, None):
             result[s[0]] = 1
