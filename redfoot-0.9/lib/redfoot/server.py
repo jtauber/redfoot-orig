@@ -11,22 +11,6 @@ import sys
 import string
 
 
-class RedfootHandler:
-
-    def __init__(self):
-        import threading
-        self.lock = threading.Lock()
-        self.viewer = None
-
-    def handleRequest(self, request, response):
-        self.lock.acquire()
-        try:
-            viewer = self.viewer
-            viewer.handleRequest(request, response)
-        finally:
-            self.lock.release()            
-
-
 class RedServer:
     def runServer(self, args):
         # set default values
@@ -163,6 +147,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.11  2000/12/06 23:26:55  eikeon
+#~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
+#~
 #~ Revision 4.10  2000/12/05 03:36:56  eikeon
 #~ reordered classes; renamed StoreNode to RedNode
 #~
