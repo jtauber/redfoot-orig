@@ -104,7 +104,7 @@ VIA = resource(SESSION_URI+"via")
 
     
     def stop(self):
-        print "saving sessions"
+        print "saving %s" % self.sessions.local.location
         self.sessions.local.save()
 
     def handle_request(self, request, response):
