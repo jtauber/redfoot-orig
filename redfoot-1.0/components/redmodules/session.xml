@@ -1,5 +1,12 @@
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
+<!--
+
+    *** Not finished or tested yet... use accordingly ***
+
+  -->
+
+
 from redfoot.rdf.const import LABEL, TYPE
 from redfoot.rdf.objects import resource, literal
 from redfoot.rdf.store.urigen import generate_uri
@@ -7,12 +14,14 @@ from redfoot.util import encode_URI, date_time
 from redfoot.rdf.store.urigen import generate_uri
 from redfoot.rdf.query.functors import first, o
 
-SESSION = resource("http://eikeon.com/2001/03/27/T17/18/48Z")
-CREATED = resource("http://eikeon.com/2000/11/2001/03/25/T00/34/45Z")
-USER_AGENT = resource("http://eikeon.com/2001/03/28/T03/32/22Z")
-REFERER = resource("http://eikeon.com/2001/03/28/T03/34/20Z")
-HOST = resource("http://eikeon.com/2001/03/28/T04/49/29Z")
-VIA = resource("http://eikeon.com/2001/03/28/T04/50/05Z")
+SESSION_URI = "http://redfoot.sourceforge.net/2001/08/SESSION/"
+
+SESSION = resource(SESSION_URI+"session")
+CREATED = resource(SESSION_URI+"created")
+USER_AGENT = resource(SESSION_URI+"userAgent")
+REFERER = resource(SESSION_URI+"referer")
+HOST = resource(SESSION_URI+"host")
+VIA = resource(SESSION_URI+"via")
 
   <red:module name="Session">
 

@@ -1,5 +1,11 @@
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
+<!--
+
+    *** Not finished or tested yet... use accordingly ***
+
+  -->
+
   from redfoot.rdf.const import TYPE
   from redfoot.rdf.objects import resource, literal
   from redfoot.util import date_time  
@@ -10,12 +16,13 @@
 
   from md5 import md5  
 
-  IDENTITY = resource("http://eikeon.com/2001/03/27/T17/20/03Z")
+  AUTH_URI = "http://redfoot.sourceforge.net/2001/08/AUTH/"
+  IDENTITY = resource(AUTH_URI + "identity")
 
-  USERNAME = resource("http://eikeon.com/2001/08/03-username")
-  MD5_HEX_DIGEST = resource("http://eikeon.com/2000/11/2001/03/24/T04/56/06Z")
-  PERSON = resource("http://redfoot.sourceforge.net/2000/10/#Person")
-  CREATED = resource("http://eikeon.com/2000/11/2001/03/25/T00/34/45Z")
+  USERNAME = resource(AUTH_URI + "username")
+  MD5_HEX_DIGEST = resource(AUTH_URI + "md5_hex_digest")
+  PERSON = resource(AUTH_URI + "person")
+  CREATED = resource(AUTH_URI + "created")
   
   <red:module name="Authentication">
 
@@ -60,8 +67,8 @@
         password = self.app.request.get_parameter('password')        
         s = self.session.sessions.local.get_first(None, USERNAME, literal(username))
         if s:
-            md5_hex_digest = self.app.rednode.local.get_first_value(s.subject, MD5_HEX_DIGEST, None)
-            print "MD5", md5_hex_digest, s.subject
+            md5_hex_digest = self.session.sessions.local.get_first_value(s.subject, MD5_HEX_DIGEST, None)
+
             if md5_hex_digest and md5(password).hexdigest()==md5_hex_digest.value:
                 self.set_identity(s.subject)
                 self.set_status('Welcome, %s' % username)
@@ -85,7 +92,6 @@
                 uri = resource(self.session.sessions.URI + generate_uri())
                 self.session.sessions.add(uri, TYPE, PERSON)
                 self.session.sessions.add(uri, MD5_HEX_DIGEST, literal(md5_hex_digest))
-                print "Create", uri, literal(md5_hex_digest)
                 self.session.sessions.add(uri, USERNAME, literal(username))
                 time = date_time()
                 self.app.rednode.add(uri, CREATED, literal(time))
