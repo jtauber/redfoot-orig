@@ -63,8 +63,6 @@ class Editor(Viewer):
     def edit(self, subject, type):
         if subject==None or subject=="":
             subject = self.storeNode.local.URI + self.generateURI()
-        elif subject[0]=="#":
-            subject = self.storeNode.local.URI + subject
         if type!=None and type!="":
             self.storeNode.local.add(subject, TYPE, type)
 
@@ -329,6 +327,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.15  2000/12/21 01:50:12  jtauber
+#~ edit can now take type; add just asks for URI; new menu names
+#~
 #~ Revision 5.14  2000/12/21 01:11:52  jtauber
 #~ calling edit with no subject, autogenerates a URI
 #~
