@@ -67,7 +67,7 @@
             o = self.app.rednode.neighbourhood.get_first_value(subject, DC_DATE, '')
 
             try:
-                parts = o.value.split('-')
+                parts = o.split('-')
                 year, month, day, hh, mm, ss, wd, y, z = (int(parts[0]), int(parts[1]), int(parts[2]), 0, 0, 0, 0, 0, 0)
                 t = ( year, month, day, hh, mm, ss, wd, y, z)
                 date = strftime(" %B %d, %Y", t)                
