@@ -8,7 +8,6 @@ from redfootlib.server import RedServer
 from redfootlib.version import VERSION
 from new import module
 
-from redfootlib.node import NodeStore, Node
 
 class RedCmd(object, Cmd):
     """
@@ -29,7 +28,7 @@ class RedCmd(object, Cmd):
 
         # Create a Redstore        
         self.context.redstore = RedStore()
-        self.context.node_store = None
+        self.context.redstore.context = self.context # TODO: !
 
         self.context.server = None
         
@@ -100,10 +99,6 @@ Quit, saving if possible.
         redstore = self.context.redstore
         try:
             self.context.redstore.save()
-            if self.context.node_store:
-                print "Saving node_store..."
-                self.context.node_store.node.save()
-                print "done."
         except:
             print "Got the following exception while trying to save:"
             from traceback import print_exc
@@ -177,8 +172,8 @@ Examples:
 prefix p:<uri> or prefix :<uri>
 
 Examples:
-  prefix rdf:http://www.w3.org/1999/02/22-rdf-syntax-ns#
-  prefix rdfs:http://www.w3.org/TR/WD-rdf-schema#
+  prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  prefix rdfs:<http://www.w3.org/TR/WD-rdf-schema#>
 
   Then rdf:label can be used as an abbreviation for <http://www.w3.org/1999/02/22-rdf-syntax-ns#label>
 """
@@ -273,30 +268,32 @@ Adds app defined in package_name.app_name to previously running server. If a ser
 
         self.context.server.add_app(app)
     
-    def do_start_node(self, arg):
-        """start_node [NYI: filename uri]"""
-        filename = "node.rdf"
-        uri = "http://redfoot.net/2002/05/11/"
-        node_store = NodeStore(Node())
-        node_store.node.load(filename, uri, 1)
-        self.context.node_store = node_store
-        self.context.redstore.neighbours.add_store(node_store)
-
-        def make_statement(context_uri):
-            return lambda s, p, o: node_store.node.make_statement(resource(context_uri), s, p, o)
-        self.context.make_statement = make_statement
 
     def do_listen_on(self, arg):
         """listen_on address:port"""
 
         (address, port) = arg.split(":", 1)
 
-        self.context.node_store.node.listen_on(address, int(port))
+        self.context.redstore.node.listen_on(address, int(port))
 
     def do_call(self, arg):
         """call address:port"""
             
         (address, port) = arg.split(":", 1)
 
-        self.context.node_store.node.call(address, int(port))
+        self.context.redstore.node.call(address, int(port))
 
+    def do_chump_bot(self, arg):
+        (channel, nickname, addr) = arg.split(" ", 2)
+        from redfootlib.redchumpbot import RedChumpBot
+        redstore = self.context.redstore        
+        if ":" in addr:
+            server, port = addr.split(":", 1)
+            bot = RedChumpBot(redstore, channel, nickname, server, port)
+        else:
+            server = addr
+            bot = RedChumpBot(redstore, channel, nickname, server)
+            import threading
+        t = threading.Thread(target = bot.start, args = ())
+        t.setDaemon(1)
+        t.start()
