@@ -25,6 +25,14 @@ class StoreIO:
         self.saveAs(self.location, self.URI)
 
     def saveAs(self, location, URI):
+        try:
+            stream = open(location, 'w')
+            self.output(stream, URI)
+            stream.close()
+        except IOError:
+            print IOError
+
+    def output(self, stream, URI):
         
         from redfoot.query import QueryStore
         queryStore = QueryStore()
@@ -32,11 +40,6 @@ class StoreIO:
         
         from redfoot.serializer import Serializer
         s = Serializer()
-
-        try:
-            stream = open(location, 'w')
-        except IOError:
-            print IOError
 
         s.setStream(stream)
         s.setBase(URI)
@@ -68,5 +71,3 @@ class StoreIO:
             s.subjectEnd()
         
         s.end()
-
-        stream.close()
