@@ -53,8 +53,16 @@ def process_args():
             arg = arg[:-4]
         elif len(arg)>3 and arg[-3:] == ".py":
             arg = arg[:-3]
-        __import__(arg)
-    
+        try:
+            __import__(arg)
+        except ImportError:
+            print """
+Error: Could not import '%s'
+
+  %s %s --help for command line options
+
+""" % (arg, sys.executable, sys.argv[0])
+            sys.exit(-1)
     return (uri, rdf, address, port)
 
 
