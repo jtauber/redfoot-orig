@@ -3,14 +3,16 @@
 from cmd import Cmd
 from sys import exit
 from redfootlib.rdf.objects import resource, literal
-from redfootlib.rednode import RedNode
+from redfootlib.rednode import RedNode as RedStore
 from redfootlib.server import RedServer
 from redfootlib.version import VERSION
 from new import module
 
+from redfootlib.node import NodeStore, Node
+
 class RedCmd(object, Cmd):
     """
-    Console for manipulating a Rednode
+    Console for manipulating a Redstore
     """
 
     intro = "Redfoot %s Console" % VERSION
@@ -25,10 +27,12 @@ class RedCmd(object, Cmd):
         self.context.prefix_map = {}
         self.context.default_uri = None
 
-        # Create a RedNode        
-        self.context.rednode = RedNode()
+        # Create a Redstore        
+        self.context.redstore = RedStore()
+        self.context.node_store = None
 
         self.context.server = None
+        
         self.is_looping = 0
 
     def __exec(self, code):
@@ -92,10 +96,14 @@ Quit the Redfoot Command Line
 
 Quit, saving if possible.
 """
-        print "Saving rednode..."
-        rednode = self.context.rednode
+        print "Saving redstore..."
+        redstore = self.context.redstore
         try:
-            self.context.rednode.save()
+            self.context.redstore.save()
+            if self.context.node_store:
+                print "Saving node_store..."
+                self.context.node_store.node.save()
+                print "done."
         except:
             print "Got the following exception while trying to save:"
             from traceback import print_exc
@@ -114,7 +122,7 @@ Example:  add <http://redfoot.sourceforge.net/> rdfs:label "Redfoot homepage" wh
 """
         st = self.get_triple(arg)
         if st:
-            self.context.rednode.add(st[0], st[1], st[2])
+            self.context.redstore.add(st[0], st[1], st[2])
             print "added", st
         else:
             print "error: see 'help add'"
@@ -123,7 +131,7 @@ Example:  add <http://redfoot.sourceforge.net/> rdfs:label "Redfoot homepage" wh
         """remove <subject> <predicate> (<object>|"object")"""
         st = self.get_triple(arg)
         if st:
-            self.context.rednode.remove(st[0], st[1], st[2])
+            self.context.redstore.remove(st[0], st[1], st[2])
             print "removed", st
         else:
             print "error"
@@ -148,7 +156,10 @@ Examples:
 
         parts = arg.split(" ")
         if len(parts)>3:
-            callback = getattr(self.context, parts[0], None)
+            codestr = parts[0]
+            #callback = getattr(self.context, parts[0], None)
+            locals = globals = self.context.__dict__
+            callback = eval(codestr, globals, locals)
             if not callback:
                 print "callback '%s' not found... using print_triple" % parts[0]
                 callback = print_triple
@@ -157,7 +168,7 @@ Examples:
             callback = print_triple
         st = self.get_triple(arg)
         if st:
-            self.context.rednode.visit(callback, st)
+            self.context.redstore.visit(callback, st)
         else:
             print "error"
 
@@ -203,7 +214,7 @@ Load a new RDF file using uri as the base URI, creating the file if it does not 
         # @@@ do we need to make sure we only do this once?
         location, uri = arg.split()
             
-        self.context.rednode.load(location, uri, 1)
+        self.context.redstore.load(location, uri, 1)
 
     def do_server(self, arg):
         """\
@@ -254,7 +265,7 @@ Adds app defined in package_name.app_name to previously running server. If a ser
         else:
             print "usage: add_app package_name.app_name"
 
-        app = AppClass(self.context.rednode)
+        app = AppClass(self.context.redstore)
 
         if not self.context.server:
             self.context.server = RedServer('', 9090)
@@ -263,64 +274,41 @@ Adds app defined in package_name.app_name to previously running server. If a ser
         self.context.server.add_app(app)
     
     def do_start_node(self, arg):
-        """start_node uid address:port"""
-            
-        (uid, addr)= arg.split(" ", 1)
+        """start_node [NYI: filename uri]"""
+        filename = "node.rdf"
+        uri = "http://redfoot.net/2002/05/11/"
+        node_store = NodeStore(Node())
+        node_store.node.load(filename, uri, 1)
+        self.context.node_store = node_store
+        self.context.redstore.neighbours.add_store(node_store)
+
+        def make_statement(context_uri):
+            return lambda s, p, o: node_store.node.make_statement(resource(context_uri), s, p, o)
+        self.context.make_statement = make_statement
+
+    def do_listen_on(self, arg):
+        """listen_on address:port name"""
+
+        (addr, name) = arg.split(" ", 1)
         (address, port) = addr.split(":", 1)
 
-        from redfootlib.p2p import Node, Cache
+        self.context.node_store.node.listen_on(address, int(port))
 
-        class CacheNode(Cache, Node, Cmd):
-            message_uid = uid
-            message_id = 0
+    def do_call(self, arg):
+        """call address:port uid"""
             
-            def default(self, line):
-                print line
-                    
-            def do_add(self, arg):
-                self.redcmd.do_add(arg)
-        
-            def message(self, to, frm, message_id, message):
-                self.onecmd(message)
-                super(CacheNode, self).message(to, frm, message_id, message)
+        (addr, name) = arg.split(" ", 1)
+        (address, port) = addr.split(":", 1)
 
-            def get_message_id(self):
-                CacheNode.message_id += 1
-                return "%s-%s" % (CacheNode.message_uid, CacheNode.message_id)
-
-        node =  CacheNode()
-        node.redcmd = self
-        #node.listen_on(("", int(port)))
-        self.context.node = node
-
-        if not self.is_looping:
-            import asyncore
-            import threading
-            t = threading.Thread(target = asyncore.loop, args = (1.0,))
-            t.setDaemon(1)
-            t.start()
-
-            import time
-            time.sleep(1)
-        
+        self.context.node_store.node.call(address, int(port))
 
     def do_tell(self, arg):
         """tell uid message"""
         (to, message) = arg.split(" ", 1)
-        node = self.context.node
-        frm = "me"
-        message_id = node.get_message_id()
-        node.tell(to, frm, message_id, message)
-
-    def do_run(self, arg):
-        if not self.is_looping:
-            import asyncore
-            import threading
-            t = threading.Thread(target = asyncore.loop, args = (1.0,))
-            t.setDaemon(1)
-            t.start()
-
-            import time
-            time.sleep(1)
         
+        redstore = self.context.redstore
+        redstore.tell(to, message)
 
+    def do_who(self, arg):
+        redstore = self.context.redstore
+        print redstore.who()
