@@ -4,7 +4,7 @@ import dev_hack
 
 from cmd import Cmd
 from sys import exit
-from redfoot.rdf.objects import resource, literal
+from redfootlib.rdf.objects import resource, literal
 
 
 class RedCmd(object, Cmd):
@@ -110,7 +110,7 @@ class RedCmd(object, Cmd):
         else:
             print "error"
 
-from redfoot.rdf.store.triple import TripleStore
+from redfootlib.rdf.store.triple import TripleStore
 
 class RedCmdStore(RedCmd, TripleStore): pass
 
