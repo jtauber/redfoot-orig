@@ -8,6 +8,7 @@ from redfoot.editor import PeerEditor
 from rdf.const import *
 
 import sys
+import string
 
 if __name__ == '__main__':
     from redfoot.server import RedServer
