@@ -445,6 +445,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 3.4  2000/11/03 23:04:08  eikeon
+# Added support for cookies and sessions; prefixed a number of methods and variables with _ to indicate they are private; changed a number of methods to mixed case for consistency; added a setHeader method on response -- headers where hardcoded before; replaced writer with response as writer predates and is redundant with repsonse; Added authentication to editor
+#
 # Revision 3.3  2000/11/02 21:00:56  eikeon
 # fixed bug that was causing problems when trying to save when on the edit page
 #
@@ -456,32 +459,3 @@ class PeerEditor(Editor):
 #
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0
-#
-# Revision 1.2  2000/10/26 19:41:54  eikeon
-# finished suppport for add(type)
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.6  2000/10/16 18:49:05  eikeon
-# converted a number of store.get()s to store.visit()s
-#
-# Revision 2.5  2000/10/16 05:27:17  jtauber
-# gave menu bars labels and clarified some of the items
-#
-# Revision 2.4  2000/10/16 05:02:28  jtauber
-# refactored menu bar to remove duplication between different UIs
-#
-# Revision 2.3  2000/10/16 04:49:57  jtauber
-# fixed bug where Editor's handler was incorrectly calling the handler on its superclass Viewer
-#
-# Revision 2.2  2000/10/16 04:10:07  jtauber
-# refactored editor-specific http handling code from viewer to editor
-#
-# Revision 2.1  2000/10/16 04:01:23  jtauber
-# (finally) added $ and $ to Editor
-#
-
-
-
-
