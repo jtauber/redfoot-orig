@@ -16,9 +16,11 @@ def run_setup(dir_name):
     os.system("%s setup.py install %s" % (python, args))
     os.chdir(dot)
 
-
-run_setup("redfoot-core")
-run_setup("redfoot-components")
+# Since 1.5.x is a development series we are going to use import
+# dev_hack to find redfootlib etc instead of installing them. As
+# setup.py does not have functionality to un-install... etc.
+#run_setup("redfoot-core")
+#run_setup("redfoot-components")
 
 try:
     import medusa
