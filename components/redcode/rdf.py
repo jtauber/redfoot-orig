@@ -17,10 +17,10 @@ class RDFRedcodeRootHandler(HandlerBase):
         HandlerBase.__init__(self, parser, None)
         self.name = name
         from redfoot.rednode import RedNode
-        self.rednode = RedNode()
+        uri = 'tmp'
+        self.rednode = RedNode(uri)
         self.rednode.local.location = "TODOtmplocation"
-        self.rednode.local.URI = "TODOtmpuri"
-        self.rednode.uri = "TODOtmpuri"                
+        self.rednode.local.uri = uri
         self.globals = {'adder': self.rednode.local.add_statement}
 
     def child(self, name, atts):
@@ -30,7 +30,7 @@ class RDFRedcodeRootHandler(HandlerBase):
             app_class = RDFApp
 
             module = new.module(self.name)
-            module.__dict__['_RF_get_app'] = lambda URI, app_class=app_class: app_class(self.rednode)
+            module.__dict__['_RF_get_app'] = lambda uri, app_class=app_class: app_class(self.rednode)
             self.module = module
         else:
             raise "Did not find expected element '%s'" % RDF_ELEMENT

@@ -69,8 +69,8 @@ builtin.load(to_relative_URL("rdf_files/builtin.rdf"), "http://redfoot.sourcefor
 
 class RedNode(SchemaQuery):
 
-    def __init__(self, autosave=1):
-        self.URI = "??"
+    def __init__(self, uri, autosave=1):
+        self.uri = uri
         if autosave:
             self.local = AutoSaveLocal() # local only
         else:
@@ -78,19 +78,18 @@ class RedNode(SchemaQuery):
         self.neighbours = MultiStore() # neighbours only
 
         self.neighbourhood = MultiStore() # neighbourhood = local + neighbours
+
         # local should be the first store as they are visited in order
         self.neighbourhood.add_store(self.local) 
         self.neighbourhood.add_store(self.neighbours)
 
-        # TODO: we need to reuse the same triple stores for the
-        # following instead of loading a new copy of each for ever
-        # RedNode
         self.neighbours.add_store(schema)
         self.neighbours.add_store(syntax)
         self.neighbours.add_store(builtin)
 
 
     def load(self, location, uri, create=0):
+        self.uri = uri
         self.local.load(location, uri, create)
         # load neighbours that are marked as connected
         self.local.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
@@ -98,11 +97,11 @@ class RedNode(SchemaQuery):
     def _connect(self, neighbour, p, o):
         self.connect_to(neighbour.uri)
 
-    def connect_to(self, location, URI=None):
-        URI = URI or location
+    def connect_to(self, location, uri=None):
+        uri = uri or location
 
         storeIO = TripleStoreIO()        
-        storeIO.load(location, URI, 0)
+        storeIO.load(location, uri, 0)
         self.neighbours.add_store(storeIO)
         self.remove(resource(location), TYPE, NEIGHBOUR)
         self.add(resource(location), TYPE, NEIGHBOUR)        
@@ -110,7 +109,7 @@ class RedNode(SchemaQuery):
         self.add(resource(location), CONNECTED, YES)        
 
     def disconnect_from(self, uri):
-        for store in [store for store in self.neighbours.stores if store.URI==uri]:
+        for store in [store for store in self.neighbours.stores if store.uri==uri]:
             self.neighbours.remove_store(store)
             self.remove(resource(uri), CONNECTED, None)
             self.add(resource(uri), CONNECTED, NO)

@@ -32,11 +32,11 @@ ELSEIF = NS+"elif"
 
 import __builtin__
 
-def create_app(klass, URI):
+def create_app(klass, uri):
     from redfoot.rednode import RedNode
-    rednode = RedNode()
+    rednode = RedNode(uri)
     rdf = "%s.rdf" % klass.__module__
-    rednode.load(rdf, URI, 1)
+    rednode.load(rdf, uri, 1)
     rednode = rednode
     return create_module(klass, None, rednode)
     
@@ -276,7 +276,7 @@ class ModuleHandler(HandlerBase):
         classobj.__module__ = module.__name__
         module.__dict__[classobj.__name__] = classobj
         module.__dict__['_RF_APP'] = classobj
-        module.__dict__['_RF_get_app'] = lambda URI, app_class=classobj: create_app(app_class, URI)
+        module.__dict__['_RF_get_app'] = lambda uri, app_class=classobj: create_app(app_class, uri)
         
 
 class SubModule(HandlerBase):
