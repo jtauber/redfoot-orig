@@ -13,6 +13,19 @@ from rdflib.nodes import URIRef
 
 from redfootlib.rdf.query.visit import Visit
 
+from redfootlib.module_store import MODULE        
+from urllib import urlopen
+
+from rdflib.nodes import URIRef, Literal
+
+from rdflib.const import LABEL, RESOURCE
+from rdflib.const import TYPE, CLASS, SUBCLASSOF
+from rdflib.const import PROPERTY, DOMAIN, RANGE
+
+MODULE = URIRef("http://redfoot.net/2002/05/20/module")
+MODULE_CLASS = URIRef("http://redfoot.net/2002/05/20/Module")
+        
+
 LISTEN_ON = URIRef("http://redfoot.net/2002/05/listen_on")
 ADDRESS = URIRef("http://redfoot.net/2002/05/Address")
 HOST = URIRef("http://redfoot.net/2002/05/host")
@@ -122,33 +135,21 @@ class RedNode(Visit, NeighbourManager, AutoSave, TripleStore):
         from redfootlib.module_store import MODULE
         value = self.neighbourhood.first_object(uri, MODULE)
         if value:
-            return self._exec_module(value)
+            return self._exec_module(uri, value)
         else:
             return self.load_module(uri)
 
     def load_module(self, uri):
         uri = URIRef(uri)
-        from redfootlib.module_store import MODULE        
-        from urllib import urlopen
-
-        from rdflib.nodes import URIRef, Literal
-
-        from rdflib.const import LABEL, RESOURCE
-        from rdflib.const import TYPE, CLASS, SUBCLASSOF
-        from rdflib.const import PROPERTY, DOMAIN, RANGE
-
-        MODULE = URIRef("http://redfoot.net/2002/05/20/module")
-        MODULE_CLASS = URIRef("http://redfoot.net/2002/05/20/Module")
-        
         f = urlopen(uri)
         value = f.read()
         value = "\n".join(value.split("\r\n")) # TODO: is there a better way?
 
-        self.add(uri, MODULE, Literal(value))
-        self.add(uri, TYPE, MODULE_CLASS)
-        return self._exec_module(value)
+        #self.add(uri, MODULE, Literal(value))
+        #self.add(uri, TYPE, MODULE_CLASS)
+        return self._exec_module(uri, value)
         
-    def _exec_module(self, value):
+    def _exec_module(self, uri, value):
         if value:
             filename = "<%s MODULE>" % uri
             from new import module

@@ -1,5 +1,6 @@
 # redcmd.py
 
+import re
 from cmd import Cmd
 from sys import exit
 from rdflib.nodes import URIRef, Literal, BNode
@@ -241,6 +242,17 @@ work. """
         from redfootlib.server.redcode import importer
         importer.install()
 
+    def do_from(self, arg):
+        pattern = re.compile(r"^(https?://[^ ]+) import ([^ ]+)$")
+        result = pattern.findall(arg)
+        if result:
+            uri, module_name = result[0]
+            rednode = self.context.redstore
+            self.context.__dict__[module_name] = rednode.load_module(uri)
+        else:
+            raise Exception("Not Yet Supported")
+            
+
     def do_add_app(self, arg):
         """\
 add_app package_name.app_name
@@ -259,6 +271,23 @@ Adds app defined in package_name.app_name to previously running server. If a ser
             AppClass = eval(name, module.__dict__)            
         else:
             print "usage: add_app package_name.app_name"
+
+        app = AppClass(self.context.redstore)
+
+        if not self.context.server:
+            self.context.server = RedServer('', 9090)
+            self.context.server.run(background=1)                    
+
+        self.context.server.add_app(app)
+
+    def do_add_handler(self, arg):
+        """\
+add_handler package_name.app_name
+
+Adds handler defined in package_name.app_name to previously running server. If a server has not yet been started then one is started on :9090"""
+        
+
+        AppClass = eval(arg, self.context.__dict__)            
 
         app = AppClass(self.context.redstore)
 
