@@ -89,7 +89,7 @@ class Serializer:
         else:
             if object[0:len(self.baseURI)+1]==self.baseURI+"#":
                 object = object[len(self.baseURI):]
-            self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], object) )
+            self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], encode(object)) )
 
     def triple(self, subject, predicate, object):
         if self.currentSubject != subject:
@@ -100,6 +100,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
+#~
 #~ Revision 4.5  2000/12/07 19:52:02  jtauber
 #~ changed base to baseURI
 #~

@@ -349,13 +349,12 @@ class Viewer:
         """ % (propertyDisplay, valueDisplay))
 
     def encodeURI(self, s):
+        # TODO: Implement me for real
         import string
-        # work-around for 2.0b
-        import sys
-        if sys.version_info[0]==2:
-            return string.join(string.split(s,'#'),u'%23')
-        else:
-            return string.join(string.split(s,'#'),'%23')
+        s = string.join(string.split(s,'#'),u'%23')
+        s = string.join(string.split(s,'&'),u'%26')
+        s = string.join(string.split(s,'?'),u'%3f')        
+        return s
 
     def RDF(self, subject=None, predicate=None, object=None):
         self.storeNode.local.output(self.response, subject, predicate, object)
@@ -440,6 +439,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
+#~
 #~ Revision 4.11  2000/12/08 08:05:58  eikeon
 #~ fixed getByType; fixed references to constants
 #~
