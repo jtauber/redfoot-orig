@@ -66,7 +66,7 @@
     </red:facet>      
 
     <red:facet name="display_edit" args="subject, return_to=''">
-      <FORM NAME='edit_form' ACTION='edit?subject={subject}' METHOD='POST'>
+      <FORM NAME='edit_form' ACTION='edit?subject={encode_URI(subject)}' METHOD='POST'>
         <INPUT NAME='update_subject' TYPE='HIDDEN' VALUE='{subject}'/>
         <INPUT NAME='processor' TYPE='HIDDEN' VALUE=""/>
         <INPUT NAME='module_instance' TYPE='HIDDEN' VALUE="{self.module_instance}"/>
