@@ -37,46 +37,54 @@ class Editor(Viewer):
         self.writer.write("""
             <FORM NAME="form" ACTION="edit?uri=%s" METHOD="GET">
               <INPUT NAME="uri" TYPE="HIDDEN" VALUE="%s">
-              <TABLE BORDER="1">
+              <TABLE>
         """ % (subject, subject))
         self.property_num = 0
-        self.qstore.propertyValuesV(subject, self.editProperty)
 
-        self.writer.write("""
+        if self.qstore.isKnownResource(subject):
+            self.qstore.propertyValuesV(subject, self.editProperty)
+	    self.qstore.reifiedV(subject, self.displayReifiedStatementsInEditMode)
+
+            self.writer.write("""
               <TR>
                 <TD>
                   <SELECT type="text" name="newProperty">
 
                     <OPTION value="">Select a new Property to add</OPTION>
-        """)
+            """)
 
-        for type in self.qstore.get(subject, self.qstore.TYPE, None):
-            for superType in self.qstore.transitiveSuperTypes(type[2]):
-                for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
-                    self.writer.write("""
-                    <OPTION value="%s">%s</OPTION>
-                    """ % (domain[0], self.qstore.label(domain[0])))
-
-        self.writer.write("""
+            for type in self.qstore.get(subject, self.qstore.TYPE, None):
+                for superType in self.qstore.transitiveSuperTypes(type[2]):
+                    for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
+                        self.writer.write("""
+                        <OPTION value="%s">%s</OPTION>
+                        """ % (domain[0], self.qstore.label(domain[0])))
+                        
+            self.writer.write("""
                   </SELECT>
 
                 </TD>
 
-                <TD COLSPAN="2">Click update to be able to specify value</TD>
+                <TD COLSPAN="5">Click update to be able to specify value</TD>
               </TR>
 
             </TABLE>
 
             <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s"/>
-            <INPUT TYPE="HIDDEN" NAME="processor"  VALUE="update"/>
-            <INPUT TYPE="SUBMIT"                   VALUE="update"/>
+            <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="update"/>
+            <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="delete"/>
           </FORM>
+              """ % self.property_num)
+        else:
+            self.writer.write("<TR><TD>Resource not known of directly</TD></TR></TABLE></FORM>")
 
+        self.writer.write("""
         </BODY>
       </HTML>
-      """ % self.property_num)
+      """)
 
-
+    UITYPE = "http://redfoot.sourceforge.net/2000/10/06/builtin#uiType"
+    TEXTAREA = "http://redfoot.sourceforge.net/2000/10/06/builtin#TEXTAREA"
 
     def editProperty(self, property, value):
         self.property_num = self.property_num + 1
@@ -91,13 +99,21 @@ class Editor(Viewer):
             self.writer.write("%s<BR>" % self.qstore.label(range[2]))
         self.writer.write("""
                   </TD>
-                  <TD>
+                  <TD COLSPAN="2">
         """)
         if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL):
+            uitype = self.qstore.get(property, self.UITYPE, None)
+            if len(uitype) > 0 and uitype[0][2]==self.TEXTAREA:
+                self.writer.write("""
+                <TEXTAREA NAME="prop%s_value" ROWS="5" COLS="60">%s</TEXTAREA>
+                """ % (self.property_num, value[1:]))
+            else:
+                self.writer.write("""
+                <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
+                """ % (self.property_num, value[1:]))
             self.writer.write("""
-                    <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
-            """ % (self.property_num, value[1:], self.property_num))
+            """ % self.property_num)
         else:
             rangelist = self.qstore.get(property, self.qstore.RANGE, None) # already did this above
             if len(rangelist) > 0:
@@ -124,8 +140,27 @@ class Editor(Viewer):
                 """ % (self.property_num, value))
         self.writer.write("""
                 </TD>
+                <TD VALIGN="TOP">
+                  <INPUT TYPE="SUBMIT" NAME="processor" VALUE="del_%s">
+                </TD>
+		<TD VALIG="TOP">
+                  <INPUT TYPE="SUBMIT" NAME="processor" VALUE="reify_%s">
+                </TD>
               </TR>
-        """)
+        """ % (self.property_num, self.property_num))
+
+    def displayReifiedStatementsInEditMode(self, subject, predicate, object):
+        propertyDisplay = self.link(predicate)
+        if object[0]=="^":
+            valueDisplay = object[1:]
+        else:
+            valueDisplay = self.link(object)
+        self.writer.write("""
+        <TR CLASS="REIFIED"><TD>%s</TD><TD></TD><TD>%s</TD>
+        <TD COLSPAN="3">%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
+        self.qstore.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
+        self.writer.write("""
+        </TD></TR>""")
 
     def add(self, type):
         self.writer.write("""
@@ -139,7 +174,7 @@ class Editor(Viewer):
         self.menuBar()
         self.writer.write("""
           <FORM NAME="form" ACTION="edit" METHOD="GET">
-            <TABLE BORDER="1">
+            <TABLE>
               <TR>
                 <TD VALIGN="TOP">URI</TD>
                 <TD>&nbsp;</TD>
@@ -214,8 +249,31 @@ class Editor(Viewer):
             if newProperty!=None and newProperty!="":
                 self.qstore.getStore().add(subject, newProperty, "")
 
+    def delete(self, params):
+        subject = params["uri"][0]
+        self.qstore.getStore().remove(subject, None, None)
+
+    def deleteProperty(self, params):
+        property_num = params["processor"][0][4:]
+        subject = params["uri"][0]
+        property = params["prop%s_name" % property_num][0]
+        value = params["prop%s_value" % property_num][0]
+        if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
+            value = "^" + value
+        self.qstore.getStore().remove(subject, property, value)
+
+    def reifyProperty(self, params):
+        property_num = params["processor"][0][6:]
+        subject = params["uri"][0]
+        property = params["prop%s_name" % property_num][0]
+        value = params["prop%s_value" % property_num][0]
+        if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
+            value = "^" + value
+        self.qstore.reify(self.generateURI(), subject, property, value)
+
     def generateURI(self):
-        return "#foo"
+	import time
+        return "#T%s" % time.time()
 
     def create(self, params):
         subject = params["uri"][0]
