@@ -4,54 +4,41 @@
     <link REL="STYLESHEET" HREF="../redfoot-doc/redfoot.css"/>
   </head>
   <body>
-    <div CLASS="NAV"><a href="../index.html">Redfoot</A> &gt; <a href="./index.html">Documentation</a></div>
+    <div CLASS="NAV"><a href="../index.html">Redfoot</A> &gt; <a href="./index.html">Examples</a></div>
     <h1>Redfoot Examples</h1>
 
-    <h2>Rednodes</h2>
+    <h2>To Run</h2>
+    From the redfoot-examples directory:
+    <pre class="code_sample">python redfoot.py &lt;init_script&gt;</pre>
+    <h3>where</h3>
+    <p>init_script is the .init file for one of the following examples.</p>
 
-    Examples of complete runnable nodes. The nodes may either be stand
-alone nodes or nodes that will form a p2p network.
+    <h2>Examples</h2>
 
-    
     <dl>
-      <dt>Link Sniffer</dt>
+      <dt>Hello World</dt>
+      <dd>A simple example of how to extend a node with an HTTP interface.</dd>
+      <dt>Hello World Redcode</dt>
+      <dd>A simple example of how to extend a node with an HTTP interface using Redcode.</dd>
+      <dt>Generic</dt>
+      <dd>A web based generic RDF editor</dd>
+
+      <dt>RSS</dt>
+      <dd>An example of an RSS HTTP app and module for working with
+RSS 1.0 RDF.</dd>
+
+      <dt>Sniffer</dt>
       <dd>
         The link sniffer is (currently) a standalone rednode that will
 parse web pages for links adding any that it finds to itself. The node
-sniffs pages as indicated via triples added to it. This node can be
-run via the <a href="sniffer.init">link sniffer init script</a>.
+sniffs pages as indicated via triples added to it. 
       </dd>
-    </dl>
 
-    <h2>Web Interfaces</h2>
-   
-    <h3>Apps</h3>
-    <dl>
-      <dt>Hello World (pure python)</dt>
-      <dt>Hello World (redcode)</dt>
-      <dt>Generic</dt>
       <dt>Grid</dt>
-      <dt>RSS</dt>
-    </dl>
-    <h3>Modules</h3>
-    <dl>
-      <dt>Instance Grid</dt>
-      <dt>Pop</dt>
-      <dt>RSS</dt>
-      <dt>RSS Item</dt>
-    </dl>    
+      <dd>An example for showing an example GridInstance Redfoot Module</dd>
 
-    <h2>Mixins</h2>
-    <dl>
-      <dt>Sniffer</dt>
-    </dl>
-
-    <h2>Connectors</h2>
-
-    <h2>Parsers</h2>
-    <dl>
-      <dt>SnifferHTMLParser</dt>
-      <dd>A parser that knows how to parse the links out of HTML files, calling the given adder for each one it finds.</dd>
+      <dt>Static</dt>
+      <dd>An example that uses the redmodule.static.Static Redfoot module to serve up files from the filesystem.</dd>
     </dl>
 
   </body>
