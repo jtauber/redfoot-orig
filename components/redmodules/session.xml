@@ -113,7 +113,6 @@ VIA = resource(SESSION_URI+"via")
         sessions = self.sessions.local
 
         session_uri = request.get_session_uri()
-        print session_uri
         if not session_uri:
             session_uri = sessions.URI + generate_uri()
             response.set_session_uri(session_uri)
