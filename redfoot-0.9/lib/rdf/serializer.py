@@ -17,16 +17,8 @@ def splitProperty(property):
                     return (property[:j],property[j:])
     return ("",property)
 
-# TODO: the following two functions are duplicated from parser
 
-def literal(str):
-    return "^"+str
-
-def is_literal(str):
-    return str[0]=="^"
-
-def un_literal(str):
-    return str[1:]
+from rdf.literal import *
 
 class Serializer:
     rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -108,6 +100,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 4.2  2000/12/04 02:25:18  jtauber
+#~ serializer has new method for serializing statements that keeps track of subject start/end for you
+#~
 #~ Revision 4.1  2000/12/03 19:38:51  jtauber
 #~ moved ^ trick to functions
 #~
