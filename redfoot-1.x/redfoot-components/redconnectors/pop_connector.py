@@ -1,9 +1,9 @@
 
 import poplib, rfc822, string
 
-from redfoot.rdf.store.triple import TripleStore
-from redfoot.rdf.objects import resource, literal
-from redfoot.rdf.const import TYPE
+from redfootlib.rdf.store.triple import TripleStore
+from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.const import TYPE
 
 POP_URI = "http://redfoot.sourceforge.net/2001/08/POP/"
 RFC_822_URI = "http://redfoot.sourceforge.net/2001/08/RFC822/"

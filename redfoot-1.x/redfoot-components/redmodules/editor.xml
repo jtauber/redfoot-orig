@@ -1,13 +1,13 @@
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.rdf.const import *
-  from redfoot.rdf.store.urigen import generate_uri
-  from redfoot.rdf.query.functors import *
-  from redfoot.rdf.query.builders import *
-  from redfoot.rdf.objects import *
-  from redfoot.util import *
+  from redfootlib.rdf.const import *
+  from redfootlib.rdf.store.urigen import generate_uri
+  from redfootlib.rdf.query.functors import *
+  from redfootlib.rdf.query.builders import *
+  from redfootlib.rdf.objects import *
+  from redfootlib.util import *
 
-  from redfoot.server.module import ParentModule
+  from redfootlib.server.module import ParentModule
 
   REQUIRED_PROPERTY = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#requiredProperty")
   YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")

@@ -3,10 +3,10 @@
   # TODO: typeless resources
   # TODO: reification
 
-  from redfoot.util import *
-  from redfoot.rdf.query.functors import *
-  from redfoot.rdf.objects import resource, literal
-  from redfoot.rdf.const import *
+  from redfootlib.util import *
+  from redfootlib.rdf.query.functors import *
+  from redfootlib.rdf.objects import resource, literal
+  from redfootlib.rdf.const import *
 
   <red:module name="Viewer">
 

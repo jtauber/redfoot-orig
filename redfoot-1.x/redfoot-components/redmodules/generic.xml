@@ -1,7 +1,7 @@
 <!-- -*- mode: python-*- -->
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.util import *
+  from redfootlib.util import *
 
   <red:module name="Generic">
 

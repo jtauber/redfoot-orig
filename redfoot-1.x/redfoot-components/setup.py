@@ -1,5 +1,5 @@
 # NOTE: must first run setup for redfoot-core
-#from redfoot.redcode import importer
+#from redfootlib.redcode import importer
 #importer.install()
 
 
