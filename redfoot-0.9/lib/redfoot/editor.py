@@ -63,18 +63,9 @@ class Editor(Viewer):
         if subject!=None and subject!="" and subject[0]=="#":
             subject = self.storeNode.local.URI + subject
 
-        self.response.write("""
-          <HTML>
-            <HEAD>
-              <TITLE>ReDFoot: Edit</TITLE>
-              <LINK REL="STYLESHEET" HREF="css"/>
-            </HEAD>
-            <BODY>
-              <H1>ReDFoot</H1>""")
-        self.menuBar()
+        self.header("Edit")
         self.resourceHeader(subject)
         self.response.write("""
-            <H3>Edit</H3>
             <FORM NAME="form" ACTION="edit?uri=%s" METHOD="POST">
               <INPUT NAME="uri" TYPE="HIDDEN" VALUE="%s">
               <TABLE>
@@ -128,10 +119,7 @@ class Editor(Viewer):
         else:
             self.response.write("<TR><TD>Resource not known of directly</TD></TR></TABLE></FORM>")
 
-        self.response.write("""
-        </BODY>
-      </HTML>
-      """)
+        self.footer()
 
     UITYPE = "http://redfoot.sourceforge.net/2000/10/06/builtin#uiType"
     TEXTAREA = "http://redfoot.sourceforge.net/2000/10/06/builtin#TEXTAREA"
@@ -224,15 +212,7 @@ class Editor(Viewer):
         """)
 
     def add(self, type):
-        self.response.write("""
-          <HTML>
-            <HEAD>
-              <TITLE>ReDFoot: Add</TITLE>
-              <LINK REL="stylesheet" HREF="css"/>
-            </HEAD>
-            <BODY>
-              <H1>ReDFoot</H1>""")
-        self.menuBar()
+        self.header("Add")
         self.response.write("""
           <FORM NAME="form" ACTION="edit" METHOD="POST">
             <TABLE>
@@ -298,9 +278,8 @@ class Editor(Viewer):
         </FORM>
 
               <P><A HREF="subclass">Return to List (without adding a Resource)</A></P>
-            </BODY>
-          </HTML>
         """)
+        self.footer()
 
     def update(self, parameters):
         subject = parameters['uri']
@@ -410,26 +389,15 @@ class PeerEditor(Editor):
         """)
     
     def connectPage(self):
+        self.header("Connect Neighbour")
         self.response.write("""
-          <HTML>
-            <HEAD>
-              <TITLE>ReDFoot: Connect</TITLE>
-              <LINK REL="STYLESHEET" HREF="css"/>
-            </HEAD>
-            <BODY>
-              <H1>ReDFoot</H1>""")
-        self.menuBar()
-        self.response.write("""
-              <H2>Connect Neighbour</H2>
-        
               <FORM NAME="form" ACTION="subclass" METHOD="POST">
                 <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri" SIZE="60">
                 <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
                 </P>
               </FORM>
-            </BODY>
-          </HTML>
-          """)
+        """)
+        self.footer()
 
     def connect(self, parameters):
         uri = parameters["uri"]
@@ -438,6 +406,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.6  2000/12/17 23:41:58  eikeon
+#~ removed of log messages
+#~
 #~ Revision 5.5  2000/12/14 05:16:16  eikeon
 #~ converted a method to new query interface
 #~
