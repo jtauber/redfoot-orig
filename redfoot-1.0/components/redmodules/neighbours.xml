@@ -44,24 +44,23 @@
       <DIV class="content_area">
         <H3 class="content_header">Other Known</H3>
 
-        <TABLE>
-         <red:for item="neighbour" list="other_known_neighbours">
-          <FORM name="other" method="POST" style="margin: 0">
-            <INPUT name="processor" value="" type="hidden"/>          
+        <FORM name="other" method="POST" style="margin: 0">
+          <INPUT name="uri" value="" type="hidden"/>
+          <INPUT name="processor" value="" type="hidden"/>          
+          <TABLE>
+           <red:for item="neighbour" list="other_known_neighbours">
             <TR>
-              <TD><red:eval>neighbour</red:eval>
-                <INPUT name="uri" value="{neighbour}" type="hidden"/>
-              </TD>
+              <TD><red:eval>neighbour</red:eval></TD>
               <TD>
-                <INPUT value="Connect" type="submit" onclick="other.processor.value='connect_neighbour';other.submit()"/>
+                <INPUT value="Connect" type="submit" onclick="other.uri.value='{neighbour}';other.processor.value='connect_neighbour';other.submit()"/>
               </TD>
               <TD align="right">
-                <INPUT value="Remove" type="submit" onclick="other.processor.value='remove_neighbour';other.submit()"/>              
+                <INPUT value="Remove" type="submit" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
               </TD>
             </TR>
-          </FORM>
-         </red:for>
-        </TABLE>
+           </red:for>
+          </TABLE>
+        </FORM>
       </DIV>
 
       <DIV class="content_area">
