@@ -1,0 +1,4 @@
+
+The medusa sdist is expected to be a subdirectory of this one. At the moment, the version from project oedipus' CVS is required since it contains a needed bug fix to medusa-0.5.2. See:
+  http://oedipus.sourceforge.net/
+
