@@ -160,3 +160,12 @@ class QueryStore:
         object = self.store.get(statement, QueryStore.OBJECT, None)[0][2]
         self.store.add(subject, predicate, object)
         #self.store.removeAll(statement)
+
+    # TODO: NEED TO MAKE A VISITOR VERSION
+    def getPossibleValues(self, property):
+        resultset = {}
+        for rangeitem in self.store.get(property, QueryStore.RANGE, None):
+            for type in self.transitiveSubTypes(rangeitem[2]):
+                for a in self.store.get(None, QueryStore.TYPE, type):
+                    resultset[a[0]] = 1
+        return resultset.keys()
