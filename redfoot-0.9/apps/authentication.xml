@@ -299,7 +299,7 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
             <INPUT value="Login" type="submit"/>
           </TD>
           <TD align="left">
-            <INPUT value="Cancel" type="button" onclick="javascript: history.back()"/>
+            <INPUT value="Cancel" type="reset"/>
             <INPUT name="processor" value="login" type="hidden"/>      
           </TD>
         </TR>
@@ -330,7 +330,7 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
         </TR>
         <TR>
           <TD align="right"><INPUT value="Update" type="submit"/></TD>
-          <TD align="left"><INPUT value="Cancel" type="button" onclick="javascript: history.back()"/></TD>
+          <TD align="left"><INPUT value="Cancel" type="reset"/></TD>
         </TR>
       </TABLE>
       <INPUT name="processor" value="update_user" type="hidden"/>
@@ -364,7 +364,7 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
         </TR>
         <TR>
           <TD align="right"><INPUT value="Create User" type="submit"/></TD>
-          <TD align="left"><INPUT value="Cancel" type="button" onclick="javascript: history.back()"/></TD>
+          <TD align="left"><INPUT value="Cancel" type="reset"/></TD>
         </TR>
       </TABLE>
       <INPUT name="processor" value="create_user" type="hidden"/>
@@ -394,7 +394,7 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
         </TR>
         <TR>
           <TD align="right"><INPUT value="Change Password" type="submit"/></TD>
-          <TD align="left"><INPUT value="Cancel" type="button" onclick="javascript: history.back()"/></TD>
+          <TD align="left"><INPUT value="Cancel" type="reset"/></TD>
         </TR>
       </TABLE>
       <INPUT name="processor" value="change_password" type="hidden"/>

@@ -194,8 +194,7 @@ username = self.get_property_value(who, LABEL, '')
             <INPUT value="Create News Item" type="submit"/>
           </TD>
           <TD align="left"> 
-            <INPUT value="Cancel" type="button" 
-                   onclick="javascript: history.back()"/>
+            <INPUT value="Cancel" type="reset"/>
           </TD>
         </TR>
       </TABLE>

@@ -98,7 +98,7 @@ other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, T
             <INPUT value="Add" type="submit"/>
           </TD>
           <TD align="left">
-            <INPUT value="Cancel" type="button" onclick="javascript: history.back()"/>
+            <INPUT value="Cancel" type="reset"/>
             <INPUT name="processor" value="add_neighbour" type="hidden"/>      
           </TD>
         </TR>
