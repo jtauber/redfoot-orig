@@ -71,10 +71,7 @@ class RedServer(Server):
 
     def keepRunning(self):
         while 1:
-            try:
-                threading.Event().wait(100)
-            except KeyboardInterrupt:
-                sys.exit()
+            threading.Event().wait(100)
 
     def _getFilename(self, module):
         file = module.__file__
@@ -207,5 +204,8 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 8.1  2001/04/29 03:08:02  eikeon
+#~ removed old log messages
+#~
 #~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release
