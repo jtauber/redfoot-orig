@@ -30,7 +30,7 @@ def __init__(self, rednode):
   <H1>Neighbours</H1>
 <r:exec>
 connected_neighbours = [neighbour.URI for neighbour in self.rednode.neighbours.stores.stores.keys()]
-known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, TYPE, NEIGHBOUR)]
+other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, TYPE, NEIGHBOUR) if not neighbour[0] in connected_neighbours]
 </r:exec>
 
   <H2>Connected</H2>
@@ -52,10 +52,10 @@ known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, TYPE, N
 </r:for>
   </TABLE>
 
-  <H2>Known</H2>
+  <H2>Other Known</H2>
 
 <TABLE>
-<r:for item="neighbour" list="known_neighbours">
+<r:for item="neighbour" list="other_known_neighbours">
     <FORM name="main" method="POST" style="margin: 0">
       <TR>
         <TD><r:eval>neighbour</r:eval>
@@ -81,7 +81,7 @@ known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, TYPE, N
       <TABLE>
         <TR>
           <TD>URI:</TD>
-          <TD><INPUT name="uri" type="text"/></TD>
+          <TD><INPUT name="uri" type="text" size="50"/></TD>
         </TR>
         <TR>
           <TD align="right">

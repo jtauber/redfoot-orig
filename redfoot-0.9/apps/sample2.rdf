@@ -14,6 +14,9 @@
    xmlns:n4="http://eikeon.com/2001/03/28/T04/49/29"
    xmlns:n11="http://eikeon.com/2000/11/2001/03/24/T04/55/02"
 >
+  <rdf:Description rdf:about="http://www.writetheweb.com/rss10.php">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://VAIO:8000/2001/04/09/T18/06/50Z">
     <n1:Z>password and verify did not match</n1:Z>
     <n2:Z></n2:Z>
@@ -47,7 +50,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="http://localhost:8000/2001/04/09/T23/35/47Z">
     <n8:Z>69dfd376a5057bb47c33e1770bb5bbc5</n8:Z>
-    <n10:Z>20</n10:Z>
+    <n10:Z>40</n10:Z>
     <n3:Z>2001/04/09T23:35:47Z</n3:Z>
     <rdf:type rdf:resource="http://redfoot.sourceforge.net/2000/10/#Person"/>
     <n11:Z>jtauber</n11:Z>
