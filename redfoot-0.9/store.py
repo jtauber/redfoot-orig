@@ -113,20 +113,22 @@ class StoreNode:
     def __init__(self):
         self.stores = MultiStore()
 
+        from redfoot.storeio import StoreIO
+
         storeIO = StoreIO()
         storeIO.setStore(TripleStore())
         storeIO.load("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
-        storeNode.connectTo(storeIO.getStore())
+        self.connectTo(storeIO.getStore())
         
         storeIO = StoreIO()
         storeIO.setStore(TripleStore())
         storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-        storeNode.connectTo(storeIO.getStore())
+        self.connectTo(storeIO.getStore())
 
 #        storeIO = StoreIO()
 #        storeIO.setStore(TripleStore())
 #        storeIO.load("tests/blueprintSchema.rdf", "http://www.bowstreet.com/2000/08/20")
-#        storeNode.connectTo(storeIO.getStore())
+#        self.connectTo(storeIO.getStore())
 
 
     def setStore(self, store):
@@ -155,6 +157,9 @@ class StoreNode:
         
 
 # $Log$
+# Revision 1.13  2000/10/01 07:24:26  eikeon
+# moved loading of the rdf-schema and rdf-syntax into StoreNode
+#
 # Revision 1.12  2000/10/01 03:58:10  eikeon
 # fixed up all the places where I put CVS keywords as keywords in omments... duh
 #
