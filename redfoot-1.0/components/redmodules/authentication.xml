@@ -45,14 +45,17 @@
         self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
         self.session.sessions.add(resource(self.session.session_uri), IDENTITY, identity)
 
+    def get_identity(self):
+        return self.session.sessions.local.get_first_value(resource(self.session.session_uri), IDENTITY, None)
+
     def authenticated(self):
-        if self.session.sessions.exists(resource(self.session.session_uri), IDENTITY, None):
+        if self.get_identity():
             return 1	
         else:
             return 0
 
     def get_username(self, default=None):
-        identity = self.session.sessions.local.get_first_value(resource(self.session.session_uri), IDENTITY, None)
+        identity = self.get_identity()
         if identity:
             username = self.session.sessions.local.get_first_value(identity, USERNAME, None)
             if username:
@@ -79,6 +82,7 @@
 
     def do_logout(self):
         self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
+        self.set_status('')
             
     def do_create_user(self):
         username = self.app.request.get_parameter('username')
@@ -119,7 +123,6 @@
       <red:if test="not self.session.sessions.exists(resource(self.session.session_uri), IDENTITY, None)">
 
       <DIV class="content_area">
-        <SPAN class="content_header">Create User</SPAN>
     
         <DIV style="colored: #990000;">
           <red:eval>self.get_status()</red:eval>
@@ -148,6 +151,7 @@
             </TR>
           </TABLE>
           <INPUT name="processor" value="do_create_user" type="hidden"/>
+          <INPUT name="view" value="create" type="hidden"/>          
         </FORM>
       </DIV>
 
@@ -161,8 +165,9 @@
     </red:facet>
     
     <red:facet name="login">    
+     <red:if test="not self.authenticated()">
       <DIV class="content_area">
-        <SPAN class="content_header">Login</SPAN>
+
         <FORM name="main" method="POST" style="margin: 0">
 
         <DIV style="colored: #990000;">
@@ -180,17 +185,24 @@
             </TR>
             <TR>
               <TD align="right">
+                <!--<INPUT value="Login" type="submit"/>-->
                 <INPUT value="Login" type="submit"/>
               </TD>
               <TD align="left">
                 <INPUT value="Cancel" type="reset"/>
-                <INPUT name="processor" value="do_login" type="hidden"/>      
+                <INPUT name="processor" value="do_login" type="hidden"/>
+                <INPUT name="view" value="login" type="hidden"/>
               </TD>
             </TR>
           </TABLE>
         </FORM>
-        <H2>Not a user yet? -- <A href="{self.create_link()}">create user</A></H2>
       </DIV>
+      <red:else>
+        <red:exec>self.app.remaining_path_info = "welcome"</red:exec>
+        <red:apply search="self.app"/>
+      </red:else>
+     </red:if> 
     </red:facet>
+
   </red:module>
 </red:code>  
