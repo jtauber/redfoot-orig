@@ -120,8 +120,7 @@ class DescriptionHandler(HandlerBase):
             if att==u"about" or att==u"ID" or att==ABOUT or att==ID:
                 pass
             else:
-                #self.adder(self.subject, att, literal(atts[att]))
-                self.adder(self.subject, att, literal(u"testing"))
+                self.adder(self.subject, att, literal(atts[att]))
 
     def set_handlers(self):
         self.parser.StartElementHandler = self.child
@@ -150,8 +149,7 @@ class PropertyHandler(HandlerBase):
                 if att == u"resource":
                     pass
                 else:
-                    #self.adder(self.object, att, literal(atts[att]))
-                    self.adder(self.object, att, literal(u"testing"))
+                    self.adder(self.object, att, literal(atts[att]))
         elif atts.has_key(RESOURCE):
             self.object = atts[RESOURCE]
             if self.object[0]==u"#":
@@ -160,8 +158,7 @@ class PropertyHandler(HandlerBase):
                 if att == RESOURCE:
                     pass
                 else:
-                    #self.adder(self.object, att, literal(atts[att]))
-                    self.adder(self.object, att, literal(u"testing"))
+                    self.adder(self.object, att, literal(atts[att]))
         else:
             self.object = literal(u"")
 
@@ -186,6 +183,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.7  2000/12/23 03:58:06  eikeon
+#~ Why did this get in there?!?!
+#~
 #~ Revision 5.6  2000/12/23 02:30:17  eikeon
 #~ added warnings and test cases for when there is no RDF root element (or when there is more than one RDF element)
 #~
