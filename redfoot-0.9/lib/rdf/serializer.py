@@ -34,10 +34,10 @@ class Serializer:
     def __init__(self):
         self.namespaces = {}
         self.namespaceCount = 0
+        self.currentSubject = None
 
     def setStream(self, stream):
         self.stream = stream
-
 
     def setBase(self, base):
         self.base = base
@@ -62,6 +62,8 @@ class Serializer:
         self.stream.write( ">\n" )
 
     def end(self):
+        if self.currentSubject != None:
+            self.subjectEnd()
         self.stream.write( "</%s:RDF>\n" % self.namespaces[self.rdfns] )
 
     def subjectStart(self, subject):
@@ -72,6 +74,7 @@ class Serializer:
             self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], subject) )
 
     def subjectEnd(self):
+        self.currentSubject = None
         self.stream.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
 
     def property(self, predicate, value):
@@ -96,8 +99,18 @@ class Serializer:
                 value = value[len(self.base):]
             self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
 
+    def triple(self, subject, predicate, object):
+        if self.currentSubject != subject:
+            if self.currentSubject != None:
+                self.subjectEnd()
+            self.subjectStart(subject)
+            self.currentSubject = subject
+        self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 4.1  2000/12/03 19:38:51  jtauber
+#~ moved ^ trick to functions
+#~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
 #~
