@@ -1,0 +1,26 @@
+2002-02-18  Edd Dumbill  <edd@usefulinc.com>
+
+	* Released version 1.1: support for permanent URIs for each item,
+	comment editing and deletion, keywords setting
+
+2001-07-12  Edd Dumbill  <edd@usefulinc.com>
+
+	* src/dailychumpbot.py: added option to specify stylesheet
+	(-e). Made -h display usage information.
+
+	* src/dailychump.py: added support for stylesheets. Fixed bug
+	where os.rename() attempted to rename across volumes. Had to 
+	subclass XMLParser in order to make it not barf on the XML
+	stylesheet directive. Future TODO: move the XML handling to be
+	SAX-based.
+	
+	* bumped version to 1.02
+
+2001-03-21  Matt Biddulph  <matt@picdiary.com>
+
+	* Fixed a regexp in URL detection, bumped release to 1.01
+
+2001-03-16  Edd Dumbill  <edd@usefulinc.com>
+
+	* Initial release 1.0
+
