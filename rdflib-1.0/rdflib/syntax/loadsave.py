@@ -1,3 +1,5 @@
+from __future__ import generators
+
 from urlparse import urlparse        
 
 from rdflib.syntax.parser import Parser
@@ -6,6 +8,30 @@ from rdflib.syntax.serializer import Serializer
 from rdflib.nodes import URIRef
 
 from threading import Lock
+
+from rdflib.nodes import URIRef
+
+from time import time, gmtime
+
+def generate_path():
+    sn = 0
+    last_time_path = None
+    while 1:
+        t = time()
+        year, month, day, hh, mm, ss, wd, y, z = gmtime(t)           
+        time_path = "%0004d/%02d/%02d/T%02d/%02d/%02dZ" % ( year, month, day, hh, mm, ss)
+
+        if time_path==last_time_path:
+            sn = sn + 1
+        else:
+            sn = 0
+            last_time_path = time_path
+
+        path = time_path + "%.004d" % sn
+        yield path
+
+path_generator = generate_path()
+
 
 class LoadSave(Parser, Serializer, object):
     """LoadSave
@@ -21,7 +47,10 @@ class LoadSave(Parser, Serializer, object):
         self.location = None
         self.__lock = Lock()
 
-
+    def generate_uri(self):
+        """Return a new unique uri."""
+        return URIRef(self.uri + path_generator.next())
+    
     def load(self, location, uri=None, create=0):
         self.location = location        
         self.uri = URIRef(uri or location)
