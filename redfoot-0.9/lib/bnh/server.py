@@ -217,6 +217,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.5  2000/10/26 19:40:44  eikeon
+# Added TODO: stating we should look at char encoding issues at some point in time
+#
 # Revision 1.4  2000/10/26 03:39:03  eikeon
 # one line :)
 #

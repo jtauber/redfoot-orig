@@ -99,6 +99,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.5  2000/10/26 21:29:45  eikeon
+# tweaked handling of path; added additional startup message for where to find editor
+#
 # Revision 1.4  2000/10/26 03:38:39  eikeon
 # one line :)
 #

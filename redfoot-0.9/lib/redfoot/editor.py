@@ -402,6 +402,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 1.2  2000/10/26 19:41:54  eikeon
+# finished suppport for add(type)
+#
 # Revision 1.1  2000/10/25 20:40:31  eikeon
 # changes relating to new directory structure
 #

@@ -211,6 +211,9 @@ class QueryStore:
         return resultset.keys()
 
 # $Log$
+# Revision 1.2  2000/10/26 03:52:23  eikeon
+# fixed bug in subClassV
+#
 # Revision 1.1  2000/10/26 03:42:33  eikeon
 # split lib/redfoot into lib/redfoot, lib/rdf
 #

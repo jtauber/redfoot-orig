@@ -167,6 +167,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 # $Log$
+# Revision 1.3  2000/10/26 19:37:13  eikeon
+# changed RemoteStore property to be from sourceforge 'namespace'
+#
 # Revision 1.2  2000/10/26 03:42:33  eikeon
 # split lib/redfoot into lib/redfoot, lib/rdf
 #

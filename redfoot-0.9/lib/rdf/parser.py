@@ -170,6 +170,9 @@ class PropertyHandler:
         self.parent.resume()
 
 # $Log$
+# Revision 1.1  2000/10/26 03:42:33  eikeon
+# split lib/redfoot into lib/redfoot, lib/rdf
+#
 # Revision 1.1  2000/10/25 20:40:31  eikeon
 # changes relating to new directory structure
 #

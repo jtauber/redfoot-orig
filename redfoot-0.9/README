@@ -77,6 +77,9 @@ HOW TO CONTACT THE DEVELOPERS
 
 
 $Log$
+Revision 2.5  2000/10/26 21:41:58  eikeon
+Exact location of UI now gets reported upon startup
+
 Revision 2.4  2000/10/26 03:36:36  eikeon
 removed explaination of -i option
 
