@@ -149,7 +149,8 @@ def runServer():
 
     storeNode.setStore(storeIO)
 
-    RedfootHTTPRequestHandler.viewer = PeerEditor(None, storeNode)
+    UI = "PeerEditor"
+    RedfootHTTPRequestHandler.viewer = eval("%s(None, storeNode)" % UI)
 
     print "Serving HTTP on port", port, "...\n"
     httpd.serve_forever()
@@ -160,6 +161,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.17  2000/10/08 06:27:41  jtauber
+# switched over to using PeerEditor and added handling of connect page and connect processor
+#
 # Revision 1.16  2000/10/08 06:19:15  eikeon
 # Changed default view to be the collapsed subclass view
 #
