@@ -37,10 +37,28 @@ class RedServer(Server):
             self.keepReloading()
         except KeyboardInterrupt:
             self.stop()
+
+    def run_redpage(self, location, *args):
+        self._uiargs = args
+        self.location = location
+        self._load = self._load_redpage
+        try:
+            self.keepReloading()
+        except KeyboardInterrupt:
+            self.stop()
     
     def _load(self):
         # TODO do we need to worry about passing in globals and locals?
         module = __import__(self.modulename)
+        handler = apply(module.UI, self._uiargs)
+        self.set_handler(handler)
+        self.start()
+        return module
+
+    def _load_redpage(self):
+        import redpage
+        module = redpage.parse_red_page(self.location)
+        module.__file__ = self.location
         handler = apply(module.UI, self._uiargs)
         self.set_handler(handler)
         self.start()
@@ -136,6 +154,9 @@ class RollbackImporter:
     
 
 #~ $Log$
+#~ Revision 6.2  2001/03/22 01:10:27  jtauber
+#~ refactor of apps and the way servers are started by them
+#~
 #~ Revision 6.1  2001/02/26 22:41:03  eikeon
 #~ removed old log messages
 #~
