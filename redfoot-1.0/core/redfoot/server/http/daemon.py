@@ -63,12 +63,8 @@ class RedDaemon(HTTPDaemon):
         self.module = module
 
         servername, port = self.server_address
-        if port==80:
-            URI = "http://%s/" % servername
-        else:
-            URI = "http://%s:%s/" % (servername, port)
-            
-        instance = module._RF_get_app(URI)
+
+        instance = module._RF_get_app(self.uri)
         module._app_instance = instance
 
         handle_request = instance.handle_request
@@ -81,6 +77,55 @@ class RedDaemon(HTTPDaemon):
 
     def stop(self):
         self.module._app_instance.stop()
+        HTTPDaemon.stop(self)
+
+    def notify_me_of_reload(self, module):
+        if module.__name__==self.module.__name__:
+            self.stop()
+            self.module = module            
+            self.load(module)
+
+            import sys
+            sys.stderr.write("RELOADED '%s'\n" % module)
+            sys.stderr.flush()
+
+
+class RDFRedDaemon(HTTPDaemon):
+    def __init__(self, serverAddress, app, exact=0):
+        if exact:
+            address = serverAddress
+        else:
+            address = ('', serverAddress[1])
+        HTTPDaemon.__init__(self, address)
+        self.app = app
+        self.server_address = serverAddress
+        print "Redfoot", VERSION
+        
+    def run(self):
+        self.start()
+        try:
+            while 1:        
+                import threading
+                threading.Event().wait(100)
+        except KeyboardInterrupt:
+            print "Shutting down..."
+            self.stop()
+
+    def start(self):
+        servername, port = self.server_address
+
+        handle_request = self.app.handle_request
+        self.set_handle_request(handle_request)            
+
+        HTTPDaemon.start(self)
+        
+        if port==80:
+            print "Running at http://%s/" % servername
+        else:
+            print "Running at http://%s:%s/" % (servername, port)
+        
+    def stop(self):
+        self.app.stop()
         HTTPDaemon.stop(self)
 
     def notify_me_of_reload(self, module):
@@ -136,9 +181,10 @@ def command_line():
     port = 8000
     exact = 0
     hostname = None
+    uri = None
 
     try:
-        optlist, args = getopt.getopt(sys.argv[1:], 'p:h:', ["help", "exact", "port=", "hostname="])
+        optlist, args = getopt.getopt(sys.argv[1:], 'p:h:', ["help", "exact", "port=", "hostname=", "uri="])
     except getopt.GetoptError, msg:
         print msg
         usage()
@@ -149,6 +195,8 @@ def command_line():
             port = string.atoi(value)
         elif opt=="-h" or opt=="--hostname":
             hostname = value
+        elif opt=="--uri":
+            uri = value
         elif opt=="--exact":
             exact = 1
         elif opt=="--help":
@@ -157,6 +205,12 @@ def command_line():
     if not hostname:
         from socket import getfqdn
         hostname = getfqdn()
+
+    if not uri:
+        if port==80:
+            uri = "http://%s/" % hostname
+        else:
+            uri = "http://%s:%s/" % (hostname, port)
 
     if len(args)!=1:
         usage()
@@ -167,5 +221,7 @@ def command_line():
     # the module name
     if module[-4:] == ".xml":
         module = module[:-4]
-    return RedDaemon((hostname, port), module, None, exact)
+    rd = RedDaemon((hostname, port), module, None, exact)
+    rd.uri = uri
+    return rd
 
