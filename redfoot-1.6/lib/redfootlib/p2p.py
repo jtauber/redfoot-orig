@@ -1,7 +1,123 @@
 #
 # $Id$
 
-from redfootlib.set import set, DecayingSet, encode, decode
+def encode(message):
+    orig = message
+    message = '\\\\'.join(message.split('\\'))
+    message = '\\n'.join(message.split('\n'))
+    if not decode(message)==orig:
+        print "ORIG:", orig, "\n\nAFTER:", decode(message)
+    return message
+
+def decode(message):
+    message = "\n".join(message.split("\\n"))
+    return "\\".join(message.split("\\\\"))
+
+#### GENERIC SET DATA STRUCTURE
+
+class set:
+
+    def __init__(self, list=[]):
+        self.__d = {}
+        for item in list:
+            self.__d[item] = 1
+
+    def __add__(self, obj):
+        d = []
+        d.extend(self.__d)
+        if obj.__class__ == set:
+            d.extend(obj.__d.keys())
+        else:
+            d.append(obj)
+        return set(d)
+
+    __or__ = __add__
+
+    def __sub__(self, obj):
+        d = self.__d.keys()
+        if obj.__class__ == set:
+            for item in obj:
+                if item in d:
+                    d.remove(item)
+        else:
+            if obj in d:
+                d.remove(obj)
+        return set(d)
+    
+    def __iadd__(self, obj):
+        if obj.__class__ == set:
+            for item in obj:
+                self.__d[item] = 1
+        else:
+            self.__d[obj] = 1
+        return self
+    
+    def __isub__(self, obj):
+        if obj.__class__ == set:
+            for item in obj:
+                if item in self:
+                    del self.__d[item]
+        else:
+            if obj in self.__d:
+                del self.__d[obj]
+        return self
+    
+    def __len__(self):
+        return len(self.__d)
+
+    def __contains__(self, item):
+        return item in self.__d
+
+    def __repr__(self):
+        return "set(%s)" % repr(self.__d.keys())
+
+    def __iter__(self):
+        return self.__d.__iter__()
+
+#### DECAYING SET
+
+import time
+
+class DecayingSet:
+    """
+    A set where the members are removed over time.
+    """
+
+    def __init__(self, ttl):
+        self.ttl = ttl
+        self.set_1 = set()
+        self.time_created_1 = time.time()
+        self.set_2 = set()
+        self.time_created_2 = time.time()
+        self.current_set = 1
+
+    def add(self, item):
+        self.refresh()
+        if self.current_set == 1:
+            self.set_1 += item
+        else:
+            self.set_2 += item
+
+    def refresh(self):
+        if self.current_set == 1:
+            if time.time() > self.time_created_1 + self.ttl:
+                self.set_2 = set()
+                self.time_created_2 = time.time()
+                self.current_set = 2
+        else:
+            if time.time() > self.time_created_2 + self.ttl:
+                self.set_1 = set()
+                self.time_created_1 = time.time()
+                self.current_set = 1
+
+    def __contains__(self, item):
+        return (item in self.set_1) or (item in self.set_2)
+
+    def __len__(self):
+        return len(self.set_1) + len(self.set_2)
+
+    # @@@ only implemented methods that are currently in use
+
 
 
 class Edge(object):
