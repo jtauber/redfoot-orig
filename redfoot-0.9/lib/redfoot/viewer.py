@@ -6,7 +6,7 @@ from rdf.const import *
 
 class Viewer:
 
-    def __init__(self, storeNode, path):
+    def __init__(self, storeNode, path="?"):
         self.storeNode = storeNode
         self.path = path
         self.showNeighbours = 0
@@ -458,5 +458,8 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 6.1  2001/02/26 22:41:04  eikeon
+#~ removed old log messages
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
