@@ -60,9 +60,9 @@ class RedServer:
             hostname = socket.getfqdn('localhost')
             uri = "http://%s:%s%s" % (hostname,port,path)
 
-            from redfoot.rednode import StoreNode
-            from rdf.storeio import StoreIO
-            from rdf.store import TripleStore
+        from redfoot.rednode import StoreNode
+        from rdf.storeio import StoreIO
+        from rdf.store import TripleStore
             
         storeNode = StoreNode()
 
@@ -105,6 +105,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.1  2000/11/07 16:55:33  eikeon
+#~ factored out creation of handler from runServer
+#~
 #~ Revision 4.0  2000/11/06 15:57:34  eikeon
 #~ VERSION 4.0
 #~
