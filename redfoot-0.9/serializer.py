@@ -47,11 +47,9 @@ class Serializer:
     def subjectStart(self, subject):
         print "  <%s:Description" % self.namespaces[self.rdfns]
         if subject[0:len(self.base)+1]==self.base+"#":
-            print "    %s:ID=\"%s\"" %
-            (self.namespaces[self.rdfns], subject[len(self.base)+1:])
+            print "    %s:ID=\"%s\"" % (self.namespaces[self.rdfns], subject[len(self.base)+1:])
         else:
-            print "    %s:about=\"%s\"" %
-            (self.namespaces[self.rdfns], subject)
+            print "    %s:about=\"%s\"" % (self.namespaces[self.rdfns], subject)
 
     def subjectEnd(self):
         print "  </%s:Description>" % self.namespaces[self.rdfns]
@@ -59,13 +57,9 @@ class Serializer:
     def property(self, predicate, value):
             (namespace, localName) = splitProperty(predicate)
             if value[0] == "^":
-                print "    <%s:%s>%s</%s:%s>" %
-                (self.namespaces[namespace], localName,
-                 value[1:],
-                 self.namespaces[namespace], localName)
+                print "    <%s:%s>%s</%s:%s>" % (self.namespaces[namespace], localName,
+                 value[1:], self.namespaces[namespace], localName)
             else:
                 if value[0:len(self.base)+1]==self.base+"#":
                     value = value[len(self.base):]
-                print "    <%s:%s %s:resource=\"%s\"/>" %
-                (self.namespaces[namespace], localName,
-                 self.namespaces[self.rdfns], value)
+                print "    <%s:%s %s:resource=\"%s\"/>" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value)
