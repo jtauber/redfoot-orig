@@ -161,6 +161,9 @@ class Viewer:
         self.menuBar()
         self.writer.write("""
             <DIV CLASS="box">
+	""")
+	self.qstore.parentTypesV(root, self.displayParent)
+	self.writer.write("""
               <DL>
         """)
 
@@ -215,6 +218,9 @@ class Viewer:
         self.writer.write("""
         <DD>%s<BR></DD>
         """ % self.link(resource))
+
+    def displayParent(self, resource):
+        self.writer.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.label(resource)))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
@@ -315,6 +321,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.19  2000/10/08 22:40:25  jtauber
+# edit/view/reified displays line up better now
+#
 # Revision 1.18  2000/10/08 06:19:15  eikeon
 # Changed default view to be the collapsed subclass view
 #
