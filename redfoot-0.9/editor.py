@@ -42,7 +42,10 @@ class Editor(Viewer):
         self.property_num = 0
 
         if self.qstore.isKnownResource(subject):
-            self.qstore.propertyValuesV(subject, self.editProperty)
+            # self.qstore.propertyValuesV(subject, self.editProperty)
+            self.qstore.propertyValuesLocalV(subject, self.editProperty)
+            self.qstore.propertyValuesNeighbourhoodV(subject, self.displayPropertyValue)
+        
 	    self.qstore.reifiedV(subject, self.displayReifiedStatementsInEditMode)
 
             self.writer.write("""
