@@ -23,6 +23,7 @@
   MD5_HEX_DIGEST = resource(AUTH_URI + "md5_hex_digest")
   PERSON = resource(AUTH_URI + "person")
   CREATED = resource(AUTH_URI + "created")
+  LAST_VISIT = resource(AUTH_URI+"lastVisit")
   
   from redfoot.module import ParentModule
   
@@ -34,6 +35,13 @@
         # TODO: This is on behalf of Authentication module
         self.status = ''
         ParentModule.handle_request(self, request, response)
+
+        sessions = self.session.sessions.local
+        identity = self.get_identity()
+        if identity:
+            sessions.remove(identity, LAST_VISIT, None)
+            sessions.add(identity, LAST_VISIT, literal(date_time()))
+
 
     def set_identity(self, identity):
         self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
