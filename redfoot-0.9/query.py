@@ -1,3 +1,4 @@
+# $Header$
 
 class QueryStore:
 
@@ -121,7 +122,7 @@ class QueryStore:
             value = statement[2]
             processPropertyValue(property,value)
         
-    def subClassV(self, type, processClass, processInstance, currentDepth=1, recurse=1):
+    def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
         for subclassStatement in self.store.get(None, QueryStore.SUBCLASSOF, type):
             if recurse:
@@ -160,3 +161,6 @@ class QueryStore:
                 for a in self.store.get(None, QueryStore.TYPE, type):
                     resultset[a[0]] = 1
         return resultset.keys()
+
+
+# $Log$
