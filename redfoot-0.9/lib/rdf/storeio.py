@@ -11,17 +11,17 @@ class StoreIO:
     def __init__(self, store):
         self.store = store
 
-    def visit(self, callback, subject=None, property=None, value=None):
-        self.store.visit(callback, subject, property, value)
+    def visit(self, callback, subject=None, predicate=None, object=None):
+        self.store.visit(callback, subject, predicate, object)
         
-    def get(self, subject=None, property=None, value=None):
-        return self.store.get(subject, property, value)
+    def get(self, subject=None, predicate=None, object=None):
+        return self.store.get(subject, predicate, object)
 
-    def remove(self, subject=None, property=None, value=None):
-        self.store.remove(subject, property, value)
+    def remove(self, subject=None, predicate=None, object=None):
+        self.store.remove(subject, predicate, object)
 
-    def add(self, subject, property, value):
-        self.store.add(subject, property, value)
+    def add(self, subject, predicate, object):
+        self.store.add(subject, predicate, object)
 
     def load(self, location, URI=None):
         self.location = location
@@ -63,8 +63,8 @@ class StoreIO:
             def __init__(self, ser):
                 self.ser = ser
                 self.subject = None
-                self.property = None
-                self.value = None
+                self.predicate = None
+                self.object = None
 
             def write(self, s, p, o):
                 if self.subject!=s:
@@ -91,13 +91,13 @@ class AutoSaveStoreIO(StoreIO):
         StoreIO.__init__(self)
         self.dirty = Dirty()
 
-    def remove(self, subject=None, property=None, value=None):
+    def remove(self, subject=None, predicate=None, object=None):
         self.dirty.set()
-        StoreIO.remove(self, subject, property, value)
+        StoreIO.remove(self, subject, predicate, object)
 
-    def add(self, subject, property, value):
+    def add(self, subject, predicate, object):
         self.dirty.set()
-        StoreIO.add(self, subject, property, value)
+        StoreIO.add(self, subject, predicate, object)
 
     def load(self, location, URI=None):
         StoreIO.load(self, location, URI)
@@ -165,6 +165,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.7  2000/12/04 01:26:44  eikeon
+#~ no more getStore() on StoreIO
+#~
 #~ Revision 4.6  2000/12/04 01:17:40  eikeon
 #~ refactored output methods into one method that takes a query style set of subject, predicate, object to output
 #~
