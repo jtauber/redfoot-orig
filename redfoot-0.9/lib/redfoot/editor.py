@@ -170,14 +170,14 @@ class Editor(Viewer):
                 """ % (self.property_num, un_literal(value)))
                 self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
-            """ % (self.property_num, un_literal(value)))                
+            """ % (self.property_num, self.encodeAttributeValue(value)))                
             else:
                 self.response.write("""
                 <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
                 """ % (self.property_num, self.encodeAttributeValue(un_literal(value))))
                 self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
-            """ % (self.property_num, self.encodeAttributeValue(un_literal(value))))
+            """ % (self.property_num, self.encodeAttributeValue(value)))
             self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
@@ -186,7 +186,7 @@ class Editor(Viewer):
             if len(rangelist) > 0:
                 self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
-            """ % (self.property_num, value))                
+            """ % (self.property_num, self.encodeAttributeValue(value)))
                 self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="no">
                     <SELECT NAME="prop%s_value">
@@ -280,7 +280,6 @@ class Editor(Viewer):
             isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
                 value = literal(value)
-                orig = literal(orig)
             if copy:
                 self.storeNode.local.add(subject, property, value)
             elif value!=orig:
