@@ -101,30 +101,30 @@ class Test:
 
         # 3.2 Container Syntax
 
-        test_model = [('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_1', u'http://mycollege.edu/students/Amy'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_2', u'http://mycollege.edu/students/Tim'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_3', u'http://mycollege.edu/students/John'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_4', u'http://mycollege.edu/students/Mary'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_5', u'http://mycollege.edu/students/Sue'),
-                      (u'http://mycollege.edu/courses/6.001', u'http://description.org/schema/students', '~1')]
+        test_model = [('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_1', 'http://mycollege.edu/students/Amy'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_2', 'http://mycollege.edu/students/Tim'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_3', 'http://mycollege.edu/students/John'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_4', 'http://mycollege.edu/students/Mary'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_5', 'http://mycollege.edu/students/Sue'),
+                      ('http://mycollege.edu/courses/6.001', 'http://description.org/schema/students', '~1')]
 
         self.test_rdf("013.rdf", test_model)
 
-        test_model = [('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_1', u'ftp://ftp.x.org'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_2', u'ftp://ftp.cs.purdue.edu'),
-                      ('~1', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_3', u'ftp://ftp.eu.net'),
-                      (u'http://x.org/packages/X11', u'http://description.org/schema/DistributionSite', '~1')]
+        test_model = [('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_1', 'ftp://ftp.x.org'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_2', 'ftp://ftp.cs.purdue.edu'),
+                      ('~1', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_3', 'ftp://ftp.eu.net'),
+                      ('http://x.org/packages/X11', 'http://description.org/schema/DistributionSite', '~1')]
         
         self.test_rdf("014.rdf", test_model)
 
         # 3.3 Distribute Referents
 
-        test_model = [(u'015.rdf#pages', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag'),
-                      (u'015.rdf#pages', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_1', u'http://foo.org/foo.html'),
-                      (u'015.rdf#pages', u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_2', u'http://bar.org/bar.html'),
-                      (u'015.rdf#pages', u'http://description.org/schema/Creator', u'^Ora Lassila')]
+        test_model = [('015.rdf#pages', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag'),
+                      ('015.rdf#pages', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_1', 'http://foo.org/foo.html'),
+                      ('015.rdf#pages', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#_2', 'http://bar.org/bar.html'),
+                      ('015.rdf#pages', 'http://description.org/schema/Creator', '^Ora Lassila')]
 
         self.test_rdf("015.rdf", test_model)
 

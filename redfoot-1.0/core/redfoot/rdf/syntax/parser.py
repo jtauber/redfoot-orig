@@ -6,14 +6,14 @@ ANON = "http://redfoot.sourceforge.net/2001/08/ANON/"
 #TODO flag for where RDF can be assumed
 #TODO proper handling of relative URIs
 
-ns_separator = u"^"
+ns_separator = "^"
 
 def parse(adder, file, baseURI):
     import xml.parsers.expat
 
     parser = xml.parsers.expat.ParserCreate(namespace_separator=ns_separator)
     parser.SetBase(baseURI)
-    parser.returns_unicode = 1
+    parser.returns_unicode = 0
     
     LookForRDFHandler(parser, adder, None)
 
@@ -36,16 +36,16 @@ def parse(adder, file, baseURI):
 # change this... as TYPE is now an object.
 from redfoot.rdf.const import RDFNS, TYPE
 
-RDF_ELEMENT = RDFNS + ns_separator + u"RDF"
-DESCRIPTION_ELEMENT = RDFNS + ns_separator + u"Description"
-ABOUT_ATTRIBUTE = RDFNS + ns_separator + u"about"
-ID_ATTRIBUTE = RDFNS + ns_separator + u"ID"
-RESOURCE_ATTRIBUTE = RDFNS + ns_separator + u"resource"
+RDF_ELEMENT = RDFNS + ns_separator + "RDF"
+DESCRIPTION_ELEMENT = RDFNS + ns_separator + "Description"
+ABOUT_ATTRIBUTE = RDFNS + ns_separator + "about"
+ID_ATTRIBUTE = RDFNS + ns_separator + "ID"
+RESOURCE_ATTRIBUTE = RDFNS + ns_separator + "resource"
 
-SEQ_ELEMENT = RDFNS + ns_separator + u"Seq"
-BAG_ELEMENT = RDFNS + ns_separator + u"Bag"
-ALT_ELEMENT = RDFNS + ns_separator + u"Alt"
-LI_ELEMENT = RDFNS + ns_separator + u"li"
+SEQ_ELEMENT = RDFNS + ns_separator + "Seq"
+BAG_ELEMENT = RDFNS + ns_separator + "Bag"
+ALT_ELEMENT = RDFNS + ns_separator + "Alt"
+LI_ELEMENT = RDFNS + ns_separator + "li"
 
 class HandlerBase:
     def __init__(self, parser, adder, parent):
@@ -102,23 +102,23 @@ class DescriptionHandler(HandlerBase):
         HandlerBase.__init__(self, parser, adder, parent)
         self.subject = None
         self.anonymous = 0
-        if atts.has_key(u"about"):
-            self.subject = atts[u"about"]
-        elif atts.has_key(u"ID"):
-            self.subject = u"#" + atts[u"ID"]
+        if atts.has_key("about"):
+            self.subject = atts["about"]
+        elif atts.has_key("ID"):
+            self.subject = "#" + atts["ID"]
         elif atts.has_key(ABOUT_ATTRIBUTE):
             self.subject = atts[ABOUT_ATTRIBUTE]
         elif atts.has_key(ID_ATTRIBUTE):
-            self.subject = u"#" + atts[ID_ATTRIBUTE]
+            self.subject = "#" + atts[ID_ATTRIBUTE]
         else:
             self.subject = ANON + generate_uri()
             self.anonymous = 1
 
-        if self.subject[0] == u"#": # TODO do this elsewhere too
+        if self.subject[0] == "#": # TODO do this elsewhere too
             self.subject = self.parser.GetBase() + self.subject
 
         for att in atts.keys():
-            if att == u"about" or att == u"ID" or \
+            if att == "about" or att == "ID" or \
                att == ABOUT_ATTRIBUTE or att == ID_ATTRIBUTE:
                 pass
             else:
@@ -179,13 +179,13 @@ class LIHandler(HandlerBase):
     def __init__(self, parser, adder, parent, atts):
         HandlerBase.__init__(self, parser, adder, parent)
         self.literal = 0
-        if atts.has_key(u"resource"):
-            self.value = atts[u"resource"]
-            if self.value[0] == u"#":
+        if atts.has_key("resource"):
+            self.value = atts["resource"]
+            if self.value[0] == "#":
                 self.value = self.parser.GetBase() + self.value
         elif atts.has_key(RESOURCE_ATTRIBUTE):
             self.value = atts[RESOURCE_ATTRIBUTE]
-            if self.value[0] == u"#":
+            if self.value[0] == "#":
                 self.value = self.parser.GetBase() + self.value
         else:
             self.value = ""
@@ -208,12 +208,12 @@ class PropertyHandler(HandlerBase):
         self.predicate = join(split(name, "^"), "")
         self.literal = 0
         self.anonymous_object = 0
-        if atts.has_key(u"resource"):
-            self.object = atts[u"resource"]
-            if self.object[0] == u"#":
+        if atts.has_key("resource"):
+            self.object = atts["resource"]
+            if self.object[0] == "#":
                 self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
-                if att == u"resource":
+                if att == "resource":
                     pass
                 else:
                     new_att = join(split(att, "^"), "")
@@ -221,7 +221,7 @@ class PropertyHandler(HandlerBase):
                                literal_object=1)
         elif atts.has_key(RESOURCE_ATTRIBUTE):
             self.object = atts[RESOURCE_ATTRIBUTE]
-            if self.object[0] == u"#":
+            if self.object[0] == "#":
                 self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
                 if att == RESOURCE_ATTRIBUTE:
@@ -243,14 +243,14 @@ class PropertyHandler(HandlerBase):
         elif name==ALT_ELEMENT:
             AltHandler(self.parser, self.adder, self, name, atts)
         else:
-            if atts.has_key(u"about"):
-                self.object = atts[u"about"]
-            elif atts.has_key(u"ID"):
-                self.object = self.parser.GetBase() + u"#" + atts[u"ID"]
+            if atts.has_key("about"):
+                self.object = atts["about"]
+            elif atts.has_key("ID"):
+                self.object = self.parser.GetBase() + "#" + atts["ID"]
             elif atts.has_key(ABOUT_ATTRIBUTE):
                 self.object = atts[ABOUT_ATTRIBUTE]
             elif atts.has_key(ID_ATTRIBUTE):
-                self.object = self.parser.GetBase() + u"#" + atts[ID_ATTRIBUTE]
+                self.object = self.parser.GetBase() + "#" + atts[ID_ATTRIBUTE]
             else:
                 raise "Descriptions must have either an about or an ID"
             if name==DESCRIPTION_ELEMENT:

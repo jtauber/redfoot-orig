@@ -2,35 +2,35 @@
 
 from string import join, split, letters, digits
 
-def encode_URI(s, safe=u'/'):
-    always_safe = letters + digits + u' _,.-'
+def encode_URI(s, safe='/'):
+    always_safe = letters + digits + ' _,.-'
     safe = always_safe + safe
     res = []
     s = str(s) # in case s is not already a string
     for c in s:
         if c not in safe:
-            res.append(u'%%%02x'%ord(c))
+            res.append('%%%02x'%ord(c))
         else:
             if c==' ':
-                res.append(u'+')
+                res.append('+')
             else:
                 res.append(c)
-    return join(res, u'')
+    return join(res, '')
 
 def encode_attribute_value(s):
     s = str(s) # in case s is not already a string   
-    s = join(split(s, u'&'), u'&amp;')
-    s = join(split(s, u'"'), u'&quot;')
-    #s = join(split(s, u"'"), u'&apos;')
-    s = join(split(s, u'<'), u'&lt;')
+    s = join(split(s, '&'), '&amp;')
+    s = join(split(s, '"'), '&quot;')
+    #s = join(split(s, "'"), '&apos;')
+    s = join(split(s, '<'), '&lt;')
     #We need not encode > for attributes
     #s = join(split(s, '>'), '&gt;')        
     return s
 
 def encode_character_data(s):
     s = str(s) # in case s is not already a string
-    s = join(split(s, u'&'), u'&amp;')
-    s = join(split(s, u'<'), u'&lt;')
+    s = join(split(s, '&'), '&amp;')
+    s = join(split(s, '<'), '&lt;')
     return s
 
 from time import time, gmtime

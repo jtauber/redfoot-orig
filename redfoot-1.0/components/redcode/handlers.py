@@ -12,22 +12,22 @@ from exceptions import SyntaxError
 from exceptions import Exception
 
 # TODO change names
-NS = u"http://redfoot.sourceforge.net/2001/06/^"
-CODE = NS+u"code" 
-MODULE = NS+u"module"
-APP = NS+u"app"
-FACET = NS+u"facet"
-SUB_MODULE = NS+u"sub-module"
+NS = "http://redfoot.sourceforge.net/2001/06/^"
+CODE = NS+"code" 
+MODULE = NS+"module"
+APP = NS+"app"
+FACET = NS+"facet"
+SUB_MODULE = NS+"sub-module"
 
-EVAL = NS+u"eval"
-EXEC = NS+u"exec"
-VISIT = NS+u"visit"
-CALLBACK = NS+u"callback"
-APPLY = NS+u"apply"
-IF = NS+u"if"
-FOR = NS+u"for"
-ELSE = NS+u"else"
-ELSEIF = NS+u"elif"
+EVAL = NS+"eval"
+EXEC = NS+"exec"
+VISIT = NS+"visit"
+CALLBACK = NS+"callback"
+APPLY = NS+"apply"
+IF = NS+"if"
+FOR = NS+"for"
+ELSE = NS+"else"
+ELSEIF = NS+"elif"
 
 
 import __builtin__
@@ -220,7 +220,7 @@ class ModuleHandler(HandlerBase):
         elif name==SUB_MODULE:
             SubModule(self.parser, self, atts)
         else:
-            raise SyntaxError, u"Unexpected Element: '%s'\n" % name
+            raise SyntaxError, "Unexpected Element: '%s'\n" % name
 
     def char(self, data):
         self.codestr = self.codestr + data
@@ -410,7 +410,7 @@ class Eval(HandlerBase):
         HandlerBase.__init__(self, parser, parent)
         self.locals = self.parent.locals
         self.globals = self.parent.globals
-        self.codestr = u""
+        self.codestr = ""
         # TODO: add supoprt for EvalNode without Encoding?
         self.element = EncodedEvalNode(None, encode_character_data)
         

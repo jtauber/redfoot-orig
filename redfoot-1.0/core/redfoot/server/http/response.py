@@ -11,7 +11,7 @@ class Response:
         self._header = {'Server': "Redfoot HTTP Server",
                        'Date': _date_time_string(),
                        'Expires': "-1",
-                       'Content-Type': "text/html",
+                       'Content-Type': "text/html; charset=UTF-8",
                        'Connection': "close" }
         self._new_session_uri = None
             
@@ -48,7 +48,7 @@ class Response:
             if self.head_sent==0:
                 self.head_sent = 1
                 self._send_head()
-            self._wfile.write(str.encode('Latin-1', 'replace'))
+            self._wfile.write(str)
         except IOError:
             raise BadRequestError("write failed")                            
 

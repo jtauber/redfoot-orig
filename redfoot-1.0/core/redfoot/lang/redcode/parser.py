@@ -14,7 +14,7 @@ def parse(source, name, handler_class):
 
 def _parse(file, name, handler_class):
     parser = ParserCreate(namespace_separator="^")
-    parser.returns_unicode = 1
+    parser.returns_unicode = 0
     
     documentHandler = handler_class(parser, name)
 

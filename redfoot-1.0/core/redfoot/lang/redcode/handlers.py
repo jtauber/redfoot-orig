@@ -3,9 +3,9 @@ import string
 
 from redfoot.xml.handler import HandlerBase
 
-NS = u"http://redfoot.sourceforge.net/2001/06/^"
-MODULE = NS+u"module"
-CLASS = NS+u"class"
+NS = "http://redfoot.sourceforge.net/2001/06/^"
+MODULE = NS+"module"
+CLASS = NS+"class"
 
 
 class RedcodeHandler(HandlerBase):
@@ -22,7 +22,7 @@ class RedcodeHandler(HandlerBase):
             rfch = ModuleHandler(self.parser, self, module_name)
             self.module = rfch.module            
         else:
-            raise str(u"did not find a '%s' root element... instead found '%s'" % (MODULE, name))
+            raise str("did not find a '%s' root element... instead found '%s'" % (MODULE, name))
 
     def end(self, name):
         # override HandlerBase
