@@ -13,12 +13,20 @@ import threading
 
 class RedServer(Server):
 
-    def __init__(self, (host, port)):
-        Server.__init__(self, (host, port))
+    def __init__(self, (host, port), redpage=None):
+        Server.__init__(self, ('', port))
         sys.stderr.write("REDFOOT: listening on port %s...\n" % port)
         # TODO localhost might not be the correct thing to use
         sys.stderr.write("... try hitting http://localhost:%s/\n" % port)    
         sys.stderr.flush()
+        if port==80:
+            self.uri = "http://%s/" % host
+        else:
+            self.uri = "http://%s:%s/" % (host, port)
+
+        if redpage!=None:
+            self.run_redpage(redpage)
+        
 
     def run(self, modulename, *args):
         self._uiargs = args
@@ -39,7 +47,22 @@ class RedServer(Server):
             self.stop()
 
     def run_redpage(self, location, *args):
-        self._uiargs = args
+
+        if len(args)==0:
+            from redfoot.rednode import RedNode
+            node = RedNode()
+            rdf_location = location[:-4] + ".rdf"
+
+            # TODO: move create if does not exist down further
+            import os
+            if not os.access(rdf_location, os.F_OK):
+                node.local.save(rdf_location, self.uri)
+            
+            node.local.load(rdf_location, self.uri )
+            self._uiargs = (node,)
+        else:
+            self._uiargs = args
+            
         self.location = location
         self._load = self._load_redpage
         try:
@@ -153,7 +176,29 @@ class RollbackImporter:
         __builtin__.__import__ = self.realImport
     
 
+
+
+if __name__ == '__main__':
+    import socket
+    hostname = socket.getfqdn('localhost')
+    port = 80
+
+    import getopt    
+    optlist, args = getopt.getopt(sys.argv[1:], 'h:p:')
+    for optpair in optlist:
+        opt, value = optpair
+        if opt=="-h":
+            hostname = value
+        elif opt=="-p":
+            port = string.atoi(value)
+    redpage = args[0]
+    RedServer((hostname, port), redpage)
+
+
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:05  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.3  2001/03/26 20:20:42  eikeon
 #~ added run_redpage and _load_redpage
 #~
