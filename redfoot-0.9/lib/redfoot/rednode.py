@@ -2,13 +2,14 @@
 
 from rdf.store import TripleStore
 from rdf.query import QueryStore
-from rdf.storeio import StoreIO
+from rdf.storeio import AutoSaveStoreIO
 
-class RedNode(QueryStore, StoreIO, TripleStore):
+class RedNode(QueryStore, AutoSaveStoreIO, TripleStore):
     ""
 
     def __init__(self):
         TripleStore.__init__(self)
+        AutoSaveStoreIO.__init__(self)
         
         def toRelativeURL(path):
             import sys
@@ -184,6 +185,9 @@ class MultiStore:
         
 
 #~ $Log$
+#~ Revision 4.7  2000/12/05 03:49:07  eikeon
+#~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
+#~
 #~ Revision 4.6  2000/12/05 03:36:56  eikeon
 #~ reordered classes; renamed StoreNode to RedNode
 #~

@@ -41,27 +41,29 @@ class StoreIO:
 
 
 class TripleStoreIO(StoreIO, TripleStore):
-    pass
+    def add(self, subject, predicate, object):
+        TripleStore.add(self, subject, predicate, object)
 
-
+    def remove(self, subject=None, predicate=None, object=None):
+        TripleStore.remove(self, subject=None, predicate=None, object=None)
+        
+        
 from threading import RLock
 from threading import Condition
 
-class AutoSaveStoreIO(StoreIO):
-    def __init__(self):
-        StoreIO.__init__(self)
-        self.dirty = Dirty()
+class AutoSaveStoreIO(TripleStoreIO):
 
     def remove(self, subject=None, predicate=None, object=None):
         self.dirty.set()
-        StoreIO.remove(self, subject, predicate, object)
+        TripleStoreIO.remove(self, subject, predicate, object)
 
     def add(self, subject, predicate, object):
         self.dirty.set()
-        StoreIO.add(self, subject, predicate, object)
+        TripleStoreIO.add(self, subject, predicate, object)
 
     def load(self, location, URI=None):
-        StoreIO.load(self, location, URI)
+        self.dirty = Dirty()
+        TripleStoreIO.load(self, location, URI)
         self.dirty.clear() # we just loaded... therefore we are clean
         self.autosave() 
 
@@ -126,6 +128,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.12  2000/12/04 22:00:57  eikeon
+#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
+#~
 #~ Revision 4.11  2000/12/04 03:24:09  jtauber
 #~ bugfix: output was ignoring query
 #~
