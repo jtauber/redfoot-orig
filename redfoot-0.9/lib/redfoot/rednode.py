@@ -35,6 +35,11 @@ class RedNode(StoreIO, QueryStore):
         self.connectTo(toRelativeURL("rdfSyntax.rdf"), "http://www.w3.org/1999/02/22-rdf-syntax-ns")
         self.connectTo(toRelativeURL("builtin.rdf"), "http://redfoot.sourceforge.net/2000/10/06/builtin")
 
+    def set_local(self, local):
+        self.neighbourhood.removeStore(self.local)
+        self.local = local
+        self.neighbourhood.addStore(self.local)
+
     def visit(self, callback, subject=None, property=None, value=None):
         # TODO: order?
         # TODO: Fix the following in regaurds to getFirst
@@ -125,23 +130,11 @@ class RedNode(StoreIO, QueryStore):
         return self.local.getTypelessResources()
 
 
-#from rdf.storeio import JournalingStoreIO
-#class Local(QueryStore, JournalingStoreIO):
-#    def __init__(self):
-#        JournalingStoreIO.__init__(self)
+from rdf.storeio import JournalingStoreIO
+class JournalingStoreLocal(QueryStore, JournalingStoreIO):
+    def __init__(self):
+        JournalingStoreIO.__init__(self)
 
-#    def load(self, location, URI=None):
-#        self.location = location
-#        if URI==None:
-#            # default to location
-#            self.URI = self.location
-#        else:
-#            self.URI = URI
-
-#        from rdf.parser import parse_RDF
-#        parse_RDF(self.add, self.location, self.URI)
-#        self.journal.location = "%s-J.rdf" % self.location[:-4]
-        
 
 class Local(QueryStore, AutoSaveStoreIO):
     def __init__(self):
@@ -177,6 +170,10 @@ class MultiStore(StoreIO, QueryStore):
     def addStore(self, store):
         self.stores[store] = 1
 
+    def removeStore(self, store):
+        if store and self.stores[store]:
+            del self.stores[store]
+
     def getStores(self):
         return self.stores.keys()
 
@@ -186,23 +183,5 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
-#~ Revision 5.7  2001/02/09 22:33:57  eikeon
-#~ checked in what I meant to check in prior version
-#~
-#~ Revision 5.5  2000/12/20 03:59:53  jtauber
-#~ visitResourcesByType will now visit resources whose type is an unknown class
-#~
-#~ Revision 5.4  2000/12/19 06:11:09  eikeon
-#~ added method to override getTypelessResources to only pay attention to local resources
-#~
-#~ Revision 5.3  2000/12/19 06:04:04  eikeon
-#~ Moved the 'local in context of neighbourhood' methods to RedNode... else we where overriding the corresponding methods on local, which someone may care about
-#~
-#~ Revision 5.2  2000/12/17 23:41:58  eikeon
-#~ removed of log messages
-#~
-#~ Revision 5.1  2000/12/14 05:15:26  eikeon
-#~ converted to new query interface (for a second time?)
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
