@@ -55,12 +55,8 @@ class Server:
         
             def start(self):
                 while 1:
-                    #sys.stderr.write("handling request\n")
-                    #sys.stderr.flush()
-            
                     clientSocket = self.server.queue.get()
                     self.handler.handleRequest(self.server, clientSocket)
-    
         
         handler = Handler(self, handler)
         import threading
@@ -99,17 +95,18 @@ class ServerConnection:
             traceback.print_exc()
 
 
-
 class Error:
     def __init__(self, msg=''):
         self._msg = msg
     def __repr__(self):
         return self._msg
 
+
 class BadRequestError(Error):
     def __init__(self, msg):
         Error.__init__(self, "%s" % msg)
         self.message = msg
+
 
 class Request:
     
@@ -217,42 +214,5 @@ def date_time_string():
 
 
 # $Log$
-# Revision 1.5  2000/10/26 19:40:44  eikeon
-# Added TODO: stating we should look at char encoding issues at some point in time
-#
-# Revision 1.4  2000/10/26 03:39:03  eikeon
-# one line :)
-#
-# Revision 1.3  2000/10/26 01:18:36  eikeon
-# changed interface to server and dependant code
-#
-# Revision 1.2  2000/10/25 21:59:47  eikeon
-# catching more exceptions caused by connection reset by peer etc and re throwing them as BadRequestError
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.2  2000/10/18 20:02:23  eikeon
-# added eikeon's
-#
-# Revision 2.1  2000/10/17 18:33:43  eikeon
-# Yet again... better exception handling; No longer prints out tracebacks of 'non fatal' exceptions
-#
-# Revision 2.0  2000/10/14 01:13:34  jtauber
-# next version
-#
-# Revision 1.5  2000/10/13 22:19:47  eikeon
-# catching all exceptions so that server does not hang
-#
-# Revision 1.4  2000/10/13 05:03:10  eikeon
-# catching a few more exception
-#
-# Revision 1.3  2000/10/13 04:45:27  eikeon
-# changed Server header value
-#
-# Revision 1.2  2000/10/13 04:25:35  eikeon
-# fixed startup message
-#
-# Revision 1.1.1.1  2000/10/13 03:59:06  eikeon
-# initial import
-#
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0

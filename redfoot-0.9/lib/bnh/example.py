@@ -73,12 +73,5 @@ if __name__ == '__main__':
 
 
 # $Log$
-# Revision 1.2  2000/10/26 01:18:36  eikeon
-# changed interface to server and dependant code
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 1.1  2000/10/17 20:53:18  eikeon
-# Example and test case for running server
-#
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0
