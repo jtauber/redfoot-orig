@@ -19,7 +19,13 @@ class Viewer:
         
         if path_info == "/":
             response.setHeader("Content-Type", "text/xml")
-            self.RDF()
+            s = parameters['subject']
+            if s=="": s=None
+            p = parameters['predicate']
+            if p=="": p=None
+            o = parameters['object']
+            if o=="": o=None
+            self.RDF(s,p,o)
         elif path_info == "/subclass":
             root = parameters['uri']
             if root=="":
@@ -33,7 +39,13 @@ class Viewer:
         elif path_info == "/classList":
             self.classList()
         elif path_info == "/Triples":
-            self.Triples()
+            s = parameters['subject']
+            if s=="": s=None
+            p = parameters['predicate']
+            if p=="": p=None
+            o = parameters['object']
+            if o=="": o=None
+            self.Triples(s,p,o)
         elif path_info == "/css":
             self.css()
         elif path_info == "/view":
@@ -343,10 +355,14 @@ class Viewer:
         else:
             return string.join(string.split(s,'#'),'%23')
 
-    def RDF(self):
-        self.storeNode.getStore().output(self.response)
+    def RDF(self, subject=None, predicate=None, object=None):
+        if subject==None and predicate==None and object==None:
+            # more efficient
+            self.storeNode.getStore().output(self.response)
+        else:
+            self.storeNode.getStore().output_query(subject, predicate, object, self.response)
 
-    def Triples(self):
+    def Triples(self, subject=None, predicate=None, object=None):
         self.response.write("""
         <HTML>
           <HEAD>
@@ -360,7 +376,7 @@ class Viewer:
             <H2>Triples</H2>
             <TABLE>
         """)
-        for statement in self.qstore.get(None, None, None):
+        for statement in self.qstore.get(subject, predicate, object):
             self.response.write("""
               <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
             """ % (statement[0], statement[1], statement[2]))
@@ -372,6 +388,9 @@ class Viewer:
 
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:34  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.3  2000/11/03 23:04:08  eikeon
 #~ Added support for cookies and sessions; prefixed a number of methods and variables with _ to indicate they are private; changed a number of methods to mixed case for consistency; added a setHeader method on response -- headers where hardcoded before; replaced writer with response as writer predates and is redundant with repsonse; Added authentication to editor
 #~
