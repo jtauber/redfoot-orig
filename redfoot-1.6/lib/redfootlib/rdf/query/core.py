@@ -13,12 +13,6 @@ class Query(object):
             return object
         return None
  
-    def objects_transitive(self, subject, property):
-        for object in self.objects(subject, property):
-            yield object
-            for o in self.objects_transitive(object, property):
-                yield o
-
     def transitive_objects(self, subject, property):
         yield subject
         for object in self.objects(subject, property):
