@@ -158,8 +158,12 @@ class Request:
 class Response:
 
     def setClientSocket(self, clientSocket):
-        self.wfile = clientSocket.makefile('wb', 0)        
+        self.wfile = clientSocket.makefile('wb', 0)
 
+        # TODO: look into char encoding issues at some point in time
+        #from encodings.utf_8 import StreamWriter
+        #self.wfile = StreamWriter(self.wfile)
+        
         self.write("%s %s %s\r\n" % ("HTTP/1.1", "200", "OK"))
         self.send_header('Server', "eikeon's Bare Naked HTTP Server")
         self.send_header('Date', date_time_string())
@@ -213,6 +217,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.4  2000/10/26 03:39:03  eikeon
+# one line :)
+#
 # Revision 1.3  2000/10/26 01:18:36  eikeon
 # changed interface to server and dependant code
 #
