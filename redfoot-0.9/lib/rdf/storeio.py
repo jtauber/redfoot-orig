@@ -91,14 +91,20 @@ class AutoSaveStoreIO(TripleStoreIO):
         
     def _autosave(self, interval):
         while 1:
-            if self.dirtyBit.value()==1:
-                self.dirtyBit.clear()
-                # TODO: catch exceptions
-                self.save(self.location, self.URI)
-                self.save("%s-%s" % (self.location, self.date_time_string()), self.URI)
-                # Do not save a backup more often than interval
-                import time
-                time.sleep(interval)
+            try:
+                if self.dirtyBit.value()==1:
+                    self.dirtyBit.clear()
+                    import sys
+                    sys.stderr.write("auto saving\n")
+                    self.save(self.location, self.URI)
+                    self.save("%s-%s" % (self.location, self.date_time_string()), self.URI)
+                    # Do not save a backup more often than interval
+                    import time
+                    time.sleep(interval)
+            except:
+                import traceback
+                traceback.print_exc()
+                sys.stderr.flush()
             # do not bother to check if dirty until we get notified
             self.dirtyBit.wait()
 
@@ -183,6 +189,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.4  2001/03/26 20:18:01  eikeon
 #~ removed old log messages
 #~
