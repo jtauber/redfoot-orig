@@ -17,6 +17,17 @@ def splitProperty(property):
                     return (property[:j],property[j:])
     return ("",property)
 
+# TODO: the following two functions are duplicated from parser
+
+def literal(str):
+    return "^"+str
+
+def is_literal(str):
+    return str[0]=="^"
+
+def un_literal(str):
+    return str[1:]
+
 class Serializer:
     rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
@@ -76,10 +87,10 @@ class Serializer:
 
         # TODO: Is this what we want to do if value is None?
         if value==None or value=="":
-            value = "^"
+            value = literal("")
             
-        if value[0] == "^":
-            self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(value[1:]), self.namespaces[namespace], localName) )
+        if is_literal(value):
+            self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(un_literal(value)), self.namespaces[namespace], localName) )
         else:
             if value[0:len(self.base)+1]==self.base+"#":
                 value = value[len(self.base):]
@@ -87,6 +98,9 @@ class Serializer:
 
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:33  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.2  2000/11/04 01:24:50  eikeon
 #~ fixed string index out of range bug in serializer
 #~

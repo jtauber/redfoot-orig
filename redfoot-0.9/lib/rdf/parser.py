@@ -1,5 +1,11 @@
 # $Header$
 
+def literal(str):
+    return "^"+str
+
+def is_literal(str):
+    return str[0]=="^"
+
 class RDFParser:
     
     def __init__(self):
@@ -100,7 +106,7 @@ class DescriptionHandler:
             if att=="about" or att=="ID" or att==rdfns+"about" or att==rdfns+"ID":
                 pass
             else:
-                self.adder(self.subject, att, "^"+atts[att])
+                self.adder(self.subject, att, literal(atts[att]))
         self.resume()
 
     def resume(self):
@@ -136,7 +142,7 @@ class PropertyHandler:
                 if att == "resource":
                     pass
                 else:
-                    self.adder(self.object, att, "^"+atts[att])
+                    self.adder(self.object, att, literal(atts[att]))
         elif atts.has_key(rdfns+"resource"):
             self.object = atts[rdfns+"resource"]
             if self.object[0]=="#":
@@ -145,9 +151,9 @@ class PropertyHandler:
                 if att == rdfns+"resource":
                     pass
                 else:
-                    self.adder(self.object, att, "^"+atts[att])
+                    self.adder(self.object, att, literal(atts[att]))
         else:
-            self.object = "^"
+            self.object = literal("")
         self.resume()
 
     def resume(self):
@@ -170,6 +176,9 @@ class PropertyHandler:
         self.parent.resume()
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:33  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.1  2000/11/02 21:48:27  eikeon
 #~ removed old log messages
 #~
