@@ -18,7 +18,6 @@ class QueryStore:
 
     def label(self, subject, default=None):
         statement = self.getFirst(subject, LABEL, None)
-
         if statement!=None:
             return un_literal(statement[2])
         elif default!=None:
@@ -30,7 +29,6 @@ class QueryStore:
      
     def comment(self, subject, default=None):
         statement = self.getFirst(subject, COMMENT, None)
-
         if statement!=None:
             return un_literal(statement[2])
         elif default!=None:
@@ -55,40 +53,33 @@ class QueryStore:
         
     # TODO: should we have a version of this that answers for subclasses too?
     def isOfType(self, resource, type):
-        for s in self.get(resource, TYPE, None):
-            if s[2] == type:
-                return 1
-        return 0
+        statement = self.getFirst(resource, TYPE, type)
+        if statement != None:
+            return 1
+        else:
+            return 0
 
     def getSubjects(self):
         result = {}
-
         def subject(s, p, o, result=result):
             result[s] = 1
-        
         self.visit(subject, None, None, None)
-
         return result.keys()
 
     def getProperties(self, subject=None):
         result = {}
-        for s in self.get(subject, None, None):
-            result[s[1]] = 1
+        def property(s, p, o, result=result):
+            result[p] = 1
+        self.visit(property, subject, None, None)
         return result.keys()
 
     def getValues(self, subject, property):
         result = {}
-        for s in self.get(subject, property, None):
-            result[s[2]] = 1
+        def object(s, p, o, result=result):
+            result[o] = 1
         return result.keys()
 
-    #TODO: remove typeInh as it is no longer being used
-    def typeInh(self, t):
-        l = []
-        for s in self.get(t, SUBCLASSOF, None):
-            l.extend(self.typeInh(s[2]))
-        return [t,l]
-
+    # TODO: are the following two methods transitive as they are currently implemented?
     def transitiveSuperTypes(self, type):
         set = {}
         set[type] = 1
@@ -112,20 +103,23 @@ class QueryStore:
     def rootClasses(self):
         """returns those classes that aren't a subclass of anything"""
         result = []
-        for klass in self.get(None, TYPE, CLASS):
-            if len(self.get(klass[0], SUBCLASSOF, None))==0:
-                result.append(klass[0])
+        def klass(s, p, o, result=result, self=self):
+            if self.getFirst(s, SUBCLASSOF, None)==None:
+                result.append(s)
+        self.visit(klass, None, TYPE, CLASS)
         return result
-                
+        
     # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
-        for klass in self.get(None, TYPE, CLASS):
-            first = 1
-            for resource in self.get(None, TYPE, klass[0]):
-                if first:
-                    processClass(klass[0])
-                    first = 0
-                processResource(resource[0])
+        def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
+            if self.getFirst(None, TYPE, s)!=None:
+                processClass(s)
+            def resource(s, p, o, processClass=processClass,\
+                         processResource=processResource, self=self):
+                processResource(s)
+            self.visit(resource, None, TYPE, s)
+        self.visit(klass, None, TYPE, CLASS)
+                
 
     def parentTypesV(self, type, processType):
         self.visit(lambda s, p, o, processType=processType: processType(o),\
@@ -199,6 +193,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.9  2000/12/06 01:35:59  eikeon
+#~ reimplemented isKnownResource
+#~
 #~ Revision 4.8  2000/12/05 23:40:32  eikeon
 #~ reimplemented getByType to use visit
 #~
