@@ -94,3 +94,78 @@ class RedDaemon(HTTPDaemon):
             sys.stderr.flush()
 
 
+import string, sys, getopt, os
+def usage():
+    print """\
+USAGE: run.py <options> <app name>
+
+    options:
+           [-h,--hostname <host name>]
+           [-p,--port <port number>]
+           [--exact]
+           [--help]
+
+    hostname
+        Defaults to the computer's fully qualified name. 
+    port
+        Defaults to 8000.
+    exact
+        If exact server will listen to request coming to host via the exact host name only. Else listens to all request coming to host regaurdless of what name they come in on.
+"""    
+    sys.exit(-1)
+
+
+if not hasattr(sys, 'version_info') or sys.version_info[0]<2:
+    print """\
+Can not run redfoot with Python verion:
+  '%s'""" % sys.version
+    print "Redfoot requires Python 2.0 or higher to run. "
+    sys.exit(-1)
+
+
+try:
+    import threading
+except ImportError:
+    print """
+Redfoot can not run without the threading module. Check that your PYTHONPATH is right and that you have threading.py
+"""
+    sys.exit(-1)
+    
+def command_line():
+    # set default value
+    port = 8000
+    exact = 0
+    hostname = None
+
+    try:
+        optlist, args = getopt.getopt(sys.argv[1:], 'p:h:', ["help", "exact", "port=", "hostname="])
+    except getopt.GetoptError, msg:
+        print msg
+        usage()
+    
+    for optpair in optlist:
+        opt, value = optpair
+        if opt=="-p" or opt=="--port":
+            port = string.atoi(value)
+        elif opt=="-h" or opt=="--hostname":
+            hostname = value
+        elif opt=="--exact":
+            exact = 1
+        elif opt=="--help":
+            usage()
+
+    if not hostname:
+        from socket import getfqdn
+        hostname = getfqdn()
+
+    if len(args)!=1:
+        usage()
+
+    module = args[0]
+
+    # Be forgiving if the module file name was specified instead of just
+    # the module name
+    if module[-4:] == ".xml":
+        module = module[:-4]
+    return RedDaemon((hostname, port), module, None, exact)
+
