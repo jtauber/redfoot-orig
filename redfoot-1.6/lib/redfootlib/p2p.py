@@ -377,7 +377,7 @@ class Node(asyncore.dispatcher):
         Refresh knowledge of connection and proxies with neighbours.
         """
         
-        for node in self.connections:
+        for node in self.connections.keys():
             for connection in self.connections[node]:
                 connection.send_who()
                 connection.send_connected()
@@ -466,16 +466,18 @@ class Connection(asynchat.async_chat):
                 args = data[5:].split()
                 destination = args[0]
                 message = " ".join(args[1:])
+                message = decode(message)
                 message_id = self.server.get_message_id()
                 if not self.server.tell(destination, self.remote_uid,
                                         message_id, message):
                     self.send_error("COULDN'T SEND")
             elif data[:7] == "PASS_ON":
-                args = data[8:].split()
+                args = data[8:].split(" ", 3)
                 destination = args[0]
                 source = args[1]
                 message_id = args[2]
-                message = " ".join(args[3:])
+                message = args[3]
+                message = decode(message)
                 if not self.server.tell(destination, source,
                                         message_id, message):
                     self.send_error("COULDN'T SEND")
@@ -515,6 +517,7 @@ class Connection(asynchat.async_chat):
         self.push("ERROR %s\r\n" % message)
 
     def send_says(self, to, frm, message_id, message):
+        message = encode(message)
         self.push("SAYS %s %s %s %s\r\n" % (to, frm, message_id, message))
 
     ## messages sent to both edges and other nodes
@@ -529,6 +532,7 @@ class Connection(asynchat.async_chat):
     ## messages normally sent only to other nodes
         
     def send_pass_on(self, to, frm, message_id, message):
+        message = encode(message)
         self.push("PASS_ON %s %s %s %s\r\n" % (to, frm, message_id, message))
 
     def send_who(self):
@@ -564,7 +568,18 @@ class OutwardConnection(Connection):
 
         
         
+def encode(message):
+    orig = message
+    message = '\\\\'.join(message.split('\\'))
+    message = '\\n'.join(message.split('\n'))
+    if not decode(message)==orig:
+        print "ORIG:", orig, "\n\nAFTER:", decode(message)
+    return message
 
+
+def decode(message):
+    message = "\n".join(message.split("\\n"))
+    return "\\".join(message.split("\\\\"))
 
 #### MAINLINE
 
