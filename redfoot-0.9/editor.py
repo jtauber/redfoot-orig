@@ -36,7 +36,7 @@ class Editor(Viewer):
         elif path_info == "/connect":
             self.connectPage()
         else:
-            Viewer.handler(path_info,args)
+            Viewer.handler(self,path_info,args)
 
     def menuBar(self):
         self.writer.write("""
@@ -386,6 +386,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 2.2  2000/10/16 04:10:07  jtauber
+# refactored editor-specific http handling code from viewer to editor
+#
 # Revision 2.1  2000/10/16 04:01:23  jtauber
 # (finally) added $ and $ to Editor
 #
