@@ -195,10 +195,16 @@ class PagesHandler(HandlerBase):
         module.__dict__['__redpages__'] = classobj
 
 
-class SubModule(ElementHandler):
+class SubModule(HandlerBase):
     def __init__(self, parser, parent, atts):
         HandlerBase.__init__(self, parser, parent)
+        if not atts.has_key('instance'):
+            msg = "sub-module is missing required instance attribute"
+            raise SyntaxError, msg
         instance_name = atts['instance']
+        if not atts.has_key('class'):
+            msg = "sub-module is missing required class attribute"
+            raise SyntaxError, msg
         class_name = atts['class']
         from_str = atts.get('from', None)
         if from_str:
@@ -207,6 +213,12 @@ class SubModule(ElementHandler):
             locals = globals
             exec "from %s import %s" % (from_str, class_name) in globals, locals
         parent.locals['RF_sub_modules'].append((instance_name, class_name))
+
+
+    def child(self, name, atts):
+        msg = "No children allowed. Found '%s'" % name
+        raise SyntaxError, msg
+        
 
 
 class If(ElementHandler):
@@ -301,7 +313,9 @@ class Eval(HandlerBase):
         self.element = EncodedEvalNode(None, encode_character_data)
         
     def child(self, name, atts):
-        raise "No children allowed"
+        msg = "No children allowed. Found '%s'" % name
+        raise SyntaxError, msg
+    
     
     def char(self, data):
         self.codestr = self.codestr + data
@@ -332,7 +346,8 @@ class Apply(HandlerBase):
         self.element = EvalNode()
         
     def child(self, name, atts):
-        raise "No children allowed"
+        msg = "No children allowed. Found '%s'" % name
+        raise SyntaxError, msg
     
     def end(self, name):
         HandlerBase.end(self, name)
