@@ -32,7 +32,7 @@ class QueryStore:
     def label(self, subject):
         l = self.get(subject, QueryStore.LABEL, None)
         if len(l) > 0:
-            return l[0][2]     # TODO: currently only returns first label
+            return l[0][2][1:]     # TODO: currently only returns first label
         else:
             return subject
 

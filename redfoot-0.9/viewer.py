@@ -107,7 +107,6 @@ class Viewer:
                self.qstore.comment(resource),
                self.qstore.label(resource)))
 
-
     def encodeURI(self, s):
         import string
         return string.join( string.split(s,'#') ,'%23')
