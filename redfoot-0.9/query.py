@@ -3,6 +3,7 @@ class QueryStore:
 
     TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     CLASS = "http://www.w3.org/2000/01/rdf-schema#Class"
+    PROPERTY = "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
     RESOURCE = "http://www.w3.org/2000/01/rdf-schema#Resource"
     SUBCLASSOF = "http://www.w3.org/2000/01/rdf-schema#subClassOf"
     LABEL = "http://www.w3.org/2000/01/rdf-schema#label"
