@@ -120,3 +120,25 @@ class SchemaQuery(Query):
         def f(statement_uri, subject=subject, self=self, callback=callback):
             callback(statement_uri, subject, self.get_first(statement_uri, PREDICATE, None).object, self.get_first(statement_uri, OBJECT, None).object)
         self.visit_by_type(s(f), STATEMENT, SUBJECT, subject)
+
+
+    def get_statement_uri(self, subject, predicate, object):
+        """\
+        Returns the first statement uri for the given subject, predicate, object.
+        """
+        class Result:
+            def __init__(self, value):
+                self.value = value
+        result = Result(None)
+        def _callback(s, p, o):
+            if not self.exists(s, SUBJECT, subject):
+                return
+            if not self.exists(s, PREDICATE, predicate):
+                return
+            if not self.exists(s, OBJECT, object):
+                return
+            result.value = s
+            return 1
+        self.visit(_callback, (None, TYPE, STATEMENT))
+        return result.value
+
