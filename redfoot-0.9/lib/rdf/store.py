@@ -28,10 +28,6 @@ class TripleStore:
 
         self.pos[predicate][object][subject] = 1
 
-    def put(self, subject, predicate, object):
-        self.remove(subject, predicate, object)
-        self.add(subject, predicate, object)
-
     def get(self, subject=None, predicate=None, object=None):
         class Visitor:
             def __init__(self):
@@ -46,16 +42,11 @@ class TripleStore:
 	return visitor.list
 
     def remove(self, subject=None, predicate=None, object=None):
-        class Visitor:
-            def __init__(self, store):
-                self.store = store
+        def callback(subject, predicate, object, self=self):
+            del self.spo[subject][predicate][object]
+            del self.pos[predicate][object][subject]
 
-            def callback(self, subject, predicate, object):
-                del self.store.spo[subject][predicate][object]
-                del self.store.pos[predicate][object][subject]
-
-        visitor = Visitor(self)
-        self.visit(visitor.callback, subject, predicate, object)
+        self.visit(callback, subject, predicate, object)
 
     def visit(self, callback, subject=None, predicate=None, object=None):
         if subject!=None: # subject is given
@@ -111,6 +102,9 @@ class TripleStore:
                     
 
 #~ $Log$
+#~ Revision 4.2  2000/12/03 20:49:38  jtauber
+#~ refactored+documented visit function
+#~
 #~ Revision 4.1  2000/12/03 20:17:40  jtauber
 #~ changed property/value to predicate/object
 #~
