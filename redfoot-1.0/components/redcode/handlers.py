@@ -273,6 +273,7 @@ class If(ElementHandler):
         HandlerBase.__init__(self, parser, parent)
         self.locals = parent.locals
         self.globals = parent.globals
+        self.module = parent.module
         test = atts['test']
         self.element = IfNodeList(test)
 
@@ -308,6 +309,7 @@ class For(ElementHandler):
         HandlerBase.__init__(self, parser, parent)
         self.locals = self.parent.locals
         self.globals = self.parent.globals
+        self.module = parent.module        
         item = atts['item']
         list = atts['list']
         code = __builtin__.compile(list, list, "eval")                
