@@ -5,7 +5,7 @@ import dev_hack
 from cmd import Cmd
 from sys import exit
 from redfootlib.rdf.objects import resource, literal
-
+from redfootlib.rednode import RedNode
 
 class RedCmd(object, Cmd):
     """
@@ -19,6 +19,9 @@ class RedCmd(object, Cmd):
         super(RedCmd, self).__init__()
         self.prefix_map = {}
         self.default_uri = None
+
+        # Create a RedNode
+        self.rednode = RedNode()
         
     def process_resource(self, text):
         if text == "ANY":
@@ -110,10 +113,19 @@ class RedCmd(object, Cmd):
         else:
             print "error"
 
-from redfootlib.rdf.store.triple import TripleStore
+    def do_load(self, arg):
+        """load <location> <uri>"""
 
-class RedCmdStore(RedCmd, TripleStore): pass
+        # Load RDF data from location using uri as the base URI, creating a
+        # file if one does not already exist.
+        # @@@ do we need to make sure we only do this once?
+        location, uri = arg.split()
+        self.rednode.load(location, uri, 1)
 
-if __name__ == "__main__":
-    red_cmd = RedCmdStore()
-    red_cmd.cmdloop()
+    def do_server(self, arg):
+        """server <address> <port>"""
+    
+        address, port = arg.split()
+        # Create a RedServer listening on address, port
+        self.server = RedServer(address, int(port))
+        server.run(background=1)
