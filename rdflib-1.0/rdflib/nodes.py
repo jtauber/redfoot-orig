@@ -1,14 +1,14 @@
 
 class URIRef(str):
     def n3(self):
-        return "<%s>" % str(self)
+        return "<%s>" % self
 
 class Literal(str):
     def __add__(self, val):
         return Literal(str(self) + val)
     
     def n3(self):
-        return '"%s"' % str(self)
+        return '"%s"' % self
 
 class BNode(str):
     def n3(self):
