@@ -41,12 +41,6 @@ def content(self, request, response):
         return
 
 
-<r:response name="/robots.txt">
-  <r:exec>response.setHeader("Content-Type", "text/plain")</r:exec>
-  <r:exec>response.write("\n")</r:exec>
-</r:response>
-
-
 <r:response name="/">
 <r:exec>self.rss(request, response)</r:exec>
 </r:response>
