@@ -19,8 +19,18 @@ def first(func):
 
 # TODO: generalize me:
 #   convert to class with __call__ and change s, p, o to *args
-def filter(callback, condition):
-    return lambda s, p, o, callback=callback, condition=condition: condition(s, p, o) and callback(s, p, o)
+#def filter(callback, condition):
+#    return lambda s, p, o, callback=callback, condition=condition: condition(s, p, o) and callback(s, p, o)
+
+class filter:
+    def __init__(self, callback, condition):
+        self.callback = callback
+        self.condition = condition
+
+    def __call__(self, *args):
+        if apply(self.condition, args):
+            apply(self.callback, args)
+
 
 # TODO what to call this?
 def callback_subject(func, callback, *args):
