@@ -185,8 +185,8 @@ class QueryStore:
         self.store.add(statement_uri, QueryStore.SUBJECT, subject)
         self.store.add(statement_uri, QueryStore.PREDICATE, predicate)
         self.store.add(statement_uri, QueryStore.OBJECT, object)
-        self.store.remove(subject, predicate, object)
 
+    # TODO: not sure this makes sense to have - jkt
     def dereify(self, statement_uri):
         subject = self.store.get(statement, QueryStore.SUBJECT, None)[0][2]
         predicate = self.store.get(statement, QueryStore.PREDICATE, None)[0][2]
@@ -211,6 +211,9 @@ class QueryStore:
         return resultset.keys()
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:33  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.1  2000/11/02 21:48:27  eikeon
 #~ removed old log messages
 #~
