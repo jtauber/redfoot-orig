@@ -17,6 +17,11 @@ REDFOOT README
       - beginnings of a peer-to-peer architecture for communication between Redfeet 
 
 
+TO INSTALL
+
+    cd redfoot-1.5.0; python install.py 
+
+
 TO RUN SOMETHING STRAIGHT AWAY
 
     cd redfoot-examples/; python run.py generic
