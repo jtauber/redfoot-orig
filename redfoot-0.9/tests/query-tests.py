@@ -6,19 +6,16 @@ from redfoot.query import *
 
 store = TripleStore()
 
-parser = pyexpat.ParserCreate(namespace_separator="")
-parser.SetBase("http://www.w3.org/1999/02/22-rdf-syntax-ns")
-rootHandler(parser, store.add, None)
-f = open("rdfSyntax.rdf")
-parser.ParseFile(f)
-f.close()
+rdfParser = RDFParser()
+rdfParser.setBaseURI("http://www.w3.org/1999/02/22-rdf-syntax-ns")
+rdfParser.setURL("rdfSyntax.rdf")
+rdfParser.setAdder(store.add)
+rdfParser.parse()
 
-parser = pyexpat.ParserCreate(namespace_separator="")
-parser.SetBase("http://www.w3.org/2000/01/rdf-schema")
-rootHandler(parser, store.add, None)
-f = open("rdfSchema.rdf")
-parser.ParseFile(f)
-f.close()
+rdfParser.setBaseURI("http://www.w3.org/2000/01/rdf-schema")
+rdfParser.setURL("rdfSchema.rdf")
+rdfParser.setAdder(store.add)
+rdfParser.parse()
 
 qstore = QueryStore()
 qstore.setStore(store)
