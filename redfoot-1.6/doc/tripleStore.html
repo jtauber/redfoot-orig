@@ -7,56 +7,95 @@
     <div CLASS="NAV"><a href="../index.html">Redfoot</A> &gt; <a href="./index.html">Documentation</a></div>
     <h1>Triple Store</h1>
 
-    <p>At the very core of Redfoot is the notion of a TripleStore,
-the class of objects with the following interface:
-
-    <UL>
-      <LI><CODE>add(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></LI>
-      <LI><CODE>remove(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></LI>
-      <LI><CODE>visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))</CODE></LI>
-    </UL>
-
-    <p>Redfoot contains an implementation of an in memory TripleStore (see lib/redfootlib/rdf/store/triple.py).
+    <p>
+      At the very core of Redfoot is the notion of a TripleStore, a
+place to add, remove and query for triples.
     </p>
 
-    <p>Redfoot uses triple stores as a place to add, remove and query
-for triples.
+    <p>
+      The triples in the store are of the form subject, predicate,
+object where:
     </p>
+
+    <ul>
+      <li>subject and predicate are instances of <CODE>Resource</CODE></li>
+      <li>object is an instance of <CODE>Resource</CODE> or <CODE>Literal</CODE></li>
+    </ul>
+
+    <p>
+      Resource and Literal are defined in
+redfootlib/rdf/objects.py. These objects are created via <CODE>Resource(<VAR>uri</VAR>)</CODE> and
+<CODE>Literal(<VAR>value</VAR>)</CODE>. <span class="ednote">A document further describing these objects(?) is on the TODO list... as is flushing out anonymous resources etc.</span>
+    </p>
+
+    <p class="ednote">
+      Currently Redfoot's in memory store implementation doesn't care what type of python objects are used for the subject, predicate and object. This has the undesireable effect of finding out the hard way further down the road... as subject, predicate and object are assumed to be of type Resource or Literal elsewhere. Need to figure out where is the best place to enforce the usage of correct object types?
+    </p>
+
+    <h2>Interface</h2>
+    <p>
+      The use of <CODE>None</CODE> in the following methods indicates that any value will match.
+    </p>
+
+    <p>The methods <CODE>triples, subjects, predicate, etc</CODE> are python generators.
+    </p>
+
+    <h3>Layer 0</h3>
+    <p>
+      The core layer a triple store backend must implement. Currently
+Redfoot has an <a href="../lib/redfootlib/rdf/store/memory.py">in memory triple store backend</a> and a Berkeley DB backed
+triple store in the works. 
+    </p>
+
+    <ul>
+      <li><code>add(<var>subject</var>, <var>predicate</var>, <var>object</var>)</code></li>
+      <li><code>remove(<var>subject</var>, <var>predicate</var>, <var>object</var>)</code></li>
+      <li><code>triples(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></li>
+    </ul>
+
+    <ul>
+      <li><code>subjects(<var>predicate</var>=None, <var>object</var>=None)</code></li>
+      <li><code>predicates(<var>subject</var>=None, <var>object</var>=None)</code></li>
+      <li><code>objects(<var>subject</var>=None, <var>predicate</var>=None)</code></li>
+    </ul>
+
+    <ul>
+      <li><code>subject_predicates(<var>object</var>=None)</code></li>
+      <li><code>subject_objects(<var>predicate</var>=None)</code></li>
+      <li><code>predicate_objects(<var>subject</var>=None)</code></li>
+    </ul>
+
+    <h3>Layer 1</h3>
+    <ul>
+      <li><code>generate_uri()</code></li>
+      <li><code>remove(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></li>
+      <li><code>__iter__()</code></li>
+    </ul>
+
+    <h3>Layer 2</h3>
+    <ul>
+      <li><code>exists(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></li>
+      <li><code>first_object(<var>subject</var>=None, <var>predicate</var>=None)</code></li>
+      <li><code>transitive_objects(<var>subject</var>=None, <var>property</var>=None)</code></li>
+      <li><code>transitive_subjects(<var>predicate</var>=None, <var>object</var>=None)</code></li>
+    </ul>
     
-    <P>In both <CODE>remove</CODE> and <CODE>visit</CODE>, any of <VAR>subject</VAR>, <VAR>predicate</VAR> and
-       <VAR>object</VAR> can be <CODE>None</CODE> which indicates that any value will match.
-
-    <P><CODE>visit</CODE> causes <VAR>callback</VAR> to be called for each matching triple. <VAR>callback</VAR>
-       must have the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE>
-       but see below on functors.</P>
-
-    <P>What types of Python object are used for each item of a triple? Technically, the triple store doesn't
-       care but in Redfoot, each item in a triple is either a <CODE>Resource</CODE> or <CODE>Literal</CODE>
-       object (see lib/redfootlib/rdf/objects.py).
-       These objects are created via the <CODE>resource(<VAR>uri</VAR>)</CODE> and
-       <CODE>literal(<VAR>value</VAR>)</CODE> which return an instance.</P>
-
-    <P>There are some handy constants for syntax and schema resource URIs defined in
-       lib/redfootlib/rdf/const.py</P>
-
     <H4>Code Example</H4>
     
     <PRE CLASS="code_sample">
 from redfootlib.rdf.store.triple import TripleStore
 from redfootlib.rdf.objects import resource, literal
-from redfootlib.rdf.const import *
+from redfootlib.rdf.const import LABEL
 
 store = TripleStore()
-store.add(resource("http://www.jtauber.com/"), LABEL, literal("James Tauber's Website"))
+store.add(resource("http://redfoot.net/"), LABEL, literal("Redfoot Network Website"))
 
-def print_triple(s, p, o):
+for s, p, o in store:   # enabled by the layer 1 __iter__ method
     print s, p, o
 
-store.visit(print_triple, (resource("http://www.jtauber.com/"), None, None))</PRE>
-
-    <p>See redfootlib.rednode.RedNode for an example of classes that
-are useful for mixing in with a TripleStore.</p>
-
+for predicate in store.predicates(resource("http://redfoot.net/"), None)
+    print predicate
+    </PRE>
 
     <p class="cvs_id">$Id$</p>
 
