@@ -6,7 +6,7 @@
 
   from redfoot.rdf.objects import resource, literal
 
-  SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
+  SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')  
 
   <red:module name="RedSite">
 
@@ -14,14 +14,27 @@
                     class="Authentication" 
                     from="redmodules.authentication"/>
 
+    <!-- Used for editing the redsite schema in redsite.rdf -->
+    <red:sub-module instance="generic"
+                    class="Generic"
+                    from="redmodules.generic"/>
+
     def __init__(self, app):
         from redfoot.module import ParentModule
         ParentModule.__init__(self, app)
 
+        self.rednode = self.create_rednode()
+        self.generic.set_rednode(self.rednode)
+        self.app.rednode.neighbours.add_store(self.rednode.local)
+
         # TODO: move defaults into redsite.rdf
         self.background = "#900"
         self.link_color = "#006"
-        self.link_hover = "#66C"        
+        self.link_hover = "#66C"
+
+    def stop(self):
+        print "saving %s" % self.rednode.local.location
+        self.rednode.local.save()
 
     <red:facet name="/">
       <red:exec>
@@ -236,7 +249,12 @@ User-agent: *
     <red:facet name="auth/">
       <h1>Authentication</h1>
       <red:exec>self.authentication.apply()</red:exec>
-    </red:facet>    
+    </red:facet>
+
+    <red:facet name="/redsite/editor">
+      <red:exec>self.generic.apply()</red:exec>
+    </red:facet>
+    
 
   </red:module>
 </red:code>
