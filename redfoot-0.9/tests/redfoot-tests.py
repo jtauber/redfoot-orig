@@ -39,7 +39,8 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         storeIO.setStore(tripleStore)
         storeIO.load("rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
         storeIO.load("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-
+        storeIO.load("example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
+        
         i = string.find(self.path, "?")
         if i==-1:
             path_info = self.path
