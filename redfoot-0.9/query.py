@@ -75,3 +75,12 @@ class QueryStore:
                 set[item] = 1
 
         return set.keys()
+
+    def resourcesByClass(self):
+        result = {}
+        for klass in self.store.get(None, QueryStore.TYPE, QueryStore.CLASS):
+            result[klass[0]] = []
+            for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
+                result[klass[0]].append(resource[0])
+        return result
+                
