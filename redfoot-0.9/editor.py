@@ -308,7 +308,7 @@ class Editor(Viewer):
 class PeerEditor(Editor):
     def menuBar(self):
         self.writer.write("""
-            <P CLASS="MENUBAR"><A HREF=".">Class List</A>
+            <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
              | <A HREF="subclass">Full Subclass View</A>
              | <A HREF="subclassNR">Collapsed Subclass View</A>
              | <A HREF="RDF">Download RDF</A>
