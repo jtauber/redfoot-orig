@@ -11,12 +11,20 @@ def run_setup(dir_name):
     os.system("%s setup.py install %s" % (python, args))
     os.chdir(dot)
 
-# TODO: first check to see if they already have a version of medusa
-# install. If so, let them install individually on their own.
-run_setup("medusa")
 
 run_setup("redfoot-core")
 run_setup("redfoot-components")
+
+try:
+    import medusa
+    print """\
+Warning: Redfoot is only known to work on version of medusa supplied, namely, 0.5.2 with one patch made to it.
+
+For now, you are on your own updating your version of medusa if needed.
+"""
+except:
+    run_setup("medusa")
+
 
 # TODO: would it make sense for this to be a setup.py script as well
 # to copy redfoot-doc and redfoot-examples somewhere... etc?
