@@ -5,15 +5,15 @@
   from redfoot.rdf.store.urigen import generate_uri
   from redfoot.util import encode_URI
 
-  from redfoot.rdf.query.builders import ListBuilder, triple2statement, statement2triple
+  from redfoot.rdf.query.functors import sort
 
   TASK = resource("http://redfoot.sourceforge.net/2001/06/task")
 
   <red:module name="Task">
 
-    def alpha_by_label(self, a, b):
-        label_a = self.app.rednode.label(a.subject)
-        label_b = self.app.rednode.label(b.subject)
+    def alpha_by_label(self, (s1, p1, o1), (s2, p2, o2)):
+        label_a = self.app.rednode.label(s1)
+        label_b = self.app.rednode.label(s2)
         return cmp(str(label_a), str(label_b))
 
     <red:facet name="">    
@@ -23,10 +23,7 @@
     <red:facet name="task_list">    
       <TABLE>
         <red:exec>
-          lb = ListBuilder()
-          self.app.rednode.visit(triple2statement(lb.accept), (None, TYPE, TASK))
-          lb.sort(self.alpha_by_label)
-          lb.visit(statement2triple(self.task_row))
+          sort(self.alpha_by_label, self.app.rednode.visit)(self.task_row, (None, TYPE, TASK))
         </red:exec>
         <TR>
           <TD>

@@ -23,3 +23,22 @@ def filter(callback, condition):
 # TODO what to call this?
 def callback_subject(func, callback, *args):
     return lambda s, func=func, callback=callback, args=args: apply(func, (callback, s) + args)
+
+class sort:
+    def __init__(self, comparator, visit):
+        self.visit = visit        
+        self.comparator = comparator
+        self.list = []
+
+    def inner_callback(self, *args):
+        self.list.append(args)
+        
+    def __call__(self, callback, *args):
+        self.visit(self.inner_callback, *args)
+        self.finished(callback)
+        
+    def finished(self, callback):
+        list = self.list
+        list.sort(self.comparator)
+        for args in list:
+            apply(callback, args)
