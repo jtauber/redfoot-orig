@@ -68,7 +68,7 @@ setup(
                 'redfootlib.rdf.query' ,
                 'redfootlib.rdf.store',
                 'redfootlib.rdf.syntax',
-                'redfootlib.redcode',
+                'redfootlib.server.redcode',
                 'redfootlib.server',
                 'redfootlib.xml'],
     )
