@@ -32,7 +32,13 @@ class StoreIO:
         
         from redfoot.serializer import Serializer
         s = Serializer()
-        s.setLocation(location)
+
+        try:
+            stream = open(location, 'w')
+        except IOError:
+            print IOError
+
+        s.setStream(stream)
         s.setBase(URI)
 
         properties = queryStore.getProperties()
@@ -63,3 +69,4 @@ class StoreIO:
         
         s.end()
 
+        stream.close()

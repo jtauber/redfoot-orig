@@ -18,12 +18,9 @@ def splitProperty(property):
 class Serializer:
     rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
-    def setLocation(self, location):
-        try:
-            print location
-            self.file = open(location, 'w')
-        except IOError:
-            print IOError
+    def setStream(self, stream):
+        self.stream = stream
+
 
     def setBase(self, base):
         self.base = base
@@ -42,30 +39,30 @@ class Serializer:
         if not self.rdfns in self.namespaces.keys():
             self.namespaces[self.rdfns] = 'rdf'
 
-        self.file.write( "<?xml version=\"1.0\"?>\n" )
-        self.file.write( "<%s:RDF\n" % self.namespaces[self.rdfns])
+        self.stream.write( "<?xml version=\"1.0\"?>\n" )
+        self.stream.write( "<%s:RDF\n" % self.namespaces[self.rdfns])
         for uri in self.namespaces.keys():
-            self.file.write( "   xmlns:%s=\"%s\"\n" % (self.namespaces[uri],uri) )
-        self.file.write( ">\n" )
+            self.stream.write( "   xmlns:%s=\"%s\"\n" % (self.namespaces[uri],uri) )
+        self.stream.write( ">\n" )
 
     def end(self):
-        self.file.write( "</%s:RDF>\n" % self.namespaces[self.rdfns] )
+        self.stream.write( "</%s:RDF>\n" % self.namespaces[self.rdfns] )
 
     def subjectStart(self, subject):
-        self.file.write( "  <%s:Description" % self.namespaces[self.rdfns] )
+        self.stream.write( "  <%s:Description" % self.namespaces[self.rdfns] )
         if subject[0:len(self.base)+1]==self.base+"#":
-            self.file.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.base)+1:]) )
+            self.stream.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.base)+1:]) )
         else:
-            self.file.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], subject) )
+            self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], subject) )
 
     def subjectEnd(self):
-        self.file.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
+        self.stream.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
 
     def property(self, predicate, value):
             (namespace, localName) = splitProperty(predicate)
             if value[0] == "^":
-                self.file.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, value[1:], self.namespaces[namespace], localName) )
+                self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, value[1:], self.namespaces[namespace], localName) )
             else:
                 if value[0:len(self.base)+1]==self.base+"#":
                     value = value[len(self.base):]
-                self.file.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
+                self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
