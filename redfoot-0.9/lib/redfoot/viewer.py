@@ -250,7 +250,7 @@ class Viewer:
         self.response.write("""
             <H3>%s</H3>
             <P>%s</P>
-        """ % (self.storeNode.label(subject), subject))
+        """ % (self.encodeCharacterData(self.storeNode.label(subject)), subject))
 
     def view(self, subject):
         self.header("View")
@@ -273,7 +273,7 @@ class Viewer:
     def displayClass(self, klass):
         self.response.write("""
         <DT>%s</DT>
-        """ % self.storeNode.label(klass))
+        """ % self.encodeCharacterData(self.storeNode.label(klass)))
 
     def displayResource(self, resource):
         self.response.write("""
@@ -281,16 +281,16 @@ class Viewer:
         """ % self.link(resource))
 
     def displayParent(self, resource):
-        self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.storeNode.comment(resource), self.storeNode.label(resource)))
+        self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.encodeAttributeValue(self.storeNode.comment(resource)), self.encodeCharacterData(self.storeNode.label(resource))))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
         self.response.write(3*depth*"&nbsp;")
 
         if recurse==0:
-            self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.storeNode.comment(klass)))
+            self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.encodeAttributeValue(self.storeNode.comment(klass))))
 
-        self.response.write("<B>%s</B>" % self.storeNode.label(klass))
+        self.response.write("<B>%s</B>" % self.encodeCharacterData(self.storeNode.label(klass)))
 
         if recurse==0:
             self.response.write("</A>")
@@ -304,15 +304,15 @@ class Viewer:
 
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
-     self.storeNode.comment(resource),
-     self.storeNode.label(resource))
+                                                                 self.encodeAttributeValues(self.storeNode.comment(resource)),
+                                                                 self.encodeCharacterData(self.storeNode.label(resource)))
 
     def displayPropertyValue(self, property, value):
         propertyDisplay = self.link(property)
         if len(value)<1:
             valueDisplay = ""
         elif is_literal(value):
-            valueDisplay = un_literal(value)
+            valueDisplay = self.encodeCharacterData(un_literal(value))
         else:
             valueDisplay = self.link(value)
         self.response.write("""
@@ -324,7 +324,7 @@ class Viewer:
         if len(object)<1:
             valueDisplay = ""
         elif is_literal(object):
-            valueDisplay = un_literal(object)
+            valueDisplay = self.encodeCharacterData(un_literal(object))
         else:
             valueDisplay = self.link(object)
         self.response.write("""
@@ -347,7 +347,7 @@ class Viewer:
         if len(value)<1:
             valueDisplay = ""
         if is_literal(value):
-            valueDisplay = un_literal(value)
+            valueDisplay = self.encodeCharacterData(un_literal(value))
         else:
             valueDisplay = self.link(value)
         self.response.write("""
@@ -368,6 +368,18 @@ class Viewer:
                 else:
                     res.append(c)
         return string.joinfields(res, '')
+
+    def encodeAttributeValues(self, s):
+        import string
+        s = string.join(string.split(s, '&'), '&amp;')
+        s = string.join(string.split(s, '"'), '&quot;')
+        return s
+
+    def encodeCharacterData(self, s):
+        import string
+        s = string.join(string.split(s, '&'), '&amp;')
+        s = string.join(string.split(s, '<'), '&lt;')
+        return s
 
     def rdf(self, subject=None, predicate=None, object=None):
         node = self.getNodeInScope()
@@ -440,6 +452,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.14  2000/12/19 06:04:04  eikeon
+#~ Moved the 'local in context of neighbourhood' methods to RedNode... else we where overriding the corresponding methods on local, which someone may care about
+#~
 #~ Revision 5.13  2000/12/17 23:41:58  eikeon
 #~ removed of log messages
 #~

@@ -57,7 +57,7 @@ class Editor(Viewer):
         self.response.write("""
             <H3>%s</H3>
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
-        """ % (self.storeNode.label(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
+        """ % (self.encodeCharacterData(self.storeNode.label(subject)), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
     def edit(self, subject):
         if subject!=None and subject!="" and subject[0]=="#":
@@ -152,7 +152,7 @@ class Editor(Viewer):
             else:
                 self.response.write("""
                 <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
-                """ % (self.property_num, un_literal(value)))
+                """ % (self.property_num, self.encodeAttributeValues(un_literal(value))))
             self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
@@ -194,9 +194,10 @@ class Editor(Viewer):
                     </SELECT>
                 """)
             else:
+                #TODO 
                 self.response.write("""
                     <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">***
-                """ % (self.property_num, value))
+                """ % (self.property_num, encodeAttributeValues(value)))
         self.response.write("""
                 </TD>""")
         if exists:
@@ -406,6 +407,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.8  2000/12/19 16:35:41  eikeon
+#~ changed neighbourhood to neighbours in one place
+#~
 #~ Revision 5.7  2000/12/17 23:58:44  eikeon
 #~ recatored to use header and footer methods
 #~
