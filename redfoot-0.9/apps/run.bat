@@ -1,7 +1,7 @@
 @echo off
 
 setlocal
-set PYTHONPATH=../lib/
+set PYTHONPATH=.;../lib/
 echo Usage (example): run module_name
 @echo on
 
