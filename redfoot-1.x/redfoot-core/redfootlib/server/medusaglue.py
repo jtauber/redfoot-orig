@@ -60,7 +60,16 @@ class RedServer:
         for app in self.hs.handlers:
             self.hs.remove_handler(app)
 
-    def run(self):
+    def run(self, background=1, daemon=1):
+        if backgroud:
+            import threading
+            t = threading.Thread(target = self.__run, args = ())
+            t.setDaemon(daemon)
+            t.start()
+        else:
+            self.__run()
+
+    def __run(self):
         try:
             become_nobody()
         except:
