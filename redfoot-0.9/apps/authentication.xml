@@ -238,7 +238,7 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
 </r:response>
 
 
-<r:response name="session_row" args="triple, row">
+<r:response name="session_row" args="triple row">
   <r:exec>subject = triple[0]</r:exec>
     <DT style="margin-top: 5px;">
       <A href="/edit?uri={encodeURI(subject)}">
@@ -260,7 +260,7 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
     </DD>            
 </r:response>
 
-<r:response name="personRow" args="triple, row">
+<r:response name="personRow" args="triple row">
 <r:exec>subject = triple[0]</r:exec>
     <DL>
       <DT>

@@ -332,7 +332,7 @@ class RF_RESPONSE_Handler(RF_Element):
 
         args = "request, response"
         if atts.has_key('args'):
-            args = args + ", %s" % atts['args']
+            args = args + ", %s" % string.join(string.split(atts['args']),",")
         
         codestr = """\
 def __tmp__(self, %s):
@@ -437,6 +437,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.5  2001/04/13 03:35:11  eikeon
+#~ probably should not be checking this in since it is incomplete, but am so that it will serve as a reminder to finish (or start again)
+#~
 #~ Revision 7.4  2001/04/11 16:06:17  jtauber
 #~ changed bases attr to take whitespace-delimited list; added load-module element
 #~

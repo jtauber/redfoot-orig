@@ -61,7 +61,7 @@ self.list(request, response, triples, self.news_row)
 </r:response>
 
 
-<r:response name="rss_row" args="triple, row">
+<r:response name="rss_row" args="triple row">
 <r:exec>
 if row % 2 == 0:
     color = 'DDDDFF'
@@ -120,7 +120,7 @@ def news_filter(self, subject):
     return 1
 
 
-<r:response name="news_row" args="triple, row">
+<r:response name="news_row" args="triple row">
 <r:exec>
 if row % 2 == 0:
     color = 'DDDDFF'

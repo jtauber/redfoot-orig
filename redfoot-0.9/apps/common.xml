@@ -96,7 +96,7 @@ self.rednode.query(callback, None, TYPE, CONTENT_TYPE_CLASS)
 
 
 <r:response name="subclass" 
-            args="defaultRoot, rowFunc, sort=None, filter=None">
+            args="defaultRoot rowFunc sort=None filter=None">
 <r:exec>
 parameters = request.getParameters()
 which = parameters['which']
@@ -139,7 +139,7 @@ def alpha_by_label(self, a, b):
     return cmp(label_a, label_b)
 
 <r:response name="list" 
-            args="triples, li=None, filter=None, sort=None, title=''">
+            args="triples li=None filter=None sort=None title=''">
 
 
 <r:exec>

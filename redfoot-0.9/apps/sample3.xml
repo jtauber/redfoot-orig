@@ -37,7 +37,7 @@ TASK = "http://redfoot.sourceforge.net/2001/04/#Task"
 
     </r:response>
 
-    <r:response name="task_row" args="triple, row">
+    <r:response name="task_row" args="triple row">
 
       <r:exec>subject = triple[0]</r:exec>
       <TR>
