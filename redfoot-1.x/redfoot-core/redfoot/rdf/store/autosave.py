@@ -22,7 +22,7 @@ class AutoSaveStoreIO(TripleStoreIO):
         self.dirtyBit.clear() # we just loaded... therefore we are clean
         self._start_thread() 
 
-    def _start_thread(self, notMoreOftenThan=5*60):
+    def _start_thread(self, notMoreOftenThan=60*60):
         """Not more often then is in seconds"""
         import threading
         t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
