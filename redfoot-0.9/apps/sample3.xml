@@ -40,6 +40,9 @@ def content(self, request, response):
         apply(getattr(self, path_info), (request, response))
         return
 
+# TODO: rss currently depends on this.
+def authorized(self):
+    return 1
 
 <r:response name="/">
 <r:exec>self.rss(request, response)</r:exec>
