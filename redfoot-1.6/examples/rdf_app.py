@@ -177,3 +177,8 @@ class RDFApp(App):
         response.close()
 
     
+def n3style(o):
+    if o.is_literal():
+        return '"%s"' % o
+    else:
+        return '<%s>' % o

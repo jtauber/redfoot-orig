@@ -13,5 +13,8 @@ redcode on
 server :9091
 add_app generic.GenericApp
 
+#start_node rdf_app :9092
 
+#!tell_redfoot = lambda s, p, o: edge.tell("redfoot/2002/05/01/ add %s %s %s" % (s, p, o))
 
+#visit tell_redfoot ANY ANY ANY
