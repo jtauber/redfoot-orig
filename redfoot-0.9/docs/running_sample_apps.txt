@@ -34,9 +34,9 @@ GENERIC VIEWER / EDITOR
 SAMPLE1
 
     To start, go to the apps directory and run one of
-	* sample1.bat (Windows)
-	* sample1.sh (Unix)
-	* python sample1.sh (if Redfoot library is on PYTHONPATH)
+	* run.bat sample1 (Windows)
+	* run.sh sample1 (Unix)
+	* python sample1.py (if Redfoot library is on PYTHONPATH)
 
     Then go to your web browser and go to http://localhost:8000/
     At the moment Redfoot doesn't know anyone, so go to the editor.
@@ -56,8 +56,8 @@ SAMPLE1
 SAMPLE2
 
     To start, go to the apps directory and run one of
-	* run.bat sample2.xml (Windows)
-	* run.sh sample2.xml (Unix)
+	* run.bat sample2 (Windows)
+	* run.sh sample2 (Unix)
 
     Then go to your web browser and go to http://localhost/
     This is a very simple task list.
@@ -73,8 +73,8 @@ SAMPLE2
 SAMPLE3
 
     To start, go to the apps directory and run one of
-	* run.bat sample3.xml (Windows)
-	* run.sh sample3.xml (Unix)
+	* run.bat sample3 (Windows)
+	* run.sh sample3 (Unix)
 
     Then go to your web browser and go to http://localhost/
     This application displays RSS 1.0 items. It also demonstrates the

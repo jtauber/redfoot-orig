@@ -25,11 +25,10 @@ class RedServer(Server):
             self.uri = "http://%s:%s/" % (host, port)
 
         if redpage!=None:
-            self.run_redpage(redpage)
+            self.run_autoload(redpage)
         
-
     def run(self, modulename, *args):
-        self._uiargs = args
+        self._args(modulename, *args)
         self.modulename = modulename
         self._load()
 #        self.start()
@@ -39,49 +38,32 @@ class RedServer(Server):
             self.stop()
 
     def run_autoload(self, modulename, *args):
-        self._uiargs = args
+        self._args(modulename, *args)
         self.modulename = modulename
         try:
             self.keepReloading()
         except KeyboardInterrupt:
             self.stop()
 
-    def run_redpage(self, location, *args):
-
+    def _args(self, module_name, *args):
         if len(args)==0:
             from redfoot.rednode import RedNode
             node = RedNode()
-            rdf_location = location[:-4] + ".rdf"
+            rdf_module_name = module_name + ".rdf"
 
             # TODO: move create if does not exist down further
             import os
-            if not os.access(rdf_location, os.F_OK):
-                node.local.save(rdf_location, self.uri)
+            if not os.access(rdf_module_name, os.F_OK):
+                node.local.save(rdf_module_name, self.uri)
             
-            node.local.load(rdf_location, self.uri )
+            node.local.load(rdf_module_name, self.uri )
             self._uiargs = (node,)
         else:
             self._uiargs = args
-            
-        self.location = location
-        self._load = self._load_redpage
-        try:
-            self.keepReloading()
-        except KeyboardInterrupt:
-            self.stop()
-    
+
     def _load(self):
         # TODO do we need to worry about passing in globals and locals?
         module = __import__(self.modulename)
-        handler = apply(module.UI, self._uiargs)
-        self.set_handler(handler)
-        self.start()
-        return module
-
-    def _load_redpage(self):
-        import redpage
-        module = redpage.parse_red_page(self.location)
-        module.__file__ = self.location
         handler = apply(module.UI, self._uiargs)
         self.set_handler(handler)
         self.start()
@@ -209,9 +191,10 @@ if __name__ == '__main__':
 
     import getopt    
     optlist, args = getopt.getopt(sys.argv[1:], 'h:p:')
-#    if len(optlist)==0:
-#        sys.stderr.write("REDFOOT: usage -h hostname -p port\n" % port)
-#        sys.stderr.flush()
+    if len(args)==0:
+        sys.stderr.write("REDFOOT: usage [-h hostname] [-p port] redpage_name\n")
+        sys.stderr.flush()
+        sys.exit()
         
     for optpair in optlist:
         opt, value = optpair
@@ -224,6 +207,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.6  2001/04/22 05:20:28  jtauber
+#~ fixed bug where start was being called twice
+#~
 #~ Revision 7.5  2001/04/21 04:55:22  jtauber
 #~ changed shutdown message
 #~
