@@ -8,11 +8,15 @@ class Store(TripleStore):
 
 # TODO this belongs elsewhere (make generic first)
 def to_relative_URL(path):
-    import sys
-    from os.path import join, dirname
-    from urllib import pathname2url
-    libDir = dirname(sys.modules["redfootlib.rdf_files"].__file__)
-    return pathname2url(join(libDir, path))
+    from urlparse import urljoin
+    import sys    
+    return urljoin(sys.modules["redfootlib.rdf_files"].__file__, path)
+
+#     import sys
+#     from os.path import join, dirname
+#     from urllib import pathname2url
+#     libDir = dirname(sys.modules["redfootlib.rdf_files"].__file__)
+#     return pathname2url(join(libDir, path))
 
 
 schema = Store()

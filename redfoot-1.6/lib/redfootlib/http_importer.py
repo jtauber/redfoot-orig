@@ -5,7 +5,7 @@ from urlparse import urljoin
 import re, tempfile, shutil, os
 
 pattern = re.compile(r"^(https?://[^ ]+)")
-url_path = ["http://eikeon.com/2002/06/15/"]
+url_path = ["http://eikeon.com/2002/06/16/", "http://eikeon.com/2002/06/15/"]
 
 class HTTPModuleLoader(ModuleLoader):
 

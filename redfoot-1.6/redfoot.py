@@ -1,5 +1,13 @@
-# Add redfootlib etc to sys.path
-import dev_hack
+from url_import import URLImportManager
+manager = URLImportManager()
+url_map = {
+    'redfoot': "http://redfoot.net/2002/06/17/",
+    'redfootlib': "http://redfoot.net/2002/06/17/",    
+    }
+manager.install(url_map)
+        
+
+#import dev_hack
 
 import sys, getopt
 
@@ -30,4 +38,6 @@ for arg in sys.argv[1:]:
     file = open(arg, "r")
     for line in file:
         red_cmd.cmdqueue.append(line)
+
+#print sys.modules.keys()
 red_cmd.cmdloop()

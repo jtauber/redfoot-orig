@@ -1,3 +1,4 @@
+print "rdf.query.visit"
 from redfootlib.rdf.query.functors import *
 from redfootlib.rdf.query.builders import *
 

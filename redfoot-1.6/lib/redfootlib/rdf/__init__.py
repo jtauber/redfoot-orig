@@ -1,1 +1,2 @@
 # RDF Library
+print "rdf"

@@ -1,3 +1,4 @@
+print "rf"
 #
 import sys
 
