@@ -9,6 +9,7 @@ __version__ = "$Revision$"
 from bnh.server import Server
 import sys
 import string
+import threading
 
 class RedServer(Server):
         
@@ -16,7 +17,6 @@ class RedServer(Server):
     def keepRunning(self):
         while 1:
             try:
-                import threading
                 threading.Event().wait(100)
             except KeyboardInterrupt:
                 sys.exit()
@@ -37,24 +37,24 @@ class RedServer(Server):
 	            import traceback
                     traceback.print_exc()
                     sys.stderr.flush()
-	            import threading
                     threading.Event().wait(1)
                     continue
             
                 mtime = getmtime(m.__file__)
                 sys.stderr.write("added '%s' @ '%s' '%s'\n" % (m.__name__, mtime, m.__file__))
+                sys.stderr.flush()
 
             if m!=None and getmtime(m.__file__) > mtime+1:
                 if self.handler!=None:
                     self.stop()
                     sys.stderr.write("removed '%s' @ '%s'\n" % (m.__name__, mtime))
+                    sys.stderr.flush()
                     m = None
                 else:
                     sys.stderr.write("'%s': '%s' -- '%s'\n" % (m.__file__, getmtime(m.__file__), mtime))
-        
-            sys.stderr.flush()
-            import threading
-            threading.Event().wait(1)
+                    sys.stderr.flush()
+            else:
+                threading.Event().wait(1)
 
 
 import string
@@ -86,6 +86,9 @@ class RollbackImporter:
     
 
 #~ $Log$
+#~ Revision 4.14  2000/12/07 20:19:07  eikeon
+#~ fixing up autoreload after server refactors
+#~
 #~ Revision 4.13  2000/12/07 19:00:23  eikeon
 #~ no longer deals with command line args
 #~
