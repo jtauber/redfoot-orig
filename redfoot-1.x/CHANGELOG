@@ -1,0 +1,142 @@
+2002/04/11
+	RELEASE 1.5.0
+
+	Session module no longer fails to create
+	redmodules.session-session.rdf
+	
+	Processors are now involked on all sub modules with a matching
+	processor.
+
+	Calling load with create set to true so that session file gets
+	created when it does not exist... currently it is failing in this
+	case.
+
+	RedDaemon now calls stop on the app when it is stopped. It used to
+	call save on the app's rednode, but an app may want to do other
+	things as well.
+
+	App now calls save on ParentModule which calls save on all sub
+	modules that have save
+
+	Session module now has save that saves the session store
+
+	
+2001/09/07
+	RELEASE 1.0.0
+
+	Fixed minor bug that was causing non redcode sub-modules (such as
+	Static) not to work.
+
+
+2001/09/04
+	RELEASE 0.9.99-pre3
+
+	rss_test app now knows about RDF file on redfoot.sourceforge.net
+	that lists sample RSS feeds to connect to.
+
+	An app's (or a parent module's) sub modules are now accessible
+	from within __init__.
+
+	Added contributed tutorial from David H. Jones.
+
+	Fixed Unicode errors by removing the use of Unicode objects and
+	switching to UTF-8 strings.
+	
+	Illegal URIs now give error messages in neighbour connect.
+	
+	Connecting to a local neighbour file no longer creates file if it
+	doesn't exist.
+
+	Set body colour / background in CSS for generic module and doc.
+
+	authentication method now returns true when user is logged in.
+
+	
+2001/08/28
+	RELEASE 0.9.99-pre2
+
+	Tutorial on writing modules included.
+
+	Documentation now describes how to configure proxy support.
+
+	Redcode includes a new tag "visit" which allows for callback
+	facets to be inlined.
+
+	Introduced a functor that creates a sorted visit function from any
+	visit function and a comparator.
+
+	Rednode now saves local RDF on shutdown.
+
+	Neighbours with CONNECTED property of YES now connected to
+	automatically on startup.
+
+	Modules can now specify the RDF they would like loaded on
+	startup.
+
+	Version number display on startup.
+
+	self.app is now available in module __init__s.
+
+	Python 2.x is explicitly checked for on startup.
+
+	Improved messages when syntax errors occur.
+
+	Better handling in Editor when a property is of an unknown range
+	or the given value is not known to be in range.
+
+	Neighbour connection now considerably faster.
+
+	Reconnecting neighbours now works.
+
+	App with only an empty string facet no longer causes an infinite
+	loop.
+
+	Lack of response no longer causes an infinite loop.
+
+	Removed unused code in rednode
+
+	Documented known issues relating to:
+	  - lack of threads in cygwin python distribution
+	  - Mac OS X hostname needing to be 127.0.0.1 rather than
+	    localhost
+	  - character encoding issues in POP example
+
+	
+2001/08/21
+	RELEASE 0.9.99-pre1
+
+	Neighbour connect now reports error message feedback to the right
+	of the connect remove buttons.
+
+	Now has a -h,--hostname command line option for setting the
+	hostname of the server. Default is now the fully qualified
+	hostname.
+
+	There is now a --exact option that, when specified, tells the
+	server to listen only to those requests coming in to host via the
+	exact hostname. (By default, the server listens to all request
+	coming in to host via any hostname.)
+
+	Renamed StatementBuilder to ItemBuilder and made accept take a
+	single argument (use functors if you want to make it take three).
+
+	Combined the functionality of functor subject() into s().
+
+	Removed not_subject() and instead made a negative of exists().
+
+	Fixed expat import problem with Python 2.0.
+
+	Fixed HTML bug where some forms were being submitted twice by
+	Netscape.
+
+	Fixed permission denied problem on directories that were trying to
+	be autoloaded.
+
+	Specific exceptions are now thrown if sub-module element is
+	missing required attributes or contains content.
+
+	
+2001/08/14
+	RELEASE 0.9.9
+	
+	This release is a complete rewrite of Redfoot from the ground up

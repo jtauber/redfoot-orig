@@ -1,0 +1,48 @@
+REDFOOT README
+
+    This version: 1.5.0
+
+    Redfoot is a framework for building distributed data-driven web
+    applications with RDF and Python. It is being developed by 
+    Daniel Krech and James Tauber.
+
+    Redfoot includes:
+
+      - in-memory RDF database 
+      - RDF parser and serializer 
+      - query API 
+      - templating language for building RDF-driven web-sites
+      - reusable module architecture and sample modules (including
+        schema-driven RDF editor module and RSS viewer module) 
+      - beginnings of a peer-to-peer architecture for communication between Redfeet 
+
+
+TO RUN SOMETHING STRAIGHT AWAY
+
+    cd apps; python run.py generic
+
+    and go to http://localhost:8000/ with your browser
+
+    See apps/README for more details
+
+
+KNOWN ISSUES
+
+    See doc/issues.html or http://redfoot.sourceforge.net/doc/issues.html
+
+
+DOCUMENTATION
+
+    See doc/index.html or http://redfoot.sourceforge.net/doc/
+
+
+WHERE TO GET THE LATEST REDFOOT
+
+    See http://redfoot.sourceforge.net/
+
+
+HOW TO CONTACT THE DEVELOPERS
+
+    Daniel Krech - eikeon@eikeon.com 
+    James Tauber - jtauber@jtauber.com
+
