@@ -130,6 +130,18 @@ class QueryStore:
             property = statement[1]
             value = statement[2]
             processPropertyValue(property,value)
+
+    def propertyValuesLocalV(self, subject, processPropertyValue):
+        for statement in self.store.store.get(subject, None, None):
+            property = statement[1]
+            value = statement[2]
+            processPropertyValue(property,value)
+
+    def propertyValuesNeighbourhoodV(self, subject, processPropertyValue):
+        for statement in self.store.stores.get(subject, None, None):
+            property = statement[1]
+            value = statement[2]
+            processPropertyValue(property,value)
         
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
@@ -173,6 +185,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 1.25  2000/10/07 02:16:36  jtauber
+# implemented isKnownResource method and made a note about typeInh no longer being used
+#
 # Revision 1.24  2000/10/05 00:39:00  jtauber
 # added TODO about extending isOfType function
 #
