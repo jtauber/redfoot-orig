@@ -54,7 +54,8 @@ def runServer(args, interface):
     if uri==None:
         import socket
         # method for calculating absolute hostname
-        hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
+        #hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
+        hostname = socket.getfqdn('localhost')
         uri = "http://%s:%s%s" % (hostname,port,path)
 
     from redfoot.rednode import StoreNode
@@ -95,6 +96,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 3.3  2000/11/03 23:04:08  eikeon
+#~ Added support for cookies and sessions; prefixed a number of methods and variables with _ to indicate they are private; changed a number of methods to mixed case for consistency; added a setHeader method on response -- headers where hardcoded before; replaced writer with response as writer predates and is redundant with repsonse; Added authentication to editor
+#~
 #~ Revision 3.2  2000/11/02 21:48:27  eikeon
 #~ removed old log messages
 #~
