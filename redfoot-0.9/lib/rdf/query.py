@@ -166,7 +166,10 @@ class QueryStore:
             else:
                 processClass(s, currentDepth+1, recurse)                
         self.store.visit(subclassStatement, None, QueryStore.SUBCLASSOF, type)
-        def instanceStatement(s, p, o, currentDepth=currentDepth, recurse=recurse):
+        def instanceStatement(s, p, o, \
+                              currentDepth=currentDepth, \
+                              recurse=recurse, \
+                              processInstance=processInstance):
             processInstance(s, currentDepth, recurse)            
         self.store.visit(instanceStatement, None, QueryStore.TYPE, type)
     
@@ -208,6 +211,9 @@ class QueryStore:
         return resultset.keys()
 
 # $Log$
+# Revision 1.1  2000/10/26 03:42:33  eikeon
+# split lib/redfoot into lib/redfoot, lib/rdf
+#
 # Revision 1.1  2000/10/25 20:40:31  eikeon
 # changes relating to new directory structure
 #
