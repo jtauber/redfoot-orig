@@ -287,28 +287,16 @@ Adds app defined in package_name.app_name to previously running server. If a ser
         self.context.make_statement = make_statement
 
     def do_listen_on(self, arg):
-        """listen_on address:port name"""
+        """listen_on address:port"""
 
-        (addr, name) = arg.split(" ", 1)
-        (address, port) = addr.split(":", 1)
+        (address, port) = arg.split(":", 1)
 
         self.context.node_store.node.listen_on(address, int(port))
 
     def do_call(self, arg):
-        """call address:port uid"""
+        """call address:port"""
             
-        (addr, name) = arg.split(" ", 1)
-        (address, port) = addr.split(":", 1)
+        (address, port) = arg.split(":", 1)
 
         self.context.node_store.node.call(address, int(port))
 
-    def do_tell(self, arg):
-        """tell uid message"""
-        (to, message) = arg.split(" ", 1)
-        
-        redstore = self.context.redstore
-        redstore.tell(to, message)
-
-    def do_who(self, arg):
-        redstore = self.context.redstore
-        print redstore.who()
