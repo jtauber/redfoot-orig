@@ -54,14 +54,14 @@
        <CODE>literal(<VAR>value</VAR>)</CODE> which return the correct instance.</P>
 
     <P>There are some handy constants for syntax and schema resource URIs defined in
-       redfoot-core/redfoot/rdf/consts.py</P>
+       redfoot-core/redfoot/rdf/const.py</P>
 
     <H4>Code Example</H4>
     
     <PRE CLASS="code_sample">
 from redfoot.rdf.store.triple import TripleStore
 from redfoot.rdf.objects import resource, literal
-from redfoot.rdf.consts import *
+from redfoot.rdf.const import *
 
 store = TripleStore()
 store.add(resource("http://www.jtauber.com/"), LABEL, literal("James Tauber's Website"))
