@@ -15,6 +15,7 @@ def __init__(self, rednode):
     self.rednode = rednode
     Editor.__init__(self, rednode)
     self._load_neighbours()
+    self.showNeighbours=1
 
 def _load_neighbours(self):
     neighbours = self.rednode.get(None, TYPE, NEIGHBOUR)
