@@ -8,8 +8,15 @@ def generateURI():
     import time
     t = time.time()
     year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
-    s = "%0004d/%02d/%02d/T%02d/%02d/%02dZ" % ( year, month, day, hh, mm, ss)
+    s = "%0004d/%02d/%02d/T%02d-%02d-%02dZ%0004d" % ( year, month, day, hh, mm, ss, serial_number())
     return s
+
+_serial_number = 0
+def serial_number():
+    global _serial_number
+    _serial_number = _serial_number + 1
+    return  _serial_number
+
 
 def ignoreCaseSort(a, b):
     import string

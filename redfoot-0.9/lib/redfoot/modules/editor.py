@@ -4,16 +4,7 @@ from redfoot.modules.viewer import Viewer
 from rdf.literal import literal, un_literal, is_literal
 
 from rdf.const import *
-
-def date_time_path(t=None):
-    """."""
-    import time
-    if t==None:
-        t = time.time()
-
-    year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
-    s = "%0004d/%02d/%02d/T%02d/%02d/%02dZ" % ( year, month, day, hh, mm, ss)        
-    return s
+from redfoot import util
 
 class Editor(Viewer):
 
@@ -315,9 +306,7 @@ class Editor(Viewer):
         self.rednode.reify(self.rednode.local.URI+self.generateURI(), subject, property, value)
 
     def generateURI(self):
-	#import time
-        #return "#T%s" % time.time()
-        return date_time_path()
+        return util.generateURI()
 
     def save(self):
         self.rednode.local.save()
@@ -368,6 +357,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 1.2  2001/04/23 01:24:19  eikeon
+#~ removed relic from the past
+#~
 #~ Revision 1.1  2001/04/14 23:40:28  eikeon
 #~ created a lib/redfoot/modules directory and moved editor/viewer into it
 #~
