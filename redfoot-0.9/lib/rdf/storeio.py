@@ -1,27 +1,20 @@
 # $Header$
 
-from threading import RLock
-from threading import Condition
-
-import sys
-
- 
 class StoreIO:
-
     def __init__(self, store):
         self.store = store
 
     def visit(self, callback, subject=None, predicate=None, object=None):
-        self.store.visit(callback, subject, predicate, object)
+        return self.store.visit(callback, subject, predicate, object)
         
     def get(self, subject=None, predicate=None, object=None):
         return self.store.get(subject, predicate, object)
 
     def remove(self, subject=None, predicate=None, object=None):
-        self.store.remove(subject, predicate, object)
+        return self.store.remove(subject, predicate, object)
 
     def add(self, subject, predicate, object):
-        self.store.add(subject, predicate, object)
+        return self.store.add(subject, predicate, object)
 
     def load(self, location, URI=None):
         self.location = location
@@ -47,18 +40,20 @@ class StoreIO:
             URI = self.URI
 
         from rdf.serializer import Serializer
-        s = Serializer()
+        serializer = Serializer()
 
-        s.setStream(stream)
-        s.setBase(URI)
+        serializer.setStream(stream)
+        serializer.setBase(URI)
+
+        self.visit(lambda s, p, o, serializer=serializer: serializer.registerProperty(p), subject, predicate, object)
+
+        serializer.start()
+        self.visit(serializer.triple, None, None, None)
+        serializer.end()
 
 
-        self.visit(lambda s, p, o, ser=s: ser.registerProperty(p), subject, predicate, object)
-
-        s.start()
-        self.visit(s.triple, None, None, None)
-        s.end()
-
+from threading import RLock
+from threading import Condition
 
 class AutoSaveStoreIO(StoreIO):
     def __init__(self):
@@ -139,6 +134,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.9  2000/12/04 02:28:32  jtauber
+#~ serializer now keeps track of subject start/end state; query store no longer needed for output
+#~
 #~ Revision 4.8  2000/12/04 01:31:07  eikeon
 #~ changed property/value to predicate/object
 #~
