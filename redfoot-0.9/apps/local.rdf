@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<n1:RDF
-   xmlns:n1="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+<rdf:RDF
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
-  <n1:Description n1:ID="T976262155.875">
-    <n1:subject n1:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#YES"/>
-    <n1:type n1:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"/>
-    <n1:predicate n1:resource="http://www.w3.org/2000/01/rdf-schema#label"/>
-    <n1:object>YES</n1:object>
-  </n1:Description>
-  <n1:Description n1:ID="T976262435.421">
-    <n1:subject n1:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#YES"/>
-    <n1:type n1:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"/>
-    <n1:predicate n1:resource="http://www.w3.org/2000/01/rdf-schema#label"/>
-    <n1:object>YES</n1:object>
-  </n1:Description>
-</n1:RDF>
+</rdf:RDF>
