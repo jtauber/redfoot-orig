@@ -76,13 +76,6 @@ class Sniffer(object):
         scheme, netloc, url, params, query, fragment = urlparse(href)
         return netloc in self.ignore_list
             
-
-    # TODO: split into two comparators... reverse and chron
-    def reverse_chron(self, (s1, p1, o1), (s2, p2, o2)):
-        date_a = self.get_first_value(s1, SNIFFED_ON, '')
-        date_b = self.get_first_value(s2, SNIFFED_ON, '')
-        return 0-cmp(str(date_a), str(date_b))
-
         
 
 from redfootlib.rdf.query.schema import SchemaQuery

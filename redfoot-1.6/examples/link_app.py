@@ -9,17 +9,21 @@ from functors import slice
 
 class LinkApp(App):
 
-    def display_link(self, request, response, s, p, o):
+    def handle_request(self, request, response):
+        start = int(request.get_parameter("start", "0"))
+        end = int(request.get_parameter("end", "30"))
         rednode = self.rednode
-        label = rednode.label(s)
-        sniffed_on = rednode.get_first_value(s, SNIFFED_ON, '??')
-        sniffed_from = rednode.get_first_value(s, SNIFFED_FROM, None)
-        if sniffed_from:
-            sniffed_from = rednode.label(sniffed_from)
-        else:
-            sniffed_from = "unknown"
+        
+        def display_link(s, p, o):
+            label = rednode.label(s)
+            sniffed_on = rednode.get_first_value(s, SNIFFED_ON, '??')
+            sniffed_from = rednode.get_first_value(s, SNIFFED_FROM, None)
+            if sniffed_from:
+                sniffed_from = rednode.label(sniffed_from)
+            else:
+                sniffed_from = "unknown"
 
-        response.write("""\
+            response.write("""\
     <p>
       <div><a href="%s">%s</a></div>
       <div class="small">%s</div>
@@ -28,10 +32,8 @@ class LinkApp(App):
       </div>      
     </p>""" % (s, label, s, sniffed_from, sniffed_on))
     
-    def handle_request(self, request, response):
-        start = int(request.get_parameter("start", "0"))
-        end = int(request.get_parameter("end", "30"))
-        sniffer = self.rednode
+        
+
         response.write("""\
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -68,8 +70,14 @@ class LinkApp(App):
   <h1>Links</h1>
   <ul>
 """)
-        callback = lambda s, p, o: self.display_link(request, response, s, p, o)
-        sort(sniffer.reverse_chron, sniffer.visit)(slice(callback, start, end), (None, TYPE, SNIFFED))
+        # TODO: split into two comparators... reverse and chron
+        def reverse_chron((s1, p1, o1), (s2, p2, o2)):
+            date_a = rednode.get_first_value(s1, SNIFFED_ON, '')
+            date_b = rednode.get_first_value(s2, SNIFFED_ON, '')
+            return 0-cmp(str(date_a), str(date_b))
+
+        callback = lambda s, p, o: display_link(s, p, o)
+        sort(reverse_chron, rednode.visit)(slice(callback, start, end), (None, TYPE, SNIFFED))
 
         response.write("""\
   </ul>        
@@ -79,20 +87,3 @@ class LinkApp(App):
     
 
 
-def run_app(sniffer):
-    """Runs the LinkApp on a RedServer for the given sniffer."""
-    from redfootlib.server import RedServer
-
-    server = RedServer('', 9090)
-
-    app = LinkApp(sniffer)
-    server.add_app(app)
-
-    # Run the server in a thread... otherwise we block on server.run() and
-    # do not get past it until the server stops. Also, set the thread to
-    # be a daemon thread so it goes away when we do.
-
-    import threading
-    t = threading.Thread(target = server.run, args = ())
-    t.setDaemon(1)
-    t.start()
