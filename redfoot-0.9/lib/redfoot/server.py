@@ -36,7 +36,7 @@ def runServer(args, interface):
     location = "local.rdf"
     uri = None
 
-    path = "/"
+    path = ""
         
     import sys
     import getopt
@@ -50,6 +50,8 @@ def runServer(args, interface):
         elif opt=="-p":
             port = string.atoi(value)
         elif opt=="-P":
+            if value[-1:]=='/':
+                value = value[0:-1]
             path = value
             
     # uri defaults to url when no uri is specified
@@ -79,6 +81,7 @@ def runServer(args, interface):
     server.start()
 
     sys.stderr.write("REDFOOT: serving %s (%s) with %s on port %s...\n" % (location, uri, interface, port))
+    sys.stderr.write("... try hitting %s/classList for an editor\n" % uri)    
     sys.stderr.flush()
         
 
@@ -96,6 +99,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.4  2000/10/26 03:38:39  eikeon
+# one line :)
+#
 # Revision 1.3  2000/10/26 02:34:52  eikeon
 # got redfoot.{bat,sh} working
 #
