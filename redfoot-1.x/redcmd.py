@@ -7,6 +7,7 @@ from sys import exit
 from redfootlib.rdf.objects import resource, literal
 from redfootlib.rednode import RedNode
 from redfootlib.server import RedServer
+from new import module
 
 class RedCmd(object, Cmd):
     """
@@ -21,8 +22,16 @@ class RedCmd(object, Cmd):
         self.prefix_map = {}
         self.default_uri = None
 
-        # Create a RedNode
-        self.rednode = RedNode()
+        # Create a context for RedCmd exec(s)
+        self.context = module("__redfoot__")
+
+        # Create a RedNode        
+        self.context.rednode = RedNode()
+
+
+    def __exec(self, code):
+        locals = globals = self.context.__dict__
+        exec code in globals, locals
         
     def process_resource(self, text):
         if text == "ANY":
@@ -62,6 +71,9 @@ class RedCmd(object, Cmd):
 
     def do_quit(self, arg):
         """Quit the Redfoot Command Line"""
+        print "Saving rednode..."
+        self.context.rednode.save()
+        print "done."
         print "Bye"
         exit(1)
 
@@ -69,7 +81,7 @@ class RedCmd(object, Cmd):
         """add <subject> <predicate> (<object>|"object")"""
         st = self.get_triple(arg)
         if st:
-            self.add(st[0], st[1], st[2])
+            self.context.rednode.add(st[0], st[1], st[2])
             print "added", st
         else:
             print "error"
@@ -78,7 +90,7 @@ class RedCmd(object, Cmd):
         """remove <subject> <predicate> (<object>|"object")"""
         st = self.get_triple(arg)
         if st:
-            self.remove(st[0], st[1], st[2])
+            self.context.rednode.remove(st[0], st[1], st[2])
             print "removed", st
         else:
             print "error"
@@ -86,7 +98,7 @@ class RedCmd(object, Cmd):
     def do_shell(self, arg):
         """! <python-statement>"""
         try:
-            exec arg in globals(), globals()
+            self.__exec(arg)
         except Exception, e:
             print e
 
@@ -96,7 +108,7 @@ class RedCmd(object, Cmd):
             print s, p, o
         st = self.get_triple(arg)
         if st:
-            self.visit(print_triple, st)
+            self.context.visit(print_triple, st)
         else:
             print "error"
 
@@ -117,16 +129,17 @@ class RedCmd(object, Cmd):
     def do_load(self, arg):
         """load <location> <uri>"""
 
+        print "loading",  arg
         # Load RDF data from location using uri as the base URI, creating a
         # file if one does not already exist.
         # @@@ do we need to make sure we only do this once?
         location, uri = arg.split()
-        self.rednode.load(location, uri, 1)
+        self.context.rednode.load(location, uri, 1)
 
     def do_server(self, arg):
         """server <address> <port>"""
     
         address, port = arg.split()
         # Create a RedServer listening on address, port
-        self.server = RedServer(address, int(port))
-        self.server.run(background=1)
+        self.context.server = RedServer(address, int(port))
+        self.context.server.run(background=1)
