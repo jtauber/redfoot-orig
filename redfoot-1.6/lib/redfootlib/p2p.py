@@ -122,6 +122,7 @@ class DecayingSet:
 
 class Edge(object):
     def __init__(self):
+        super(Edge, self).__init__()
         self.__message_set = DecayingSet(60)
         self.uids = set() # uids of interest
 
@@ -283,7 +284,8 @@ class Node(Neighbours, Edge, asyncore.dispatcher):
         self.add_neighbour(proxy)
 
 
-    def listen_on(self, addr):        
+    def listen_on(self, host, port):
+        addr = host, port
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.set_reuse_addr()
         self.bind(addr)
@@ -316,7 +318,7 @@ class Cache(object):
     def _backlog(self, neighbour, tell=1):
         known = neighbour.knows()        
         message_set = self.message_set
-        #msg = self.last_message.setdefault(connection.remote_uid, None)
+
         msg = None
         if msg:
             start = message_set.index(msg) + 1
@@ -327,5 +329,4 @@ class Cache(object):
             if to in known:
                 neighbour.message(to, frm, message_id, message)
             else:
-                print "Nope:", msg
-        #self.last_message[neighbour] = msg
+                print "Nope:", known, msg

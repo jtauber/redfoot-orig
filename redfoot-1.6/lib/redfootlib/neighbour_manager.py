@@ -14,7 +14,7 @@ class Neighbour(LoadSave, TripleStore): pass
 
 class NeighbourManager(object):
 
-    def load(self, location ,uri, create=0):
+    def load(self, location, uri, create=0):
         super(NeighbourManager, self).load(location, uri, create)
         # load neighbours that are marked as connected
         self.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
