@@ -55,24 +55,28 @@ class TripleStore:
                     if self.spo[subject].has_key(predicate):
                         if object!=None: # subject+predicate+object is given
                             if self.spo[subject][predicate].has_key(object):
-                                callback(subject, predicate, object)
+                                if callback(subject, predicate, object)!=None:
+                                    return
                             else: # given object not found
                                 pass
                         else: # subject+predicate is given, object unbound
                             for o in self.spo[subject][predicate].keys():
-                                callback(subject, predicate, o)
+                                if callback(subject, predicate, o)!=None:
+                                    return
                     else: # given predicate not found
                         pass
                 else: # subject given, predicate unbound
                     for p in self.spo[subject].keys():
                         if object!=None: # object is given
                             if self.spo[subject][p].has_key(object):
-                                callback(subject, p, object)
+                                if callback(subject, p, object)!=None:
+                                    return
                             else: # given object not found
                                 pass
                         else: # object unbound
                             for o in self.spo[subject][p].keys():
-                                callback(subject, p, o)
+                                if callback(subject, p, o)!=None:
+                                    return
             else: # given subject not found
                 pass
         elif predicate!=None: # predicate is given, subject unbound
@@ -80,28 +84,35 @@ class TripleStore:
                 if object!=None: # predicate+object is given, subject unbound
                     if self.pos[predicate].has_key(object):
                         for s in self.pos[predicate][object].keys():
-                            callback(s, predicate, object)
+                            if callback(s, predicate, object)!=None:
+                                return
                     else: # given object not found
                         pass
                 else: # predicate is given, object+subject unbound
                     for o in self.pos[predicate].keys():
                         for s in self.pos[predicate][o].keys():
-                            callback(s, predicate, o)
+                            if callback(s, predicate, o)!=None:
+                                return
         elif object!=None: # object is given, subject+predicate unbound
             for p in self.pos.keys():
                 if self.pos[p].has_key(object):
                     for s in self.pos[p][object]:
-                        callback(s, p, object)
+                        if callback(s, p, object)!=None:
+                            return
                 else: # given object not found
                     pass
         else: # subject+predicate+object unbound
             for s in self.spo.keys():
                 for p in self.spo[s].keys():
                     for o in self.spo[s][p].keys():
-                        callback(s, p, o)
+                        if callback(s, p, o)!=None:
+                            return
                     
 
 #~ $Log$
+#~ Revision 4.5  2000/12/03 22:25:14  jtauber
+#~ moved literal stuff to literal.py
+#~
 #~ Revision 4.4  2000/12/03 22:00:03  jtauber
 #~ put literal handling code in store.py
 #~
