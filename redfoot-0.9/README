@@ -37,9 +37,12 @@ Run
 	python server.py <options>
 
 	-l location of RDF file to use as local
-	-u uri to treat that file as
+	-u uri to treat that file as (normally the URI that Redfoot is running as)
 	-p port number to run on
 	-i web interface class to use (Viewer, Editor or PeerEditor)
+
+Hitting the URI that Redfoot is running as will return the RDF.
+Try hitting http://hostname.domain:port/classList to get the UI
 
 INFORMATION FOR DEVELOPERS
 
@@ -50,7 +53,11 @@ WHERE TO GET THE LATEST REDFOOT
 See http://www.sourceforge.net/projects/redfoot
 
 $Log$
+Revision 1.2  2000/10/09 06:26:32  jtauber
+location, uri, port and web interface class are now specified using command-line options
+
 Revision 1.1  2000/10/07 02:13:16  jtauber
 first attempt at README file
+
 
 
