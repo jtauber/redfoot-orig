@@ -34,7 +34,7 @@ class ListBuilder:
     def filter(self, filter):
         list = []
         for item in self.list:
-            if filter(item)==0:
+            if filter(item):
                 list.append(item)
         self.list = list
         
