@@ -12,8 +12,8 @@ from redfootlib import rdf_files
 class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
     """
     A RedNode is a store that is queryable via high level queries, can
-    manage its neighbour connections, [automatically] save to RDF, and
-    load from RDF.
+    manage its neighbour connections, [automatically] save to RDF/XML
+    syntax, and load from RDF/XML syntax.
 
     A RedNode contains a neighbourhood store for querying the nodes'
     entire neighbourhood, which includes itself and its neighbours in
