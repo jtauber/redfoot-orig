@@ -4,6 +4,7 @@ from rdf.store import TripleStore
 from rdf.query import QueryStore
 from rdf.storeio import AutoSaveStoreIO
 from rdf.const import *
+from rdf.literal import literal, un_literal, is_literal
 
 class RedNode(QueryStore):
     ""
@@ -31,21 +32,19 @@ class RedNode(QueryStore):
         self.neighbourhood.visit(callback, subject, property, value)
 
     # TODO: when to call... used to call on setStore()
-    def _preCacheRemoteStores(self, baseDirectory=None):
-        rstores = self.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://redfoot.sourceforge.net/2000/10/06/builtin#RemoteStore")
+    def _preCacheNeighbourStores(self, baseDirectory=None):
+        rstores = self.get(None, TYPE, "http://redfoot.sourceforge.net/2000/12/redfoot-builtin#Neighbour")
 	for rstore in rstores:
-	    locationlist = self.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#location", None)
-            if len(locationlist) == 0:
-                continue
-            location = un_literal(locationlist[0][2])
-            systemIDlist = self.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#systemID", None)
-            if len(systemIDlist) == 0:
-                systemID = None
-            else:
-                systemID = systemIDlist[0][2][1:]
+            location = self.getFirst(rstore[0], "http://redfoot.sourceforge.net/2000/12/redfoot-builtin#location", None)
+            if location!=None:
+                systemID = self.getFirst(rstore[0], "http://redfoot.sourceforge.net/2000/12/redfoot-builtin#systemID", None)
+                if systemID!=None:
+                    systemID = un_literal(systemID)
 
-            from urllib import basejoin
-            self.connectTo(basejoin(self.location, location), systemID)
+                from urllib import basejoin
+                self.connectTo(basejoin(self.location, location), systemID)
+            else:
+                pass # no location to connect to
 
     def connectTo(self, location, URI=None):
         if URI==None:
@@ -59,9 +58,6 @@ class RedNode(QueryStore):
 
     def _connectTo(self, store):
         self.neighbourhood.addNeighbour(store)
-
-
-from rdf.literal import literal, un_literal, is_literal
 
 
 class Local(QueryStore, AutoSaveStoreIO):
@@ -155,6 +151,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.15  2000/12/07 00:21:52  eikeon
+#~ fixed show/hide again after I broke it again when I refactored rednode
+#~
 #~ Revision 4.14  2000/12/06 23:26:55  eikeon
 #~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
 #~
