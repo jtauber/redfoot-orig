@@ -120,52 +120,52 @@
     </red:facet>
 
     <red:facet name="people">
-      <H2>People</H2>
-      <UL>
+      <h2>People</h2>
+      <ul>
         <red:visit args="(None, TYPE, PERSON)">
-          <LI><red:eval>self.app.rednode.get_first_value(subject, USERNAME, '?')</red:eval></LI>
+          <li><red:eval>self.app.rednode.get_first_value(subject, USERNAME, '?')</red:eval></li>
         </red:visit>
-      </UL>
+      </ul>
     </red:facet>
 
     <red:facet name="create">
       <red:if test="not self.session.sessions.exists(resource(self.session.session_uri), IDENTITY, None)">
 
-      <DIV class="content_area">
+      <div class="content_area">
     
-        <DIV style="colored: #990000;">
+        <div style="colored: #990000;">
           <red:eval>self.status</red:eval>
-        </DIV>
+        </div>
     
-        <FORM name="main" action=""
+        <form name="main" action=""
               method="POST" style="margin: 0">
-          <TABLE>
-            <TR>
-              <TD>Username:</TD>
-              <TD><INPUT name="username" type="text"/></TD>
-            </TR>
-            <TR>
-              <TD>Password:</TD>
-              <TD><INPUT name="password" type="password"/>
-              </TD>
-            </TR>
-            <TR>
-              <TD>Verify:</TD>
-              <TD><INPUT name="verify" type="password"/>
-              </TD>
-            </TR>
-            <TR>
-              <TD align="right"><INPUT value="Create User" type="submit"/></TD>
-              <TD align="left"><INPUT value="Cancel" type="reset"/></TD>
-            </TR>
-          </TABLE>
-          <INPUT name="processor" value="do_create_user" type="hidden"/>
-          <INPUT name="view" value="create" type="hidden"/>          
-        </FORM>
-      </DIV>
+          <table>
+            <tr>
+              <td>Username:</td>
+              <td><input name="username" type="text"/></td>
+            </tr>
+            <tr>
+              <td>Password:</td>
+              <td><input name="password" type="password"/>
+              </td>
+            </tr>
+            <tr>
+              <td>Verify:</td>
+              <td><input name="verify" type="password"/>
+              </td>
+            </tr>
+            <tr>
+              <td align="right"><input value="Create User" type="submit"/></td>
+              <td align="left"><input value="Cancel" type="reset"/></td>
+            </tr>
+          </table>
+          <input name="processor" value="do_create_user" type="hidden"/>
+          <input name="view" value="create" type="hidden"/>          
+        </form>
+      </div>
 
         <red:else>
-          <A href="create">Welcome, <red:eval>self.get_username()</red:eval></A>
+          <a href="create">Welcome, <red:eval>self.get_username()</red:eval></a>
         </red:else>
         
       </red:if>
@@ -175,36 +175,36 @@
     
     <red:facet name="login">    
      <red:if test="not self.authenticated()">
-      <DIV class="content_area">
+      <div class="content_area">
 
-        <FORM name="main" method="POST" style="margin: 0">
+        <form name="main" method="POST" style="margin: 0">
 
-        <DIV style="colored: #990000;">
+        <div style="colored: #990000;">
           <red:eval>self.status</red:eval>
-        </DIV>
+        </div>
         
-          <TABLE>
-            <TR>
-              <TD>Username:</TD>
-              <TD><INPUT name="username" type="text"/></TD>
-            </TR>
-            <TR>
-              <TD>Password:</TD>
-              <TD><INPUT name="password" type="password"/></TD>
-            </TR>
-            <TR>
-              <TD align="right">
-                <INPUT value="Login" type="submit"/>
-              </TD>
-              <TD align="left">
-                <INPUT value="Cancel" type="reset"/>
-                <INPUT name="processor" value="do_login" type="hidden"/>
-                <INPUT name="view" value="login" type="hidden"/>
-              </TD>
-            </TR>
-          </TABLE>
-        </FORM>
-      </DIV>
+          <table>
+            <tr>
+              <td>Username:</td>
+              <td><input name="username" type="text"/></td>
+            </tr>
+            <tr>
+              <td>Password:</td>
+              <td><input name="password" type="password"/></td>
+            </tr>
+            <tr>
+              <td align="right">
+                <input value="Login" type="submit"/>
+              </td>
+              <td align="left">
+                <input value="Cancel" type="reset"/>
+                <input name="processor" value="do_login" type="hidden"/>
+                <input name="view" value="login" type="hidden"/>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
       <red:else>
         <red:exec>self.app.remaining_path_info = "welcome"</red:exec>
         <red:apply search="self.app"/>
