@@ -308,7 +308,7 @@ self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
 </r:response>
 
 
-<r:response name="personal">
+<r:response name="/personal/">
   <r:if test="self.authenticated()">
 
   <DIV class="content_area">

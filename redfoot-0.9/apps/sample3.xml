@@ -1,9 +1,7 @@
 <r:module name="sample3" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
 
-
 from redfoot.modules.base import Base
 from redfoot.modules.common import Common
-
 
 from rdf.const import *
 from rdf.literal import *

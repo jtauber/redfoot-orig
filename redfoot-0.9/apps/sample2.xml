@@ -17,14 +17,6 @@ from redfoot.modules.neighbours import Neighbours
 from redfoot.modules.rss import RSS
 
 
-from rdf.query import QueryStore
-from rdf.storeio import TripleStoreIO
-
-class Local(QueryStore, TripleStoreIO):
-    def __init__(self):
-        TripleStoreIO.__init__(self)
-
-
 <r:class name="UI" bases="Authentication RSS Common Editor Neighbours">
 
 def __init__(self, rednode):
