@@ -6,6 +6,10 @@ from store import TripleStore
 # or along with a class that implements add(s,p,o) and
 # visit(callback,s,p,o) 
 class StoreIO:
+    
+    def __init__(self):
+        self.URI = None
+        
     def load(self, location, URI=None):
         self.location = location
         if URI==None:
@@ -26,6 +30,10 @@ class StoreIO:
         self.output(stream, URI)
         stream.close()
         
+    # TODO: maybe move this method 'down' a bit... as a URI is not
+    # required to perform *a* serialization of a TripleStore?
+    # Also, this method does not require a location.
+    #   StoreIO->PersistantStore?
     def output(self, stream, URI=None, subject=None, predicate=None, object=None):
         if URI==None:
             URI = self.URI
@@ -44,12 +52,15 @@ class StoreIO:
 
 
 class TripleStoreIO(StoreIO, TripleStore):
-    pass
+    def __init__(self):
+        TripleStore.__init__(self)
         
 from threading import RLock
 from threading import Condition
 
 class AutoSaveStoreIO(TripleStoreIO):
+    def __init__(self):
+        TripleStoreIO.__init__(self)
 
     def remove(self, subject=None, predicate=None, object=None):
         self.dirtyBit.set()
@@ -128,6 +139,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 5.3  2000/12/17 21:12:46  eikeon
+#~ fixed typo
+#~
 #~ Revision 5.2  2000/12/17 21:11:11  eikeon
 #~ changed a couple mixed case names to _ style names
 #~
