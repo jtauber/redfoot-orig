@@ -8,27 +8,20 @@ import sys
  
 class StoreIO:
 
-    def __init__(self):
-        pass
-
-
-    def setStore(self, store):
+    def __init__(self, store):
         self.store = store
 
-    def getStore(self):
-        return self.store
-
     def visit(self, callback, subject=None, property=None, value=None):
-        self.getStore().visit(callback, subject, property, value)
+        self.store.visit(callback, subject, property, value)
         
     def get(self, subject=None, property=None, value=None):
-        return self.getStore().get(subject, property, value)
+        return self.store.get(subject, property, value)
 
     def remove(self, subject=None, property=None, value=None):
-        self.getStore().remove(subject, property, value)
+        self.store.remove(subject, property, value)
 
     def add(self, subject, property, value):
-        self.getStore().add(subject, property, value)
+        self.store.add(subject, property, value)
 
     def load(self, location, URI=None):
         self.location = location
@@ -41,33 +34,21 @@ class StoreIO:
         from rdf.parser import parseRDF
         parseRDF(self.store.add, self.location, self.URI)
 
-
     def save(self):
         self.saveAs(self.location, self.URI)
 
     def saveAs(self, location, URI):
-        
         stream = open(location, 'w')
         self.output(stream, URI)
         stream.close()
         
-    
-    def autosave(self, notMoreOftenThan=10):
-        """Not more often then is in seconds"""
-        import threading
-        t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
-        t.setDaemon(1)
-        t.start()
-        
-        
     def output(self, stream, URI=None, subject=None, predicate=None, object=None):
-
         if URI==None:
             URI = self.URI
 
         from rdf.query import QueryStore
         queryStore = QueryStore()
-        queryStore.setStore(self.getStore())
+        queryStore.setStore(self.store)
         
         from rdf.serializer import Serializer
         s = Serializer()
@@ -184,6 +165,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.6  2000/12/04 01:17:40  eikeon
+#~ refactored output methods into one method that takes a query style set of subject, predicate, object to output
+#~
 #~ Revision 4.5  2000/12/04 01:00:58  eikeon
 #~ Seperated out auto save stuff into AutoSaveStoreIO subclass
 #~

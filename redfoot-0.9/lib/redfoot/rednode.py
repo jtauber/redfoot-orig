@@ -79,10 +79,9 @@ class StoreNode:
 
         from rdf.storeio import StoreIO
 
-        storeIO = StoreIO()
-        storeIO.setStore(TripleStore())
+        storeIO = StoreIO(TripleStore())
         storeIO.load(location, URI)
-        self._connectTo(storeIO.getStore())
+        self._connectTo(storeIO)
 
     def _connectTo(self, store):
         self.stores.addStore(store)
@@ -167,6 +166,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:34  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.1  2000/11/02 21:48:27  eikeon
 #~ removed old log messages
 #~

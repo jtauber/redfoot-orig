@@ -64,12 +64,10 @@ class RedServer:
         from rdf.storeio import StoreIO
         from rdf.store import TripleStore
             
-        storeNode = StoreNode()
-
-        # TODO: do this lazily on storeNode.load method?
-        storeIO = StoreIO()
-        storeIO.setStore(TripleStore()) # TODO: do this lazily
+        storeIO = StoreIO(TripleStore())
         storeIO.load(location, uri)
+
+        storeNode = StoreNode()
         storeNode.setStore(storeIO)
 
     
@@ -170,6 +168,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.5  2000/11/08 22:46:42  eikeon
+#~ catch and dump exceptions while attempting to load
+#~
 #~ Revision 4.4  2000/11/07 18:48:40  eikeon
 #~ keepReloading now a method on server
 #~
