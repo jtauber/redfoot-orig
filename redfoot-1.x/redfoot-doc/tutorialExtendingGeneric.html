@@ -1,0 +1,178 @@
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en]C-CCK-MCD Boeing Kit  (WinNT; I) [Netscape]">
+   <title>Redfoot Documentation</title>
+<link REL="STYLESHEET" HREF="redfoot.css"/>
+</head>
+<body>
+
+<DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./">Documentation</A></DIV>
+
+<h1>Tutorial: Extending the Generic App</h1>
+
+<P CLASS="author">Contributed by David H. Jones</P>
+
+This tutorial describes how to extend the Generic redfoot application as
+a simple way of learning how to use the redfoot environment.
+<br>To do this in a clean fashion we will be using redfoot modules.
+<p>We will be creating an extension called myFun, which displays class
+labels and their descriptions that have been added as neighbors.
+<br>The extension will be accessed through the menus that are displayed
+at the top of each Generic app page.
+<br>&nbsp;
+<h2>
+Step1: Add menus and references to the extension module.</h2>
+First you need to make a copy of generic.xml.&nbsp; Let's call it 'mygeneric.xml'.
+Open this file in your favorite text editor. The first modification we
+will make is to add menu entries to access the functionality we will be
+adding in the module MyFun.xml.&nbsp; To do this we will copy (duplicate)
+the following lines of code:
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;P CLASS="MENUBAR">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;A HREF="/output">RDF (local only)&lt;/A> |
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;A HREF="/neighbours/">Add Read-Only Neighbour&lt;/A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/P></pre>
+And change the copied lines to:
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;P CLASS="MENUBAR">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;A HREF="/display_my_classes">Display My Classes&lt;/A> |
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;A HREF="/xxx">TBD&lt;/A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/P></pre>
+The string "/display_my_classes" is concateneated with the redfoot server
+address to form the URL for accessing the new function.
+<p>Next we will reference the new module we will be creating.&nbsp; The
+redfoot framwork supports modulization of an application with the red:sub-module
+tag.&nbsp; To add our exension we will add the following line near the
+top of generic.xml
+<pre>&nbsp;&nbsp;&nbsp; &lt;red:sub-module instance="myFun" class="MyFun" from="mymodules.myFun"/></pre>
+This means that a redpage module named 'myFun' must be placed in a new
+directory 'mymodules' in the 'components' directory of redfoot:
+<br>..\redfoot-xxx\components
+<h2>
+Step2: Add subdirectory, module, and __init__.py.</h2>
+In the redfoot directory 'components' add a new directory 'mymodules'.&nbsp;
+Then copy the __init__.py file from any other subdirectory of 'components'
+to the 'mymodules' subdirectory.&nbsp; This is necessary to make the python
+module/package work correctly (see python documentation for additional
+information on packages).
+<p>Then create a file named myFun.xml, and insert the code below.&nbsp;
+This code provides the basic structure&nbsp; of a module.&nbsp; We will
+be adding additional xml and python code in later steps.
+<pre>&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+&nbsp; from redfoot.rdf.objects import resource
+&nbsp; from redfoot.rdf.const import TYPE,CLASS,LABEL
+
+&nbsp; &lt;red:module name="MyFun">
+
+&nbsp;&nbsp;&nbsp; &lt;red:facet name="display_my_classes">
+&nbsp;&nbsp;&nbsp; &lt;P> Hello, redfoot&lt;/P>
+&nbsp;&nbsp;&nbsp; &lt;/red:facet>
+
+&nbsp; &lt;/red:module>
+
+&lt;/red:code></pre>
+
+<h2>
+Step 3: Test the extended application</h2>
+Start redfoot in the normal way: From the apps directory execute the command:
+<pre>python run.py mygeneric</pre>
+You should see the following:
+<pre>Redfoot 0.9.99-pre2
+Started Redfoot HTTP Server.
+Attempting to bind to socket
+Successfully bound to socket
+Running at http://&lt;localhost>:8000/</pre>
+
+<p><br>NOTE: If you see additional console output, this means there is
+some sort of error you've made in previous steps.&nbsp; Use the output
+to help correct the error (easier said than done).
+<p>Then point your browser at the URL where your redfoot server is running.
+<p>You should see the standard redfoot generic app, with one additional
+menu line with menu selection items for 'Display My Classes'
+<br>When you click on this you should see the following:
+<p><font face="Arial,Helvetica"><font size=-2>Hello, redfoot</font></font>
+<p>This isn't extremely interesting, but it proves that everything works.&nbsp;
+Now lets add code to display the class labels and comments of the neighbours.
+The following code is added after the 'Hello redfoot' line.
+<pre>&nbsp;&nbsp;&nbsp; &lt;DL CLASS="CLASS_LIST">
+&nbsp;&nbsp;&nbsp; &lt;red:visit match="(None,TYPE,CLASS)">
+&nbsp;&nbsp;&nbsp; &lt;DT>&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;red:eval>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self.app.rednode.label(subject)&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/red:eval>
+&nbsp;&nbsp;&nbsp; &lt;/DT>
+&nbsp;&nbsp;&nbsp; &lt;DD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;red:eval>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self.app.rednode.comment(subject,'No description')&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/red:eval>
+&nbsp;&nbsp;&nbsp; &lt;/DD>
+&nbsp;&nbsp;&nbsp; &lt;/red:visit>
+&nbsp;&nbsp;&nbsp; &lt;/DL></pre>
+When you save the module you will get a message on console (window where
+you started redfoot) that it has been reloaded. You also need to save AGAIN
+generic.xml -- or you can &lt;ctrl> C to stop the redfoot server, the restart
+it.&nbsp; When you've done all this you should see the following:
+<p><font face="Arial,Helvetica"><font size=-2>Hello, redfoot</font></font>
+<p><font face="Arial,Helvetica"><font size=-2>Statement</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>This represents the set
+of reified statements.</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>Class</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>The concept of Class</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>Resource</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>The most general class</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>ConstraintProperty</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>Properties used to express
+RDF Schema constraints.</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>ContainerMembershipProperty</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>No description</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>ConstraintResource</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>Resources used to express
+RDF Schema constraints.</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>Property</font></font>
+<br><font face="Arial,Helvetica"><font size=-2>The concept of a property.</font></font><font face="Arial,Helvetica"><font size=-2></font></font>
+<p>These are the classes define in RDF schema and any other Neighbours
+that you might have already connected.
+<p>This completes this introduction to Redfoot.&nbsp; We hope you've learned
+the basics of building Redfoot applications.
+<h3>
+Complete code for module myFun.xml</h3>
+
+<pre CLASS="code_sample">&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+&nbsp; from redfoot.rdf.objects import resource
+&nbsp; from redfoot.rdf.const import TYPE,CLASS,LABEL
+
+&nbsp; RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+&nbsp; RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+&nbsp; RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+&nbsp; RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+&nbsp; &lt;red:module name="MyFun">
+
+&nbsp;&nbsp;&nbsp; &lt;red:facet name="display_my_classes">
+&nbsp;&nbsp;&nbsp; &lt;P> Hello, redfoot&lt;/P>
+&nbsp;&nbsp;&nbsp; &lt;DL CLASS="CLASS_LIST">
+&nbsp;&nbsp;&nbsp; &lt;red:visit match="(None,TYPE,CLASS)">
+&nbsp;&nbsp;&nbsp; &lt;DT>&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;red:eval>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self.app.rednode.label(subject)&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/red:eval>
+&nbsp;&nbsp;&nbsp; &lt;/DT>
+&nbsp;&nbsp;&nbsp; &lt;DD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;red:eval>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self.app.rednode.comment(subject,'No description')&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/red:eval>
+&nbsp;&nbsp;&nbsp; &lt;/DD>
+&nbsp;&nbsp;&nbsp; &lt;/red:visit>
+&nbsp;&nbsp;&nbsp; &lt;/DL>
+&nbsp;&nbsp;&nbsp; &lt;/red:facet>
+
+&nbsp; &lt;/red:module>
+
+&lt;/red:code>
+
+</pre>
+<P CLASS="cvs_id">$Id$</P>
+
+</body>
+</html>

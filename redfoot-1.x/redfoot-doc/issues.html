@@ -1,0 +1,37 @@
+<HTML>
+  <HEAD>
+    <TITLE>Known Redfoot Issues</TITLE>
+    <LINK REL="STYLESHEET" HREF="redfoot.css"/>
+  </HEAD>
+  <BODY>
+    <DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./">Documentation</A></DIV>
+    <H1>Known Issues</H1>
+
+    <H2>Can't access via 'localhost' on MacOS X</H2>
+
+    <P><B>PROBLEM</B>: If Redfoot is run with the hostname of 'localhost', it cannot be accessed
+       by a browser using 'localhost' as the hostname.</P>
+
+    <P><B>SOLUTION</B>: Use 127.0.0.1 to access Redfoot with your browser.</P>
+
+    <H2>"ImportError: No module named thread" running on Cygwin</H2>
+
+    <P><B>PROBLEM</B>: Some versions of Cygwin (1.3.2 for example) come with a version of
+       Python compiled without threads.</P>
+ 
+    <P><B>SOLUTION</B>: Uninstall the cygwin python package and get a windows version
+       from python.org that is compiled with thread support.</P>
+
+    <H2>Encoding Issues with POP Module/Connector</H2>
+
+    <P><B>PROBLEM</B>: Some email containing non-ASCII characters raises an exception
+       in the POP Module.</P>
+
+    <P><B>SOLUTION</B>: Believed to be fixed in 0.9.99-pre3.</P>
+
+    <P CLASS="cvs_id">$Id$</P>
+  </BODY>
+</HTML>
+
+
+
