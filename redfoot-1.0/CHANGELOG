@@ -1,4 +1,28 @@
 
+2001/09/04
+	RELEASE 0.9.99-pre3
+
+	rss_test app now knows about RDF file on redfoot.sourceforge.net
+	that lists sample RSS feeds to connect to.
+
+	An app's (or a parent module's) sub modules are now accessible
+	from within __init__.
+
+	Added contributed tutorial from David H. Jones.
+
+	Fixed Unicode errors by removing the use of Unicode objects and
+	switching to UTF-8 strings.
+	
+	Illegal URIs now give error messages in neighbour connect.
+	
+	Connecting to a local neighbour file no longer creates file if it
+	doesn't exist.
+
+	Set body colour / background in CSS for generic module and doc.
+
+	authentication method now returns true when user is logged in.
+
+	
 2001/08/28
 	RELEASE 0.9.99-pre2
 
