@@ -2,6 +2,9 @@
 
 from rdf.store import TripleStore
 from rdf.query import QueryStore
+from rdf.query import *
+from rdf.query import _s_
+
 from rdf.storeio import StoreIO
 from rdf.storeio import AutoSaveStoreIO
 from rdf.const import *
@@ -93,21 +96,6 @@ class RedNode(StoreIO, QueryStore):
         # only show local instances
         self.local.visit(instance, None, TYPE, type)
 
-    # May need to move the following method elsewhere if we need
-    # resourcesByClassV defined for all combinations and do not wish to
-    # overload what it mean for Local
-    def visitResourcesByType_original(self, processClass, processResource):
-        def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
-            if self.local.getFirst(None, TYPE, s)!=None:
-                processClass(s)
-            def resource(s, p, o, processClass=processClass,\
-                         processResource=processResource, self=self):
-                processResource(s)
-            # only show local instances
-            self.local.visit(resource, None, TYPE, s)
-        # show classes in neighbourhod as well as in local store
-        self.neighbourhood.visit(klass, None, TYPE, CLASS)
-
     def visitResourcesByType(self, processClass, processResource):
         from rdf.query import ObjectSetBuilder
         setBuilder = ObjectSetBuilder()
@@ -116,12 +104,8 @@ class RedNode(StoreIO, QueryStore):
         for klass in types:
             if self.local.getFirst(None, TYPE, klass)!=None:
                 processClass(klass)
-                def resource(s, p, o, processClass=processClass,\
-                             processResource=processResource, self=self):
-                    processResource(s)
-                # only show local instances
-                self.local.visit(resource, None, TYPE, klass)
-
+                query = Query(processResource, (_s_,))
+                self.local.query(query, None, TYPE, klass)
 
     def output(self, stream, URI=None, subject=None, predicate=None, object=None):
         self.local.output(stream, URI, subject, predicate, object)
@@ -183,5 +167,8 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
+#~ Revision 6.1  2001/02/26 22:40:10  eikeon
+#~ a few changes to the journaling store support
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
