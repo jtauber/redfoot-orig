@@ -1,4 +1,4 @@
-# $Id$
+# $Header$
 
 class TripleStore:
 
@@ -139,3 +139,6 @@ class StoreNode:
         
 
 # $Log$
+# Revision 1.10  2000/10/01 02:18:05  eikeon
+# MultiStore now has both visit and get methods; Added a StoreNode class; Added CVS keywords $Id$ and $Log$
+#
