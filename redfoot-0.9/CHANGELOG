@@ -1,5 +1,34 @@
 CHANGELOG
 
+Changes between 0.9.4 and 0.9.5
+
+ - **refactor of apps and the way servers are started by them**
+ - added run_redpage and _load_redpage
+
+ - generateURI now generates URI's that are 'further down' in the URI
+   space -- giving the resource its own URI rather than 'just' an ID
+   in the current 'document'
+
+ - fixed cookie expires date format
+ - changed session default max inactive time to 10 years
+
+ - refactored the way Query objects take args (much simpler now)
+ - refactored out lambdas that pull s and o from triple
+
+ - Viewer/Editor/UI no longer have a path property as it is now /
+
+ - optimized split_property a bit by adding a cache lookup
+ - hard coded the rdf prefix (for sake of optimization)
+
+ - fixes for JournalingStore (still experimental)
+ - update no longer removes and re-adds properties who's values are
+   unchanged
+ - added SOURCE property to journal statements
+ - JournalingStore no longer has TripleStore as a base
+ - fixed up subject URI's used in Journal Store
+ - fixed up timestamps used in Journal Store
+
+
 Changes between 0.9.3 and 0.9.4
 	
  - added 'copy' button to edit page
