@@ -31,7 +31,9 @@ class Sample1UI:
     def handleRequest(self, request, response):
         path_info = request.getPathInfo()
 
-        if self.path_match(path_info):
+	if path_info[:-1]==self.path:
+            self.call_editor(request, response)
+        elif self.path_match(path_info):
             if not self.authenticated(request, response):
                 return
             self.call_editor(request, response)
@@ -44,7 +46,7 @@ class Sample1UI:
         response.write("""
         <HTML>
           <HEAD>
-            <TITLE>Main Page</TITLE>
+            <TITLE>Main Page test</TITLE>
           </HEAD>
           <BODY>
             <H1>Main Page</H1>
@@ -110,26 +112,12 @@ class Sample1UI:
                 return 0
 
         raise "TODO: exception indicating we should never fall though to here"
-            
-
-if __name__ == '__main__':
-    from redfoot.server import RedServer
-
-    port = 8000
-            
-    server = RedServer(('', port))
-    server.setHandler(Sample1UI())
-    server.start()
-
-    import sys
-    sys.stderr.write("Sample1: listening on port %s...\n" % port)
-    sys.stderr.write("... try hitting http://localhost:%s/\n" % port)    
-    sys.stderr.flush()
-
-    server.keepRunning()
-
+             
 
 # $Log$
+# Revision 1.3  2000/12/07 21:33:25  jtauber
+# fixed commandline options and path bugs in sample1
+#
 # Revision 1.2  2000/12/07 21:21:56  eikeon
 # added startup message; fixed type; added focus to username
 #

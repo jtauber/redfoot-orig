@@ -2,4 +2,4 @@
 
 export PYTHONPATH=../lib
 
-python ./sample1.py
+python ./sample1Main.py $*
