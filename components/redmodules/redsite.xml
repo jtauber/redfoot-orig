@@ -245,7 +245,7 @@ A:hover {
       uri = resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
     </red:exec>
       <h1>
-        <red:eval>self.app.rednode.label(uri)</red:eval>
+        <red:eval>self.app.rednode.label(uri, '')</red:eval>
       </h1>
       <red:exec>
         html = self.app.rednode.get_first_value(uri, HTML, None)
