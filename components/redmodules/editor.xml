@@ -42,7 +42,9 @@
         type = self.app.request.get_parameter("type", None)
         copy = self.app.request.get_parameter("copy", None)
         return_to = self.app.request.get_parameter("return_to", "")
-        
+        s_property = self.app.request.get_parameter('s_property', '')
+        s_subject = self.app.request.get_parameter('s_subject', '')
+
         if copy == "true":
             subject = self.rednode.local.uri + generate_uri()
             self.update(resource(subject), 1)
@@ -51,6 +53,10 @@
                 subject = self.rednode.local.uri + generate_uri()
 
         subject = resource(subject)
+
+        if s_property != '' and s_subject != '':
+            self.app.rednode.remove(resource(s_subject), resource(s_property), resource(""))
+            self.app.rednode.add(resource(s_subject), resource(s_property), subject)  
 
         if type != None and type != "":
             self.rednode.add(subject, TYPE, resource(type))
@@ -71,7 +77,7 @@
 
           <red:if test="self.rednode.exists(subject, None, None)">
             <red:exec>
-              self.rednode.local.visit(po(self.edit_property), (subject, None, None))
+              self.rednode.local.visit(self.edit_property, (subject, None, None))
               self.rednode.neighbours.visit(po(self.viewer.display_property_value), (subject, None, None))
             </red:exec>
             <red:else>
@@ -85,7 +91,7 @@
             self.rednode.visit_possible_properties_for_subject(b.accept, subject)
             for prop in b.set:
                 if self.rednode.exists(prop, REQUIRED_PROPERTY, YES):
-                    self.edit_property(prop, literal(""), 0)
+                    self.edit_property(subject, prop, literal(""), 0)
           </red:exec>                
 
           <TR>
@@ -131,7 +137,7 @@
       </DIV>
     </red:facet>
     
-    <red:facet name="edit_property" args="property, value, exists = 1">
+    <red:facet name="edit_property" args="subject, property, value, exists = 1">
       <red:exec>
         self.property_num = self.property_num + 1
       </red:exec>        
@@ -205,13 +211,14 @@
               </red:exec>
               <red:if test="return_to == ''">
                 <red:exec>
-                  subject = self.app.request.get_parameter("subject", "")
                   query_string=""
                   b = ListBuilder()
                   self.rednode.visit(o(b.accept), (property, RANGE, None))
                   for r in b.list:
                     query_string = query_string + "type=" + encode_URI(r) + "&amp;"
                   query_string = query_string + "return_to=edit%3Fsubject=" + encode_URI(subject)
+                  query_string = query_string + "&amp;s_property=" + encode_URI(property)
+                  query_string = query_string + "&amp;s_subject=" + encode_URI(subject)
                 </red:exec>
                 <A HREF="add?{query_string}">add new</A>
               </red:if>
@@ -233,9 +240,16 @@
     </red:facet>
 
     <red:facet name="add">
-      <red:exec>type = self.app.request.get_parameter('type', RESOURCE)</red:exec>
-      <red:exec>return_to = self.app.request.get_parameter('return_to', '')</red:exec>
-      <H2>Add Resource of Type <red:eval>self.rednode.label(type)</red:eval></H2>
+      <red:exec>
+        type = self.app.request.get_parameter('type', '')
+        if type != '':
+          type = resource(type)
+        return_to = self.app.request.get_parameter('return_to', '')
+        s_property = self.app.request.get_parameter('s_property', '')
+        s_subject = self.app.request.get_parameter('s_subject', '')
+      </red:exec>
+      <H2>Add Resource</H2>
+      <red:if test="s_property != '' and s_subject != ''"><P>and add as value for property</P></red:if>
       <FORM NAME="form" ACTION="edit" METHOD="POST">
         <TABLE>
           <TR>
@@ -249,6 +263,8 @@
         <INPUT TYPE="SUBMIT" VALUE="add"/>
         <INPUT TYPE="HIDDEN" NAME="type" VALUE="{type}"/>
         <INPUT TYPE="HIDDEN" NAME="return_to" VALUE="{return_to}"/>
+        <INPUT TYPE="HIDDEN" NAME="s_property" VALUE="{s_property}"/>
+        <INPUT TYPE="HIDDEN" NAME="s_subject" VALUE="{s_subject}"/>
       </FORM>
     </red:facet>      
 
