@@ -6,8 +6,8 @@
 >
   <n2:Description n2:about="http://redfoot.sourceforge.net/2000/10/#emailAddress">
     <n1:label>Email Address</n1:label>
-    <n2:type n2:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
     <n1:domain n2:resource="http://redfoot.sourceforge.net/2000/10/#Person"/>
+    <n2:type n2:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
     <n1:range n2:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
   </n2:Description>
   <n2:Description n2:about="http://redfoot.sourceforge.net/2000/10/#DanKrech">

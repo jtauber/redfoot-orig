@@ -298,7 +298,7 @@ class Editor(Viewer):
         self.response.write("""
         </FORM>
 
-              <P><A HREF="subclassNR">Return to List (without adding a Resource)</A></P>
+              <P><A HREF="subclass">Return to List (without adding a Resource)</A></P>
             </BODY>
           </HTML>
         """)
@@ -423,7 +423,7 @@ class PeerEditor(Editor):
         self.response.write("""
               <H2>Connect Neighbour</H2>
         
-              <FORM NAME="form" ACTION="subclassNR" METHOD="POST">
+              <FORM NAME="form" ACTION="subclass" METHOD="POST">
                 <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri" SIZE="60">
                 <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
                 </P>
@@ -439,6 +439,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 5.0  2000/12/08 08:34:52  eikeon
+# new release
+#
 # Revision 4.13  2000/12/08 07:39:12  eikeon
 # show / hide does not lose current value for uri paramter
 #
