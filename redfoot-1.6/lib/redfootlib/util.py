@@ -59,3 +59,23 @@ def to_URL(module_name, path):
         return pathname2url(join(libDir, path))
     else: # path is absolute URL
         return path
+
+sn = 0
+def unique_date_time(t=None):
+    """http://www.w3.org/TR/NOTE-datetime ex: 1997-07-16T19:20:30Z"""
+    t = t or time()
+    global sn
+    year, month, day, hh, mm, ss, wd, y, z = gmtime(t)
+    s = "%0004d-%02d-%02dT%02d:%02d:%02d.%00000008dZ" % ( year, month, day, hh, mm, ss, sn)
+    sn += 1
+    return s
+
+def encode_as_single_line(message):
+    orig = message
+    message = '\\\\'.join(message.split('\\'))
+    message = '\\n'.join(message.split('\n'))
+    return message
+
+def decode_from_single_line(message):
+    message = "\n".join(message.split("\\n"))
+    return "\\".join(message.split("\\\\"))
