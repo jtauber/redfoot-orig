@@ -295,5 +295,8 @@ TODO
 
 
 $Log$
+Revision 3.1  2000/11/02 21:48:27  eikeon
+removed old log messages
+
 Revision 3.0  2000/10/27 01:23:10  eikeon
 bump-ing version to 3.0

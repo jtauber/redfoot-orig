@@ -93,6 +93,9 @@ if __name__ == '__main__':
     runServer(sys.argv[1:], SampleUI)
 
 # $Log$
+# Revision 1.7  2000/11/04 03:39:47  eikeon
+# changed password input to type password
+#
 # Revision 1.6  2000/11/04 01:48:43  eikeon
 # moved sample authentication from editor.py to sample.py
 #

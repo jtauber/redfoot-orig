@@ -87,6 +87,9 @@ class Serializer:
 
 
 #~ $Log$
+#~ Revision 3.2  2000/11/04 01:24:50  eikeon
+#~ fixed string index out of range bug in serializer
+#~
 #~ Revision 3.1  2000/11/02 21:48:27  eikeon
 #~ removed old log messages
 #~

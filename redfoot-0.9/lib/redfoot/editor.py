@@ -403,6 +403,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 3.6  2000/11/04 03:39:10  eikeon
+# moved sample authentication from editor.py to sample.py
+#
 # Revision 3.5  2000/11/04 01:25:33  eikeon
 # removed old log messaged
 #

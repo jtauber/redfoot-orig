@@ -369,6 +369,9 @@ def date_time_string():
 
 
 #~ $Log$
+#~ Revision 3.6  2000/11/06 01:11:29  eikeon
+#~ added ability to stop a 'handler'; introduced a HandlerCubby to manage state between the server and handlers
+#~
 #~ Revision 3.5  2000/11/03 23:04:08  eikeon
 #~ Added support for cookies and sessions; prefixed a number of methods and variables with _ to indicate they are private; changed a number of methods to mixed case for consistency; added a setHeader method on response -- headers where hardcoded before; replaced writer with response as writer predates and is redundant with repsonse; Added authentication to editor
 #~
