@@ -351,16 +351,11 @@ class Node(asyncore.dispatcher):
                 if proxy in self.connections:
                     # the above should be true but let's just check
                     for connection in self.connections[proxy]:
-                        msg = (to, frm, message_id, message)
-                        self._send_pass_on(connection, msg)
+                        connection.send_pass_on(to, frm, message_id, message)
                         # @@@ we don't really know if it got to destination
                         result = 1
 
         return result
-
-    def _send_pass_on(self, connection, (to, frm, message_id, message)):
-        connection.send_pass_on(to, frm, message_id, message)
-
 
     def call(self, host, port):
         """

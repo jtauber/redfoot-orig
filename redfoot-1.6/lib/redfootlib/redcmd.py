@@ -300,7 +300,12 @@ class Edge(Cmd, object):
         super(Edge, self).__init__()        
         self.redcmd = redcmd
         self.node = node
-        self.uid = uid        
+        self.remote_uid = node.uid
+        self.uid = uid
+        print "????", self.uid, self.remote_uid
+
+    def join(self, uid):
+        self.node.register(uid, self)
 
     def do_echo(self, arg):
         print arg
