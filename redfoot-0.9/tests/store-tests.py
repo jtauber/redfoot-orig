@@ -1,37 +1,25 @@
-import pyexpat
-
-from redfoot.parser import *
-from redfoot.store import *
-
-class RDFParser:
-
-    def __init__(self, baseURI, URL, adder):
-        parser = pyexpat.ParserCreate(namespace_separator="")
-        if baseURI!=None:
-            parser.SetBase(baseURI)
-            rootHandler(parser, adder, None)
-            from urllib import *
-            f = urlopen(URL)
-            parser.ParseFile(f)
-            f.close()
 
 def test_1():
     "load RDF from url"
 
-    url = "http://www.w3.org/1999/02/22-rdf-syntax-ns"
-    url = "rdfSchema.rdf"
-    uri = url
-
+    from redfoot.store import TripleStore
     store = TripleStore()
 
-    parser = RDFParser(uri, url, store.add)
-#    parser = RDFParser()
-#    parser.setAdder(store.add)
-#    parser.setURL(url)
-#    parser.setURI(uri)
+    from redfoot.parser import RDFParser
+    parser = RDFParser()
 
-#    parser.parse()
+    parser.setAdder(store.add)
+
+    parser.parse("http://www.w3.org/1999/02/22-rdf-syntax-ns")
     
     print len(store.get())
 
+
+def test_2():
+    "NeighborhoodStore test"
+    pass
+    
+
 test_1()
+test_2()
+
