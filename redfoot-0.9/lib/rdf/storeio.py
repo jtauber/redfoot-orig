@@ -57,32 +57,36 @@ class StoreIO:
         s.setStream(stream)
         s.setBase(URI)
 
-        properties = queryStore.getProperties()
 
-        for property in properties:
-            s.registerProperty(property)
+        queryStore.visit(lambda s, p, o, ser=s: ser.registerProperty(p), None, None, None)
+
+        class State:
+            def __init__(self, ser):
+                self.ser = ser
+                self.subject = None
+                self.property = None
+                self.value = None
+
+            def write(self, s, p, o):
+                if self.subject!=s:
+                    if self.subject!=None:
+                        self.ser.subjectEnd()
+                    self.ser.subjectStart(s)
+                    self.subject = s
+                self.ser.property(p, o)
+
+            def flush(self):
+                if self.subject!=None:
+                    self.ser.subjectEnd()                    
+
+        state = State(s)
 
         s.start()
-        
-        subjects = queryStore.getSubjects()
-        subjects.sort() 
-
-        for subject in subjects:
-            s.subjectStart(subject)
-
-            properties = queryStore.getProperties(subject)
-            properties.sort()
-            
-            for property in properties:
-                values = queryStore.getValues(subject, property)
-                values.sort()
-                
-                for value in values:
-                    s.property(property, value)
-
-            s.subjectEnd()
-        
+        queryStore.visit(state.write, None, None, None)
+        state.flush()
         s.end()
+
+
 
     #TODO: I don't know if this belongs here - JKT
     #TODO: Perhaps this could merge with self.output - JKT
@@ -143,6 +147,9 @@ class StoreIO:
         s.end()
 
 #~ $Log$
+#~ Revision 4.1  2000/11/20 21:31:58  jtauber
+#~ added a method that outputs to a given stream the serialized results of a query
+#~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
 #~
