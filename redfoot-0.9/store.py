@@ -8,19 +8,19 @@ class TripleStore:
         self.pvs = {}
 
     def add(self, subject, property, value):
-        if not subject in self.spv.keys():
+        if not self.spv.has_key(subject):
             self.spv[subject] = {}
 
-        if not property in self.spv[subject].keys():
+        if not self.spv[subject].has_key(property):
             self.spv[subject][property] = {}
 
         self.spv[subject][property][value] = 1
 
         # add to byProperty
-        if not property in self.pvs.keys():
+        if not self.pvs.has_key(property):
             self.pvs[property] = {}
 
-        if not value in self.pvs[property].keys():
+        if not self.pvs[property].has_key(value):
             self.pvs[property][value] = {}
 
         self.pvs[property][value][subject] = 1
