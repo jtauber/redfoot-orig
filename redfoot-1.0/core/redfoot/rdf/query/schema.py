@@ -80,7 +80,6 @@ class SchemaQuery(Query):
     def visit_resources_by_type(self, class_callback, instance_callback):
         b = SetBuilder()
         self.visit(o(b.accept), (None, TYPE, None))
-        b.end()
         for type in b.set:
             if self.exists(None, TYPE, type):
                 class_callback(type)
