@@ -1,6 +1,5 @@
 $Header$
 
-
 REDFOOT README
 
     Redfoot is a framework for distributed RDF-based applications,
@@ -26,36 +25,19 @@ REDFOOT README
         - connectors for mapping non-RDF data into RDF triples
         - sample applications built on top of Redfoot
 
-    Redfoot is written in pure Python (Python 2.0 required) and is 
-    being tested on both windows and linux (requires PyExpat).
+    Redfoot is written in pure Python (Python 2.0 + PyExpat required) and is 
+    being tested on both windows and linux.
 
     Redfoot currently uses eikeon's Bare Naked HTTP server which is
     included in the standard distribution.
 
-RUNNING THE REDFOOT SERVER
+TO SEE WHAT REDFOOT IS LIKE
 
-    1. Make sure the ./lib/ directory of redfoot is on the python
-       path.
-
-    2. Run
-
-           python server.py <options>
-
-           -l location of RDF file to use as local
-                (eg myrdf.rdf. defaults to local.rdf)
-
-           -u uri to treat that file as
-                (eg http://redfoot.sourceforge.net/2000/10/.
-                 defaults to http://hostname.domain:port/path)
-
-           -p port number to run on
-                (defaults to 8000)
-
-           -P path from server root to actual RDF
-                (eg /2000/10. defaults to /)
-
-    See sample/sample.{sh,bat} for an example of invoking with a custom UI 
-    for viewing.
+    Go into apps/
+    Try generic.sh (unix) or generic.bat (windows)
+    This is generic UI
+    Now try sample1.sh (unix) or sample1.bat (windows)
+    This is a very simple example of a custom UI
 
 INFORMATION FOR USERS
 
@@ -67,7 +49,7 @@ INFORMATION FOR CUSTOM UI DEVELOPERS
 
 INFORMATION FOR REDFOOT DEVELOPERS
 
-    See lib/redfoot/DEVMANUAL (out of date)
+    See lib/redfoot/DEVMANUAL
         lib/rdf/RDFLIB_MANUAL.txt
 
 WHERE TO GET THE LATEST REDFOOT
@@ -79,21 +61,3 @@ HOW TO CONTACT THE DEVELOPERS
 
     James Tauber - jtauber@jtauber.com
     Daniel Krech - eikeon@eikeon.com 
-
-
-$Log$
-Revision 4.0  2000/11/06 15:57:33  eikeon
-VERSION 4.0
-
-Revision 3.3  2000/11/04 06:16:25  jtauber
-added reference to usermanual and updated location of DEVMANUAL
-
-Revision 3.2  2000/11/04 03:40:32  eikeon
-updated stale info
-
-Revision 3.1  2000/11/02 21:48:23  eikeon
-removed old log messages
-
-Revision 3.0  2000/10/27 01:23:10  eikeon
-bump-ing version to 3.0
-
