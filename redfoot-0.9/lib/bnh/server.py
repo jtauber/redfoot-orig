@@ -135,30 +135,38 @@ class Response:
     def setClientSocket(self, clientSocket):
         self.wfile = clientSocket.makefile('wb', 0)        
 
-        self.wfile.write("%s %s %s\r\n" % ("HTTP/1.1", "200", "OK"))
+        self.write("%s %s %s\r\n" % ("HTTP/1.1", "200", "OK"))
         self.send_header('Server', "eikeon's Bare Naked HTTP Server")
         self.send_header('Date', date_time_string())
         self.send_header('Expires', "-1")
         self.send_header('Connection', "close")
-        self.wfile.write("\r\n")
+        self.write("\r\n")
 
     
     def send_header(self, keyword, value):
         """Send a MIME header."""
 
-        self.wfile.write("%s: %s\r\n" % (keyword, value))
+        self.write("%s: %s\r\n" % (keyword, value))
 
 
     def write(self, str):
-        self.wfile.write(str)
+        try:
+            self.wfile.write(str)
+        except IOError:
+            raise BadRequestError("write failed")            
 
     def flush(self):
-        self.wfile.flush()
-
-    def close(self):
-        self.wfile.flush()
-        self.wfile.close()
+        try:
+            self.wfile.flush()
+        except IOError:
+            raise BadRequestError("flush failed")
         
+    def close(self):
+        try:
+            self.wfile.flush()
+            self.wfile.close()
+        except IOError:
+            raise BadRequestError("close failed")            
 
 def date_time_string():
     """Return the current date and time formatted for a message header."""
@@ -180,6 +188,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 2.2  2000/10/18 20:02:23  eikeon
 # added eikeon's
 #
