@@ -1,0 +1,57 @@
+$Header$
+
+REDFOOT APPS README
+
+    There are a growing number of sample Redfoot applications in this
+    directory:
+
+	* generic viewer / editor
+	* sample1 - simple app written in Python
+	* sample2 - simple todo app written in RedCode
+	* sample3 - RedCode app combining modules for authentication,
+                    rss/weblogs and neighbour connections
+
+WHAT IS REDCODE?
+
+    RedCode is a combination of Python and XML that makes it easier to
+    combine Python code with XHTML. Anything in RedCode could be
+    written as straight Python but RedCode makes things a little
+    easier when writing Redfoot applications. See sample2.xml or
+    sample3.xml for examples.
+
+    run.bat or run.sh can be used to run RedCode.
+
+GENERIC VIEWER / EDITOR
+
+    To start, run
+	* generic.bat (Windows)
+	* generic.sh (Unix)
+	* python generic.py (if Redfoot library is on PYTHONPATH)
+
+    To learn more about the Generic UI and how to use it, see
+        docs/usermanual.txt 
+
+SAMPLE1
+
+    To start, run
+	* sample1.bat (Windows)
+	* sample1.sh (Unix)
+	* python sample1.sh (if Redfoot library is on PYTHONPATH)
+
+    @@@ TODO: explanation of what sample does
+
+SAMPLE2
+
+    To start, run
+	* run.bat sample2 (Windows)
+	* run.sh sample2 (Unix)
+
+    @@@ TODO: explanation of what sample does
+
+SAMPLE3
+
+    To start, run
+	* run.bat sample3 (Windows)
+	* run.sh sample3 (Unix)
+
+    @@@ TODO: explanation of what sample does
