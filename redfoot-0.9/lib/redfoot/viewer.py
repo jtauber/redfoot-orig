@@ -25,7 +25,7 @@ class Viewer:
             if p=="": p=None
             o = parameters['object']
             if o=="": o=None
-            self.RDF(s,p,o)
+            self.rdf(s,p,o)
         elif path_info == "/fullsubclass":
             root = parameters['uri']
             if root=="":
@@ -38,14 +38,14 @@ class Viewer:
             self.fullsubclass(root, 0)
         elif path_info == "/classList":
             self.classList()
-        elif path_info == "/Triples":
+        elif path_info == "/triples":
             s = parameters['subject']
             if s=="": s=None
             p = parameters['predicate']
             if p=="": p=None
             o = parameters['object']
             if o=="": o=None
-            self.Triples(s,p,o)
+            self.triples(s,p,o)
         elif path_info == "/css":
             self.css()
         elif path_info == "/view":
@@ -165,7 +165,7 @@ class Viewer:
              | <A HREF="fullsubclass">Full Subclass Tree</A>
              | <A HREF="subclass">Partial Subclass Tree</A>
              | <A HREF=".">RDF</A>
-             | <A HREF="Triples">Triples</A>
+             | <A HREF="triples">Triples</A>
             </P>
         """)
 
@@ -375,10 +375,10 @@ class Viewer:
                     res.append(c)
         return string.joinfields(res, '')
 
-    def RDF(self, subject=None, predicate=None, object=None):
+    def rdf(self, subject=None, predicate=None, object=None):
         self.storeNode.local.output(self.response, subject, predicate, object)
 
-    def Triples(self, subject=None, predicate=None, object=None):
+    def triples(self, subject=None, predicate=None, object=None):
         self.response.write("""
         <HTML>
           <HEAD>
@@ -458,6 +458,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.4  2000/12/09 22:05:04  jtauber
+#~ subclass -> fullsubclass; subclassNR -> subclass
+#~
 #~ Revision 5.3  2000/12/09 18:37:52  jtauber
 #~ class list now lists typeless resources
 #~
