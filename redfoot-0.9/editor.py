@@ -2,14 +2,6 @@ from redfoot.viewer import Viewer
 
 class Editor(Viewer):
 
-    import sys
-    if sys.version_info[0]==2:
-        # work-around for 2.0c1... still can not get POST to work
-        METHOD = "GET"
-    else:
-        # work-around for 1.6... can not get POST to work
-        METHOD = "GET"
-
     def menuBar(self):
         self.writer.write("""
             <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
@@ -44,10 +36,10 @@ class Editor(Viewer):
         self.resourceHeader(subject)
         self.writer.write("""
             <H3>Edit</H3>
-            <FORM NAME="form" ACTION="edit?uri=%s" METHOD="%s">
+            <FORM NAME="form" ACTION="edit?uri=%s" METHOD="POST">
               <INPUT NAME="uri" TYPE="HIDDEN" VALUE="%s">
               <TABLE>
-        """ % (subject, self.METHOD, subject))
+        """ % (subject, subject))
         self.property_num = 0
 
         if self.qstore.isKnownResource(subject):
@@ -172,7 +164,7 @@ class Editor(Viewer):
               <H1>ReDFoot</H1>""")
         self.menuBar()
         self.writer.write("""
-          <FORM NAME="form" ACTION="edit" METHOD="%s">
+          <FORM NAME="form" ACTION="edit" METHOD="POST">
             <TABLE>
               <TR>
                 <TD VALIGN="TOP">URI</TD>
@@ -180,7 +172,7 @@ class Editor(Viewer):
                 <TD>
                   <INPUT TYPE="TEXT" SIZE="60" NAME="uri" value="%s"/>
                 </TD>
-              </TR>""" % (self.METHOD, self.generateURI()))
+              </TR>""" % (self.generateURI()))
         self.writer.write("""
               <TR>
                 <TD VALIGN="TOP">label</TD>
@@ -343,14 +335,14 @@ class PeerEditor(Editor):
         self.writer.write("""
               <H2>Connect Neighbour</H2>
         
-              <FORM NAME="form" ACTION="subclassNR" METHOD="%s">
+              <FORM NAME="form" ACTION="subclassNR" METHOD="POST">
                 <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri" SIZE="60">
                 <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
                 </P>
               </FORM>
             </BODY>
           </HTML>
-          """ % self.METHOD)
+          """)
 
     def connect(self, params):
         if params.has_key("uri"):
