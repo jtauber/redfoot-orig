@@ -1,27 +1,15 @@
 # $Header$
 
 from redfoot.query import QueryStore
-from redfoot.editor import PeerEditor
+from redfoot.baseUI import BaseUI
 
-class SampleUI:
-
-    def __init__(self, writer, storeNode, path):
-        self.writer = writer;
-        self.storeNode = storeNode
-        self.path = path
-        self.qstore = QueryStore(storeNode)
-
-        self.editor = PeerEditor(writer, storeNode, path)
-
-    def setWriter(self, writer):
-        self.writer = writer
-        self.editor.setWriter(writer)
+class SampleUI(BaseUI):
 
     def handler(self, path_info, args):
         ""
 
-        if path_info[0:len(self.path)]==self.path:
-            self.editor.handler(path_info[len(self.path):], args)
+        if self.path_match(path_info):
+            self.call_editor(path_info, args)
         elif path_info=="/":
             self.main()
         else:
@@ -36,6 +24,7 @@ class SampleUI:
           </HEAD>
           <BODY>
             <H1>Main Page</H1>
+            <P>These are the people I know about:</P>
             <UL>
         """)
         for s in self.qstore.get(None, QueryStore.TYPE, "http://redfoot.sourceforge.net/2000/10/#Person"):
@@ -60,9 +49,16 @@ class SampleUI:
         """)
 
 # $Log$
+# Revision 1.3  2000/10/19 00:33:07  jtauber
+# sample ui now links to peer editor
+#
 # Revision 1.2  2000/10/17 03:42:45  jtauber
 # included rdf file for sample ui and added a page that does a query
 #
 # Revision 1.1  2000/10/17 02:31:10  jtauber
 # beginnings of a sample UI
 #
+
+
+
+
