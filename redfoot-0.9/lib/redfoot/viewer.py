@@ -9,7 +9,7 @@ class Viewer:
     def __init__(self, storeNode, path):
         self.storeNode = storeNode
         self.path = path
-        self.showNeighbours=0
+        self.showNeighbours = 0
         
     def handleRequest(self, request, response):
         self.response = response
@@ -26,16 +26,16 @@ class Viewer:
             o = parameters['object']
             if o=="": o=None
             self.RDF(s,p,o)
+        elif path_info == "/fullsubclass":
+            root = parameters['uri']
+            if root=="":
+                root = RESOURCE
+            self.fullsubclass(root)
         elif path_info == "/subclass":
             root = parameters['uri']
             if root=="":
                 root = RESOURCE
-            self.subclass(root)
-        elif path_info == "/subclassNR":
-            root = parameters['uri']
-            if root=="":
-                root = RESOURCE
-            self.subclass(root, 0)
+            self.fullsubclass(root, 0)
         elif path_info == "/classList":
             self.classList()
         elif path_info == "/Triples":
@@ -162,15 +162,15 @@ class Viewer:
         self.response.write("""
             <P CLASS="MENUBAR"><B>VIEW</B>
              : <A HREF="classList">Resources by Class</A>
-             | <A HREF="subclass">Full Subclass Tree</A>
-             | <A HREF="subclassNR">Partial Subclass Tree</A>
+             | <A HREF="fullsubclass">Full Subclass Tree</A>
+             | <A HREF="subclass">Partial Subclass Tree</A>
              | <A HREF=".">RDF</A>
              | <A HREF="Triples">Triples</A>
             </P>
         """)
 
     def mainPage(self):
-        self.subclass(RESOURCE, 0)
+        self.fullsubclass(RESOURCE, 0)
 
     def classList(self):
         self.response.write("""
@@ -212,7 +212,7 @@ class Viewer:
         </HTML>
         """)
 
-    def subclass(self, root, recurse=1):
+    def fullsubclass(self, root, recurse=1):
         self.response.write("""
         <HTML>
           <HEAD>
@@ -287,14 +287,14 @@ class Viewer:
         """ % self.link(resource))
 
     def displayParent(self, resource):
-        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.storeNode.comment(resource), self.storeNode.label(resource)))
+        self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.storeNode.comment(resource), self.storeNode.label(resource)))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
         self.response.write(3*depth*"&nbsp;")
 
         if recurse==0:
-            self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.storeNode.comment(klass)))
+            self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.storeNode.comment(klass)))
 
         self.response.write("<B>%s</B>" % self.storeNode.label(klass))
 
@@ -458,6 +458,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.3  2000/12/09 18:37:52  jtauber
+#~ class list now lists typeless resources
+#~
 #~ Revision 5.2  2000/12/09 00:44:59  eikeon
 #~ improved encodeURI function
 #~
