@@ -282,6 +282,7 @@ class QueryStore(QueryBase):
 
     def getRootClasses(self):
         """returns those classes that aren't a subclass of anything"""
+        # TODO: (1) use this in subclass view; (2) return unknown classes that appear as types
         result = []
         def klass(s, p, o, result=result, self=self):
             if self.getFirst(s, SUBCLASSOF, None)==None:
@@ -349,6 +350,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 5.13  2000/12/20 03:59:53  jtauber
+#~ visitResourcesByType will now visit resources whose type is an unknown class
+#~
 #~ Revision 5.12  2000/12/17 20:56:08  eikeon
 #~ renamed visitSubjects to visit_subjects
 #~
