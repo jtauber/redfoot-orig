@@ -35,7 +35,7 @@ def load_rss(self, request, response):
         self.rednode.neighbours.stores.removeStore(self.rss_store)
         self.rss_store = None
     store = Local()
-    store.load(request.getParameters()['url'], None)
+    store.load(request.get_parameters()['url'], None)
     self.rednode.neighbours.stores.addStore(store)
     self.rss_store = store
 

@@ -41,7 +41,7 @@ class Session:
             session_uri = rednode.local.URI + generateURI()
             response.set_session_uri(session_uri)
 
-            headers = request.getHeaders()
+            headers = request.get_headers()
             rednode.local.add(session_uri, TYPE, SESSION)
             rednode.local.add(session_uri, CREATED, literal(date_time()))
             rednode.local.add(session_uri, USER_AGENT, literal(headers['user-agent']))
@@ -129,7 +129,7 @@ class Session:
             self.rednode.local.add(uri, EMAIL, literal(email))
 
     def login(self, request, response):
-        parameters = request.getParameters()
+        parameters = request.get_parameters()
         username = parameters['username']
         s = self.rednode.getFirst(None, USERNAME, literal(username))
         if s:
@@ -147,7 +147,7 @@ class Session:
             return 0
 
     def change_password(self, request, response):
-        parameters = request.getParameters()
+        parameters = request.get_parameters()
         username = self.get_username()
         s = self.rednode.getFirst(None, USERNAME, literal(username))
         if s:
@@ -161,14 +161,14 @@ class Session:
                     self.change_password_status = "Passwords did not match"
 
     def update_user(self, request, response):
-        parameters = request.getParameters()
+        parameters = request.get_parameters()
         #self.set_username(parameters['username'])
         self.set_full_name(parameters['fullname'])
         self.set_email(parameters['email'])        
 
 
     def create_user(self, request, response):
-        parameters = request.getParameters()
+        parameters = request.get_parameters()
         username = parameters['username']
         s = self.rednode.getFirst(None, USERNAME, literal(username))
         if not s:
@@ -203,7 +203,7 @@ def __init__(self, rednode):
 
 def handle_request_init(self, request, response):
     # TODO: why does this need to be first?
-    parameters = request.getParameters()
+    parameters = request.get_parameters()
 
     Session.handle_request(self, request, response)
     self.logger.log(self) 

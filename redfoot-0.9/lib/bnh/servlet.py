@@ -115,19 +115,16 @@ class Request:
         self._get_first_line()
         return self._path_info
 
-    def setPath_info(self, path_info):
-        self._path_info = path_info
-
-    def getParameters(self):
+    def get_parameters(self):
         if self._parameters==None:
             self._get_first_line()        
 
             import cgi
             parameters = cgi.parse_qs(self._queryString)
 
-            length = self.getHeaders()['content-length']
+            length = self.get_headers()['content-length']
 
-            ctype, pdict = cgi.parse_header(self.getHeaders()['content-type'])
+            ctype, pdict = cgi.parse_header(self.get_headers()['content-type'])
             
             if ctype == 'multipart/form-data':
                 params = cgi.parse_multipart(self._rfile, pdict)
@@ -146,7 +143,7 @@ class Request:
 
         return self._parameters
 
-    def getHeaders(self):
+    def get_headers(self):
         if self._headers==None:
             headers = {}
             line = self._rfile.readline()
@@ -159,8 +156,8 @@ class Request:
             self._headers = Headers(headers)
         return self._headers
 
-    def getCookies(self):
-        cookieStr = self.getHeaders()['cookie']
+    def get_cookies(self):
+        cookieStr = self.get_headers()['cookie']
         
         import Cookie
         cookies = Cookie.SmartCookie()
@@ -168,7 +165,7 @@ class Request:
         return cookies
 
     def get_session_uri(self):
-        cookies = self.getCookies()
+        cookies = self.get_cookies()
         if cookies.has_key('EBNH_session'):
             session_uri = cookies['EBNH_session'].value            
         else:
@@ -285,6 +282,9 @@ def _date_time_string():
 
 
 #~ $Log$
+#~ Revision 8.2  2001/04/29 03:08:02  eikeon
+#~ removed old log messages
+#~
 #~ Revision 8.1  2001/04/29 02:58:14  eikeon
 #~ pathinfo -> path_info
 #~

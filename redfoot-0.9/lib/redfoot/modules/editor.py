@@ -12,7 +12,7 @@ class Editor(Viewer):
         self.response = response
         self.request = request
         
-        parameters = request.getParameters()
+        parameters = request.get_parameters()
         path_info = request.get_path_info()
 
         processor = parameters['processor']
@@ -322,7 +322,7 @@ class PeerEditor(Editor):
              : <A HREF="connect">Connect Neighbour</A>
              |""")
 
-        uri = self.request.getParameters()['uri']
+        uri = self.request.get_parameters()['uri']
         if uri!="":
             uriqs = "&uri=%s" % self.encodeURI(uri)
         else:
@@ -357,6 +357,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 8.1  2001/04/29 02:58:14  eikeon
+#~ pathinfo -> path_info
+#~
 #~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release
 #~

@@ -17,7 +17,7 @@ CONTENT_TYPE_VALUE = "http://eikeon.com/2001/03/26/T00/03/03Z"
 
 
 def handle_request(self, request, response):
-    parameters = request.getParameters()
+    parameters = request.get_parameters()
     processor = parameters['processor']
 
     if processor=="upload":
@@ -108,7 +108,7 @@ self.rednode.query(callback, None, TYPE, CONTENT_TYPE_CLASS)
 <r:response name="subclass" 
             args="defaultRoot rowFunc sort=None filter=None">
 <r:exec>
-parameters = request.getParameters()
+parameters = request.get_parameters()
 which = parameters['which']
 if which=="":
     which = defaultRoot

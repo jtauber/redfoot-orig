@@ -26,7 +26,7 @@ def handle_request(self, request, response):
     sys.stderr.flush()
 
     # invoke the processor
-    processor = request.getParameters()['processor']
+    processor = request.get_parameters()['processor']
 
     if hasattr(self, processor):
         apply(getattr(self, processor), (request, response))

@@ -17,9 +17,9 @@ class ExampleHandler:
         self.lock = threading.Lock()
 
     def handle_request(self, request, response):
-        parameters = request.getParameters()
-        headers = request.getHeaders()
-        cookies = request.getCookies()
+        parameters = request.get_parameters()
+        headers = request.get_headers()
+        cookies = request.get_cookies()
 
         session_uri = request.get_session_uri()
 
@@ -94,17 +94,5 @@ if __name__ == '__main__':
 
 
 #~ $Log$
-#~ Revision 1.1  2001/04/14 03:57:40  eikeon
-#~ moved here from lib/bnh
-#~
-#~ Revision 7.1  2001/04/12 22:52:18  eikeon
-#~ removed management of session objects; BNH now only deals with the setting/getting of the EBNH_session cookie
-#~
-#~ Revision 7.0  2001/03/26 23:41:04  eikeon
-#~ NEW RELEASE
-#~
-#~ Revision 6.1  2001/03/26 20:19:00  eikeon
-#~ removed old header
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release

@@ -111,7 +111,7 @@ username = self.get_property_value(who, LABEL, '')
 def create_news_item(self, request, response):
     # TODO:
     #session_uri = 
-    parameters = request.getParameters()
+    parameters = request.get_parameters()
 
     uri = self.rednode.local.URI + generateURI()
 

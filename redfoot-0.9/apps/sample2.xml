@@ -54,13 +54,13 @@ TASK = "http://redfoot.sourceforge.net/2001/04/#Task"
 </r:response>
 
 def add_task(self, request, response):
-    parameters = request.getParameters()
+    parameters = request.get_parameters()
     uri = self.rednode.local.URI + generateURI()
     self.rednode.local.add(uri, TYPE, TASK)
     self.rednode.local.add(uri, LABEL, literal(parameters['new_task']))
 
 def task_done(self, request, response):
-    parameters = request.getParameters()
+    parameters = request.get_parameters()
     task_uri = parameters['task_uri']
     self.rednode.local.remove(task_uri)
 

@@ -99,19 +99,19 @@ other_known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, T
 </r:response>
 
 def disconnect_neighbour(self, request, response):
-    uri = request.getParameters()['uri']
+    uri = request.get_parameters()['uri']
     self.rednode.neighbours.remove_store(uri=uri)
 
 def connect_neighbour(self, request, response):
-    uri = request.getParameters()['uri']
+    uri = request.get_parameters()['uri']
     self.rednode.connectTo(uri)
 
 def remove_neighbour(self, request, response):
-    uri = request.getParameters()['uri']
+    uri = request.get_parameters()['uri']
     self.rednode.local.remove(uri, TYPE, NEIGHBOUR)
 
 def add_neighbour(self, request, response):
-    uri = request.getParameters()['uri']
+    uri = request.get_parameters()['uri']
     self.rednode.local.add(uri, TYPE, NEIGHBOUR)
 
 </r:class>
