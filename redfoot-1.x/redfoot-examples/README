@@ -11,7 +11,7 @@ REDFOOT EXAMPLES README
 
     python run.py 10_hello_world
 
-  will run the application defined in generic.xml
+  will run the application defined in 10_hello_world.py
 
 
   See:
@@ -19,3 +19,11 @@ REDFOOT EXAMPLES README
     python run.py --help
 
   for more information
+
+
+RELEASE NOTES FOR 1.5.0
+
+  The examples starting in 99 have yet to be tested. Look for more
+examples to be released soon in either a redfoot-examples release or
+in the next full release of redfoot 1.5.1
+

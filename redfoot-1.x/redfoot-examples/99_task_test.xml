@@ -1,0 +1,29 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  <red:app name="TaskManager">
+
+    <red:sub-module instance="task" class="Task" from="redmodules.task"/>
+
+    <red:facet name="/">
+      <HTML>
+        <HEAD>
+          <TITLE>Task Demo</TITLE>
+        </HEAD>
+        <BODY>
+          <H1>Task Demo</H1>
+          <red:apply/>
+        </BODY>
+      </HTML>
+    </red:facet>
+
+    <red:facet name="">
+      <A href="task/">Task List</A>
+    </red:facet>    
+
+    <red:facet name="task/">
+      <red:apply search="self.task"/>
+    </red:facet>
+
+  </red:app>
+
+</red:code>

@@ -1,0 +1,54 @@
+<!-- -*- mode: python-*- -->
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  <red:app name="FOAF_Test">
+
+    <red:sub-module instance="foaf" class="FOAF" from="redmodules.foaf"/>
+
+    <red:facet name="/">
+      <HTML>
+        <HEAD>
+          <TITLE>FOAF Test</TITLE>
+          <STYLE>
+              body {
+                  color: #000;
+                  background: #FFF;
+                  font-size: 9pt;
+                  font-family: Verdana, sans-serif;
+              }
+              td {
+                  background: #DDD;
+                  font-size: 9pt;
+                  padding: 5px;
+              }
+              th {
+                  background: #CCF;
+                  font-size: 11pt;
+                  padding: 5px;
+              }
+              table {
+                  border: 1px solid #000;
+                  margin: 5px;
+              }
+              td.edit_cell {
+                  background: #FFF;
+              }
+              td.name_cell {
+                  font-size: 14pt;
+              }
+          </STYLE>
+        </HEAD>
+        <BODY>
+
+          <H1>FOAF Test</H1>
+          <P><A HREF="/">Friend List</A></P>
+          <red:apply/>
+
+        </BODY>
+      </HTML>
+    </red:facet>
+
+  </red:app>
+
+</red:code>
+
