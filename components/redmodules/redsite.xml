@@ -11,6 +11,8 @@
 
   from redfoot.module import ParentModule
 
+  from redfoot.util import encode_URI
+
   SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
   SITE_DESCRIPTION = resource('http://redfoot.sourceforge.net/2001/09/site/description')
   SITE_KEYWORDS = resource('http://redfoot.sourceforge.net/2001/09/site/keywords')
@@ -162,7 +164,16 @@
 
       <!-- menu -->
       <red:if test="self.authentication.authenticated()">
-          <red:exec>self._body(uri)</red:exec>                                
+          <red:exec>self._body(uri)</red:exec>
+          <div style="font-size: 8pt; text-align: center;">
+            <!--
+              TODO: remove editor location assumption;
+                    Related: Maybe change the uri's to editor resource
+                    to something along the lines of
+                    uri?view_with=editor_uri
+              -->
+            [ <a href="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), 'TODO: EDITOR', '/editor/')}edit?subject={encode_URI(self.app.rednode.uri+self.app.request.get_path_info()[1:])}">Edit this page</a> ]
+          </div>
         <red:else>
           <red:exec>view = self.app.request.get_parameter('view', None)</red:exec>
           <red:if test="view=='login'">
