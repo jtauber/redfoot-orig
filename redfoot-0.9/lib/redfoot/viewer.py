@@ -348,13 +348,20 @@ class Viewer:
         %s: %s<BR>
         """ % (propertyDisplay, valueDisplay))
 
-    def encodeURI(self, s):
-        # TODO: Implement me for real
+    def encodeURI(self, s, safe='/'):
         import string
-        s = string.join(string.split(s,'#'),u'%23')
-        s = string.join(string.split(s,'&'),u'%26')
-        s = string.join(string.split(s,'?'),u'%3f')        
-        return s
+        always_safe = string.letters + string.digits + ' _,.-'
+        safe = always_safe + safe
+        res = []
+        for c in s:
+            if c not in safe:
+                res.append('%%%02x'%ord(c))
+            else:
+                if c==' ':
+                    res.append('+')
+                else:
+                    res.append(c)
+        return string.joinfields(res, '')
 
     def RDF(self, subject=None, predicate=None, object=None):
         self.storeNode.local.output(self.response, subject, predicate, object)
@@ -439,6 +446,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.1  2000/12/08 23:02:25  eikeon
+#~ encoding fixes
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
 #~
