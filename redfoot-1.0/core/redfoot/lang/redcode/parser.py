@@ -1,6 +1,4 @@
 from xml.parsers.expat import ParserCreate
-from xml.parsers import expat
-from xml.parsers.expat import ExpatError
 
 from exceptions import SyntaxError
 
@@ -20,12 +18,7 @@ def _parse(file, name, handler_class):
     
     documentHandler = handler_class(parser, name)
 
-    try:
-        parser.ParseFile(file)
-    except ExpatError, msg:
-        errno = parser.ErrorCode
-        if errno>0:
-            raise SyntaxError, u"Error at line:%s, column: %s, " % (parser.ErrorLineNumber, parser.ErrorColumnNumber) + "%s\n" % expat.ErrorString(errno)        
+    parser.ParseFile(file)
         
     file.close()
     return documentHandler.module
