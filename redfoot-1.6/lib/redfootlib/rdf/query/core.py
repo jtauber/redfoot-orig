@@ -2,12 +2,19 @@
 from redfootlib.rdf.query.functors import *
 from redfootlib.rdf.query.builders import *
 
-class Query:
+from redfootlib.rdf.query.visit import Visit
+
+
+class Query(Visit):
     
     def exists(self, subject, predicate, object):
         b = ItemBuilder()
         self.visit(first(triple2statement(b.accept)), (subject, predicate, object))
         return (b.item != None)
+
+    def remove(self, subject=None, predicate=None, object=None):
+        for s, p, o in self.triples(subject, predicate, object):
+            super(Query, self).remove(s, p, o)
 
     def not_exists(self, subject, predicate, object):
         return not self.exists(subject, predicate, object)

@@ -1,3 +1,5 @@
+from __future__ import generators
+
 from redfootlib.util import unique_date_time as date_time
 from redfootlib.util import encode_as_single_line as encode
 from redfootlib.util import decode_from_single_line as decode
@@ -56,16 +58,19 @@ TIMESTAMP = resource("http://redfoot.net/2002/05/TIMESTAMP")
 ADD = resource("http://redfoot.net/2002/05/ADD")
 REMOVE = resource("http://redfoot.net/2002/05/REMOVE")
 
+from redfootlib.rdf.query.visit import Visit
+
 class NodeStore(TripleStore, object):
     def __init__(self, node):
         super(NodeStore, self).__init__()
         self.context_id = None
         self.node = node
         
-    def visit(self, callback, (subject, predicate, object)):
+    def triples(self, s, p, o):
         self.node.update(self.context_id, self)
-        return super(NodeStore, self).visit(callback, (subject, predicate, object))
-
+        for triple in super(NodeStore, self).triples(s, p, o):
+            yield triple
+        
 
 class AbstractNode(object):
     def __init__(self):

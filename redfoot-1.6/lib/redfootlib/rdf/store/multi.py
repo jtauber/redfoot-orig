@@ -1,3 +1,5 @@
+from __future__ import generators
+
 class MultiStore(object):
     """
     An ordered collection of stores with a 'visit' facade that visits all
@@ -17,6 +19,11 @@ class MultiStore(object):
         stores = self.stores
         if store and store in stores:
             stores.remove(store)
+
+    def triples(self, s, p, o):
+        for store in self.stores:
+            for triple in store.triples(s, p, o):
+                yield triple
 
     def visit(self, callback, triple):
         for store in self.stores:
