@@ -5,7 +5,7 @@ from threading import Condition
 
 import sys
 
-
+ 
 class StoreIO:
 
     def __init__(self):
@@ -60,7 +60,7 @@ class StoreIO:
         t.start()
         
         
-    def output(self, stream, URI=None):
+    def output(self, stream, URI=None, subject=None, predicate=None, object=None):
 
         if URI==None:
             URI = self.URI
@@ -76,7 +76,7 @@ class StoreIO:
         s.setBase(URI)
 
 
-        queryStore.visit(lambda s, p, o, ser=s: ser.registerProperty(p), None, None, None)
+        queryStore.visit(lambda s, p, o, ser=s: ser.registerProperty(p), subject, predicate, object)
 
         class State:
             def __init__(self, ser):
@@ -103,67 +103,6 @@ class StoreIO:
         queryStore.visit(state.write, None, None, None)
         state.flush()
         s.end()
-
-
-
-    #TODO: I don't know if this belongs here - JKT
-    #TODO: Perhaps this could merge with self.output - JKT
-    def output_query(self, subject, predicate, object, stream, URI=None):
-
-        if URI==None:
-            URI = self.URI
-
-        from rdf.query import QueryStore
-        queryStore = QueryStore()
-        queryStore.setStore(self.getStore())
-        
-        from rdf.serializer import Serializer
-        s = Serializer()
-
-        s.setStream(stream)
-        s.setBase(URI)
-
-        # TODO: there's probably a more efficient way - JKT
-
-        spv = {}
-        
-        for st in queryStore.get(subject, predicate, object):
-            su = st[0]
-            pr = st[1]
-            ob = st[2]
-            if not spv.has_key(su):
-                spv[su] = {}
-            if not spv[su].has_key(pr):
-                spv[su][pr] = {}
-            spv[su][pr][ob] = 1
-
-        properties = queryStore.getProperties()
-
-        for property in properties:
-            s.registerProperty(property)
-
-        s.start()
-        
-        subjects = spv.keys()
-        subjects.sort() 
-
-        for subject in subjects:
-            s.subjectStart(subject)
-
-            properties = spv[subject].keys()
-            properties.sort()
-            
-            for property in properties:
-                values = spv[subject][property].keys()
-                values.sort()
-                
-                for value in values:
-                    s.property(property, value)
-
-            s.subjectEnd()
-        
-        s.end()
-
 
 
 class AutoSaveStoreIO(StoreIO):
@@ -245,6 +184,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.5  2000/12/04 01:00:58  eikeon
+#~ Seperated out auto save stuff into AutoSaveStoreIO subclass
+#~
 #~ Revision 4.4  2000/12/03 22:27:07  jtauber
 #~ updated to use new parseRDF function
 #~
