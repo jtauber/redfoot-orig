@@ -1,0 +1,12 @@
+CHANGELOG
+
+Changes between 0.9.0 and 0.9.1
+
+- numerous refactors
+- gave menu bars labels and clarified some of the items
+- list of resources by class now only shows classes with instances
+- fixed bug causing server to hang under load
+- sample custom UI
+- server now takes -P option to pass in path from server root to RDF
+- BNH now has example and test case for running server
+- BNH now has better exception handling
