@@ -26,8 +26,6 @@ class ExampleHandler:
             session.count = 0
         else:
             session.count = session.count + 1
-        
-        path_info = request.path_info
 
         self.lock.acquire()
         try:
@@ -101,6 +99,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 3.4  2000/11/03 19:52:00  eikeon
+#~ first pass at sessions... needs cleanup
+#~
 #~ Revision 3.3  2000/11/02 21:48:26  eikeon
 #~ removed old log messages
 #~

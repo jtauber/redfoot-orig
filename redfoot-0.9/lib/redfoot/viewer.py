@@ -4,24 +4,21 @@ from rdf.query import QueryStore
 
 class Viewer:
 
-    def __init__(self, writer, storeNode, path):
-        self.writer = writer;
+    def __init__(self, storeNode, path):
         self.storeNode = storeNode
         self.path = path
         self.qstore = QueryStore(storeNode)
 
         self.showNeighbours=0
         
-
-    def setWriter(self, writer):
-        self.writer = writer
-
-
     def handleRequest(self, request, response):
+        self.response = response
+        
         parameters = request.getParameters()        
-        path_info = request.path_info
+        path_info = request.getPathInfo()
         
         if path_info == "/":
+            response.setHeader("Content-Type", "text/xml")
             self.RDF()
         elif path_info == "/subclass":
             root = parameters['uri']
@@ -42,11 +39,10 @@ class Viewer:
         elif path_info == "/view":
             self.view(parameters['uri'])
         else:
-            # make a proper 404
-            self.writer.write("unknown PATH of '%s'" % path_info)
+            self.response.write("unknown PATH of '%s'" % path_info)
 
     def css(self):
-        self.writer.write("""
+        self.response.write("""
         body {
           margin:      10px;
         }
@@ -149,7 +145,7 @@ class Viewer:
         """)
 
     def menuBar(self):
-        self.writer.write("""
+        self.response.write("""
             <P CLASS="MENUBAR"><B>VIEW</B>
              : <A HREF="classList">Resources by Class</A>
              | <A HREF="subclass">Full Subclass Tree</A>
@@ -163,7 +159,7 @@ class Viewer:
         self.subclass(QueryStore.RESOURCE, 0)
 
     def classList(self):
-        self.writer.write("""
+        self.response.write("""
         <HTML>
           <HEAD>
             <TITLE>ReDFoot</TITLE>
@@ -173,7 +169,7 @@ class Viewer:
             <H1>ReDFoot</H1>
         """)
         self.menuBar()
-        self.writer.write("""
+        self.response.write("""
             <DIV CLASS="box">
               <DL>
         """)
@@ -183,7 +179,7 @@ class Viewer:
         else:
             self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
     
-        self.writer.write("""
+        self.response.write("""
               </DL>
             </DIV>
           </BODY>
@@ -191,7 +187,7 @@ class Viewer:
         """)
 
     def subclass(self, root, recurse=1):
-        self.writer.write("""
+        self.response.write("""
         <HTML>
           <HEAD>
             <TITLE>ReDFoot Subclass View</TITLE>
@@ -200,11 +196,11 @@ class Viewer:
           <BODY>
             <H1>ReDFoot</H1>""")
         self.menuBar()
-        self.writer.write("""
+        self.response.write("""
             <DIV CLASS="box">
 	""")
 	self.qstore.parentTypesV(root, self.displayParent)
-	self.writer.write("""
+	self.response.write("""
               <DL>
         """)
 
@@ -213,7 +209,7 @@ class Viewer:
         else:
             self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
             
-        self.writer.write("""
+        self.response.write("""
               </DL>
             </DIV>
           </BODY>
@@ -221,13 +217,13 @@ class Viewer:
         """)
 
     def resourceHeader(self, subject):
-        self.writer.write("""
+        self.response.write("""
             <H2>%s</H2>
             <P>%s</P>
         """ % (self.qstore.label(subject), subject))
 
     def view(self, subject):
-        self.writer.write("""
+        self.response.write("""
         <HTML>
           <HEAD>
             <TITLE>ReDFoot</TITLE>
@@ -237,7 +233,7 @@ class Viewer:
             <H1>ReDFoot</H1>""")
         self.menuBar()
         self.resourceHeader(subject)
-        self.writer.write("""
+        self.response.write("""
             <H3>View</H3>
             <TABLE>
         """)
@@ -245,46 +241,46 @@ class Viewer:
         if self.qstore.isKnownResource(subject):
             self.qstore.propertyValuesV(subject, self.displayPropertyValue)
         else:
-            self.writer.write("<TR><TD>Resource not known of directly</TD></TR>")
+            self.response.write("<TR><TD>Resource not known of directly</TD></TR>")
         self.qstore.reifiedV(subject, self.displayReifiedStatements)
         
-        self.writer.write("""
+        self.response.write("""
             </TABLE>
           </BODY>
         </HTML>
         """)
 
     def displayClass(self, klass):
-        self.writer.write("""
+        self.response.write("""
         <DT>%s</DT>
         """ % self.qstore.label(klass))
 
     def displayResource(self, resource):
-        self.writer.write("""
+        self.response.write("""
         <DD>%s<BR></DD>
         """ % self.link(resource))
 
     def displayParent(self, resource):
-        self.writer.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.label(resource)))
+        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.label(resource)))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
-        self.writer.write(3*depth*"&nbsp;")
+        self.response.write(3*depth*"&nbsp;")
 
         if recurse==0:
-            self.writer.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.qstore.comment(klass)))
+            self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.qstore.comment(klass)))
 
-        self.writer.write("<B>%s</B>" % self.qstore.label(klass))
+        self.response.write("<B>%s</B>" % self.qstore.label(klass))
 
         if recurse==0:
-            self.writer.write("</A>")
+            self.response.write("</A>")
 
-        self.writer.write("<BR>")
+        self.response.write("<BR>")
 
     # TODO: rewrite to use lists
     def displaySCResource(self, resource, depth, recurse):
-        self.writer.write(3*(depth+1)*"&nbsp;")
-        self.writer.write(self.link(resource)+"<BR>")
+        self.response.write(3*(depth+1)*"&nbsp;")
+        self.response.write(self.link(resource)+"<BR>")
 
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
@@ -299,7 +295,7 @@ class Viewer:
             valueDisplay = value[1:]
         else:
             valueDisplay = self.link(value)
-        self.writer.write("""
+        self.response.write("""
         <TR><TD>%s</TD><TD></TD><TD COLSPAN="2">%s</TD></TR>
         """ % (propertyDisplay, valueDisplay))
 
@@ -311,11 +307,11 @@ class Viewer:
             valueDisplay = object[1:]
         else:
             valueDisplay = self.link(object)
-        self.writer.write("""
+        self.response.write("""
         <TR CLASS="REIFIED"><TD>%s</TD><TD></TD><TD>%s</TD>
         <TD COLSPAN="3">%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
         self.qstore.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
-        self.writer.write("""
+        self.response.write("""
         </TD></TR>""")
 
     def displayReifiedStatementPropertyValue(self, property, value):
@@ -334,7 +330,7 @@ class Viewer:
             valueDisplay = value[1:]
         else:
             valueDisplay = self.link(value)
-        self.writer.write("""
+        self.response.write("""
         %s: %s<BR>
         """ % (propertyDisplay, valueDisplay))
 
@@ -348,10 +344,10 @@ class Viewer:
             return string.join(string.split(s,'#'),'%23')
 
     def RDF(self):
-        self.storeNode.getStore().output(self.writer)
+        self.storeNode.getStore().output(self.response)
 
     def Triples(self):
-        self.writer.write("""
+        self.response.write("""
         <HTML>
           <HEAD>
             <TITLE>Redfoot Triples</TITLE>
@@ -360,15 +356,15 @@ class Viewer:
           <BODY>
             <H1>ReDFoot</H1>""")
         self.menuBar()
-        self.writer.write("""
+        self.response.write("""
             <H2>Triples</H2>
             <TABLE>
         """)
         for statement in self.qstore.get(None, None, None):
-            self.writer.write("""
+            self.response.write("""
               <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
             """ % (statement[0], statement[1], statement[2]))
-        self.writer.write("""
+        self.response.write("""
             </TABLE>
           </BODY>
         </HTML>
@@ -376,6 +372,9 @@ class Viewer:
 
 
 #~ $Log$
+#~ Revision 3.2  2000/11/02 21:48:27  eikeon
+#~ removed old log messages
+#~
 # Revision 3.1  2000/10/31 05:03:08  eikeon
 # mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
 #

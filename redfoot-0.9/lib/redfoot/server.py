@@ -21,7 +21,6 @@ class RedfootHandler:
         self.lock.acquire()
         try:
             viewer = self.viewer
-            viewer.setWriter(response)
             viewer.handleRequest(request, response)
         finally:
             self.lock.release()            
@@ -96,6 +95,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 3.2  2000/11/02 21:48:27  eikeon
+#~ removed old log messages
+#~
 # Revision 3.1  2000/10/31 05:03:08  eikeon
 # mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
 #

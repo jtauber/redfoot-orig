@@ -6,19 +6,17 @@ from redfoot.baseUI import BaseUI
 class SampleUI(BaseUI):
 
     def handleRequest(self, request, response):
-        args = request.parameters
-        path_info = request.path_info
+        path_info = request.getPathInfo()
 
         if self.path_match(path_info):
             self.call_editor(request, response)
         elif path_info=="/":
-            self.main()
+            self.main(response)
         else:
-            self.view()
-        # self.writer.write("unknown PATH of '%s'" % path_info)
+            self.view(response)
 
-    def main(self):
-        self.writer.write("""
+    def main(self, response):
+        response.write("""
         <HTML>
           <HEAD>
             <TITLE>Main Page</TITLE>
@@ -29,16 +27,16 @@ class SampleUI(BaseUI):
             <UL>
         """)
         for s in self.qstore.get(None, QueryStore.TYPE, "http://redfoot.sourceforge.net/2000/10/#Person"):
-            self.writer.write("<LI>%s</LI>" % self.qstore.label(s[0]))
-        self.writer.write("""
+            response.write("<LI>%s</LI>" % self.qstore.label(s[0]))
+        response.write("""
             </UL>
             <P><A HREF="%s/classList">Go to editor</A>
           </BODY>
         </HTML>
         """% self.path)
 
-    def view(self):
-        self.writer.write("""
+    def view(self, response):
+        response.write("""
         <HTML>
           <HEAD>
             <TITLE>Sample UI</TITLE>
@@ -56,3 +54,6 @@ if __name__ == '__main__':
     runServer(sys.argv[1:], SampleUI)
 
 # $Log$
+# Revision 1.4  2000/11/02 21:48:27  eikeon
+# removed old log messages
+#

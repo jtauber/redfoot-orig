@@ -9,22 +9,21 @@ __version__ = "$Revision$"
 import socket
 import sys
 import string
-
+from Queue import Queue
 
 class Server:
     ""
 
     def __init__(self, server_address):
         ""
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
-        self.socket.bind(server_address)
-        self.socket.listen(5)
-
-        from Queue import Queue
+        self.server_address = server_address
         self.queue = Queue(5)
 
     def _acceptRequests(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
+        self.socket.bind(self.server_address)
+        self.socket.listen(5)
         while 1:
             try:
                 clientSocket, client_address = self.socket.accept()
@@ -69,11 +68,10 @@ class ServerConnection:
         self.context = context
         
     def handleRequest(self, server, clientSocket):
-
         try:
             try:
-                self.request.setClientSocket(clientSocket)
-                self.response.setClientSocket(clientSocket)
+                self.request._setClientSocket(clientSocket)
+                self.response._setClientSocket(clientSocket)
                 self.handler.handleRequest(self.request, self.response)
                 self.response.close()
                 clientSocket.shutdown(1)
@@ -104,7 +102,6 @@ class BadRequestError(Error):
 
 
 class ServerContext:
-
     def __init__(self):
         self.sessions = {}
 
@@ -113,63 +110,79 @@ class Session:
 
 
 class Request:
-
     def __init__(self, connection):
         self.connection = connection
 
-    def setClientSocket(self, clientSocket):
-        rfile = clientSocket.makefile('rb', 0)
+    def _setClientSocket(self, clientSocket):
+        self._rfile = clientSocket.makefile('rb', 0)
+        self._firstline = None
+        self._parameters = None
+        self._headers = None
 
-        firstline = rfile.readline()
 
-        words = string.split(firstline)
-        if len(words) == 3:
-            [self.method, self.path, self.version] = words
-        else:
-            raise BadRequestError("Empty Request '%s'" % firstline)
+    def _getFirstLine(self):
+        if not self._firstline:
+            self._firstline = self._rfile.readline()
+            words = string.split(self._firstline)
+            if len(words) == 3:
+                [self._method, self._path, self._version] = words
+            else:
+                raise BadRequestError("Empty Request '%s'" % self._firstline)
 
-        i = string.find(self.path, "?")
-        if i==-1:
-            self.path_info = self.path
-            self.query_string = ""
-            parameters = {}
-        else:
-            self.path_info = self.path[:i]
-            self.query_string = self.path[i+1:]
-            import cgi
-            parameters = cgi.parse_qs(self.query_string)
+            i = string.find(self._path, "?")
+            if i==-1:
+                self._pathInfo = self._path
+                self._queryString = ""
+            else:
+                self._pathInfo = self._path[:i]
+                self._queryString = self._path[i+1:]
 
-        headers = {}
-        line = rfile.readline()
-        while line and not line in ('\r\n', '\n'):
-            i = string.find(line, ':')
-            if i<0:
-                continue
-            header = string.lower(line[:i])
-            headers[header] = string.strip(line[len(header)+1:])
-            line = rfile.readline()
+        return self._firstline
+    
+    def getPathInfo(self):
+        self._getFirstLine()
+        return self._pathInfo
 
-        if headers.has_key('content-length'):
-            cLen = int(headers['content-length'])
-            body = rfile.read(cLen)
-            rfile.close()
-            import cgi
-            params = cgi.parse_qs(body)
-            for param in params.keys():
-                parameters[param] = params[param]
-
-        self.parameters = Parameters(parameters)
-        self.headers = Headers(headers)
-
+    def setPathInfo(self, pathInfo):
+        self._pathInfo = pathInfo
 
     def getParameters(self):
-        return self.parameters
+        if self._parameters==None:
+            self._getFirstLine()        
+
+            import cgi
+            parameters = cgi.parse_qs(self._queryString)
+
+            length = self.getHeaders()['content-length']
+            if length!='':
+                len = int(length)
+                body = self._rfile.read(len)
+                self._rfile.close()
+                import cgi
+                params = cgi.parse_qs(body)
+                for param in params.keys():
+                    parameters[param] = params[param]
+
+            self._parameters = Parameters(parameters)
+
+        return self._parameters
 
     def getHeaders(self):
-        return self.headers
+        if self._headers==None:
+            headers = {}
+            line = self._rfile.readline()
+            while line and not line in ('\r\n', '\n'):
+                i = string.find(line, ':')
+                if i<0:
+                    continue
+                header = string.lower(line[:i])
+                headers[header] = string.strip(line[len(header)+1:])
+                line = self._rfile.readline()
+            self._headers = Headers(headers)
+        return self._headers
 
     def getCookies(self):
-        cookieStr = self.headers['cookie']
+        cookieStr = self.getHeaders()['cookie']
         
         import Cookie
         cookies = Cookie.SmartCookie()
@@ -207,14 +220,22 @@ class Response:
     def __init__(self, connection):
         self.connection = connection
 
-    def setClientSocket(self, clientSocket):
-        self.wfile = clientSocket.makefile('wb', 0)
-
+    def _setClientSocket(self, clientSocket):
+        self._wfile = clientSocket.makefile('wb', 0)
+        self.head_sent = 0
+        self._header = {'Server': "eikeon's Bare Naked HTTP Server",
+                       'Date': date_time_string(),
+                       'Expires': "-1",
+                       'Content-Type': "text/html",
+                       'Connection': "close" }
+            
+        
+    def _send_head(self):
         self.write("%s %s %s\r\n" % ("HTTP/1.1", "200", "OK"))
-        self.send_header('Server', "eikeon's Bare Naked HTTP Server")
-        self.send_header('Date', date_time_string())
-        self.send_header('Expires', "-1")
-        self.send_header('Connection', "close")
+
+        for key in self._header.keys():
+            self.write("%s: %s\r\n" % (key, self._header[key]))
+
         import Cookie
         cookie = Cookie.SmartCookie()
         if hasattr(self.connection, 'session'):
@@ -227,28 +248,31 @@ class Response:
         self.write("\r\n")
 
     
-    def send_header(self, keyword, value):
+    def setHeader(self, keyword, value):
         """Send a MIME header."""
-
-        self.write("%s: %s\r\n" % (keyword, value))
+        self._header[keyword] = value
 
 
     def write(self, str):
         try:
-            self.wfile.write(str)
+            if self.head_sent==0:
+                self.head_sent = 1
+                self._send_head()
+                
+            self._wfile.write(str)
         except IOError:
             raise BadRequestError("write failed")            
 
     def flush(self):
         try:
-            self.wfile.flush()
+            self._wfile.flush()
         except IOError:
             raise BadRequestError("flush failed")
         
     def close(self):
         try:
-            self.wfile.flush()
-            self.wfile.close()
+            self._wfile.flush()
+            self._wfile.close()
         except IOError:
             raise BadRequestError("close failed")            
 
@@ -293,6 +317,9 @@ def date_time_string():
 
 
 #~ $Log$
+#~ Revision 3.4  2000/11/03 19:52:00  eikeon
+#~ first pass at sessions... needs cleanup
+#~
 #~ Revision 3.3  2000/11/02 21:48:26  eikeon
 #~ removed old log messages
 #~

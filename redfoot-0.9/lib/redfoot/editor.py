@@ -5,8 +5,13 @@ from redfoot.viewer import Viewer
 class Editor(Viewer):
 
     def handleRequest(self, request, response):
+        self.response = response
+        
+        if not self.authenticated(request, response):
+            return
+
         parameters = request.getParameters()
-        path_info = request.path_info
+        path_info = request.getPathInfo()
 
         processor = parameters['processor']
         if processor == "update":
@@ -35,12 +40,52 @@ class Editor(Viewer):
         elif path_info == "/connect":
             self.connectPage()
         else:
-            request.path_info = path_info
+            request.setPathInfo(path_info)
             Viewer.handleRequest(self, request, response)
+
+
+
+    def authenticated(self, request, response):
+        parameters = request.getParameters()
+        session = request.getSession()
+        if hasattr(session, 'username'):
+            return 1
+        elif parameters['username']!="" and \
+           parameters['password']!="" and parameters['password']=="redfoot":
+                session.username = parameters['username']
+                return 1
+        else:
+                self.response.write("""
+<HTML>
+  <HEAD>
+    <TITLE>Username</TITLE>
+  </HEAD>
+  <H1>Username</H1>
+  <FORM method="POST">
+  <TABLE>
+    <TR>
+      <TD>Username:</TD>
+      <TD><INPUT name="username" type="text"> (Hint: any username will work)</TD>
+    </TR>
+    <TR>
+      <TD>Password:</TD>
+      <TD><INPUT name="password" type="text"> (Hint: refoot)</TD>
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan=2"><INPUT value="Login" type="submit"></TD>
+    </TR>
+  </FORM>
+</HTML>
+""")
+                return 0
+
+        raise "TODO: exception indicating we should never fall though to here"
+            
 
     def menuBar(self):
         Viewer.menuBar(self)
-        self.writer.write("""
+        self.response.write("""
             <P CLASS="MENUBAR"><B>EDIT</B>
              : <A HREF="add">Add a Resource</A>
              | <A HREF="?processor=save">Save Node to Disk</A>
@@ -48,7 +93,7 @@ class Editor(Viewer):
         """)
 
     def resourceHeader(self, subject):
-        self.writer.write("""
+        self.response.write("""
             <H2>%s</H2>
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
         """ % (self.qstore.label(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
@@ -57,7 +102,7 @@ class Editor(Viewer):
         if subject!=None and subject!="" and subject[0]=="#":
             subject = self.qstore.getStore().getStore().URI + subject
 
-        self.writer.write("""
+        self.response.write("""
           <HTML>
             <HEAD>
               <TITLE>ReDFoot: Edit</TITLE>
@@ -67,7 +112,7 @@ class Editor(Viewer):
               <H1>ReDFoot</H1>""")
         self.menuBar()
         self.resourceHeader(subject)
-        self.writer.write("""
+        self.response.write("""
             <H3>Edit</H3>
             <FORM NAME="form" ACTION="edit?uri=%s" METHOD="POST">
               <INPUT NAME="uri" TYPE="HIDDEN" VALUE="%s">
@@ -82,7 +127,7 @@ class Editor(Viewer):
         
 	    self.qstore.reifiedV(subject, self.displayReifiedStatements)
 
-            self.writer.write("""
+            self.response.write("""
               <TR>
                 <TD>
                   <SELECT type="text" name="newProperty">
@@ -93,11 +138,11 @@ class Editor(Viewer):
             for type in self.qstore.get(subject, self.qstore.TYPE, None):
                 for superType in self.qstore.transitiveSuperTypes(type[2]):
                     for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
-                        self.writer.write("""
+                        self.response.write("""
                         <OPTION value="%s">%s</OPTION>
                         """ % (domain[0], self.qstore.label(domain[0])))
                         
-            self.writer.write("""
+            self.response.write("""
                   </SELECT>
 
                 </TD>
@@ -113,9 +158,9 @@ class Editor(Viewer):
           </FORM>
               """ % self.property_num)
         else:
-            self.writer.write("<TR><TD>Resource not known of directly</TD></TR></TABLE></FORM>")
+            self.response.write("<TR><TD>Resource not known of directly</TD></TR></TABLE></FORM>")
 
-        self.writer.write("""
+        self.response.write("""
         </BODY>
       </HTML>
       """)
@@ -126,7 +171,7 @@ class Editor(Viewer):
 
     def editProperty(self, property, value, exists=1):
         self.property_num = self.property_num + 1
-        self.writer.write("""
+        self.response.write("""
                 <TR>
                   <TD VALIGN="TOP">%s
                     <INPUT TYPE="HIDDEN" NAME="prop%s_name" VALUE="%s">
@@ -135,66 +180,66 @@ class Editor(Viewer):
         """ % (self.qstore.label(property), self.property_num, property))
 
         def callback(s, p, o, self=self):
-            self.writer.write("%s<BR>" % self.qstore.label(o))
+            self.response.write("%s<BR>" % self.qstore.label(o))
         self.qstore.visit(callback, property, self.qstore.RANGE, None)
 
-        self.writer.write("""
+        self.response.write("""
                   </TD>
                   <TD COLSPAN="2">
         """)
         if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL):
             uitype = self.qstore.get(property, self.UITYPE, None)
             if len(uitype) > 0 and uitype[0][2]==self.TEXTAREA:
-                self.writer.write("""
+                self.response.write("""
                 <TEXTAREA NAME="prop%s_value" ROWS="5" COLS="60">%s</TEXTAREA>
                 """ % (self.property_num, value[1:]))
             else:
-                self.writer.write("""
+                self.response.write("""
                 <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
                 """ % (self.property_num, value[1:]))
-            self.writer.write("""
+            self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
         else:
             rangelist = self.qstore.get(property, self.qstore.RANGE, None) # already did this above
             if len(rangelist) > 0:
-                self.writer.write("""
+                self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="no">
                     <SELECT NAME="prop%s_value">
                       <OPTION value="">Select a value for this property</OPTION>
                 """ % (self.property_num, self.property_num))
                 for v in self.qstore.getPossibleValues(property):
                     if v==value:
-                        self.writer.write("""
+                        self.response.write("""
                         <OPTION SELECTED="TRUE" VALUE="%s">%s</OPTION>
                         """ % (v, self.qstore.label(v)))
                     else:
-                        self.writer.write("""
+                        self.response.write("""
                         <OPTION VALUE="%s">%s</OPTION>
                         """ % (v, self.qstore.label(v)))
-                self.writer.write("""
+                self.response.write("""
                     </SELECT>
                 """)
             else:
-                self.writer.write("""
+                self.response.write("""
                     <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">***
                 """ % (self.property_num, value))
-        self.writer.write("""
+        self.response.write("""
                 </TD>""")
         if exists:
-            self.writer.write("""
+            self.response.write("""
                 <TD VALIGN="TOP">
                   <INPUT TYPE="SUBMIT" NAME="processor" VALUE="del_%s">
                 </TD>
 		<TD VALIG="TOP">
                   <INPUT TYPE="SUBMIT" NAME="processor" VALUE="reify_%s">
                 </TD>"""  % (self.property_num, self.property_num))
-        self.writer.write("""
+        self.response.write("""
               </TR>
         """)
 
     def add(self, type):
-        self.writer.write("""
+        self.response.write("""
           <HTML>
             <HEAD>
               <TITLE>ReDFoot: Add</TITLE>
@@ -203,7 +248,7 @@ class Editor(Viewer):
             <BODY>
               <H1>ReDFoot</H1>""")
         self.menuBar()
-        self.writer.write("""
+        self.response.write("""
           <FORM NAME="form" ACTION="edit" METHOD="POST">
             <TABLE>
               <TR>
@@ -213,7 +258,7 @@ class Editor(Viewer):
                   <INPUT TYPE="TEXT" SIZE="60" NAME="uri" value="%s"/>
                 </TD>
               </TR>""" % (self.generateURI()))
-        self.writer.write("""
+        self.response.write("""
               <TR>
                 <TD VALIGN="TOP">label</TD>
                 <TD>Literal</TD>
@@ -229,18 +274,18 @@ class Editor(Viewer):
 
         self.property_num = 0
         if type == "":
-            self.writer.write("""
+            self.response.write("""
                   <SELECT SIZE="1" NAME="type">
             """)
             for klass in self.qstore.get(None, self.qstore.TYPE, self.qstore.CLASS):
-                self.writer.write("""
+                self.response.write("""
                     <OPTION VALUE="%s">%s</OPTION>
                 """ % (klass[0], self.qstore.label(klass[0])))
-            self.writer.write("""
+            self.response.write("""
                   </SELECT>
             """)
         else:
-            self.writer.write("""
+            self.response.write("""
                   <INPUT TYPE="HIDDEN" NAME="type" VALUE="%s"/>
                   %s
             """ % (type, self.link(type)))
@@ -252,17 +297,17 @@ class Editor(Viewer):
                     if len(self.qstore.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
                         self.editProperty(property, "", 0)
             
-        self.writer.write("""
+        self.response.write("""
                 </TD>
               </TR>
         """)
-        self.writer.write("""
+        self.response.write("""
           </TABLE>
             <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s"/>
             <INPUT TYPE="HIDDEN" NAME="processor"  VALUE="create"/>
           <INPUT TYPE="SUBMIT"                   VALUE="create"/>
         """ % self.property_num)
-        self.writer.write("""
+        self.response.write("""
         </FORM>
 
               <P><A HREF="subclassNR">Return to List (without adding a Resource)</A></P>
@@ -355,24 +400,24 @@ class PeerEditor(Editor):
 
     def menuBar(self):
         Editor.menuBar(self)
-        self.writer.write("""
+        self.response.write("""
             <P CLASS="MENUBAR"><B>PEER</B>
              : <A HREF="connect">Connect Neighbour</A>
              |""")
 
         if self.showNeighbours==1:
-            self.writer.write("""
+            self.response.write("""
             <A HREF="?processor=hideNeighbours">Hide Neighbour Resources</A>""")
         else:
-            self.writer.write("""
+            self.response.write("""
             <A HREF="?processor=showNeighbours">Show Neighbour Resources</A>""")
 
-        self.writer.write("""
+        self.response.write("""
             </P>
         """)
     
     def connectPage(self):
-        self.writer.write("""
+        self.response.write("""
           <HTML>
             <HEAD>
               <TITLE>ReDFoot: Connect</TITLE>
@@ -381,7 +426,7 @@ class PeerEditor(Editor):
             <BODY>
               <H1>ReDFoot</H1>""")
         self.menuBar()
-        self.writer.write("""
+        self.response.write("""
               <H2>Connect Neighbour</H2>
         
               <FORM NAME="form" ACTION="subclassNR" METHOD="POST">
@@ -400,6 +445,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 3.3  2000/11/02 21:00:56  eikeon
+# fixed bug that was causing problems when trying to save when on the edit page
+#
 # Revision 3.2  2000/10/31 05:03:08  eikeon
 # mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
 #

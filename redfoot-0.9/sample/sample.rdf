@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <n3:RDF
+   xmlns:n3="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:n2="http://redfoot.sourceforge.net/2000/10/#"
    xmlns:n1="http://www.w3.org/2000/01/rdf-schema#"
-   xmlns:n3="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
   <n3:Description n3:about="http://redfoot.sourceforge.net/2000/10/#DanKrech">
     <n2:emailAddress>dkrech@bowstreet.com</n2:emailAddress>
