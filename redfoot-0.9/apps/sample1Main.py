@@ -5,7 +5,7 @@ if __name__ == '__main__':
     port = 8000
     import getopt
     import sys
-    optlist, args = getopt.getopt(sys.argv[1:], 'l:p:u:P:')
+    optlist, args = getopt.getopt(sys.argv[1:], 'p:')
     for optpair in optlist:
         opt, value = optpair
         if opt=="-p":
