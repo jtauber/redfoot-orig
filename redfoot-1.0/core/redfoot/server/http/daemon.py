@@ -68,6 +68,12 @@ class RedDaemon(HTTPDaemon):
 
         self.set_handle_request(handle_request)            
         self.start()
+        if port==80:
+            print "Running at http://%s/" % servername
+        else:
+            print "Running at http://%s:%s/" % (servername, port)
+
+        
 
     def notify_me_of_reload(self, module):
         if module.__name__==self.module.__name__:
