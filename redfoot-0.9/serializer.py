@@ -67,6 +67,7 @@ class Serializer:
             s = string.join(string.split(s, '&'), '&amp;')
             s = string.join(string.split(s, '<'), '&lt;')
             s = string.join(string.split(s, "'"), '&quot;')
+            return s
 
         (namespace, localName) = splitProperty(predicate)
         if value[0] == "^":
@@ -78,3 +79,6 @@ class Serializer:
 
 
 # $Log$
+# Revision 1.7  2000/10/01 07:19:22  eikeon
+# fixed output to encode &'s, <'s and ''s
+#
