@@ -152,7 +152,6 @@
                   <red:exec>
                     b = SetBuilder()
                     self.app.rednode.visit_possible_values(b.accept, property)
-                    b.end()
                     b.sort(self.app.rednode.label)
                   </red:exec>  
 
