@@ -116,7 +116,7 @@ class RedNode(SchemaQuery):
             self.load(rdf, uri, 1)
 
         self.server = server = RedServer(address, port)
-        server.add_handler(Boot(self))
+        server.add_app(Boot(self))        
         server.run()
             
     def load(self, location, uri, create=0):

@@ -46,12 +46,19 @@ class RedServer:
         #self.hs.install_handler (dh)
 
 
-    def add_handler(self, handler):
-        self.hs.install_handler(handler)
+    def add_app(self, app):
+        if not issubclass(app.__class__, MedusaHandler):
+            class DerivedClass(MedusaHandler, app.__class__):
+                def __init__(self, rednode):
+                    MedusaHandler.__init__(self)
+                    AppClass.__init__(self, rednode)
+            app.__class__ = DerivedClass
+            MedusaHandler.__init__(app) 
+        self.hs.install_handler(app)
 
-    def remove_handler(self, handler):
-        for handler in self.hs.handlers:
-            self.hs.remove_handler(handler)
+    def remove_app(self, app):
+        for app in self.hs.handlers:
+            self.hs.remove_handler(app)
 
     def run(self):
         become_nobody()
@@ -62,8 +69,8 @@ class RedServer:
         try:
             loop()
         except KeyboardInterrupt:
-            for adapter in self.hs.handlers:
-                apply(getattr(adapter, "stop", lambda :None), ())
+            for app in self.hs.handlers:
+                apply(getattr(app, "stop", lambda :None), ())
             print "Shut down."
         
         
@@ -84,7 +91,7 @@ def become_nobody():
             self.params = (params or ';')[1:]
             self.query = (query or '?')[1:]
             
-            super(AppAdapter, self).handle_request(self, self) 
+            super(MedusaHandler, self).handle_request(self, self) 
 
             self.state = NEW_REQUEST
         
@@ -93,7 +100,7 @@ from urllib import unquote
 
 NEW_REQUEST, FINISH_REQUEST = [1, 2]
 
-class AppAdapter(object):
+class MedusaHandler(object):
     "Object to adapt redfoot.module Apps so that they have medusa \
     style handle_requests"
     
@@ -133,7 +140,7 @@ class AppAdapter(object):
             self.params = (params or ';')[1:]
             self.query = (query or '?')[1:]
             
-            super(AppAdapter, self).handle_request(self, self)
+            super(MedusaHandler, self).handle_request(self, self)
 
             self.state = NEW_REQUEST
         
@@ -232,10 +239,3 @@ class AppAdapter(object):
         self.__request.done()        
 
         
-from redfoot import module
-AppOrig = module.App
-class App(AppAdapter, AppOrig):
-    def __init__(self, rednode):
-        AppAdapter.__init__(self)
-        AppOrig.__init__(self, rednode)
-module.App = App
