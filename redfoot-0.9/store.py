@@ -29,8 +29,35 @@ class TripleStore:
         self.remove(subject, property, value)
         self.add(subject, property, value)
 
+
     def get(self, subject=None, property=None, value=None):
-        list = []
+        class Visitor:
+            def __init__(self):
+                self.list = []
+
+            def callback(self, subject, property, value):
+                self.list.append((subject, property, value))
+
+        visitor = Visitor()
+        self.visit(visitor, subject, property, value)
+
+	return visitor.list
+
+
+    def remove(self, subject=None, property=None, value=None):
+        class Visitor:
+            def __init__(self, store):
+                self.store = store
+
+            def callback(self, subject, property, value):
+                del self.store.spv[subject][property][value]
+                del self.store.pvs[property][value][subject]
+
+        visitor = Visitor(self)
+        self.visit(visitor, subject, property, value)
+
+
+    def visit(self, visitor, subject=None, property=None, value=None):
 
         if subject!=None:
             for s in self.spv.keys():
@@ -39,7 +66,7 @@ class TripleStore:
                         if property == None or property == p:
                             for v in self.spv[s][p].keys():
                                 if value == None or value == v:
-                                    list.append((s, p, v))
+                                    visitor.callback(s, p, v)
         else:
             for p in self.pvs.keys():
                 if property == None or property == p:
@@ -47,23 +74,12 @@ class TripleStore:
                         if value == None or value == v:
                             for s in self.pvs[p][v].keys():
                                 if subject == None or subject == s:
-                                    list.append((s, p, v))
+                                    visitor.callback(s, p, v)
             
 	return list
 
-    def remove(self, subject, property, value):
-        if subject in self.spv.keys() and property in self.spv[subject].keys():
-            if self.spv[subject][property].has_key(value):
-                del self.spv[subject][property][value]
 
-        if property in self.pvs.keys() and value in self.pvs[property].keys():
-            if self.pvs[property][value].has_key(subject):
-                del self.pvs[property][value][subject]
 
-    def removeAll(self, subject):
-        list = self.get(subject, None, None)
-        for item in list:
-            self.remove(item[0], item[1], item[2])
 
 
 

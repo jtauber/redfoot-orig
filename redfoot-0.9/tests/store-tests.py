@@ -1,25 +1,20 @@
+from redfoot.store import TripleStore
+
 
 def test_1():
-    "load RDF from url"
-
-    from redfoot.store import TripleStore
-    store = TripleStore()
-
-    from redfoot.parser import RDFParser
-    parser = RDFParser()
-
-    parser.setAdder(store.add)
-
-    parser.parse("http://www.w3.org/1999/02/22-rdf-syntax-ns")
+    "Simple test of store."
     
-    print len(store.get())
+    ts = TripleStore()
+    ts.put("s1", "p1", "v")
+    ts.put("s1", "p2", "v")
+    ts.put("s2", "p", "v")
+    ts.put("s3", "p", "v")
 
-
-def test_2():
-    "NeighborhoodStore test"
-    pass
-    
+    print len(ts.get())
+    ts.remove("s1")
+    print len(ts.get())
 
 test_1()
-test_2()
+
+
 
