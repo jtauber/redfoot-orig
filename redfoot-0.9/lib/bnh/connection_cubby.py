@@ -1,3 +1,5 @@
+# $Header$
+
 from threading import RLock
 from threading import Condition
 
@@ -45,3 +47,5 @@ class ConnectionCubby:
         self.mon.acquire()
         self.rc.notify()
         self.mon.release()
+
+#~ $Log$

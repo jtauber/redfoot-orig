@@ -259,24 +259,8 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 6.1  2001/03/13 04:02:50  eikeon
+#~ fixed cookies so that they persist a very long time; changed default max inactive time to 10 years
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
-#~
-#~ Revision 5.8  2000/12/22 22:26:14  eikeon
-#~ changed some mixed case to _ style
-#~
-#~ Revision 5.7  2000/12/20 21:22:07  eikeon
-#~ converted many mixedCase names to _ style names
-#~
-#~ Revision 5.6  2000/12/19 05:34:57  eikeon
-#~ removed debug output
-#~
-#~ Revision 5.5  2000/12/18 18:59:44  eikeon
-#~ added support for content type of multipart/form-data
-#~
-#~ Revision 5.4  2000/12/17 23:35:53  eikeon
-#~ split off ServerConnection and company into their own module
-#~
-#~ Revision 5.3  2000/12/17 21:19:10  eikeon
-#~ removed old log messages
-#~

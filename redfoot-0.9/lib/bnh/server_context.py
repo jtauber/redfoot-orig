@@ -148,9 +148,8 @@ class Cubby:
 
 
 #~ $Log$
+#~ Revision 6.1  2001/03/13 04:02:50  eikeon
+#~ fixed cookies so that they persist a very long time; changed default max inactive time to 10 years
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
-#~
-#~ Revision 5.1  2000/12/17 23:35:53  eikeon
-#~ split off ServerConnection and company into their own module
-#~

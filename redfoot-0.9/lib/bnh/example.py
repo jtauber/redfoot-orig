@@ -99,11 +99,5 @@ if __name__ == '__main__':
 
 
 #~ $Log$
-#~ Revision 5.2  2000/12/20 21:22:07  eikeon
-#~ converted many mixedCase names to _ style names
-#~
-#~ Revision 5.1  2000/12/17 21:19:10  eikeon
-#~ removed old log messages
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release

@@ -71,26 +71,5 @@ class Receiver:
     
 
 #~ $Log$
-#~ Revision 5.7  2000/12/20 21:22:07  eikeon
-#~ converted many mixedCase names to _ style names
-#~
-#~ Revision 5.6  2000/12/17 22:33:10  eikeon
-#~ changing names to _ style names; moved ConnectionCubby to its own module
-#~
-#~ Revision 5.5  2000/12/17 21:19:10  eikeon
-#~ removed old log messages
-#~
-#~ Revision 5.4  2000/12/14 00:39:32  eikeon
-#~ moved attempting to bind to socket message out of loop
-#~
-#~ Revision 5.3  2000/12/14 00:32:38  eikeon
-#~ added code to keep trying to bind to address
-#~
-#~ Revision 5.2  2000/12/13 00:03:37  eikeon
-#~ server now shuts down cleanly
-#~
-#~ Revision 5.1  2000/12/12 22:20:50  eikeon
-#~ added shutdown code... to shutdown cleanly
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
