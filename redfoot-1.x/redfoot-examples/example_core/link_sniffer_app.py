@@ -31,9 +31,9 @@ sniffer = SnifferNode()
 sniffer.load("link_sniffer.rdf", "http://eikeon.com", 1)
 sniffer.run()
 
-sniffer.do_prefix("sniff http://redfoot.net/2002/04/17/sniff/")
-sniffer.do_prefix("rdfs http://www.w3.org/2000/01/rdf-schema#")
-sniffer.do_prefix("rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+sniffer.do_prefix("sniff:<http://redfoot.net/2002/04/17/sniff/>")
+sniffer.do_prefix("rdfs:<http://www.w3.org/2000/01/rdf-schema#>")
+sniffer.do_prefix("rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>")
 
 import threading
 t = threading.Thread(target = sniffer.cmdloop(), args = ())
