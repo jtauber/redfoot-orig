@@ -60,6 +60,12 @@ class SetBuilder:
         else:
             raise AttributeError
 
+    def filter(self, filter):
+        set = []
+        for item in self.set:
+            if filter(item):
+                set.append(item)
+        self.set = set
+
     def sort(self, comparator):
         self.set.sort(comparator)
-
