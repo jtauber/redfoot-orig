@@ -100,6 +100,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 2.0  2001/08/15 04:28:11  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 1.1.1.1  2001/08/14 22:29:57  eikeon
 #~ TRANSFER FROM EIKCO
 #~
