@@ -26,7 +26,7 @@ class Sample1UI:
 
     def call_editor(self, request, response):
         request._pathInfo = request.getPathInfo()[len(self.path):]
-        self.getEditor().handleRequest(request, response)
+        self.getEditor().handle_request(request, response)
 
     def handle_request(self, request, response):
         path_info = request.getPathInfo()
@@ -116,6 +116,9 @@ class Sample1UI:
              
 
 # $Log$
+# Revision 5.1  2000/12/20 21:22:07  eikeon
+# converted many mixedCase names to _ style names
+#
 # Revision 5.0  2000/12/08 08:34:52  eikeon
 # new release
 #
