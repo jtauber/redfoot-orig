@@ -157,7 +157,7 @@ class QueryStore:
         processClass(type, currentDepth, recurse)
         def subclassStatement(s, p, o, \
                               processClass=processClass, \
-                              processInstance=processIstance, \
+                              processInstance=processInstance, \
                               currentDepth=currentDepth,
                               recurse=recurse):
             if recurse:
@@ -207,6 +207,9 @@ class QueryStore:
         return resultset.keys()
 
 # $Log$
+# Revision 2.6  2000/10/17 00:14:05  eikeon
+# changed one more get to visit
+#
 # Revision 2.5  2000/10/16 19:29:16  eikeon
 # fixed to getPossibleValues bug I just introduced
 #
