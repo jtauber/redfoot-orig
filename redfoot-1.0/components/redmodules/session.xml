@@ -102,9 +102,11 @@ VIA = resource(SESSION_URI+"via")
         raise AttributeError, name                
 
     
-    def handle_request(self, request, response):
-        print "HELLO?"
+    def stop(self):
+        print "saving sessions"
+        self.sessions.local.save()
 
+    def handle_request(self, request, response):
         # TODO: This is on behalf of Authentication module
         self.status = ''
 
