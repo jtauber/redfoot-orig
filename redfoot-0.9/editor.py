@@ -296,7 +296,8 @@ class Editor(Viewer):
 class PeerEditor(Editor):
     def menuBar(self):
         self.writer.write("""
-            <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
+            <P CLASS="MENUBAR">
+             <A HREF="classList">Class List</A>
              | <A HREF="subclass">Full Subclass View</A>
              | <A HREF="subclassNR">Collapsed Subclass View</A>
              | <A HREF=".">Download RDF</A>
@@ -304,6 +305,16 @@ class PeerEditor(Editor):
              | <A HREF="add">Add a Resource</A>
              | <A HREF="?processor=save">Save Node to Disk</A>
              | <A HREF="connect">Connect Neighbour</A>
+             |""")
+
+        if self.showNeighbours==1:
+            self.writer.write("""
+            <A HREF="?processor=hideNeighbours">Hide Neighbours</A>""")
+        else:
+            self.writer.write("""
+            <A HREF="?processor=showNeighbours">Show Neighbours</A>""")
+
+        self.writer.write("""
             </P>
         """)
     

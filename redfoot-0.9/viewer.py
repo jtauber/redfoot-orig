@@ -9,6 +9,9 @@ class Viewer:
         self.storeNode = storeNode
         self.qstore = QueryStore(storeNode)
 
+        self.showNeighbours=0
+        
+
     def setWriter(self, writer):
         self.writer = writer
 
@@ -144,7 +147,10 @@ class Viewer:
               <DL>
         """)
 
-        self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
+        if self.showNeighbours==1:
+            self.qstore.resourcesByClassV(self.displayClass, self.displayResource)
+        else:
+            self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
     
         self.writer.write("""
               </DL>
@@ -171,7 +177,10 @@ class Viewer:
               <DL>
         """)
 
-        self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+        if self.showNeighbours==1:
+            self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+        else:
+            self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
             
         self.writer.write("""
               </DL>
@@ -331,6 +340,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.24  2000/10/10 04:31:21  jtauber
+# work-around in string joining between non-unicode and unicode for 2.0b
+#
 # Revision 1.23  2000/10/10 04:29:56  eikeon
 # call resourceByClassV and subClassV on storeNode so that we see only what is in the local store for now
 #

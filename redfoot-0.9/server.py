@@ -84,6 +84,10 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 viewer.reifyProperty(args)
             elif args["processor"][0] == "connect":
                 viewer.connect(args)
+            elif args["processor"][0] == "showNeighbours":
+                viewer.showNeighbours=1
+            elif args["processor"][0] == "hideNeighbours":
+                viewer.showNeighbours=0
 	                
         if path_info == "/":
             viewer.RDF()
@@ -193,6 +197,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.23  2000/10/10 04:10:33  jtauber
+# POST is now used for form submission (finally)
+#
 # Revision 1.22  2000/10/09 22:34:31  jtauber
 # RDF is now default view
 #
