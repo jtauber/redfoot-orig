@@ -60,7 +60,9 @@ class Editor(Viewer):
         """ % (self.encodeCharacterData(self.storeNode.label(subject)), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
     def edit(self, subject):
-        if subject!=None and subject!="" and subject[0]=="#":
+        if subject==None or subject=="":
+            subject = self.storeNode.local.URI + self.generateURI()
+        elif subject[0]=="#":
             subject = self.storeNode.local.URI + subject
 
         self.header("Edit")
@@ -401,6 +403,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.13  2000/12/21 00:35:28  jtauber
+#~ can now add properties to an unknown resource using edit
+#~
 #~ Revision 5.12  2000/12/20 21:22:08  eikeon
 #~ converted many mixedCase names to _ style names
 #~
