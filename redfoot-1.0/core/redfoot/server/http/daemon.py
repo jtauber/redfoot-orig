@@ -5,6 +5,8 @@ from Queue import Queue
 from redfoot.server.daemon import Daemon
 from redfoot.server.http.handler import HTTPConnectionHandler
 
+from redfoot.version import VERSION
+
 class HTTPDaemon(Daemon):
     def __init__(self, serverAddress):
         Daemon.__init__(self, serverAddress)
@@ -39,6 +41,7 @@ class RedDaemon(HTTPDaemon):
         self.name = name
         self.handler_class = handler_class
         self.server_address = serverAddress
+        print "Redfoot", VERSION
         
     def run(self):
         from redfoot.lang.redcode.importer import RedcodeModuleImporter
