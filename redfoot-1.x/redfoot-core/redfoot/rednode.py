@@ -1,24 +1,11 @@
-import redfoot
-
-from redfoot import rdf_files
-
+from redfoot.rdf.store.triple import TripleStore
 from redfoot.rdf.query.schema import SchemaQuery
-
-from redfoot.rdf.const import LABEL, TYPE
-from redfoot.rdf.objects import resource, literal
-
-from redfoot.command_line import process_args
-from redfoot.server import RedServer
-
-NEIGHBOUR = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")
-CONNECTED = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Connected")
-YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
-NO = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#NO")
 
 from redfoot.rdf.store.multi import MultiStore
 from redfoot.rdf.store.storeio import LoadSave
 from redfoot.rdf.store.autosave import AutoSave
 
+from redfoot import rdf_files
 
 class Local(SchemaQuery, LoadSave, TripleStore): pass
 class Neighbour(LoadSave, TripleStore): pass
@@ -39,8 +26,15 @@ class Neighbourhood(SchemaQuery, object):
         if stop:
             return stop
 
+from redfoot.neighbour_manager import NeighbourManager, NEIGHBOUR, CONNECTED, YES, NO
+
+
+import redfoot
+from redfoot.command_line import process_args
+from redfoot.server import RedServer
+
     
-class RedNode(SchemaQuery, AutoSave, LoadSave, TripleStore):
+class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
 
     def __init__(self):
         super(RedNode, self).__init__()
@@ -80,31 +74,4 @@ class RedNode(SchemaQuery, AutoSave, LoadSave, TripleStore):
         self.server = server = RedServer(address, port)
         server.add_app(Boot(self))        
         server.run()
-
-    def load(self, location ,uri, create=0):
-        super(RedNode, self).load(location, uri, create)
-        # load neighbours that are marked as connected
-        self.local.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
-
-    def _connect(self, neighbour, p, o):
-        self.connect_to(neighbour.uri)
-
-    def connect_to(self, location, uri=None):
-        neighbour = Neighbour()        
-        neighbour.load(location, uri or location, 0)
-        self.neighbours.add_store(neighbour)
-        self.remove(resource(location), TYPE, NEIGHBOUR)
-        self.add(resource(location), TYPE, NEIGHBOUR)        
-        self.remove(resource(location), CONNECTED, None)
-        self.add(resource(location), CONNECTED, YES)        
-
-    def disconnect_from(self, uri):
-        for store in [store for store in self.neighbours.stores if store.uri==uri]:
-            self.neighbours.remove_store(store)
-            self.remove(resource(uri), CONNECTED, None)
-            self.add(resource(uri), CONNECTED, NO)
-            # Do we want to remember our neighbour?
-            if not self.local.exists(resource(uri), TYPE, NEIGHBOUR):
-                self.add(resource(uri), TYPE, NEIGHBOUR)
-
 
