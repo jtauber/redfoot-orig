@@ -13,11 +13,6 @@ class Local(SchemaQuery, TripleStoreIO):
     pass
 
 
-#class JournalingStoreLocal(SchemaQuery, JournalingStoreIO):
-#    """Like Local but for journaling stores."""
-#    pass
-
-
 class AutoSaveLocal(SchemaQuery, AutoSaveStoreIO):
     """Like Local but for auto-saving stores."""
     pass
@@ -102,46 +97,5 @@ class RedNode(SchemaQuery):
         self.local.remove(subject, predicate, object)
 
     def visit(self, callback, triple):
-        # TODO: There may be an issue of order here. If so, we
-        # probably need to either reimplement this to explicitly call
-        # local first (and depending on what it returns call
-        # neighbours. Or, maybe we need to do this at the level of the
-        # neighbourhood's visit... in which case we may need to
-        # subclass Multistore or give it a notion of order.
         return self.neighbourhood.visit(callback, triple)
-
-    ### Overridden from SchemaQuery
-
-    # TODO both this and the visit_subclasses in SchemaQuery can probably be cleaned up so there is more reuse
-    # between the two
-    def visit_subclasses(self, class_start_callback, class_end_callback, instance_callback, root,
-                         recurse=1, depth=0):
-        class_start_callback(root, depth)
-
-        def f(type,
-              self=self, class_start_callback=class_start_callback,
-              class_end_callback=class_end_callback, instance_callback=instance_callback, depth=depth):
-            self.visit_subclasses(class_start_callback, class_end_callback, instance_callback,
-                                  type, 1, depth + 1)
-
-        def g(instance,
-              depth=depth, instance_callback=instance_callback):
-            instance_callback(instance, depth)
-
-        def h(klass,
-              depth=depth, class_start_callback=class_start_callback, class_end_callback=class_end_callback):
-            class_start_callback(klass, depth + 1)
-            class_end_callback(klass, depth + 1)
-
-        if recurse:
-            self.neighbourhood.visit(s(f), (None, SUBCLASSOF, root))
-        else:
-            self.neighbourhood.visit(s(h), (None, SUBCLASSOF, root))
-
-        self.local.visit(s(g), (None, TYPE, root))
-
-        class_end_callback(root, depth)
-
-    def visit_typeless_resources(self, callback):
-        self.local.visit_subjects(filter(s(callback), not_subject(self.exists, TYPE, None)))
 
