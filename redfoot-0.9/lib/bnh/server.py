@@ -5,13 +5,9 @@ eikeon's Bare Naked HTTP Server
 
 __version__ = "$Revision$"
 
-
 from bnh.receiver import Receiver
 from bnh.servlet import ServerConnection
 from bnh.servlet import ServerContext
-
-from threading import RLock
-from threading import Condition
 
 class Server:
     def __init__(self, serverAddress):
@@ -23,9 +19,9 @@ class Server:
         self.handler = handler
 
     def start(self):
-        sc = ServerConnection(self.handler, self.context)
+        serverConnection = ServerConnection(self.handler, self.context)
         import threading
-        t = threading.Thread(target = self._handleRequest, args = (sc,))
+        t = threading.Thread(target = self._handleRequest, args = (serverConnection,))
         t.setDaemon(1)
         t.start()
 
@@ -40,6 +36,9 @@ class Server:
                 handlerCubby.wait(0.05) # TODO: can we make this wait()?
 
 #~ $Log$
+#~ Revision 4.5  2000/12/04 05:21:24  eikeon
+#~ Split server.py into server.py, servlet.py and receiver.py
+#~
 #~ Revision 4.4  2000/12/04 02:02:56  eikeon
 #~ removed debug output
 #~
