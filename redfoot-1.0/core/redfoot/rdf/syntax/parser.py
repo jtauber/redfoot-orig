@@ -1,3 +1,4 @@
+from redfoot.xml.handler import HandlerBase
 from redfoot.rdf.store.urigen import generate_uri
 from string import join, split
 
@@ -8,27 +9,27 @@ ANON = "http://redfoot.sourceforge.net/2001/08/ANON/"
 
 ns_separator = "^"
 
-def parse(adder, file, baseURI):
+def parse(globals, file, baseURI):
     import xml.parsers.expat
 
     parser = xml.parsers.expat.ParserCreate(namespace_separator=ns_separator)
     parser.SetBase(baseURI)
     parser.returns_unicode = 0
     
-    LookForRDFHandler(parser, None, adder)
+    LookForRDFHandler(parser, None, globals)
 
     parser.ParseFile(file)
         
     file.close()
 
     
-#  def parse_URI(adder, location, baseURI=None):
+#  def parse_URI(globals, location, baseURI=None):
 #      baseURI = baseURI or location
 
 #      from urllib import urlopen
 #      file = urlopen(location)
 
-#      parse(adder, file, baseURI)
+#      parse(globals, file, baseURI)
 
     
 # TODO: do we still want the level of isolation where the parser /
@@ -47,59 +48,39 @@ BAG_ELEMENT = RDFNS + ns_separator + "Bag"
 ALT_ELEMENT = RDFNS + ns_separator + "Alt"
 LI_ELEMENT = RDFNS + ns_separator + "li"
 
-class HandlerBase:
-    def __init__(self, parser, parent, adder):
-        self.parser = parser
-        self.adder = adder
-        self.parent = parent
-        self.set_handlers()
 
-    def set_handlers(self):
-        self.parser.StartElementHandler = self.child
-        self.parser.CharacterDataHandler = self.char
-        self.parser.EndElementHandler = self.end
-
-    def char(self, data):
-        pass
-
-    def child(self, name, atts):
-        pass
-    
-    def end(self, name):
-        self.parent.set_handlers()
-
-    
 class LookForRDFHandler(HandlerBase):
-    def __init__(self, parser, parent, adder):
-        HandlerBase.__init__(self, parser, parent, adder)
+    def __init__(self, parser, parent, globals):
+        HandlerBase.__init__(self, parser, parent, globals)
 
     def child(self, name, atts):
         if name == RDF_ELEMENT:
-            RDFHandler(self.parser, self, self.adder)
+            RDFHandler(self.parser, self, self.globals)
         else:
-            LookForRDFHandler(self.parser, self, self.adder)
+            LookForRDFHandler(self.parser, self, self.globals)
 
 
 class RDFHandler(HandlerBase):
-    def __init__(self, parser, parent, adder):
-        HandlerBase.__init__(self, parser, parent, adder)
+    def __init__(self, parser, parent, globals):
+        HandlerBase.__init__(self, parser, parent, globals)
 
     def child(self, name, atts):
         if name == DESCRIPTION_ELEMENT:
-            DescriptionHandler(self.parser, self, self.adder, atts)
+            DescriptionHandler(self.parser, self, self.globals, atts)
         elif name == BAG_ELEMENT:
-            BagHandler(self.parser, self, self.adder, name, atts)
+            BagHandler(self.parser, self, self.globals, name, atts)
         elif name == ALT_ELEMENT:
-            AltHandler(self.parser, self, self.adder, name, atts)
+            AltHandler(self.parser, self, self.globals, name, atts)
         elif name == SEQ_ELEMENT:
-            SeqHandler(self.parser, self, self.adder, name, atts)
+            SeqHandler(self.parser, self, self.globals, name, atts)
         else:
-            TypedNodeHandler(self.parser, self, self.adder, name, atts)
+            TypedNodeHandler(self.parser, self, self.globals, name, atts)
 
 
 class DescriptionHandler(HandlerBase):
-    def __init__(self, parser, parent, adder, atts):
-        HandlerBase.__init__(self, parser, parent, adder)
+    def __init__(self, parser, parent, globals, atts):
+        HandlerBase.__init__(self, parser, parent, globals)
+        self.adder = globals['adder']
         self.subject = None
         self.anonymous = 0
         if atts.has_key("about"):
@@ -127,14 +108,15 @@ class DescriptionHandler(HandlerBase):
                            anonymous_subject=self.anonymous, literal_object=1)
 
     def child(self, name, atts):
-        PropertyHandler(self.parser, self, self.adder, name, atts)
+        PropertyHandler(self.parser, self, self.globals, name, atts)
                         
 
 class TypedNodeHandler(DescriptionHandler):
-    def __init__(self, parser, parent, adder, name, atts):
-        DescriptionHandler.__init__(self, parser, parent, adder, atts)
+    def __init__(self, parser, parent, globals, name, atts):
+        DescriptionHandler.__init__(self, parser, parent, globals, atts)
+        adder = globals['adder']        
         type = join(split(name, "^"), "")
-        self.adder(self.subject, str(TYPE), type, anonymous_subject=self.anonymous)
+        adder(self.subject, str(TYPE), type, anonymous_subject=self.anonymous)
 
 
 def all_whitespace(data):
@@ -145,17 +127,18 @@ def all_whitespace(data):
 
 
 class ContainerHandler(TypedNodeHandler):
-    def __init__(self, parser, parent, adder, name, atts):
-        TypedNodeHandler.__init__(self, parser, parent, adder, name, atts)
+    def __init__(self, parser, parent, globals, name, atts):
+        TypedNodeHandler.__init__(self, parser, parent, globals, name, atts)
+        self.adder = globals['adder']        
         parent.object = self.subject
         parent.anonymous_object = self.anonymous
         self.li_count = 0
 
     def child(self, name, atts):
         if name == LI_ELEMENT:
-            LIHandler(self.parser, self, self.adder, atts)
+            LIHandler(self.parser, self, self.globals, atts)
         else:
-            PropertyHandler(self.parser, self, self.adder, name, atts)
+            PropertyHandler(self.parser, self, self.globals, name, atts)
 
     def add_li(self, value, literal):
         self.li_count = self.li_count + 1
@@ -176,8 +159,8 @@ class SeqHandler(ContainerHandler):
 
 
 class LIHandler(HandlerBase):
-    def __init__(self, parser, parent, adder, atts):
-        HandlerBase.__init__(self, parser, parent, adder)
+    def __init__(self, parser, parent, globals, atts):
+        HandlerBase.__init__(self, parser, parent, globals)
         self.literal = 0
         if atts.has_key("resource"):
             self.value = atts["resource"]
@@ -203,8 +186,9 @@ class LIHandler(HandlerBase):
 
 
 class PropertyHandler(HandlerBase):
-    def __init__(self, parser, parent, adder, name, atts):
-        HandlerBase.__init__(self, parser, parent, adder)
+    def __init__(self, parser, parent, globals, name, atts):
+        HandlerBase.__init__(self, parser, parent, globals)
+        self.adder = globals['adder']        
         self.predicate = join(split(name, "^"), "")
         self.literal = 0
         self.anonymous_object = 0
@@ -237,11 +221,11 @@ class PropertyHandler(HandlerBase):
     def child(self, name, atts):
         self.literal = 0
         if name==SEQ_ELEMENT:
-            SeqHandler(self.parser, self, self.adder, name, atts)
+            SeqHandler(self.parser, self, self.globals, name, atts)
         elif name==BAG_ELEMENT:
-            BagHandler(self.parser, self, self.adder, name, atts)
+            BagHandler(self.parser, self, self.globals, name, atts)
         elif name==ALT_ELEMENT:
-            AltHandler(self.parser, self, self.adder, name, atts)
+            AltHandler(self.parser, self, self.globals, name, atts)
         else:
             if atts.has_key("about"):
                 self.object = atts["about"]
@@ -254,9 +238,9 @@ class PropertyHandler(HandlerBase):
             else:
                 raise "Descriptions must have either an about or an ID"
             if name==DESCRIPTION_ELEMENT:
-                DescriptionHandler(self.parser, self, self.adder, atts)
+                DescriptionHandler(self.parser, self, self.globals, atts)
             else:
-                TypedNodeHandler(self.parser, self, self.adder, name, atts)
+                TypedNodeHandler(self.parser, self, self.globals, name, atts)
 
     def char(self, data):
         if not all_whitespace(data):
@@ -286,7 +270,7 @@ class Parser:
         self.add(s, p, o)
 
     def parse(self, file, baseURI):
-        parse(self.add_statement, file, baseURI)
+        parse({'adder': self.add_statement}, file, baseURI)
 
     def parse_URI(self, location, baseURI=None):
         baseURI = baseURI or location
