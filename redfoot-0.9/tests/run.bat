@@ -3,7 +3,7 @@ setlocal
 set PYTHONPATH=../../
 @echo on
 
-python parser-tests.py serializer-tests.py
+python %*
 
 @echo off
 endlocal
