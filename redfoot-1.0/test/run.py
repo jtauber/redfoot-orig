@@ -2,7 +2,7 @@ import string, sys, getopt
 import os, string
 
 sys.path.append('../core')
-sys.path.append('../../tools')
+#sys.path.append('../../tools')
 
 optlist, args = getopt.getopt(sys.argv[1:], 'p:')
 

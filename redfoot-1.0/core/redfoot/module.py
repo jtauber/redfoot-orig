@@ -2,6 +2,8 @@ from string import rfind
 from types import MethodType
 
 class Module:
+    def __init__(self, app):
+        self.app = app
 
     def apply_exact(self, path):        
         #print "Module.apply_exact (%s) looking for '%s'" % (self.__class__, path)        
@@ -56,6 +58,17 @@ def to_URL(module_name, path):
         return path
 
 class ParentModule(Module):
+    def __init__(self, app):
+        self.app = app        
+        self.modules = []
+
+        instance_vars = self.__dict__
+        sub_modules = getattr(self, 'sub_modules', None)
+        if sub_modules:
+            for (instance_name, mod_class) in sub_modules():
+                mod_instance = mod_class(app)
+                instance_vars[instance_name] = mod_instance
+                self.modules.append(mod_instance)
 
     def apply_exact(self, path, modules=None):
         if not modules:

@@ -18,15 +18,17 @@ class RedcodeHooks:
         return getattr(self.hooks, name)
 
     def get_suffixes(self):
-        return self.hooks.get_suffixes() + [('.xml', 'r', 1)]
+        #return self.hooks.get_suffixes() + [('.xml', 'r', 1)]
+        return self.hooks.get_suffixes() + [('.xml', 'r', 1), ('.rdf', 'r', 1)]
 
     def load_source(self, name, filename, file=None):
         from string import split        
         extension = split(filename, '.')[-1]
 
-        if extension=="xml":
+        handler = self.handlers.get(extension, None)
+        if handler:
             try:
-                module = parse(file, name, self.handler_class)
+                module = parse(file, name, handler)
                 sys.modules[name] = module                
                 # TODO: close file?
                 return module
@@ -52,9 +54,9 @@ class RedcodeModuleImporter(AutoReloadModuleImporter):
       import foo
     """
     
-    def __init__(self, handler_class):
+    def __init__(self, handlers):
         AutoReloadModuleImporter.__init__(self)
         rh = RedcodeHooks(self.get_hooks())
-        rh.handler_class = handler_class
+        rh.handlers = handlers
         self.set_hooks(rh)
 

@@ -31,7 +31,7 @@ def notify_me_of_reload(module):
     
 
 class RedDaemon(HTTPDaemon):
-    def __init__(self, serverAddress, name, handler_class, exact=0):
+    def __init__(self, serverAddress, name, handlers, exact=0):
         if exact:
             address = serverAddress
         else:
@@ -39,13 +39,13 @@ class RedDaemon(HTTPDaemon):
         HTTPDaemon.__init__(self, address)
         daemons.append(self)
         self.name = name
-        self.handler_class = handler_class
+        self.handlers = handlers
         self.server_address = serverAddress
         print "Redfoot", VERSION
         
     def run(self):
         from redfoot.lang.redcode.importer import RedcodeModuleImporter
-        importer = RedcodeModuleImporter(self.handler_class)
+        importer = RedcodeModuleImporter(self.handlers)
         importer.install()
 
         module = __import__(self.name, globals(), locals(), ['*'])
