@@ -250,6 +250,9 @@ class PropertyHandler(HandlerBase):
             if not self.literal:
                 raise "has both character content and a resource attribute"
             self.object = self.object + data
+        else:
+            if self.literal:
+                self.object = self.object + data
 
     def end(self, name):
         self.adder(self.parent.subject, self.predicate, self.object,
