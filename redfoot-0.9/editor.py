@@ -10,6 +10,7 @@ class Editor(Viewer):
              | <A HREF="RDF">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
              | <A HREF="add">Add a Resource</A>
+             | <A HREF=".?processor=save">Save Node to Disk</A>
             </P>
         """)
 
@@ -237,3 +238,6 @@ class Editor(Viewer):
                 property = params["prop%s_name" % i][0]
                 value = params["prop%s_value" % i][0]
                 self.qstore.getStore().add(subject, property, value)
+
+    def save(self):
+        self.qstore.getStore().getStore().save()

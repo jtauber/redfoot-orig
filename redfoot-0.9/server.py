@@ -56,7 +56,9 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 viewer.update(args)
             elif args["processor"][0] == "create":
                 viewer.create(args)
-
+            elif args["processor"][0] == "save":
+                viewer.save()
+                
         if path_info == "/":
             viewer.mainPage()
         elif path_info == "/subclass":
@@ -146,6 +148,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.12  2000/10/05 18:48:30  jtauber
+# add now actually creates the resource entry
+#
 # Revision 1.11  2000/10/05 02:42:35  jtauber
 # implemented UI for 'add' in editor
 #
