@@ -87,7 +87,7 @@ class Editor(Viewer):
                   <TD VALIGN="TOP">
         """ % (self.qstore.label(property), self.property_num, property))
         for range in self.qstore.get(property, self.qstore.RANGE, None): # TODO: redo as visitor
-            self.writer.write("%s<BR>" % range[2])
+            self.writer.write("%s<BR>" % self.qstore.label(range[2]))
         self.writer.write("""
                   </TD>
                   <TD>
