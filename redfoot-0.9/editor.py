@@ -4,6 +4,40 @@ from redfoot.viewer import Viewer
 
 class Editor(Viewer):
 
+    def handler(self, path_info, args):
+        if args.has_key("processor"):
+            if args["processor"][0] == "update":
+                self.update(args)
+            elif args["processor"][0] == "create":
+                self.create(args)
+            elif args["processor"][0] == "save":
+                self.save()
+            elif args["processor"][0] == "delete":
+                self.delete(args)
+            elif args["processor"][0][0:4] == "del_":
+                self.deleteProperty(args)
+            elif args["processor"][0][0:6] == "reify_":
+                self.reifyProperty(args)
+            elif args["processor"][0] == "connect":
+                self.connect(args)
+            elif args["processor"][0] == "showNeighbours":
+                self.showNeighbours=1
+            elif args["processor"][0] == "hideNeighbours":
+                self.showNeighbours=0
+    
+        if path_info == "/edit":
+            self.edit(args['uri'][0]) # TODO: check why values of args are lists
+	elif path_info == "/add":
+            if args.has_key("type"):
+                type = args["type"][0]
+            else:
+                type = None
+            self.add(type)
+        elif path_info == "/connect":
+            self.connectPage()
+        else:
+            Viewer.handler(path_info,args)
+
     def menuBar(self):
         self.writer.write("""
             <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
@@ -352,6 +386,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 2.1  2000/10/16 04:01:23  jtauber
+# (finally) added $ and $ to Editor
+#
 
 
 

@@ -19,26 +19,6 @@ class Viewer:
     def handler(self, path_info, args):
         ""
         
-        if args.has_key("processor"):
-            if args["processor"][0] == "update":
-                self.update(args)
-            elif args["processor"][0] == "create":
-                self.create(args)
-            elif args["processor"][0] == "save":
-                self.save()
-            elif args["processor"][0] == "delete":
-                self.delete(args)
-            elif args["processor"][0][0:4] == "del_":
-                self.deleteProperty(args)
-            elif args["processor"][0][0:6] == "reify_":
-                self.reifyProperty(args)
-            elif args["processor"][0] == "connect":
-                self.connect(args)
-            elif args["processor"][0] == "showNeighbours":
-                self.showNeighbours=1
-            elif args["processor"][0] == "hideNeighbours":
-                self.showNeighbours=0
-	                
         if path_info == "/":
             self.RDF()
         elif path_info == "/subclass":
@@ -61,16 +41,6 @@ class Viewer:
             self.css()
         elif path_info == "/view":
             self.view(args['uri'][0]) # TODO: check why values of args are lists
-        elif path_info == "/edit":
-            self.edit(args['uri'][0]) # TODO: check why values of args are lists
-	elif path_info == "/add":
-            if args.has_key("type"):
-                type = args["type"][0]
-            else:
-                type = None
-            self.add(type)
-        elif path_info == "/connect":
-            self.connectPage()
         else:
             # make a proper 404
             response.write("unknown PATH of '%s'" % path_info)
@@ -406,6 +376,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 2.2  2000/10/16 01:56:10  eikeon
+# removed 1.x log history
+#
 # Revision 2.1  2000/10/16 01:45:32  eikeon
 # moved viewer request handling code from server to viewer
 #
