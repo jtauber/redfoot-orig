@@ -12,6 +12,9 @@ class URIRef(str):
         return "<%s>" % str(self)
 
 class Literal(str):
+    def __add__(self, val):
+        return Literal(str(self) + val)
+    
     def n3(self):
         return '"%s"' % str(self)
 
