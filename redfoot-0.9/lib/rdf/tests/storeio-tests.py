@@ -10,7 +10,7 @@ def test_1():
     storeIO.setStore(tripleStore)
     storeIO.load("http://www.w3.org/1999/02/22-rdf-syntax-ns")
 
-    storeIO.saveAs("tmptmp.test", "tmptmp.test")
+    storeIO.save("tmptmp.test", "tmptmp.test")
     
 def test_2():
     ""

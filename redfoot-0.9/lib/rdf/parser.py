@@ -1,6 +1,6 @@
 # $Header$
 
-def parseRDF(adder, location, baseURI=None):
+def parse_RDF(adder, location, baseURI=None):
     if baseURI==None:
         baseURI = location
 
@@ -157,5 +157,8 @@ class PropertyHandler(HandlerBase):
         self.parent.setHandlers()
 
 #~ $Log$
+#~ Revision 5.1  2000/12/17 20:40:47  eikeon
+#~ started adding exception handling code around parse
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release

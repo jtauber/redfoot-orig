@@ -14,13 +14,14 @@ class StoreIO:
         else:
             self.URI = URI
 
-        from rdf.parser import parseRDF
-        parseRDF(self.add, self.location, self.URI)
+        from rdf.parser import parse_RDF
+        parse_RDF(self.add, self.location, self.URI)
 
-    def save(self):
-        self.saveAs(self.location, self.URI)
-
-    def saveAs(self, location, URI):
+    def save(self, location=None, URI=none):
+        if location==None:
+            location = self.location
+        if URI==None:
+            URI = self.URI
         stream = open(location, 'w')
         self.output(stream, URI)
         stream.close()
@@ -35,7 +36,7 @@ class StoreIO:
         serializer.setStream(stream)
         serializer.setBaseURI(URI)
 
-        self.visit(lambda s, p, o, serializer=serializer: serializer.registerProperty(p), subject, predicate, object)
+        self.visit(lambda s, p, o, registerProperty=serializer.registerProperty: registerProperty(p), subject, predicate, object)
 
         serializer.start()
         self.visit(serializer.triple, subject, predicate, object)
@@ -76,8 +77,8 @@ class AutoSaveStoreIO(TripleStoreIO):
             if self.dirtyBit.value()==1:
                 self.dirtyBit.clear()
                 # TODO: catch exceptions
-                self.saveAs(self.location, self.URI)
-                self.saveAs("%s-%s" % (self.location, self.date_time_string()), self.URI)
+                self.save(self.location, self.URI)
+                self.save("%s-%s" % (self.location, self.date_time_string()), self.URI)
                 # Do not save a backup more often than interval
                 import time
                 time.sleep(interval)
@@ -127,5 +128,8 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 5.1  2000/12/17 20:41:22  eikeon
+#~ removed log message prior to currently worked on release
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
