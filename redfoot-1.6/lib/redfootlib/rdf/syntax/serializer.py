@@ -1,4 +1,16 @@
-from redfootlib.util import encode_attribute_value, encode_character_data
+def encode_attribute_value(s):
+    s = '&amp;'.join(s.split('&'))
+    s = '&quot;'.join(s.split('"'))
+    s = '&lt;'.join(s.split('<'))
+    #We need not encode > for attributes
+    #'&apos;'        
+    #s = join(split(s, '>'), '&gt;')        
+    return s
+
+def encode_character_data(s):
+    s = '&amp;'.join(s.split('&'))
+    s = '&lt;'.join(s.split('<'))    
+    return s
 
 # TODO: really needs to be fully unicode
 namestart = ['A','B','C','D','E','F','G','H','I','J','K','L','M',
