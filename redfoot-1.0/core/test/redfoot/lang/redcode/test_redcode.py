@@ -60,6 +60,9 @@ while 1:
 # TODO: add test for off
 
 # $Log$
+# Revision 4.0  2001/08/21 22:09:51  eikeon
+# NEW RELEASE
+#
 # Revision 3.0  2001/08/15 05:39:04  eikeon
 # NEW RELEASE
 #
