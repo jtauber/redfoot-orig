@@ -172,3 +172,6 @@ USING GENERIC UI: ADDING A RESOURCE
 [TODO: PEER stuff]
 
 $Log$
+Revision 1.1  2000/11/04 06:14:22  jtauber
+first attempt at a user manual
+
