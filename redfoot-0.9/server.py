@@ -49,9 +49,11 @@ class RedfootHandler:
 
 class RedfootServerConnection(ServerConnection):
 
+    handler = RedfootHandler()
+
     def __init__(self):
         ServerConnection.__init__(self, None)
-        self.handler = RedfootHandler()
+        self.handler = RedfootServerConnection.handler
         
 
 if __name__ == '__main__':
@@ -86,8 +88,7 @@ if __name__ == '__main__':
     server = Server(('', port), lambda : RedfootServerConnection())
     
     import threading
-    t = threading.Thread(target = server.start,
-                         args = ())
+    t = threading.Thread(target = server.start, args = ())
     t.setDaemon(1)
     t.start()
 
@@ -103,6 +104,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 2.3  2000/10/16 04:58:19  eikeon
+# refactored plumb-ing between bnh.Server and RedfootHandler
+#
 # Revision 2.2  2000/10/16 01:56:10  eikeon
 # removed 1.x log history
 #
