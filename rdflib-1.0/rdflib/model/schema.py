@@ -1,14 +1,12 @@
 from __future__ import generators
 
-from rdflib.model.core import Core
-
 from rdflib.const import LABEL, COMMENT
 from rdflib.const import TYPE, STATEMENT
 from rdflib.const import SUBJECT, PREDICATE, OBJECT
 from rdflib.const import DOMAIN, SUBCLASSOF
 
 
-class Schema(Core):
+class Schema(object):
 
     def label(self, subject, default=None):
         for s, p, o in self.triples(subject, LABEL, None):
