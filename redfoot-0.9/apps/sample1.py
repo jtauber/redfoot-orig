@@ -9,14 +9,19 @@ from rdf.const import *
 
 if __name__ == "__main__":
     server = RedServer(("", 8000))
-    server.run_autoload("sample1", "sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
+    rednode = RedNode()
+    rednode.local.load("sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
+    server.run_autoload("sample1", rednode)
     
 
 class UI:
 
-    def __init__(self, location, uri):
+    def __init__(self, rednode):
+        # TODO: remove this hack... for now we do not use the given
+        # rednode, but create our own so that we can set the URI
+        # correctly
         self.rednode = RedNode()
-        self.rednode.local.load(location, uri)
+        self.rednode.local.load("sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
         self.editor = Editor(self.rednode)
         
     def handle_request(self, request, response):
@@ -48,6 +53,9 @@ class UI:
         """)
 
 ## $Log$
+## Revision 7.5  2001/04/23 01:53:27  eikeon
+## reverter to 7.3 -- as my changes where cosmetic yet broke things :(
+##
 ## Revision 7.3  2001/04/14 23:40:28  eikeon
 ## created a lib/redfoot/modules directory and moved editor/viewer into it
 ##
