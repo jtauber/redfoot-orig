@@ -6,6 +6,7 @@ from cmd import Cmd
 from sys import exit
 from redfootlib.rdf.objects import resource, literal
 from redfootlib.rednode import RedNode
+from redfootlib.server import RedServer
 
 class RedCmd(object, Cmd):
     """
@@ -128,4 +129,4 @@ class RedCmd(object, Cmd):
         address, port = arg.split()
         # Create a RedServer listening on address, port
         self.server = RedServer(address, int(port))
-        server.run(background=1)
+        self.server.run(background=1)
