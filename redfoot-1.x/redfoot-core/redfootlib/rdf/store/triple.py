@@ -12,26 +12,10 @@ class TripleStore(object):
     def add(self, s, p, o):
         
         # spo
-        spo = self.spo
-        if not s in spo:
-            spo[s] = {}
-
-        subjectDictionary = spo[s]
-        if not p in subjectDictionary:
-            subjectDictionary[p] = {}
-
-        subjectDictionary[p][o] = 1
+        self.spo.setdefault(s, {}).setdefault(p, {})[o] = 1
 
         # pos
-        pos = self.pos
-        if not p in pos:
-            pos[p] = {}
-
-        predicateDictionary = pos[p]
-        if not o in predicateDictionary:
-            predicateDictionary[o] = {}
-
-        predicateDictionary[o][s] = 1
+        self.pos.setdefault(p, {}).setdefault(o, {})[s] = 1
 
     def __remove(self, subject, predicate, object):
         del self.spo[subject][predicate][object]
