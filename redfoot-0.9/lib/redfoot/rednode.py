@@ -118,17 +118,22 @@ class RedNode(StoreIO, QueryStore):
                 self.local.visit(resource, None, TYPE, klass)
 
 
-    def output(self, stream, URI=None, subject=None, predicate=None, object=None):
-        self.local.output(stream, URI, subject, predicate, object)
+    def output(self, stream, URI=None, subject=None, predicate=None, object=None, absolute=0):
+        self.local.output(stream, URI, subject, predicate, object, absolute)
 
     def getTypelessResources(self):
         return self.local.getTypelessResources()
 
 
+#from rdf.storeio import JournalingStoreIO
+#class Local(QueryStore, JournalingStoreIO):
+#    def __init__(self):
+#        JournalingStoreIO.__init__(self)
+
 class Local(QueryStore, AutoSaveStoreIO):
     def __init__(self):
-        # TODO: need to clean up the __init__ calling
         AutoSaveStoreIO.__init__(self)
+
 
 
 class Neighbourhood(QueryStore):
@@ -168,6 +173,9 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
+#~ Revision 5.5  2000/12/20 03:59:53  jtauber
+#~ visitResourcesByType will now visit resources whose type is an unknown class
+#~
 #~ Revision 5.4  2000/12/19 06:11:09  eikeon
 #~ added method to override getTypelessResources to only pay attention to local resources
 #~
