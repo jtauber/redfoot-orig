@@ -9,7 +9,7 @@ __version__ = "$Revision$"
 import socket
 import sys
 import string
-
+import time
 
 class Server:
     ""
@@ -55,7 +55,8 @@ class Server:
                     if clientSocket!=None:
                         self.handler.handleRequest(self.server, clientSocket)
                     else:
-                        handlerCubby.wait()
+                        #handlerCubby.wait()
+                        handlerCubby.wait(0.05)                        
 
             def stop(self):
                 self.server.handlerCubby.stop(self)
@@ -99,9 +100,9 @@ class HandlerCubby:
         self.mon.release()
         return item
 
-    def wait(self):
+    def wait(self, timeout=None):
         self.mon.acquire()
-        self.rc.wait()
+        self.rc.wait(timeout)
         self.mon.release()
 
     def stop(self, handler):
@@ -110,6 +111,46 @@ class HandlerCubby:
         self.rc.notifyAll()
         self.mon.release()
     
+
+class Cubby:
+
+    def __init__(self):
+        self.mon = RLock()
+        self.rc = Condition(self.mon)
+        self.wc = Condition(self.mon)
+        self.queue = []
+
+    def put(self, item):
+        self.mon.acquire()
+        self.queue.append(item)
+        self.rc.notify()
+        self.mon.release()
+
+    def get(self):
+        self.mon.acquire()
+        if not self.queue:
+            item = None
+        else:
+            item = self.queue[0]
+            del self.queue[0]
+            self.wc.notify()
+        self.mon.release()
+        return item
+
+    def peek(self):
+        self.mon.acquire()
+        if not self.queue:
+            item = None
+        else:
+            item = self.queue[0]
+        self.mon.release()
+        return item
+
+    def wait(self, timeout=None):
+        self.mon.acquire()
+        self.rc.wait(timeout)
+        self.mon.release()
+
 
 class ServerConnection:
 
@@ -156,9 +197,85 @@ class BadRequestError(Error):
 class ServerContext:
     def __init__(self):
         self.sessions = {}
+        self.cubby = Cubby()
+        import threading
+        t = threading.Thread(target = self._sessionReaper, args = ())
+        t.setDaemon(1)
+        t.start()
+
+    def _sessionReaper(self):
+        while 1:
+            sessionKey = self.cubby.peek()
+            if sessionKey==None:
+                self.cubby.wait(1)
+            else:
+                import time
+                now = time.time()
+                session = self.sessions[sessionKey]
+                
+                idle = (now - session.getLastAccessedTime())
+                if idle > session.getMaxInactiveInterval():
+                    self.cubby.get() # todo... pop
+                    del self.sessions[sessionKey]
+                else:
+                    delta = session.getMaxInactiveInterval() -  idle
+                    self.cubby.wait(delta)
+                    
+            sys.stderr.write("# sessions %s\n" % len(self.sessions.keys()))
+            sys.stderr.flush()
 
 class Session:
-    pass
+    def __init__(self, id):
+        now = time.time()
+        self._creationTime = now
+        self._setLastAccessedTime(now)
+        self._attributes = {}
+        #self.maxInactiveInterval = 30 * 60
+        self.maxInactiveInterval = 10
+        self._id = id
+
+    def getAttribute(self, name):
+        if self._attributes.has_key(name):
+            return self._attributes[name]
+        else:
+            return None
+    
+    def getAttributeNames(self):
+        return self._attributes.keys()
+    
+    def getCreationTime(self):
+        return self._creationTime
+
+    def getId(self):
+        return self._id
+
+    def getLastAccessedTime(self):
+        return self._lastAccessedTime
+
+    def _setLastAccessedTime(self, time):
+        self._lastAccessedTime = time
+
+    def getMaxInactiveInterval(self):
+        return self.maxInactiveInterval
+
+    def setMaxInactiveInterval(self, interval):
+        self._maxInactiveInterval = interval
+
+    def invalidate(self):
+        self._invalid = 1
+
+    def isNew(self):
+        return self.new==1
+
+    def removeAttribute(self, name):
+        del self.attributes[name]
+
+    def setAttribute(self, name, value):
+        self.attributes[name] = value
+
+    def setMaxInactiveInterval(self, interval):
+        self._maxInactiveInterval = interval
+    
 
 
 class Request:
@@ -248,21 +365,24 @@ class Request:
         cookies = self.getCookies()
 
         if cookies.has_key('EBNH_session'):
-            session = cookies['EBNH_session'].value
-            if sessions.has_key(session):
-                return sessions[session]
+            sessionKey = cookies['EBNH_session'].value
+            if sessions.has_key(sessionKey):
+                session = sessions[sessionKey]
+                session._setLastAccessedTime(time.time())
+                return session
 
         # Create a new session
         from whrandom import random
         rn = random()
-        import time
         session = "%s#T%s" % (rn, time.time())
         self.connection.session = session
 
         if sessions.has_key(session):
             raise "TODO: exception"
 
-        sessions[session] = Session()
+        sessions[session] = Session(session)
+
+        self.connection.context.cubby.put(session)
 
         return sessions[session]
 
@@ -291,7 +411,6 @@ class Response:
         import Cookie
         cookie = Cookie.SmartCookie()
 
-        import time
         TTL = 60*60*24 # time to live in seconds
         expire = time.time()+TTL
 
@@ -357,7 +476,6 @@ class Headers(UserDict):
 
 def date_time_string(t=None):
     """Return the current date and time formatted for a message header."""
-    import time
     weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
     monthname = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -371,6 +489,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 4.2  2000/11/28 15:35:04  eikeon
+#~ Move creation of ServerContext to Server
+#~
 #~ Revision 4.1  2000/11/09 21:14:21  eikeon
 #~ made cookies persist for 24 hours
 #~
