@@ -1,22 +1,23 @@
 # $Header$
 
-from redfoot import server
-from redfoot import rednode
-from redfoot.modules import editor
+from redfoot.server import RedServer
+from redfoot.rednode import RedNode
+from redfoot.modules.editor import Editor
+from rdf.query import QueryStore
 from rdf.const import *
 
 
 if __name__ == "__main__":
-    server = server.RedServer(("", 8000))
+    server = RedServer(("", 8000))
     server.run_autoload("sample1", "sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
     
 
 class UI:
 
     def __init__(self, location, uri):
-        self.rednode = rednode.RedNode()
+        self.rednode = RedNode()
         self.rednode.local.load(location, uri)
-        self.editor = editor.Editor(self.rednode)
+        self.editor = Editor(self.rednode)
         
     def handle_request(self, request, response):
         path_info = request.getPathInfo()
