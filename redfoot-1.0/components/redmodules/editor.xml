@@ -160,6 +160,11 @@
                     b.sort(self.alpha_by_label)
                   </red:exec>  
 
+                  <red:if test="not value in b.set">
+                    <OPTION SELECTED='TRUE' VALUE='{value}'>
+                      <red:eval>self.app.rednode.label(value)</red:eval>
+                    </OPTION>
+                  </red:if>
                   <red:for item="v" list="b.set">
                     <red:if test="v == value">
                       <OPTION SELECTED='TRUE' VALUE='{v}'>
@@ -171,7 +176,7 @@
                         </OPTION>
                       </red:else>  
                     </red:if>
-                  </red:for>  
+                  </red:for>
                 </SELECT>
                 <red:else>
                   <!-- TODO do something better than this -->
