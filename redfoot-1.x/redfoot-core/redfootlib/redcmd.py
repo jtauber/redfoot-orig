@@ -210,7 +210,7 @@ work. """
 
         # TODO: check arg and uninstall... for now install reguardless
         
-        from redfootlib.redcode import importer
+        from redfootlib.server.redcode import importer
         importer.install()
 
     def do_add_app(self, arg):
