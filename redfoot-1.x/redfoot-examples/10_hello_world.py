@@ -1,4 +1,4 @@
-#-*- mode: python-*-
+#
 
 from redfoot.module import App
 
@@ -9,9 +9,11 @@ class HelloWorld(App):
 <html>
   <title>Hello World!</title>
   <h1>Hello World!</h1>
+  <h2>Pure Python</h2>
 </html>
 """);
         response.close()
 
+# 
 from redfoot import register_app
-register_app("http://eikeon.com/2002/04/08/HelloWorld", HelloWorld)
+register_app("http://redfoot.net/2002/04/08/HelloWorld", HelloWorld)
