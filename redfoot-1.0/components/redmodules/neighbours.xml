@@ -86,6 +86,7 @@
                 <INPUT value="Remove" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
               </TD>
 
+              <!-- Make the status red -->
               <TD><red:eval>self.status.get(neighbour.uri, '')</red:eval></TD>
             </TR>
     </red:facet>
@@ -115,11 +116,15 @@
        from urllib import quote, quote_plus
 
        scheme, netloc, url, params, query, fragment = urlparse(uri)
+       orig = uri
        url = quote(url, safe="/%")
        query = quote_plus(query, safe="=&amp;")
        uri = urlunparse((scheme, netloc, url, params, query, fragment))
        # TODO: check to see if uri has been further encoded by the
        # above and if so, added a warning message to that effect.
+       if uri!=orig:
+          self.status[uri] = "URI contained illegal characters. Encoded '%s' as '%s'" % (orig, uri)
+
        
        self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)
        self.app.rednode.add(resource(uri), CONNECTED, NO)
