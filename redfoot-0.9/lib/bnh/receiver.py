@@ -71,5 +71,8 @@ class Receiver:
     
 
 #~ $Log$
+#~ Revision 6.1  2001/03/26 20:19:00  eikeon
+#~ removed old header
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release

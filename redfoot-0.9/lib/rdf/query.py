@@ -356,6 +356,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 6.5  2001/03/26 20:18:01  eikeon
+#~ removed old log messages
+#~
 #~ Revision 6.4  2001/03/13 19:43:03  eikeon
 #~ one line bug fix
 #~

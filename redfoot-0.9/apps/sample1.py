@@ -86,6 +86,9 @@ class UI:
         return 0
 
 # $Log$
+# Revision 6.1  2001/03/22 01:10:27  jtauber
+# refactor of apps and the way servers are started by them
+#
 # Revision 6.0  2001/02/19 05:01:23  jtauber
 # new release
 #

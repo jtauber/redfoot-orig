@@ -183,6 +183,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 6.4  2001/03/26 20:18:01  eikeon
+#~ removed old log messages
+#~
 #~ Revision 6.3  2001/03/13 02:12:05  eikeon
 #~ added missing import
 #~

@@ -49,3 +49,6 @@ class ConnectionCubby:
         self.mon.release()
 
 #~ $Log$
+#~ Revision 6.1  2001/03/26 20:19:00  eikeon
+#~ removed old header
+#~

@@ -457,6 +457,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 6.3  2001/03/22 01:10:27  jtauber
+#~ refactor of apps and the way servers are started by them
+#~
 #~ Revision 6.2  2001/02/27 21:14:05  eikeon
 #~ made path optional
 #~

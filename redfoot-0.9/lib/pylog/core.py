@@ -218,6 +218,9 @@ if test4: add(("_X","num-legs","4"),("_X","type","turtle"))
 if test4: print goal(("fred","num-legs","_X"))
 
 # $Log$
+# Revision 6.0  2001/02/19 05:01:23  jtauber
+# new release
+#
 # Revision 5.0  2000/12/08 08:34:52  eikeon
 # new release
 #

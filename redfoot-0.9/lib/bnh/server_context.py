@@ -148,6 +148,9 @@ class Cubby:
 
 
 #~ $Log$
+#~ Revision 6.2  2001/03/26 20:19:01  eikeon
+#~ removed old header
+#~
 #~ Revision 6.1  2001/03/13 04:02:50  eikeon
 #~ fixed cookies so that they persist a very long time; changed default max inactive time to 10 years
 #~

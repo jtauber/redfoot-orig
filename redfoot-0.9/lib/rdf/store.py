@@ -250,6 +250,9 @@ class JournalingStore:
 
         
 #~ $Log$
+#~ Revision 6.5  2001/03/02 19:24:01  eikeon
+#~ fixes for JournalingStore / Sample2
+#~
 #~ Revision 6.4  2001/03/02 15:47:40  eikeon
 #~ added SOURCE property to journal statements
 #~

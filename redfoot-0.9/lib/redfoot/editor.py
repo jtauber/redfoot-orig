@@ -369,6 +369,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 6.7  2001/03/20 21:49:08  jtauber
+#~ encoding of prop_orig now consistent
+#~
 #~ Revision 6.5  2001/03/15 16:47:51  eikeon
 #~ The recent change to update broke copy... it is now fixed.
 #~

@@ -109,6 +109,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 6.3  2001/03/26 20:12:08  eikeon
+#~ fixed bug introduced since last release
+#~
 #~ Revision 6.2  2001/02/27 21:02:36  eikeon
 #~ fixed small bug introduced since last release
 #~
