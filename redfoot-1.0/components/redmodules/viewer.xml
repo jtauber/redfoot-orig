@@ -79,7 +79,7 @@
         <red:eval>res</red:eval>
         <red:else>
           <A HREF='view?subject={encode_URI(res)}'
-             TITLE='{self.app.rednode.comment(res))'>
+             TITLE='{self.app.rednode.comment(res)}'>
             <red:eval>
               self.app.rednode.label(res)
             </red:eval>
