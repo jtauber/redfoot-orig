@@ -1,3 +1,5 @@
+# $Header$
+
 from redfoot.viewer import Viewer
 
 class Editor(Viewer):
@@ -349,7 +351,7 @@ class PeerEditor(Editor):
             self.qstore.getStore().connectTo(params["uri"][0])
 
 
-
+# $Log$
 
 
 
