@@ -52,6 +52,8 @@ class Viewer:
             self.view(parameters['uri'])
         elif path_info == "/test":
             self.test(parameters['search'])
+        elif path_info == "/graphViz":
+            self.graphViz()
         else:
             self.response.write("unknown PATH of '%s'" % path_info)
 
@@ -421,7 +423,23 @@ class Viewer:
         self.response.write("""</UL>""")
         self.footer()
 
+    def graphViz(self):
+        self.response.write("""
+            digraph G {
+        """)
+        def callback(s,p,o,response=self.response, node=self.storeNode):
+            response.write("""
+	        "%s" -> "%s" [ label="%s" ];
+            """ % (node.label(s), node.label(o), node.label(p)))
+        self.getNodeInScope().visit(callback, None, None, None)
+        self.response.write("""
+            }
+        """)
+
 #~ $Log$
+#~ Revision 5.10  2000/12/09 23:02:12  jtauber
+#~ fixed font-weight and size
+#~
 #~ Revision 5.9  2000/12/09 22:56:40  jtauber
 #~ removed second menubar in view
 #~
