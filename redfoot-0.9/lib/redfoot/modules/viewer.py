@@ -457,6 +457,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 1.2  2001/04/22 05:06:53  eikeon
+#~ RDF->HOME until we fix it to always return RDF
+#~
 #~ Revision 1.1  2001/04/14 23:40:28  eikeon
 #~ created a lib/redfoot/modules directory and moved editor/viewer into it
 #~

@@ -357,6 +357,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 1.3  2001/04/24 04:21:07  eikeon
+#~ added serial number to end of generated URIs to ensure uniqeness
+#~
 #~ Revision 1.2  2001/04/23 01:24:19  eikeon
 #~ removed relic from the past
 #~

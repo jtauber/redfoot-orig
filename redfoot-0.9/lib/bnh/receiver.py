@@ -105,6 +105,9 @@ class Receiver:
     
 
 #~ $Log$
+#~ Revision 7.3  2001/04/24 01:51:10  eikeon
+#~ added TODO
+#~
 #~ Revision 7.2  2001/04/14 16:43:43  eikeon
 #~ the args attribute of the response tag now takes space separated args
 #~

@@ -53,6 +53,9 @@ class UI:
         """)
 
 ## $Log$
+## Revision 7.6  2001/04/24 05:42:53  eikeon
+## all samples can now be run using 'run module_name'
+##
 ## Revision 7.5  2001/04/23 01:53:27  eikeon
 ## reverter to 7.3 -- as my changes where cosmetic yet broke things :(
 ##

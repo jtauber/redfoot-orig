@@ -94,6 +94,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 1.1  2001/04/14 03:57:40  eikeon
+#~ moved here from lib/bnh
+#~
 #~ Revision 7.1  2001/04/12 22:52:18  eikeon
 #~ removed management of session objects; BNH now only deals with the setting/getting of the EBNH_session cookie
 #~

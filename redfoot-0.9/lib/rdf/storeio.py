@@ -189,6 +189,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 7.2  2001/04/14 23:06:13  eikeon
+#~ removed old log messages
+#~
 #~ Revision 7.1  2001/04/03 03:34:15  eikeon
 #~ added a message to stderr when auto saving; added a try catch around auto save so that thread does not die when there is an error saving (like disk being full:)
 #~

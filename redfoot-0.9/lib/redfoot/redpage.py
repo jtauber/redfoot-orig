@@ -436,6 +436,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.10  2001/04/21 04:55:11  eikeon
+#~ removed RF_LOAD as the corresponding load-module tag has already been removed
+#~
 #~ Revision 7.9  2001/04/15 16:58:42  eikeon
 #~ removed load-module tag (for now)
 #~

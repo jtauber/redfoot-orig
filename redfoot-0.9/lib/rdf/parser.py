@@ -214,6 +214,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 7.2  2001/04/14 23:06:13  eikeon
+#~ removed old log messages
+#~
 #~ Revision 7.1  2001/04/03 03:43:24  eikeon
 #~ added printing of stack trace for parsing exceptions; added an IgnoreHandler to correctly ignore bits that we do not parse yet
 #~

@@ -207,6 +207,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.7  2001/04/24 05:49:58  eikeon
+#~ collapsed almost parallel code for runing module into one method
+#~
 #~ Revision 7.6  2001/04/22 05:20:28  jtauber
 #~ fixed bug where start was being called twice
 #~

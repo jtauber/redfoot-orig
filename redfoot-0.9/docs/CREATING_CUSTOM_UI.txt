@@ -101,6 +101,9 @@ PROVIDING HTTP TO THE UNDERLYING REDFOOT
 TODO
 
 $Log$
+Revision 7.0  2001/03/26 23:41:04  eikeon
+NEW RELEASE
+
 Revision 6.1  2001/03/22 01:10:27  jtauber
 refactor of apps and the way servers are started by them
 

@@ -84,6 +84,9 @@ class ConnectionCubby:
         self.mon.release()
 
 #~ $Log$
+#~ Revision 7.2  2001/04/14 23:08:49  eikeon
+#~ removed old log messages
+#~
 #~ Revision 7.1  2001/04/14 03:58:34  eikeon
 #~ removed unused code and added LICENSE to top of source files
 #~
