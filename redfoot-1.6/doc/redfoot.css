@@ -15,9 +15,22 @@ h1 {
   margin:      0px -10px 10px -10px;
 }
 
-h2 {
+h2, h3 {
   font-family: "Trebuchet MS", sans-serif;
   color: #990000;
+}
+
+a {
+    font-weight: bold;
+    color: #000;
+    text-decoration: none
+}
+
+a:hover {
+    font-weight: bold;
+    color: #000;
+    background-color: #ddd;
+    text-decoration: none
 }
 
 .sidebar {
@@ -42,6 +55,8 @@ dt {
 
 dl {
   margin-left: 3em;
+  font-family: "Trebuchet MS", sans-serif;
+  color: #990000;
 }
 
 td {
@@ -68,6 +83,7 @@ div.NAV A {
 
 div.NAV A:hover {
   color: #FFF;
+  background-color: #222;
 }
 
 .ednote {
