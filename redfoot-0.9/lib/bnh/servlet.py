@@ -12,17 +12,17 @@ class ServerConnection:
         self.handler = handler
         self.context = context
         
-    def handle_request(self, server, clientSocket):
+    def handle_request(self, server, client_socket):
         try:
             try:
-                self.request._set_client_socket(clientSocket)
-                self.response._set_client_socket(clientSocket)
+                self.request._set_client_socket(client_socket)
+                self.response._set_client_socket(client_socket)
                 self.handler.handle_request(self.request, self.response)
                 self.request.close()
                 self.response.close()                
-                clientSocket.shutdown(1)
+                client_socket.shutdown(1)
             finally:
-                clientSocket.close()
+                client_socket.close()
         except socket.error:
             #TODO: log
             pass
@@ -51,8 +51,8 @@ class Request:
     def __init__(self, connection):
         self.connection = connection
 
-    def _set_client_socket(self, clientSocket):
-        self._rfile = clientSocket.makefile('rb', 0)
+    def _set_client_socket(self, client_socket):
+        self._rfile = client_socket.makefile('rb', 0)
         self._firstline = None
         self._parameters = None
         self._headers = None
@@ -165,8 +165,8 @@ class Response:
     def __init__(self, connection):
         self.connection = connection
 
-    def _set_client_socket(self, clientSocket):
-        self._wfile = clientSocket.makefile('wb', 0)
+    def _set_client_socket(self, client_socket):
+        self._wfile = client_socket.makefile('wb', 0)
         self.head_sent = 0
         self._header = {'Server': "eikeon's Bare Naked HTTP Server",
                        'Date': date_time_string(),
@@ -262,6 +262,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 5.7  2000/12/20 21:22:07  eikeon
+#~ converted many mixedCase names to _ style names
+#~
 #~ Revision 5.6  2000/12/19 05:34:57  eikeon
 #~ removed debug output
 #~
