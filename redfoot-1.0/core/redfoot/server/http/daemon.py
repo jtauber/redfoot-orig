@@ -53,6 +53,8 @@ class RedDaemon(HTTPDaemon):
                 import threading
                 threading.Event().wait(100)
         except KeyboardInterrupt:
+            print "Shutting down... autosaving"
+            module._app_instance.rednode.local.save()
             self.stop()
 
     def load(self, module, args=()):
@@ -61,6 +63,7 @@ class RedDaemon(HTTPDaemon):
 
         app_class = module.__redpages__
         instance = apply(app_class, args)
+        module._app_instance = instance
         servername, port = self.server_address
         if port==80:
             instance.URI = "http://%s/" % servername
