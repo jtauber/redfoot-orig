@@ -144,24 +144,20 @@ class QueryStore:
 
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
-        def subclassStatement(s, p, o, \
-                              processClass=processClass, \
-                              processInstance=processInstance, \
-                              currentDepth=currentDepth,
-                              recurse=recurse,
-                              self=self):
+        def subclass(s, p, o, self=self, currentDepth=currentDepth, recurse=recurse,\
+                     processClass=processClass, processInstance=processInstance):
             if recurse:
                 self.subClassV(s, processClass, processInstance, currentDepth+1)
             else:
-                processClass(s, currentDepth+1, recurse)                
-        self.visit(subclassStatement, None, SUBCLASSOF, type)
-        def instanceStatement(s, p, o, \
-                              currentDepth=currentDepth, \
-                              recurse=recurse, \
-                              processInstance=processInstance):
-            processInstance(s, currentDepth, recurse)            
-        self.visit(instanceStatement, None, TYPE, type)
-    
+                processClass(s, currentDepth+1, recurse)
+        # show classes in neighbourhood as well
+        self.visit(subclass, None, SUBCLASSOF, type)
+        def instance(s, p, o, processInstance=processInstance, \
+                     currentDepth=currentDepth, recurse=recurse):
+            processInstance(s, currentDepth, recurse)
+        # only show local instances
+        self.visit(instance, None, TYPE, type)
+
     # REIFICATION STUFF
 
     def reifiedV(self, subject, processStatement):
@@ -222,6 +218,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 4.15  2000/12/06 21:22:40  eikeon
+#~ added getRange function
+#~
 #~ Revision 4.14  2000/12/06 20:49:38  eikeon
 #~ decomposed getPossibleProperties into two methods... one that takes a subject and the other that takes a type... also added a getTypes method
 #~

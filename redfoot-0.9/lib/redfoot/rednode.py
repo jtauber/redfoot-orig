@@ -57,15 +57,20 @@ class RedNode(QueryStore, AutoSaveStoreIO):
 
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
-        # show classes in neighbourhood as well
-        for subclassStatement in self.neighbourhood.get(None, SUBCLASSOF, type): 
+        def subclass(s, p, o, self=self, currentDepth=currentDepth, recurse=recurse,\
+                     processClass=processClass, processInstance=processInstance):
             if recurse:
-                self.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
+                self.subClassV(s, processClass, processInstance, currentDepth+1)
             else:
-                processClass(subclassStatement[0], currentDepth+1, recurse)
-        # only show local instances 
-        for instanceStatement in self.get(None, TYPE, type):
-            processInstance(instanceStatement[0], currentDepth, recurse)
+                processClass(s, currentDepth+1, recurse)
+        # show classes in neighbourhood as well
+        self.neighbourhood.visit(subclass, None, SUBCLASSOF, type)
+        def instance(s, p, o, processInstance=processInstance, \
+                     currentDepth=currentDepth, recurse=recurse):
+            processInstance(s, currentDepth, recurse)
+        # only show local instances
+        self.visit(instance, None, TYPE, type)
+
 
     def resourcesByClassV(self, processClass, processResource):
         def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
@@ -134,6 +139,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.12  2000/12/06 21:28:04  eikeon
+#~ added resourcesByClassV and subClassV to rednode as they are effected by show/hide neighbourhood; removed subClassV from neighbourhood we do not wish to override it
+#~
 #~ Revision 4.11  2000/12/06 19:41:37  eikeon
 #~ removed get method as it is now implemented on query
 #~
