@@ -1,23 +1,22 @@
 # $Header$
 
-from redfoot.server import RedServer
-from redfoot.rednode import RedNode
-from redfoot.modules.editor import Editor
-from rdf.query import QueryStore
+from redfoot import server
+from redfoot import rednode
+from redfoot.modules import editor
 from rdf.const import *
 
 
 if __name__ == "__main__":
-    server = RedServer(("", 8000))
+    server = server.RedServer(("", 8000))
     server.run_autoload("sample1", "sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
     
 
 class UI:
 
     def __init__(self, location, uri):
-        self.rednode = RedNode()
+        self.rednode = rednode.RedNode()
         self.rednode.local.load(location, uri)
-        self.editor = Editor(self.rednode)
+        self.editor = editor.Editor(self.rednode)
         
     def handle_request(self, request, response):
         path_info = request.getPathInfo()
@@ -48,6 +47,9 @@ class UI:
         """)
 
 ## $Log$
+## Revision 7.3  2001/04/14 23:40:28  eikeon
+## created a lib/redfoot/modules directory and moved editor/viewer into it
+##
 ## Revision 7.2  2001/04/12 09:05:31  jtauber
 ## removed authentication as no longer worked
 ##
