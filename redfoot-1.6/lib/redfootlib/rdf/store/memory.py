@@ -20,15 +20,18 @@ pos[p][o][s] = 1.
         # indexed by [predicate][object][subject]
         self.__pos = {}
 
-    def add(self, s, p, o):
+    def add(self, subject, predicate, object):
         """\
         Add a triple to the store of triples.
         """
         # add dictionary entries for spo[s][p][p] = 1 and pos[p][o][s]
         # = 1, creating the nested dictionaries where they do not yet
         # exits.
-        self.__spo.setdefault(s, {}).setdefault(p, {})[o] = 1
-        self.__pos.setdefault(p, {}).setdefault(o, {})[s] = 1
+        sp = self.__spo.setdefault(subject, {})
+        sp.setdefault(predicate, {})[object] = 1
+        
+        po = self.__pos.setdefault(predicate, {})
+        po.setdefault(object, {})[subject] = 1
 
     def remove(self, subject, predicate, object):
         del self.__spo[subject][predicate][object]
@@ -48,19 +51,19 @@ pos[p][o][s] = 1.
                             else: # given object not found
                                 pass
                         else: # subject+predicate is given, object unbound
-                            for o in subjectDictionary[predicate].keys():
+                            for o in subjectDictionary[predicate]:
                                 yield subject, predicate, o
                     else: # given predicate not found
                         pass
                 else: # subject given, predicate unbound
-                    for p in subjectDictionary.keys():
+                    for p in subjectDictionary:
                         if object!=ANY: # object is given
                             if object in subjectDictionary[p]:
                                 yield subject, p, object
                             else: # given object not found
                                 pass
                         else: # object unbound
-                            for o in subjectDictionary[p].keys():
+                            for o in subjectDictionary[p]:
                                 yield subject, p, o
             else: # given subject not found
                 pass
@@ -70,29 +73,29 @@ pos[p][o][s] = 1.
                 predicateDictionary = pos[predicate]
                 if object!=ANY: # predicate+object is given, subject unbound
                     if object in predicateDictionary:
-                        for s in predicateDictionary[object].keys():
+                        for s in predicateDictionary[object]:
                             yield s, predicate, object
                     else: # given object not found
                         pass
                 else: # predicate is given, object+subject unbound
-                    for o in predicateDictionary.keys():
-                        for s in predicateDictionary[o].keys():
+                    for o in predicateDictionary:
+                        for s in predicateDictionary[o]:
                             yield s, predicate, o
         elif object!=ANY: # object is given, subject+predicate unbound
             pos = self.__pos
-            for p in pos.keys():
+            for p in pos:
                 predicateDictionary = pos[p]
                 if object in predicateDictionary:
-                    for s in predicateDictionary[object].keys():
+                    for s in predicateDictionary[object]:
                         yield s, p, object
                 else: # given object not found
                     pass
         else: # subject+predicate+object unbound
             spo = self.__spo
-            for s in spo.keys():
+            for s in spo:
                 subjectDictionary = spo[s]
-                for p in subjectDictionary.keys():
-                    for o in subjectDictionary[p].keys():
+                for p in subjectDictionary:
+                    for o in subjectDictionary[p]:
                         yield s, p, o
 
     def subjects(self, predicate=None, object=None):
@@ -105,7 +108,7 @@ pos[p][o][s] = 1.
             if object!=None:
                 os_list = self.__pos[predicate].values()                
             else:
-                for s in self.__spo.keys():
+                for s in self.__spo:
                     yield s
                 return
             
@@ -118,7 +121,7 @@ pos[p][o][s] = 1.
                 else:
                     return
             for s in s_list:
-                for subject in s.keys():
+                for subject in s:
                     yield subject
 
     def objects(self, subject, predicate):
@@ -139,9 +142,6 @@ pos[p][o][s] = 1.
                 o_list = po.values()
 
             for o in o_list:
-                for object in o.keys():
+                for object in o:
                     yield object
             
- 
-
-
