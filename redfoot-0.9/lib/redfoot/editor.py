@@ -82,10 +82,10 @@ class Editor(Viewer):
         self.property_num = 0
 
         if self.storeNode.isKnownResource(subject):
-            self.storeNode.propertyValuesV(subject, self.editProperty)
-            self.storeNode.neighbourhood.propertyValuesV(subject, self.displayPropertyValue)
+            self.storeNode.local.visitPredicateObjectPairsForSubject(self.editProperty, subject)
+            self.storeNode.neighbourhood.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
         
-	    self.storeNode.reifiedV(subject, self.displayReifiedStatements)
+	    self.storeNode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
 
             self.response.write("""
               <TR>
@@ -99,7 +99,7 @@ class Editor(Viewer):
                 self.response.write("""
                     <OPTION value="%s">%s</OPTION>
                                     """ % (s, self.storeNode.label(s)))
-            self.storeNode.getPossiblePropertiesForSubject(subject, possibleProperty)
+            self.storeNode.visitPossiblePropertiesForSubject(possibleProperty, subject)
 
 
             def option(s, p, o, write=self.response.write, neighbourhood=self.storeNode.neighbourhood):
@@ -184,7 +184,7 @@ class Editor(Viewer):
                     # we use a key of 'label + s' to insure uniqness of key
                     possibleValues[label+s] = s 
 
-                self.storeNode.getPossibleValuesV(property, possibleValue)
+                self.storeNode.visitPossibleValues(possibleValue, property)
 
                 pvs = possibleValues.keys()
                 pvs.sort()
@@ -438,6 +438,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 5.2  2000/12/09 23:02:12  jtauber
+# fixed font-weight and size
+#
 # Revision 5.1  2000/12/09 22:08:33  eikeon
 # subclass -> fullsubclass; subclassNR -> subclass
 #

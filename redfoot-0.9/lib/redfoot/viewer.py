@@ -211,11 +211,11 @@ class Viewer:
         """)
 
         node = self.getNodeInScope()
-        node.resourcesByClassV(self.displayClass, self.displayResource)
+        node.visitResourcesByType(self.displayClass, self.displayResource)
         
         firstTypeless = 1
 
-        for resource in node.typelessResources():
+        for resource in node.getTypelessResources():
             if firstTypeless==1:
                 self.response.write("""<DT>Typeless</DT>""")
                 firstTypeless=0
@@ -232,13 +232,13 @@ class Viewer:
         self.response.write("""
             <DIV CLASS="box">
 	""")
-	self.storeNode.parentTypesV(root, self.displayParent)
+	self.storeNode.visitParentTypes(self.displayParent, root)
 	self.response.write("""
               <DL>
         """)
 
         node = self.getNodeInScope()
-        node.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+        node.visitSubclasses(self.displaySCClass, self.displaySCResource, root, recurse=recurse)
             
         self.response.write("""
               </DL>
@@ -260,10 +260,10 @@ class Viewer:
         """)
 
         if self.storeNode.isKnownResource(subject):
-            self.storeNode.propertyValuesV(subject, self.displayPropertyValue)
+            self.storeNode.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
         else:
             self.response.write("<TR><TD>Resource not known of directly</TD></TR>")
-        self.storeNode.reifiedV(subject, self.displayReifiedStatements)
+        self.storeNode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
         
         self.response.write("""
             </TABLE>
@@ -330,7 +330,7 @@ class Viewer:
         self.response.write("""
         <TR CLASS="REIFIED"><TD>%s</TD><TD></TD><TD>%s</TD>
         <TD COLSPAN="3">%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
-        self.storeNode.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
+        self.storeNode.visitPredicateObjectPairsForSubject(self.displayReifiedStatementPropertyValue, subject)
         self.response.write("""
         </TD></TR>""")
 
@@ -437,6 +437,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.11  2000/12/10 01:19:13  jtauber
+#~ init attempt at generating dot for graphviz
+#~
 #~ Revision 5.10  2000/12/09 23:02:12  jtauber
 #~ fixed font-weight and size
 #~

@@ -2,19 +2,28 @@
 from rdf.literal import literal, un_literal, is_literal
 from rdf.const import *
 
-class QueryStore:
-    # TODO: method to return all labels
+class QueryBase:
 
-    def comment(self, subject, default=None):
-        statement = self.getFirst(subject, COMMENT, None)
-        if statement!=None:
-            return un_literal(statement[2])
-        elif default!=None:
-            return default
+    def query(self, visitor, subject=None, predicate=None, object=None):
+        self.visit(visitor.visit, subject, predicate, object)
+        visitor.flush()
+        
+    def get(self, subject=None, predicate=None, object=None):
+        listBuilder = ListBuilder()
+        self.query(listBuilder, subject, predicate, object)
+	return listBuilder.list
+
+    def getFirst(self, subject, predicate, object):
+        listBuilder = ListBuilder()
+        self.query(First(listBuilder), subject, predicate, object)
+        list = listBuilder.list
+        if len(list)>0:
+            return list[0]
         else:
-            return self.label(subject)
+            return None
 
     def isKnownResource(self, resource):
+        """is the given resource known?"""
         if self.getFirst(resource, None, None)!=None:
             return 1
         else:
@@ -22,42 +31,14 @@ class QueryStore:
         
     # TODO: should we have a version of this that answers for subclasses too?
     def isOfType(self, resource, type):
+        """is the given resource of the given type"""
         statement = self.getFirst(resource, TYPE, type)
         if statement != None:
             return 1
         else:
             return 0
 
-    def transitiveSuperTypes(self, type):
-        objectSetBuilder = ObjectSetBuilder()
-        objectSetBuilder.set[type] = 1
-        query = Query(self.query, (objectSetBuilder,), lambda s, p, o: (o, SUBCLASSOF, None))
-        self.superTypeV(query, type)
-        return objectSetBuilder.set.keys()
-
-    def superTypeV(self, visitor, type):
-        self.query(visitor, type, SUBCLASSOF, None)
-
-    def transitiveSubTypes(self, type):
-        subjectSetBuilder = SubjectSetBuilder()
-        subjectSetBuilder.set[type] = 1
-        query = Query(self.query, (subjectSetBuilder,), lambda s, p, o: (None, SUBCLASSOF, s))
-        self.subTypeV(query, type)
-        return subjectSetBuilder.set.keys()
-
-    def subTypeV(self, visitor, type):
-        self.query(visitor, None, SUBCLASSOF, type)
-
-    def rootClasses(self):
-        """returns those classes that aren't a subclass of anything"""
-        result = []
-        def klass(s, p, o, result=result, self=self):
-            if self.getFirst(s, SUBCLASSOF, None)==None:
-                result.append(s)
-        self.visit(klass, None, TYPE, CLASS)
-        return result
-
-    def typelessResources(self):
+    def getTypelessResources(self):
         """returns those resources that don't have a type"""
         result = []
         def callback(s, p, o, result=result, self=self):
@@ -66,55 +47,44 @@ class QueryStore:
         self.visit(callback, None, None, None)
         return result
 
-    def typelessResourcesV(self, callback):
+    def visitTypelessResources(self, callback):
         """returns those resources that don't have a type"""
         def adaptor(s, callback=callback, self=self):
             if self.getFirst(s, TYPE, None)==None:
                 callback(s)
         self.visitSubjects(adaptor)
 
-    # visitor pattern
-    def resourcesByClassV(self, processClass, processResource):
-        processResourceV = Query(processResource, (), lambda s, p, o: (s,))
-        queryV = Query(self.query, (processResourceV,), lambda s, p, o: (None, TYPE, s))
+    # TODO: do you really need me?
+    def visitTypes(self, callback, subject=None):
+        self.visit(callback, subject, TYPE, None)
 
-        processClassV = Query(processClass, (), lambda s, p, o: (s,))
+    # TODO: need a visitor version
+    def getByType(self, type, predicate, object):
+        listBuilder = ListBuilder()
+        query = Query(self.query, (listBuilder,), lambda s, p, o: (s,), (predicate, object))
+        self.query(query, None, TYPE, type)
+        return listBuilder.list
 
-        first = Query(self.query, (If(First(), processClassV),),\
-                      lambda s, p, o: (None, TYPE,  s))
+    def visitResourcesByType(self, type_callback, resource_callback):
+        resourceVisitor = Query(resource_callback, (), lambda s, p, o: (s,))
+        queryV = Query(self.query, (resourceVisitor,), lambda s, p, o: (None, TYPE, s))
 
-        #classVisitor = And(first, queryV)
-        classVisitor = And(processClassV, queryV)
+        typeVisitor = Query(type_callback, (), lambda s, p, o: (s,))
+
+        classVisitor = And(typeVisitor, queryV)
 
         self.query(classVisitor, None, TYPE, CLASS)
         
-    def parentTypesV(self, type, processType):
-        self.visit(lambda s, p, o, processType=processType: processType(o),\
-                   type, SUBCLASSOF, None)
-
-    def propertyValuesV(self, subject, processPropertyValue):
-        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
-            processPropertyValue(p, o)            
+    def visitPredicateObjectPairsForSubject(self, predicateObject_callback, subject):
+        def callbackAdaptor(s, p, o, predicateObject_callback=predicateObject_callback):
+            predicateObject_callback(p, o)            
         self.visit(callbackAdaptor, subject, None, None)
-
-    def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
-        processClass(type, currentDepth, recurse)
-
-        if recurse:
-            query = Query(self.subClassV, (), lambda s, p, o: (s,), (processClass, processInstance, currentDepth+1))
-        else:
-            query = Query(processClass, (), lambda s, p, o: (s,), (currentDepth+1, 0))
-        self.query(query, None, SUBCLASSOF, type)
-        
-        instanceQuery = Query(processInstance, (), lambda s, p, o: (s,), (currentDepth, recurse))
-        self.query(instanceQuery, None, TYPE, type)
-
 
     # REIFICATION STUFF
 
-    def reifiedV(self, subject, processStatement):
+    def visitReifiedStatementsAboutSubject(self, callback, subject):
         for statement in self.getByType(STATEMENT, SUBJECT, subject):
-            processStatement(statement[0], self.get(statement[0], PREDICATE, None)[0][2], self.get(statement[0], OBJECT, None)[0][2])
+            callback(statement[0], self.get(statement[0], PREDICATE, None)[0][2], self.get(statement[0], OBJECT, None)[0][2])
 
     # should perhaps just autogenerate statement_uri
     def reify(self, statement_uri, subject, predicate, object):
@@ -131,84 +101,6 @@ class QueryStore:
         self.local.add(subject, predicate, object)
         #self.removeAll(statement)
 
-    def getPossibleValues(self, property):
-        resultset = {}
-
-        def possibleSubject(subject, property, value, resultset=resultset):
-            resultset[subject] = 1
-
-        self.getPossibleValuesV(property, possibleSubject)
-
-        return resultset.keys()
-        
-    # callback may be called more than once for the same possibleValue... user
-    # of this method will have to remove duplicates
-    def getPossibleValuesV(self, property, possibleValue):        
-        def rangeitem(s, p, o, self=self, qstore=self, possibleValue=possibleValue):
-            for type in qstore.transitiveSubTypes(o):
-                qstore.visit(possibleValue, None, TYPE, type)
-
-        query = Query(rangeitem, (), lambda s, p, o: (s, p, o), (self, self, possibleValue))
-
-        self.query(query, property, RANGE, None)
-        #self.visit(rangeitem, property, RANGE, None)
-        
-    def getPossibleProperties(self, type, possibleProperty):
-        for superType in self.transitiveSuperTypes(type):
-            self.visit(possibleProperty, None, DOMAIN, superType)
-
-    def visitTypes(self, callback, subject=None):
-        self.visit(callback, subject, TYPE, None)
-
-    def getPossiblePropertiesForSubject(self, subject, possibleProperty):
-        def type(s, p, o, self=self, possibleProperty=possibleProperty):
-            self.getPossibleProperties(o, possibleProperty)
-        self.visitTypes(type, subject)
-        # all subjects can take the properties that resource can
-        # note: this will definitely lead to duplicates, but they are
-        # possible anyway
-        self.getPossibleProperties(RESOURCE, possibleProperty)
-
-    def getRange(self, property):
-        statement = self.getFirst(property, RANGE, None)
-        if statement!=None:
-            return statement[2]
-        else:
-            return None
-
-    def query(self, visitor, subject=None, predicate=None, object=None):
-        self.visit(visitor.visit, subject, predicate, object)
-        visitor.flush()
-        
-    def get(self, subject=None, predicate=None, object=None):
-        listBuilder = ListBuilder()
-        self.query(listBuilder, subject, predicate, object)
-	return listBuilder.list
-
-    def getByType(self, type, predicate, object):
-        listBuilder = ListBuilder()
-        query = Query(self.query, (listBuilder,), lambda s, p, o: (s,), (predicate, object))
-        self.query(query, None, TYPE, type)
-        return listBuilder.list
-
-    def label(self, subject, default=None):
-        statement = Statement()
-        self.query(First(statement), subject, LABEL, None)
-        if statement.object():
-            return un_literal(statement.object())
-        elif default!=None:
-            return default
-        else:
-            return subject
-
-    def getFirst(self, subject, predicate, object):
-        listBuilder = ListBuilder()
-        self.query(First(listBuilder), subject, predicate, object)
-        list = listBuilder.list
-        if len(list)>0:
-            return list[0]
-        else:
-            return None
 
 class First:
     def __init__(self, visitor=None):
@@ -330,7 +222,117 @@ class Alpha:
             s, p, o = self.statements[k]
             apply(self.query, self.pre + self.adapter(s, p, o) + self.post)
 
+
+class QueryStore(QueryBase):
+
+    # TODO: method to return all labels
+    def label(self, subject, default=None):
+        statement = Statement()
+        self.query(First(statement), subject, LABEL, None)
+        if statement.object():
+            return un_literal(statement.object())
+        elif default!=None:
+            return default
+        else:
+            return subject
+
+    def comment(self, subject, default=None):
+        statement = self.getFirst(subject, COMMENT, None)
+        if statement!=None:
+            return un_literal(statement[2])
+        elif default!=None:
+            return default
+        else:
+            return self.label(subject)
+
+    # TODO: is this broken?
+    def getTransitiveSuperTypes(self, type):
+        objectSetBuilder = ObjectSetBuilder()
+        objectSetBuilder.set[type] = 1
+        query = Query(self.query, (objectSetBuilder,), lambda s, p, o: (o, SUBCLASSOF, None))
+        self.query(query, type, SUBCLASSOF, None)
+        return objectSetBuilder.set.keys()
+
+    # TODO: is this broken?
+    def getTransitiveSubTypes(self, type):
+        subjectSetBuilder = SubjectSetBuilder()
+        subjectSetBuilder.set[type] = 1
+        query = Query(self.query, (subjectSetBuilder,), lambda s, p, o: (None, SUBCLASSOF, s))
+        self.query(query, None, SUBCLASSOF, type)
+        return subjectSetBuilder.set.keys()
+
+    def getRootClasses(self):
+        """returns those classes that aren't a subclass of anything"""
+        result = []
+        def klass(s, p, o, result=result, self=self):
+            if self.getFirst(s, SUBCLASSOF, None)==None:
+                result.append(s)
+        self.visit(klass, None, TYPE, CLASS)
+        return result
+
+    def visitParentTypes(self, callback, type):
+        self.visit(lambda s, p, o, callback=callback: callback(o),\
+                   type, SUBCLASSOF, None)
+
+    def visitSubclasses(self, class_callback, instance_callback, type, currentDepth=0, recurse=1):
+        class_callback(type, currentDepth, recurse)
+
+        if recurse:
+            query = Query(self.visitSubclasses, (class_callback, instance_callback), lambda s, p, o: (s,), (currentDepth+1,))
+        else:
+            query = Query(class_callback, (), lambda s, p, o: (s,), (currentDepth+1, 0))
+        self.query(query, None, SUBCLASSOF, type)
+        
+        instanceQuery = Query(instance_callback, (), lambda s, p, o: (s,), (currentDepth, recurse))
+        self.query(instanceQuery, None, TYPE, type)
+
+    def getPossibleValues(self, property):
+        resultset = {}
+
+        def possibleSubject(subject, property, value, resultset=resultset):
+            resultset[subject] = 1
+
+        self.getPossibleValuesV(property, possibleSubject)
+
+        return resultset.keys()
+        
+    # callback may be called more than once for the same possibleValue... user
+    # of this method will have to remove duplicates
+    def visitPossibleValues(self, callback, property):        
+        def rangeitem(s, p, o, self=self, qstore=self, callback=callback):
+            for type in qstore.getTransitiveSubTypes(o):
+                qstore.visit(callback, None, TYPE, type)
+
+        query = Query(rangeitem, (), lambda s, p, o: (s, p, o), (self, self, callback))
+
+        self.query(query, property, RANGE, None)
+
+    def visitPossibleProperties(self, callback, type):
+        for superType in self.getTransitiveSuperTypes(type):
+            self.visit(callback, None, DOMAIN, superType)
+
+    # TODO rename "type" function
+    def visitPossiblePropertiesForSubject(self, callback, subject):
+        def type(s, p, o, self=self, callback=callback):
+            self.visitPossibleProperties(callback, o)
+        self.visitTypes(type, subject)
+        # all subjects can take the properties that resource can
+        # note: this will definitely lead to duplicates, but they are
+        # possible anyway
+        self.visitPossibleProperties(callback, RESOURCE)
+
+    # TODO properties should be able to have more than one range
+    def getRange(self, property):
+        statement = self.getFirst(property, RANGE, None)
+        if statement!=None:
+            return statement[2]
+        else:
+            return None
+
 #~ $Log$
+#~ Revision 5.8  2000/12/13 00:43:11  eikeon
+#~ half baked changes
+#~
 #~ Revision 5.7  2000/12/10 07:44:59  eikeon
 #~ refactored label to use new query method; still have a few thoughts before we go nuts and convert everything over
 #~
