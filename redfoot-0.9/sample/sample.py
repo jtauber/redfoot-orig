@@ -89,10 +89,19 @@ class SampleUI(BaseUI):
             
 if __name__ == '__main__':
     import sys
-    from redfoot.server import runServer
-    runServer(sys.argv[1:], SampleUI)
+    from redfoot.server import RedServer
+    redfoot = RedServer()
+    redfoot.runServer(sys.argv[1:])
+
+    handler = SampleUI(redfoot.storeNode, redfoot.path)
+    redfoot.server.addHandler(handler)
+    
+    redfoot.keepRunning()
 
 # $Log$
+# Revision 4.0  2000/11/06 15:57:34  eikeon
+# VERSION 4.0
+#
 # Revision 1.7  2000/11/04 03:39:47  eikeon
 # changed password input to type password
 #

@@ -5,8 +5,7 @@ from redfoot.editor import PeerEditor
 
 class BaseUI:
 
-    def __init__(self, writer, storeNode, path):
-        self.writer = writer;
+    def __init__(self, storeNode, path):
         self.storeNode = storeNode
         self.path = path
         self.qstore = QueryStore(storeNode)
@@ -26,6 +25,9 @@ class BaseUI:
         self.getEditor().handleRequest(request, response)
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:34  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.4  2000/11/04 03:36:23  eikeon
 #~ moved creation of editor to getEditor method so that subclasses can override getEditor to create an editor of their like-ing
 #~
