@@ -1,0 +1,49 @@
+REDFOOT README
+
+    Redfoot is a framework for distributed RDF-based applications,
+    written in Python by James Tauber and Daniel Krech.
+
+    At present, Redfoot includes:
+
+       - an RDF database
+       - a query API for RDF with numerous higher-level query
+         functions 
+       - an RDF parser and serializer
+       - a simple HTTP server providing a web interface for viewing
+         and editing RDF
+       - a fully customizable UI
+       - the beginnings of a peer-to-peer architecture for
+         communication between different RDF databases
+       - sample applications built on top of Redfoot
+
+    In the future, Redfoot will hopefully include:
+
+        - a full peer-to-peer architecture for discovery of RDF
+          statements
+        - an inference engine
+        - connectors for mapping non-RDF data into RDF triples
+
+    Redfoot is written in pure Python (Python 2.x) and is 
+    being tested on both windows and linux.
+
+    Redfoot currently uses a custom HTTP server which is included
+    in the standard distribution.
+
+TO SEE WHAT REDFOOT IS LIKE
+
+    See apps/README
+
+DOCUMENTATION
+
+    See doc/index.html
+
+WHERE TO GET THE LATEST REDFOOT
+
+    See http://redfoot.sourceforge.net/
+
+HOW TO CONTACT THE DEVELOPERS
+
+    James Tauber - jtauber@jtauber.com
+    Daniel Krech - eikeon@eikeon.com 
+
+

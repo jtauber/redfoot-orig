@@ -1,0 +1,266 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.module import ParentModule
+
+  from redfoot.rdf.const import *
+  from redfoot.rdf.store.urigen import generate_uri
+  from redfoot.rdf.query.functors import *
+  from redfoot.rdf.query.builders import *
+  from redfoot.rdf.objects import *
+  from redfoot.util import *
+
+  REQUIRED_PROPERTY = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#requiredProperty")
+  YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
+  UI_TYPE = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#uiType")
+  TEXT_AREA = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#TEXTAREA")
+
+  <red:module name="Editor">
+
+    <red:sub-module instance="viewer" class="Viewer" from="redmodules.viewer"/>
+    
+    <red:facet name="">
+      <red:exec>self.viewer.class_list()</red:exec>
+    </red:facet>
+
+    <red:facet name="edit">
+      <red:exec>
+        subject = self.app.request.get_parameter('subject', None)
+        type = self.app.request.get_parameter("type", None)
+        copy = self.app.request.get_parameter("copy", None)
+        
+        if copy == "copy":
+            subject = self.app.rednode.local.URI + generate_uri()
+            self.update(resource(subject), 1)
+        else:
+            if subject == None or subject == "":
+                subject = self.app.rednode.local.URI + generate_uri()
+
+        subject = resource(subject)
+
+        if type != None and type != "":
+            self.app.rednode.add(subject, TYPE, resource(type))
+            
+        self.display_edit(subject)
+      </red:exec>
+    </red:facet>      
+
+    <red:facet name="display_edit" args="subject">    
+      <FORM NAME='edit_form' ACTION='edit?subject={subject}' METHOD='POST'>
+        <INPUT NAME='subject' TYPE='HIDDEN' VALUE='{subject}'/>
+        <H2><red:eval>subject</red:eval></H2>
+        <TABLE>
+          <red:exec>
+            self.property_num = 0
+          </red:exec>
+
+          <red:if test="self.app.rednode.exists(subject, None, None)">
+            <red:exec>
+              self.app.rednode.local.visit(po(self.edit_property), (subject, None, None))
+              self.app.rednode.neighbours.visit(po(self.viewer.display_property_value), (subject, None, None))
+            </red:exec>
+            <red:else>
+              <TR><TD>Resource not known of directly</TD></TR>
+            </red:else>
+          </red:if>
+          <!-- TODO: reified statements-->
+
+          <red:exec>
+            b = SetBuilder()
+            self.app.rednode.visit_possible_properties_for_subject(b.accept, subject)
+            b.end()
+            for prop in b.set:
+                if self.app.rednode.exists(prop, REQUIRED_PROPERTY, YES):
+                    self.edit_property(prop, literal(""), 0)
+          </red:exec>                
+
+          <TR>
+            <TD>
+              <SELECT TYPE='TEXT' NAME='new_property'>
+                <OPTION VALUE=''>Select a new Property to add</OPTION>
+                <red:exec>
+                  self.app.rednode.visit_possible_properties_for_subject(self.display_property_option, subject)
+                  self.display_property_option(TYPE)
+                </red:exec>        
+              </SELECT>
+            </TD>
+            <TD COLSPAN='5'>
+              Click update to be able to specify value
+            </TD>
+          </TR>
+        </TABLE>
+        <INPUT TYPE='HIDDEN' NAME='prop_count' VALUE='{self.property_num}'/>
+        <INPUT TYPE='HIDDEN' NAME='del_num' VALUE='0'/>
+        <INPUT TYPE='SUBMIT' NAME='processor'  VALUE='update'/>
+        <INPUT TYPE='SUBMIT' NAME='processor'  VALUE='delete'/>
+        <INPUT TYPE="SUBMIT" NAME="copy" VALUE="copy"
+               ONCLICK="edit_form.action='edit'; edit_form.submit()"/>
+               <!-- The onclick is being used to... --> 
+      </FORM>
+    </red:facet>    
+
+    <red:facet name="display_property_option" args="property">
+      <OPTION VALUE='{property}'>
+        <red:eval>self.app.rednode.label(property)</red:eval>
+      </OPTION>
+    </red:facet>
+
+    <red:facet name="display_range_line" args="uri">
+      <DIV>
+        <red:eval>self.app.rednode.label(uri)</red:eval>
+      </DIV>
+    </red:facet>
+    
+    <red:facet name="edit_property" args="property, value, exists = 1">
+      <red:exec>
+        self.property_num = self.property_num + 1
+      </red:exec>        
+      <TR>
+        <!-- display property label cell -->
+        <TD VALIGN='TOP'>
+          <red:eval>self.app.rednode.label(property)</red:eval>
+          <INPUT TYPE='HIDDEN' NAME='prop{self.property_num}_name' VALUE='{property}'/>
+        </TD>
+
+        <!-- display range(s) cell -->
+        <TD VALIGN='TOP'>
+          <red:exec>
+            self.app.rednode.visit(o(self.display_range_line), (property, RANGE, None))
+          </red:exec>
+        </TD>
+
+        <!-- display edit widget cell -->
+        <TD COLSPAN='2'>
+          <red:if test="(value and value.is_literal()) or (not value and self.app.rednode.exists(property, RANGE, LITERAL))">
+            <!-- LITERAL -->
+            <red:if test="self.app.rednode.exists(property, UI_TYPE, TEXT_AREA)">
+              <TEXTAREA NAME='prop{self.property_num}_value' ROWS='5' COLS='60'><red:eval>value</red:eval></TEXTAREA>
+              <red:else>
+                <INPUT TYPE='TEXT' SIZE='60' NAME='prop{self.property_num}_value' VALUE='{value}'/>
+              </red:else>
+            </red:if>
+            <INPUT TYPE='HIDDEN' NAME='prop{self.property_num}_is_literal' VALUE='yes'/>
+
+            <red:else>
+              <!-- RESOURCE -->
+
+              <red:if test="self.app.rednode.exists(property, RANGE, None)">
+                <INPUT TYPE='HIDDEN' NAME='prop{self.property_num}_is_literal' VALUE='no'/>
+                <SELECT NAME='prop{self.property_num}_value'>
+                  <OPTION VALUE="">Select a value for this property</OPTION>
+
+                  <red:exec>
+                    b = SetBuilder()
+                    self.app.rednode.visit_possible_values(b.accept, property)
+                    b.end()
+                    b.sort(self.app.rednode.label)
+                  </red:exec>  
+
+                  <red:for item="v" list="b.set">
+                    <red:if test="v == value">
+                      <OPTION SELECTED='TRUE' VALUE='{v}'>
+                        <red:eval>self.app.rednode.label(v)</red:eval>
+                      </OPTION>
+                      <red:else>
+                        <OPTION VALUE='{v}'>
+                          <red:eval>self.app.rednode.label(v)</red:eval>
+                        </OPTION>
+                      </red:else>  
+                    </red:if>
+                  </red:for>  
+                </SELECT>
+                <red:else>
+                  <!-- TODO do something better than this -->
+                  <INPUT TYPE='TEXT' SIZE='60' NAME='prop{self.property_num}_value'
+                         VALUE='{value}'/>***
+                </red:else>
+              </red:if>
+            </red:else>
+          </red:if>  
+        </TD>
+
+        <INPUT TYPE='HIDDEN' NAME='prop{self.property_num}_orig'
+               VALUE='{value}'/>
+
+        <red:if test="exists">
+          <TD VALIGN='TOP'>
+            <INPUT TYPE='SUBMIT' NAME='processor' VALUE='delete_property'
+                   ONCLICK="edit_form.del_num.value='{self.property_num}'; edit_form.submit()"/>
+          </TD>
+            <!-- <TD VALIGN='TOP'><INPUT TYPE='SUBMIT' NAME='processor' VALUE='reify_{self.property_num}'/></TD> -->
+        </red:if>  
+      </TR>
+    </red:facet>
+
+    <red:facet name="add">
+      <red:exec>type = self.app.request.get_parameter('type', RESOURCE)</red:exec>
+      <FORM NAME="form" ACTION="edit" METHOD="POST">
+        <TABLE>
+          <TR>
+            <TD VALIGN="TOP">URI</TD>
+            <!--<TD>&nbsp;</TD>-->
+            <TD>
+              <INPUT TYPE="TEXT" SIZE="60" NAME="subject"/>
+            </TD>
+          </TR>
+        </TABLE>
+        <INPUT TYPE="SUBMIT" VALUE="create"/>
+        <INPUT TYPE="HIDDEN" NAME="type" VALUE="{type}"/>
+      </FORM>
+    </red:facet>      
+
+    def update(self, subject=None, copy=0):
+        if subject==None:
+            subject = resource(self.app.request.get_parameter("subject", None))
+        count = self.app.request.get_parameter("prop_count", 0)
+        i = 0
+        while i &lt; int(count):
+            i = i + 1
+            property = self.app.request.get_parameter('prop%s_name' % i, "")
+            value = self.app.request.get_parameter('prop%s_value' % i, "")
+            orig = self.app.request.get_parameter('prop%s_orig' % i, "")
+            is_literal = self.app.request.get_parameter('prop%s_is_literal' % i, "no")
+            if is_literal == "yes":
+                value = literal(value)
+                orig = literal(orig)
+            else:
+                value = resource(value)
+                orig = resource(orig)
+            property = resource(property)
+            if copy:
+                self.app.rednode.add(subject, property, value)
+            elif value != orig:
+                self.app.rednode.remove(subject, property, orig)
+                self.app.rednode.add(subject, property, value)
+
+        new_property = self.app.request.get_parameter("new_property", "")
+        new_property_value = ""
+        if self.app.rednode.exists(resource(new_property), RANGE, LITERAL):
+            new_property_value = literal(new_property_value)
+        else:
+            new_property_value = resource(new_property_value)
+        if new_property != "":
+            self.app.rednode.add(subject, resource(new_property), new_property_value)
+
+    def delete(self):
+        subject = self.app.request.get_parameter("subject")
+        if subject == "":
+            raise "TODO: invalid subject"
+        self.app.rednode.remove(resource(subject), None, None)
+
+    def delete_property(self):
+        property_num = self.app.request.get_parameter("del_num")
+        subject = resource(self.app.request.get_parameter("subject"))
+        property = resource(self.app.request.get_parameter("prop%s_name" % property_num))
+        v_name = "prop%s_orig" % property_num
+        is_literal = self.app.request.get_parameter("prop%s_is_literal" % property_num)
+        if is_literal == 'yes':
+            value = literal(self.app.request.get_parameter(v_name))
+        else:
+            value = resource(self.app.request.get_parameter(v_name))
+
+        self.app.rednode.remove(subject, property, value)
+
+
+  </red:module>
+
+</red:code>

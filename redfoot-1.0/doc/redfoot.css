@@ -1,0 +1,35 @@
+body {
+  margin:      10px;
+  font-family: "Trebuchet MS", sans-serif;
+  font-size:   10pt;
+}
+
+h1 {
+  font-family: "Trebuchet MS", sans-serif;
+  background:  #990000;
+  font-weight: normal;
+  color:       #FFF;
+  padding:     5px 10px;
+  margin:      -10px -10px 10px -10px;
+}
+
+h2 {
+  font-family: "Trebuchet MS", sans-serif;
+  color: #990000;
+}
+
+.sidebar {
+  border: 1px solid #990000;
+  background: #EEE;
+  padding: 5px;
+} 
+
+.announcement {
+  border: 1px solid #990000;
+  padding: 5px;
+  font-weight: bold;
+}
+ 
+pre.code_sample {
+  background: #EEE;
+}

@@ -1,0 +1,165 @@
+<HTML>
+  <HEAD>
+    <TITLE>Redfoot Documentation</TITLE>
+    <LINK REL="STYLESHEET" HREF="redfoot.css"/>
+  </HEAD>
+  <BODY>
+    <H1>Redfoot Documentation</H1>
+    <P><B>Redfoot</B> is a framework for building distributed data-driven applications. Redfoot
+       uses RDF as the underlying model for all data because of the extensibility and the ability
+       to express relationships between any objects.</P>
+
+    <P>This documentations will be fleshed out before 1.0.</P>
+    <UL>
+      <LI><A HREF="#architecture">Architecture</A></LI>
+      <LI><A HREF="#writing_queries">Writing queries</A></LI>
+      <LI><A HREF="#writing_redcode">Writing redcode</A></LI>
+      <LI><A HREF="#writing_modules">Writing modules</A></LI>
+      <LI><A HREF="#writing_connectors">Writing connectors</A></LI>
+      <LI><A HREF="#writing_apps">Writing apps</A></LI>
+    </UL>
+
+    <H2><A NAME="architecture">Architecture</A></H2>
+
+    <H2><A NAME="writing_queries">Writing Queries</A></H2>
+
+    <UL>
+      <LI>visit</LI>
+      <LI>callback</LI>
+      <LI>triple mask</LI>
+      <LI>functors</LI>
+      <LI>builders</LI>
+    </UL>
+
+    <H2><A NAME="writing_redcode">Writing Redcode</A></H2>
+
+    <P><B>Redcode</B> is an XML vocabulary for combining XML (and in particular XHTML) with 
+       Python code.</P>
+
+    <DL>
+      <DT><CODE>red:code</CODE></DT>
+      <DD>The top-level element that contains an <CODE>red:app</CODE> or <CODE>red:module</CODE> element and raw python code.</DD>
+      <DT><CODE>red:exec</CODE></DT>
+      <DD>Within a <I>facet</I>, executes the enclosed python code.</DD>
+      <DT><CODE>red:eval</CODE></DT>
+      <DD>Within a <I>facet</I>, executes the enclosed python code.</DD>
+      <DT><CODE>{...} in attributes</CODE></LI>
+      <DD>Evaluates enclose python code with XHTML attributes.</DD>
+    </DL>
+
+    <H2><A NAME="writing_modules">Writing Modules</A></H2>
+    
+    <H3>Example Module</H3>
+    <PRE CLASS="code_sample">
+&lt;red:code name="pop" xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.rdf.const import LABEL, TYPE
+  from redfoot.rdf.objects import resource, literal
+  from redconnectors.pop_connector import *
+  from redfoot.rdf.query.functors import s
+  from redfoot.util import encode_URI
+
+  &lt;red:module name="POP">
+
+    &lt;red:facet name="messages">
+      &lt;H1>Messages&lt;/H1>
+      &lt;TABLE>
+        &lt;red:exec>
+          self.app.rednode.visit(s(self.message_list_item), (None, TYPE, MESSAGE))
+        &lt;/red:exec>
+      &lt;/TABLE>
+    &lt;/red:facet>
+
+    &lt;red:facet name="message_list_item" args="message">
+      &lt;TR>
+        &lt;TD>
+          &lt;A HREF="message?uri={encode_URI(message)}">
+            &lt;red:eval>self.app.rednode.get_first_value(message, SUBJECT, "unknown")&lt;/red:eval>
+          &lt;/A>
+        &lt;/TD>
+        &lt;TD>&lt;red:eval>self.app.rednode.get_first_value(message, FROM, "unknown")&lt;/red:eval>&lt;/TD>
+        &lt;TD>&lt;red:eval>self.app.rednode.get_first_value(message, DATE, "unknown")&lt;/red:eval>&lt;/TD>
+      &lt;/TR>
+    &lt;/red:facet>
+
+    &lt;red:facet name="pop_connect">
+      &lt;H2>Connect to POP&lt;/H2>
+      &lt;FORM name="main" method="POST" ACTION="messages">
+        &lt;P>host &lt;INPUT NAME="host" VALUE="pop.example.com" TYPE="TEXT"/>&lt;/P>
+        &lt;P>username &lt;INPUT NAME="username" TYPE="TEXT"/>&lt;/P>
+        &lt;P>password &lt;INPUT NAME="password" TYPE="PASSWORD"/>&lt;/P>
+        &lt;INPUT VALUE="Retrieve" TYPE="SUBMIT"/>
+        &lt;INPUT NAME="processor" VALUE="connect_pop" TYPE="hidden"/>
+      &lt;/FORM>
+    &lt;/red:facet>
+
+    &lt;red:facet name="message">
+      &lt;red:exec>
+        msg = resource(self.app.request.get_parameter('uri'))
+      &lt;/red:exec>
+      &lt;H1>Message&lt;/H1>
+      &lt;H2>
+        &lt;red:eval>self.app.rednode.get_first_value(msg, SUBJECT, "unknown subject")&lt;/red:eval>
+      &lt;/H2>
+      &lt;PRE>
+        &lt;red:eval>self.app.rednode.get_first_value(msg, BODY, "unknown")&lt;/red:eval>&lt;/PRE>
+      &lt;P>&lt;A HREF="messages">Back to Message List&lt;/A>&lt;/P>
+    &lt;/red:facet>
+
+    def connect_pop(self):
+        host = self.app.request.get_parameter('host')
+        username = self.app.request.get_parameter('username')
+        password = self.app.request.get_parameter('password')
+        self.app.rednode.neighbours.add_store(POP_Connector(host, username, password))
+
+  &lt;/red:module>
+&lt;/red:code></PRE>
+
+    <H2><A NAME="writing_connectors">Writing Connectors</A></H2>
+
+    <P>A <B>connector</B> is a component that takes a non-RDF datasource and makes it look like
+       RDF by implementing the <CODE>visit(callback, triple)</CODE> method. The connector can
+       then be treated as a triple store and a module can add it to the neighbourhood with:</P>
+    <PRE CLASS="code_sample">
+self.app.rednode.neighbours.add_store(<VAR>some_connector</VAR>)</PRE>
+
+    <H2><A NAME="writing_apps">Writing Apps</A></H2>
+
+    <H3>Example App</H3>
+
+    <P>An <B>app</B> brings together modules to form a website.</P>
+    <P>Apps are generally written in <I>redcode</I>. Within the <CODE>red:code</CODE> element
+       is a <CODE>red:app</CODE> element with a name. This in turn contains a
+       <CODE>red:sub-module</CODE> element for each module that makes up the app. The remainder
+       of the app is usually a set of <CODE>red:facet</CODE> elements indicating how the facets
+       of the modules are to appear in overall app.</P>
+    <PRE CLASS="code_sample">
+&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  &lt;red:app name="POPTest">
+
+    &lt;red:sub-module instance="pop" class="POP" from="redmodules.pop"/>
+
+    &lt;red:facet name="/">
+      &lt;HTML>
+        &lt;HEAD>
+          &lt;TITLE>POP Test&lt;/TITLE>
+        &lt;/HEAD>
+        &lt;BODY>
+          &lt;red:apply/>
+        &lt;/BODY>
+      &lt;/HTML>
+    &lt;/red:facet>
+
+    &lt;red:facet name="">
+      &lt;red:exec>
+        self.pop.pop_connect()
+      &lt;/red:exec>
+    &lt;/red:facet>
+
+  &lt;/red:app>
+
+&lt;/red:code></PRE>
+
+  </BODY>
+</HTML>

@@ -1,0 +1,110 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.rdf.const import LABEL, TYPE
+  from redfoot.rdf.objects import resource, literal
+
+  from redfoot.rdf.query.builders import ListBuilder, triple2statement
+
+  NEIGHBOUR = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")  
+
+  <red:module name="Neighbours">
+
+    <red:facet name="neighbours">
+      <H2>Neighbours</H2>
+      <red:exec>
+        connected_neighbours = [resource(neighbour.URI) for neighbour 
+                                in self.app.rednode.neighbours.stores]
+        lb = ListBuilder()
+        self.app.rednode.visit(triple2statement(lb.accept), (None, TYPE, NEIGHBOUR))
+        lb.end()
+        l = lb.list
+        other_known_neighbours = [neighbour.subject for neighbour in 
+                                  l if not neighbour.subject in connected_neighbours]
+      </red:exec>
+
+      <DIV class="content_area">
+        <H3 CLASS="content_header">Connected</H3>
+        <TABLE>
+         <red:for item="neighbour" list="connected_neighbours">
+          <FORM name="main" method="POST" style="margin: 0">
+            <TR>
+              <TD><red:eval>neighbour</red:eval>
+                <INPUT name="uri" value="{neighbour}" type="hidden"/>
+              </TD>
+              <TD align="right">
+                <INPUT value="Disconnect" type="submit"/>
+                <INPUT name="processor" value="disconnect_neighbour" type="hidden"/>
+              </TD>
+            </TR>
+          </FORM>
+         </red:for>
+        </TABLE>
+      </DIV>
+
+      <DIV class="content_area">
+        <H3 class="content_header">Other Known</H3>
+
+        <TABLE>
+         <red:for item="neighbour" list="other_known_neighbours">
+          <FORM name="other" method="POST" style="margin: 0">
+            <INPUT name="processor" value="" type="hidden"/>          
+            <TR>
+              <TD><red:eval>neighbour</red:eval>
+                <INPUT name="uri" value="{neighbour}" type="hidden"/>
+              </TD>
+              <TD>
+                <INPUT value="Connect" type="submit" onclick="other.processor.value='connect_neighbour';other.submit()"/>
+              </TD>
+              <TD align="right">
+                <INPUT value="Remove" type="submit" onclick="other.processor.value='remove_neighbour';other.submit()"/>              
+              </TD>
+            </TR>
+          </FORM>
+         </red:for>
+        </TABLE>
+      </DIV>
+
+      <DIV class="content_area">
+        <SPAN class="content_header">Add Neighbour</SPAN>
+        <FORM name="add" method="POST" action="" style="margin: 0">
+          <TABLE>
+            <TR>
+              <TD>URI:</TD>
+              <TD><INPUT name="uri" type="text" size="50"/></TD>
+            </TR>
+            <TR>
+              <TD align="right">
+                <INPUT value="Add" type="submit"/>
+              </TD>
+              <TD align="left">
+                <INPUT value="Cancel" type="reset"/>
+                <INPUT name="processor" value="add_neighbour" type="hidden"/>      
+              </TD>
+            </TR>
+          </TABLE>
+        </FORM>
+      </DIV>
+    </red:facet>
+
+    def disconnect_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+       for store in [store for store in self.app.rednode.neighbours.stores if store.URI==uri]:
+           self.app.rednode.neighbours.remove_store(store)
+           # Do we want to remember our neighbour?
+           if not self.app.rednode.local.exists(resource(uri), TYPE, NEIGHBOUR):
+              self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)           
+
+    def connect_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+       self.app.rednode.connect_to(uri)
+
+    def remove_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+       self.app.rednode.remove(resource(uri), TYPE, NEIGHBOUR)
+
+    def add_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+       self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)
+
+  </red:module>
+</red:code>
