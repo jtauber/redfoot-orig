@@ -1,3 +1,4 @@
+# $Header$
 import socket
 import sys
 import time
@@ -385,3 +386,4 @@ def date_time_string(t=None):
     return s
 
 
+#~ $Log$
