@@ -2,16 +2,21 @@
 
 from rdf.store import TripleStore
 from rdf.query import QueryStore
+from rdf.storeio import StoreIO
 from rdf.storeio import AutoSaveStoreIO
 from rdf.const import *
 from rdf.literal import literal, un_literal, is_literal
 
-class RedNode(QueryStore):
+class RedNode(StoreIO, QueryStore):
+    # local in the context of neighbours where applicable else entire
+    # neighbourhood. For example, visitResourcesByType will visit
+    # resoruces in the local store, but will display relevant class
+    # information from the entire neighbourhood.
+    
     ""
 
     def __init__(self):
-        pass
-        
+        StoreIO.__init__(self)
         def toRelativeURL(path):
             import sys
             from os.path import join, dirname
@@ -19,17 +24,22 @@ class RedNode(QueryStore):
             libDir = dirname(sys.modules["redfoot.rednode"].__file__)
             return pathname2url(join(libDir, path))
 
-        self.local = Local(self)
-        self.neighbourhood = Neighbourhood()
+        self.local = Local() # local only
+        self.neighbours = Neighbourhood() # neighbours only
+
+        self.neighbourhood = MultiStore() # local plus neighbours
+        self.neighbourhood.addStore(self.local)
+        self.neighbourhood.addStore(self.neighbours)
 
         self.connectTo(toRelativeURL("rdfSchema.rdf"), "http://www.w3.org/2000/01/rdf-schema")
         self.connectTo(toRelativeURL("rdfSyntax.rdf"), "http://www.w3.org/1999/02/22-rdf-syntax-ns")
         self.connectTo(toRelativeURL("builtin.rdf"), "http://redfoot.sourceforge.net/2000/10/06/builtin")
 
     def visit(self, callback, subject=None, property=None, value=None):
-        # todo: order?
+        # TODO: order?
+        # TODO: Fix the following in regaurds to getFirst
         self.local.visit(callback, subject, property, value)
-        self.neighbourhood.visit(callback, subject, property, value)
+        self.neighbours.visit(callback, subject, property, value)
 
     # TODO: when to call... used to call on setStore()
     def _preCacheNeighbourStores(self, baseDirectory=None):
@@ -57,14 +67,7 @@ class RedNode(QueryStore):
         self._connectTo(storeIO)
 
     def _connectTo(self, store):
-        self.neighbourhood.addNeighbour(store)
-
-
-class Local(QueryStore, AutoSaveStoreIO):
-    def __init__(self, rednode):
-        # TODO: need to clean up the __init__ calling
-        TripleStore.__init__(self)
-        self.rednode = rednode
+        self.neighbours.addNeighbour(store)
 
     # May need to move the following method elsewhere if we need
     # subClassV defined for all combinations and do not wish to
@@ -77,28 +80,38 @@ class Local(QueryStore, AutoSaveStoreIO):
                 self.visitSubclasses(processClass, processInstance, s, currentDepth+1)
             else:
                 processClass(s, currentDepth+1, recurse)
-        # show classes in neighbourhood as well
-        self.rednode.visit(subclass, None, SUBCLASSOF, type)
+        # show classes in neighbours as well
+        self.neighbourhood.visit(subclass, None, SUBCLASSOF, type)
         def instance(s, p, o, processInstance=processInstance, \
                      currentDepth=currentDepth, recurse=recurse):
             processInstance(s, currentDepth, recurse)
         # only show local instances
-        self.visit(instance, None, TYPE, type)
+        self.local.visit(instance, None, TYPE, type)
 
     # May need to move the following method elsewhere if we need
     # resourcesByClassV defined for all combinations and do not wish to
     # overload what it mean for Local
     def visitResourcesByType(self, processClass, processResource):
         def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
-            if self.getFirst(None, TYPE, s)!=None:
+            if self.local.getFirst(None, TYPE, s)!=None:
                 processClass(s)
             def resource(s, p, o, processClass=processClass,\
                          processResource=processResource, self=self):
                 processResource(s)
             # only show local instances
-            self.visit(resource, None, TYPE, s)
+            self.local.visit(resource, None, TYPE, s)
         # show classes in neighbourhod as well as in local store
-        self.rednode.visit(klass, None, TYPE, CLASS)
+        self.neighbourhood.visit(klass, None, TYPE, CLASS)
+
+    def output(self, stream, URI=None, subject=None, predicate=None, object=None):
+        self.local.output(stream, URI, subject, predicate, object)
+
+
+
+class Local(QueryStore, AutoSaveStoreIO):
+    def __init__(self):
+        # TODO: need to clean up the __init__ calling
+        AutoSaveStoreIO.__init__(self)
 
 
 class Neighbourhood(QueryStore):
@@ -119,10 +132,11 @@ class Neighbourhood(QueryStore):
         raise "Can not remove from Neighbourhood store!"
 
 
-class MultiStore(QueryStore):
+class MultiStore(StoreIO, QueryStore):
     ""
     
     def __init__(self):
+        StoreIO.__init__(self)
         self.stores = {}
 
     def addStore(self, store):
@@ -135,22 +149,11 @@ class MultiStore(QueryStore):
         for store in self.getStores():
             store.visit(callback, subject, property, value)
 
-    def get(self, subject=None, property=None, value=None):
-        class Visitor:
-            def __init__(self):
-                self.list = []
-
-            def callback(self, subject, property, value):
-                self.list.append((subject, property, value))
-
-        visitor = Visitor()
-
-        self.visit(visitor.callback, subject, property, value)
-        
-	return visitor.list
-        
 
 #~ $Log$
+#~ Revision 5.2  2000/12/17 23:41:58  eikeon
+#~ removed of log messages
+#~
 #~ Revision 5.1  2000/12/14 05:15:26  eikeon
 #~ converted to new query interface (for a second time?)
 #~

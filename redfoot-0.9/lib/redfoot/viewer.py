@@ -59,9 +59,9 @@ class Viewer:
 
     def getNodeInScope(self):
         if self.showNeighbours==1:
-            return self.storeNode
+            return self.storeNode.neighbourhood
         else:
-            return self.storeNode.local
+            return self.storeNode
 
     def css(self):
         self.response.write("""
@@ -370,7 +370,8 @@ class Viewer:
         return string.joinfields(res, '')
 
     def rdf(self, subject=None, predicate=None, object=None):
-        self.storeNode.local.output(self.response, subject, predicate, object)
+        node = self.getNodeInScope()
+        node.output(self.response, subject, predicate, object)
 
     def triples(self, subject=None, predicate=None, object=None):
         self.header("Triples")
@@ -382,8 +383,10 @@ class Viewer:
             write("""
               <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
             """ % (s, p, o))
-        node = self.getNodeInScope()
-        node.visit(triple, subject, predicate, object)
+        if self.showNeighbours==1:
+            self.storeNode.neighbourhood.visit(triple, subject, predicate, object)
+        else:
+            self.storeNode.local.visit(triple, subject, predicate, object)
 
         self.response.write("""
             </TABLE>
@@ -437,6 +440,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.13  2000/12/17 23:41:58  eikeon
+#~ removed of log messages
+#~
 #~ Revision 5.12  2000/12/13 02:54:11  jtauber
 #~ moved functions in query around and renamed a lot
 #~
