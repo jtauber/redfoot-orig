@@ -89,7 +89,7 @@
         <input name='is_literal' type="hidden"/>        
         <input name='object' type="hidden"/>        
       </form>
-      <FORM NAME='edit_form' ACTION='edit?subject={encode_URI(subject)}' METHOD='POST'>
+      <FORM NAME='edit_form' ACTION='?subject={encode_URI(subject)}' METHOD='POST'>
         <INPUT NAME='update_subject' TYPE='HIDDEN' VALUE='{subject}'/>
         <INPUT NAME='processor' TYPE='HIDDEN' VALUE=""/>
         <INPUT NAME='module_instance' TYPE='HIDDEN' VALUE="{self.module_instance}"/>
@@ -376,21 +376,22 @@
         while i &lt; int(count):
             i = i + 1
             property = self.app.request.get_parameter('prop%s_name' % i, "")
-            value = self.app.request.get_parameter('prop%s_value' % i, "")
-            orig = self.app.request.get_parameter('prop%s_orig' % i, "")
-            is_literal = self.app.request.get_parameter('prop%s_is_literal' % i, "no")
-            if is_literal == "yes":
-                value = literal(value)
-                orig = literal(orig)
-            else:
-                value = resource(value)
-                orig = resource(orig)
-            property = resource(property)
-            if copy:
-                self.rednode.add(subject, property, value)
-            elif value != orig:
-                self.rednode.remove(subject, property, orig)
-                self.rednode.add(subject, property, value)
+            value = self.app.request.get_parameter('prop%s_value' % i, None)
+            if value:
+                orig = self.app.request.get_parameter('prop%s_orig' % i, "")
+                is_literal = self.app.request.get_parameter('prop%s_is_literal' % i, "no")
+                if is_literal == "yes":
+                    value = literal(value)
+                    orig = literal(orig)
+                else:
+                    value = resource(value)
+                    orig = resource(orig)
+                property = resource(property)
+                if copy:
+                    self.rednode.add(subject, property, value)
+                elif value != orig:
+                    self.rednode.remove(subject, property, orig)
+                    self.rednode.add(subject, property, value)
 
         new_property = self.app.request.get_parameter("new_property", "")
         new_property_value = ""
