@@ -9,7 +9,7 @@
   from redfoot.rdf.query.builders import ListBuilder
   from redfoot.rdf.query.functors import o
 
-  from redfoot.module import ParentModule  
+  from redfoot.module import ParentModule
 
   SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
   SITE_DESCRIPTION = resource('http://redfoot.sourceforge.net/2001/09/site/description')
@@ -51,10 +51,16 @@
                 import sys
                 globals = sys.modules[self.app.__class__.__module__].__dict__
                 locals = self.app.__class__.__dict__
-                lines = str(processor).split("\n")
+                processor = str(processor)
+
+                # TODO: Where to do this properly
+                processor = processor.replace('\r\n', '\n')
+
+                lines = processor.split("\n")
                 codestr = "def _RF_Processor(self, request, response):\n"
                 for line in lines:
                     codestr = codestr + "    " + line + "\n"
+                print codestr
                 exec codestr+"\n" in globals, locals
                 # setsttr(self, uri, _RF_Processor)
                 self.app._RF_Processor(request, response)
