@@ -26,10 +26,35 @@ BASICS
         - a subclass of BaseUI (in module redfoot.baseUI)
         - a script that invokes a RedServer
 
+STARTUP SCRIPT
+
+    A basic start up script looks like the following:
+
+       from redfoot.server import RedServer
+       server = RedServer(('', port))
+       server.setHandler(MyUI())
+       server.start()
+       server.keepRunning()
+            
+    where MyUI() is the subclass of BaseUI to use for the custom UI
+
+CREATING THE REDNODE
+
+    Each Redfoot has, at its heart, a RedNode. This is typically
+    either created in the constructor of the UI class or created in
+    the startup script and passed to the UI class.
+
+    Creating the RedNode is as simple as:
+
+        from redfoot.rednode import RedNode
+	redNode = RedNode()
+	redNode.local.load(location, uri)
+
 THE UI CLASS
 
-    The core part of a custom UI is the UI class which must be
-    a subclass of BaseUI in module redfoot.baseUI.
+    The core part of a custom UI is the UI class which is often
+    a subclass of BaseUI in module redfoot.baseUI (to provide some
+    useful utility functions)
 
     The only method that the subclass must implement is
 
@@ -74,40 +99,13 @@ PROVIDING HTTP TO THE UNDERLYING REDFOOT
 
 TODO
 
-
-
-STARTING REDFOOT WITH A CUSTOM UI
-
-    Typically, a custom UI will be provided as a python class which is
-    a subclass of BaseUI. A special file will be run to start up
-    Redfoot with that particular UI. See sample/sample.sh for an
-    example.
-
-    Note that in almost all cases, a Redfoot with a custom UI will
-    have the -P path specified. The generic Redfoot UI will then be
-    available at that path with the rest of server's URI space
-    available for the custom UI.
-
-    Often, the generic UI will be retained for editing the RDF,
-    although the custom UI may provide custom editing as well as
-    custom views.
-
-STARTUP COMMANDLINE OPTIONS
-
-    The following options may be passed to the Redfoot server on the
-    commandline at startup:
-
-        -l location of RDF file to use as local
-           (eg myrdf.rdf. defaults to local.rdf)
-
-        -u uri to treat that file as
-           (eg http://redfoot.sourceforge.net/2000/10/.
-            defaults to http://hostname.domain:port/path)
-
-        -p port number to run on
-           (defaults to 8000)
-
-        -P path from server root to actual RDF
-           (eg /2000/10/redfoot. defaults to /)
-
 $Log$
+Revision 1.1  2000/12/04 03:27:01  jtauber
+first pass at documentation on creating custom UI
+
+
+
+
+
+
+
