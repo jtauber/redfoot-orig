@@ -4,9 +4,10 @@ from redfoot.query import QueryStore
 
 class Viewer:
 
-    def __init__(self, writer, storeNode):
+    def __init__(self, writer, storeNode, path):
         self.writer = writer;
         self.storeNode = storeNode
+        self.path = path
         self.qstore = QueryStore(storeNode)
 
         self.showNeighbours=0
@@ -377,6 +378,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 2.5  2000/10/16 15:37:07  eikeon
+# fixed bug... unknown response is now self.writer
+#
 # Revision 2.4  2000/10/16 05:27:17  jtauber
 # gave menu bars labels and clarified some of the items
 #

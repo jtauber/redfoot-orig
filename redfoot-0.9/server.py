@@ -32,7 +32,7 @@ class RedfootHandler:
             storeIO.load(location, uri)
 
             storeNode.setStore(storeIO)
-            self.viewer = eval("%s(None, storeNode)" % interface)
+            self.viewer = eval("%s(None, storeNode, path)" % interface)
 
         return self.viewer
 
@@ -65,10 +65,11 @@ if __name__ == '__main__':
     location = "local.rdf"
     uri = None
     interface = "PeerEditor"
-    
+    path = ""
+        
     import sys
     import getopt
-    optlist, args = getopt.getopt(sys.argv[1:], 'i:l:p:u:')
+    optlist, args = getopt.getopt(sys.argv[1:], 'i:l:p:u:P:')
     for optpair in optlist:
         opt, value = optpair
         if opt=="-l":
@@ -79,13 +80,15 @@ if __name__ == '__main__':
             port = string.atoi(value)
         elif opt=="-i":
             interface = value
-
+        elif opt=="-P":
+            path = value
+            
     # uri defaults to url when no uri is specified
     if uri==None:
         import socket
         # method for calculating absolute hostname
         hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
-        uri = "http://%s:%s/" % (hostname,port)
+        uri = "http://%s:%s/%s" % (hostname,port,path)
 
     server = Server(('', port), lambda : RedfootServerConnection())
     
@@ -106,6 +109,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 2.5  2000/10/17 00:12:47  eikeon
+# fixed bug causing server to hang under load
+#
 # Revision 2.4  2000/10/16 06:31:49  eikeon
 # fixed bug I just introduced where a new RedfootHandler is beging created for each request
 #
