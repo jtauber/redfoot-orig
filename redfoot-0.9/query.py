@@ -30,8 +30,8 @@ class QueryStore:
     def get(self, subject=None, predicate=None, object=None):
         return self.store.get(subject, predicate, object)
 
-    def visit(self, visitor, subject=None, predicate=None, object=None):
-        self.store.visit(visitor, subject, predicate, object)
+    def visit(self, callback, subject=None, predicate=None, object=None):
+        self.store.visit(callback, subject, predicate, object)
 
     def label(self, subject):
         l = self.get(subject, QueryStore.LABEL, None)
@@ -131,9 +131,7 @@ class QueryStore:
                 processResource(resource[0])
 
     def parentTypesV(self, type, processType):
-	#TODO: could use visit rather than get
-        for subclassStatement in self.get(type, QueryStore.SUBCLASSOF, None):
-	    processType(subclassStatement[2])
+        self.visit(lambda s, p, o: processType(o), type, QueryStore.SUBCLASSOF, None)
 
     def propertyValuesV(self, subject, processPropertyValue):
         for statement in self.store.get(subject, None, None):
@@ -195,6 +193,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 2.2  2000/10/16 15:39:13  eikeon
+# added visit method
+#
 # Revision 2.1  2000/10/16 04:45:48  jtauber
 # resourcesByClassV on query and rednode now only call processClass if the class has instances
 #
