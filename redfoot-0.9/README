@@ -3,63 +3,92 @@ $Header$
 
 REDFOOT README
 
-Redfoot is a framework for distributed RDF-based applications, written in Python
-by James Tauber and Daniel Krech.
+    Redfoot is a framework for distributed RDF-based applications,
+    written in Python by James Tauber and Daniel Krech.
 
-At present, Redfoot includes:
+    At present, Redfoot includes:
 
-    - an RDF database
-    - a query API for RDF with numerous higher-level query functions
-    - an RDF parser and serializer
-    - a simple HTTP server providing a web interface for viewing and
-      editing RDF
-    - the beginnings of a peer-to-peer architecture for communication
-      between different RDF databases
+       - an RDF database
+       - a query API for RDF with numerous higher-level query
+         functions 
+       - an RDF parser and serializer
+       - a simple HTTP server providing a web interface for viewing
+         and editing RDF
+       - the beginnings of a peer-to-peer architecture for
+         communication between different RDF databases
 
-In the future, Redfoot will hopefully include:
+    In the future, Redfoot will hopefully include:
 
-    - a full peer-to-peer architecture for discovery of RDF statements
-    - an inference engine
-    - a fully customizable UI
-    - connectors for mapping non-RDF data into RDF triples
-    - sample applications built on top of Redfoot
+        - a full peer-to-peer architecture for discovery of RDF
+          statements
+        - an inference engine
+        - a fully customizable UI
+        - connectors for mapping non-RDF data into RDF triples
+        - sample applications built on top of Redfoot
 
-Redfoot is written in pure Python and is being tested on Python 1.6 and 2.0c1
+    Redfoot is written in pure Python and is being tested on Python
+    1.6 and 2.0
 
-Redfoot currently uses eikeon's Bare Naked HTTP server which is included in the standard
-distribution.
+    Redfoot currently uses eikeon's Bare Naked HTTP server which is
+    included in the standard distribution.
 
 RUNNING THE REDFOOT SERVER
 
-Make sure the parent directory of redfoot is on the python path. The easiest way
-to do that is to set the PYTHONPATH environment variable to include ../
+    1. Make sure the parent directory of redfoot is on the python
+       path. The easiest way to do that is to set the PYTHONPATH
+       environment variable to include ../ 
 
-Run
+    2. Run
 
-	python server.py <options>
+           python server.py <options>
 
-	-l location of RDF file to use as local
-	-u uri to treat that file as (normally the URI that Redfoot is running as)
-	-p port number to run on
-	-i web interface class to use (Viewer, Editor or PeerEditor)
+	   -l location of RDF file to use as local
+		(eg myrdf.rdf. defaults to local.rdf)
 
-Hitting the URI that Redfoot is running as will return the RDF.
-Try hitting http://hostname.domain:port/classList to get the UI
+	   -u uri to treat that file as
+		(eg http://redfoot.sourceforge.net/2000/10/.
+		 defaults to http://hostname.domain:port/path)
+
+	    -p port number to run on
+		(defaults to 8000)
+
+	    -i web interface class to use
+	       (Viewer, Editor, PeerEditor, SampleUI)
+		(defaults to PeerEditor)
+
+	    -P path from server root to actual RDF
+		(eg /2000/10. defaults to /)
+
+    Hitting the URI that Redfoot is running as will return the RDF. Try hitting
+
+	http://hostname.domain:port/classList
+
+    to get the UI
+
+    See sample.sh for an example of invoking with a custom UI for viewing.
+
 
 INFORMATION FOR DEVELOPERS
 
-See DEVMANUAL
+    See DEVMANUAL
+
 
 WHERE TO GET THE LATEST REDFOOT
 
-See http://www.sourceforge.net/projects/redfoot
+    See http://www.sourceforge.net/projects/redfoot
+
 
 HOW TO CONTACT THE DEVELOPERS
 
-James Tauber - jtauber@bowstreet.com
-Daniel Krech - dkrech@bowstreet.com
+    James Tauber - jtauber@bowstreet.com
+    Daniel Krech - dkrech@bowstreet.com
+
+
 
 $Log$
+Revision 2.1  2000/10/19 01:19:24  jtauber
+added email addresses
+
 Revision 2.0  2000/10/14 01:14:04  jtauber
 next version
 
