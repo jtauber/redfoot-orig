@@ -65,7 +65,7 @@ class QueryBase:
         query = Query(self.query, (visitor,), lambda s, p, o: (s,), (predicate, object))
         self.query(query, None, TYPE, type)
 
-    def visitResourcesByType(self, type_callback, resource_callback):
+    def visitResourcesByType_orig(self, type_callback, resource_callback):
         resourceVisitor = Query(resource_callback, (), lambda s, p, o: (s,))
         queryV = Query(self.query, (resourceVisitor,), lambda s, p, o: (None, TYPE, s))
 
@@ -74,6 +74,19 @@ class QueryBase:
         classVisitor = And(typeVisitor, queryV)
 
         self.query(classVisitor, None, TYPE, CLASS)
+
+    def visitResourcesByType(self, processClass, processResource):
+        setBuilder = ObjectSetBuilder()
+        self.query(setBuilder, None, TYPE, None)
+        types = setBuilder.set.keys()
+        for klass in types:
+            if self.getFirst(None, TYPE, klass)!=None:
+                processClass(klass)
+                def resource(s, p, o, processClass=processClass,\
+                             processResource=processResource, self=self):
+                    processResource(s)
+                self.visit(resource, None, TYPE, klass)
+
         
     def visitPredicateObjectPairsForSubject(self, predicateObject_callback, subject):
         def callbackAdaptor(s, p, o, predicateObject_callback=predicateObject_callback):
@@ -336,6 +349,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 5.12  2000/12/17 20:56:08  eikeon
+#~ renamed visitSubjects to visit_subjects
+#~
 #~ Revision 5.11  2000/12/14 05:14:39  eikeon
 #~ removed unused gets
 #~

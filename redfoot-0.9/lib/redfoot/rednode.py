@@ -91,7 +91,7 @@ class RedNode(StoreIO, QueryStore):
     # May need to move the following method elsewhere if we need
     # resourcesByClassV defined for all combinations and do not wish to
     # overload what it mean for Local
-    def visitResourcesByType(self, processClass, processResource):
+    def visitResourcesByType_original(self, processClass, processResource):
         def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
             if self.local.getFirst(None, TYPE, s)!=None:
                 processClass(s)
@@ -102,6 +102,21 @@ class RedNode(StoreIO, QueryStore):
             self.local.visit(resource, None, TYPE, s)
         # show classes in neighbourhod as well as in local store
         self.neighbourhood.visit(klass, None, TYPE, CLASS)
+
+    def visitResourcesByType(self, processClass, processResource):
+        from rdf.query import ObjectSetBuilder
+        setBuilder = ObjectSetBuilder()
+        self.neighbourhood.query(setBuilder, None, TYPE, None)
+        types = setBuilder.set.keys()
+        for klass in types:
+            if self.local.getFirst(None, TYPE, klass)!=None:
+                processClass(klass)
+                def resource(s, p, o, processClass=processClass,\
+                             processResource=processResource, self=self):
+                    processResource(s)
+                # only show local instances
+                self.local.visit(resource, None, TYPE, klass)
+
 
     def output(self, stream, URI=None, subject=None, predicate=None, object=None):
         self.local.output(stream, URI, subject, predicate, object)
@@ -153,6 +168,9 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
+#~ Revision 5.4  2000/12/19 06:11:09  eikeon
+#~ added method to override getTypelessResources to only pay attention to local resources
+#~
 #~ Revision 5.3  2000/12/19 06:04:04  eikeon
 #~ Moved the 'local in context of neighbourhood' methods to RedNode... else we where overriding the corresponding methods on local, which someone may care about
 #~
