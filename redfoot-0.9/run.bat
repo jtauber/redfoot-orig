@@ -6,7 +6,7 @@ set PYTHONPATH=../
 @echo on
 
 
-python server.py 8000 tests/services.rdf http://www.bowstreet.com/2000/08/20
+python server.py 8000 tests/example.rdf http://www.bowstreet.com/2000/08/20
 
 
 @echo off
