@@ -1,3 +1,19 @@
+def encodeURI(s, safe='/'):
+    import string
+    always_safe = string.letters + string.digits + ' _,.-'
+    safe = always_safe + safe
+    res = []
+    for c in s:
+        if c not in safe:
+            res.append('%%%02x'%ord(c))
+        else:
+            if c==' ':
+                res.append('+')
+            else:
+                res.append(c)
+    return string.joinfields(res, '')
+
+
 import threading
 import getopt
 import sys
@@ -12,6 +28,8 @@ def _start_thread(notMoreOftenThan=15):
     t.setDaemon(1)
     t.start()
         
+LASTRETRIEVED = "http://redfoot.sourceforge.net/2001/01/30/#lastRetrieved"
+
 def _pull(interval):
     while 1:
         import time
@@ -22,9 +40,22 @@ def _pull(interval):
         from urllib2 import urlopen, Request
         headers = {}
         headers['Accept-Language'] = 'rdf'
-        request = Request("http://localhost:8002/", None, headers)
+
+        last = storeNode.local.getFirst("http://localhost:8002/", LASTRETRIEVED, None)
+        url = "http://localhost:8002/"
+        if last!=None:
+            url = url + "?since=%s" % encodeURI(last[2])
+        request = Request(url, None, headers)
+
+        # For now just put the current time...
+        # Later we should put the time of the last timestamp we get back from the query
+        timestamp = storeNode.local.generateURI()
+        storeNode.local.remove("http://localhost:8002/", LASTRETRIEVED, timestamp)
+        storeNode.local.add("http://localhost:8002/", LASTRETRIEVED, timestamp)        
+
         f = urlopen(request)
         storeNode.local.update_journal(f, "http://localhost:8002/")
+
         f.close()
         
 
