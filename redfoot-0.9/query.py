@@ -57,6 +57,18 @@ class QueryStore:
             result[s[0]] = 1
         return result.keys()
 
+    def getProperties(self, subject=None):
+        result = {}
+        for s in self.store.get(subject, None, None):
+            result[s[1]] = 1
+        return result.keys()
+
+    def getValues(self, subject, property):
+        result = {}
+        for s in self.store.get(subject, property, None):
+            result[s[2]] = 1
+        return result.keys()
+
     def typeInh(self, t):
         l = []
         for s in self.get(t, QueryStore.SUBCLASSOF, None):
