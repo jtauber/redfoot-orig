@@ -1,0 +1,115 @@
+<HTML>
+  <HEAD>
+    <TITLE>Redfoot Architectural Overview</TITLE>
+    <LINK REL="STYLESHEET" HREF="redfoot.css"/>
+  </HEAD>
+  <BODY>
+    <H1>Redfoot Architectural Overview</H1>
+    <P><B>Redfoot</B> is a framework for building distributed data-driven applications (generally web sites). Redfoot
+       uses RDF as the underlying model for all data because of the extensibility and the ability
+       to express relationships between any objects.</P>
+
+    <P>This document is designed to provide an architectural overview of Redfoot. It (currently) assumes a knowledge of Python and RDF.</P>
+
+    <H2>Top-level</H2>
+
+    <P>Three key pieces make up the Redfoot distribution:</P>
+
+    <DL>
+      <DT>core</DT>
+      <DD>the foundation for creating and running the components. This includes RDF parsing and serialization, the triple store, query functions, web server, etc</DD>
+      <DT>components</DT>
+      <DD>the building-blocks that make up applications built with Redfoot. These include modules, connectors and redcode tag libraries</DD>
+      <DT>apps</DT>
+      <DD>the glue that combines modules to make applications</DD>
+    </DL>     
+
+    <H2>Core</H2>
+
+    <H3>Triple Store</H3>
+
+    <P>Redfoot stores RDF triples in a class called TripleStore (see core/redfoot/rdf/store/triple.py).
+       There are three important methods on TripleStore:</P>
+
+    <UL>
+      <LI><CODE>add(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></LI>
+      <LI><CODE>remove(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></LI>
+      <LI><CODE>visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))</CODE></LI>
+    </UL>
+    
+    <P>In both <CODE>remove</CODE> and <CODE>visit</CODE>, any of <VAR>subject</VAR>, <VAR>predicate</VAR> and
+       <VAR>object</VAR> can be <CODE>None</CODE> which indicates that any value will match.
+
+    <P><CODE>visit</CODE> causes <VAR>callback</VAR> to be called for each matching triple. <VAR>callback</VAR>
+       must have the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE>
+       but see below on functors.</P>
+
+    <P>What types of Python object are used for each item of a triple? Technically, the triple store doesn't
+       care but in Redfoot, each item in a triple is either a <CODE>Resource</CODE> or <CODE>Literal</CODE>
+       object (see core/redfoot/rdf/objects.py).
+       These classes aren't instantiated directly because then different
+       instantiations of a Resource with the same URI would result in different instances representing the
+       same thing. So instead, these objects are created via the <CODE>resource(<VAR>uri</VAR>)</CODE> and
+       <CODE>literal(<VAR>value</VAR>)</CODE> which return the correct instance.</P>
+
+    <P>There are some handy constants for syntax and schema resource URIs defined in
+       core/redfoot/rdf/consts.py</P>
+
+    <H4>Code Example</H4>
+    
+    <PRE CLASS="code_sample">
+from redfoot.rdf.store.triple import TripleStore
+from redfoot.rdf.objects import resource, literal
+from redfoot.rdf.consts import *
+
+store = TripleStore()
+store.add(resource("http://www.jtauber.com/"), LABEL, literal("James Tauber's Website"))
+
+def print_triple(s, p, o):
+    print s, p, o
+
+store.visit(print_triple, (resource("http://www.jtauber.com/"), None, None))</PRE>
+
+    <P>If the triple store is to be loaded from and saved to an XML serialization, <CODE>TripleStore</CODE>
+       is mixed in with the <CODE>StoreIO</CODE> class and a parser and serializer.
+       See core/redfoot/rdf/store/storeio.py for an example of this where the mix-in <CODE>TripleStoreIO</CODE>
+       is defined. Similarly, core/redfoot/rdf/store/autosave.py extends TripleStoreIO to autosave the RDF.</P>
+
+    <H3>Rednodes</H3>
+
+    <P>At the very core of a Redfoot application is the concept of a rednode. A rednode combines multiple
+       triple stores (TripleStoreIO instances) and mixes in additional query functionality.
+       Rednodes are implemented as the class <CODE>RedNode</CODE> in core/redfoot/rednode.py</P>
+
+    <P>A rednode has a local triple store (which is read/write) and any number of neighbour triple stores
+       (which are read only). The combination of the local store and neighbour stores is referred to as the
+       neighbourhood. The process of adding a new neighbour is referred to as connecting to that neighbour.</P>
+
+    <P>When a rednode is created, the RDF syntax and schema files are added to the neighbourhood automatically
+       as well as a schema for some builtin classes and properties used by Redfoot.</P>
+
+    <H4>Code Example</H4>
+    
+    <PRE CLASS="code_sample">
+rednode = RedNode()
+rednode.local.load(<VAR>location</VAR>, <VAR>URI_if_different</VAR>)
+rednode.connect_to(<VAR>location</VAR>)
+
+# query the local store
+rednode.local.visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))
+
+# query only the neighbours
+rednode.neighbours.visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))
+
+# query the whole neighbourhood (local + neighbours)
+rednode.neighbourhood.visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))
+# or just
+rednode.visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))</PRE>
+    <H3>Queries</H3>
+
+    <H2>Components</H2>
+
+    <H3>Modules</H3>
+
+</BODY>
+</HTML>
