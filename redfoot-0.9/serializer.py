@@ -1,3 +1,5 @@
+# $Header$
+
 # TODO: really needs to be fully unicode
 namestart = ['A','B','C','D','E','F','G','H','I','J','K','L','M',
              'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -60,10 +62,19 @@ class Serializer:
         self.stream.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
 
     def property(self, predicate, value):
-            (namespace, localName) = splitProperty(predicate)
-            if value[0] == "^":
-                self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, value[1:], self.namespaces[namespace], localName) )
-            else:
-                if value[0:len(self.base)+1]==self.base+"#":
-                    value = value[len(self.base):]
-                self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
+        def encode(s):
+            import string
+            s = string.join(string.split(s, '&'), '&amp;')
+            s = string.join(string.split(s, '<'), '&lt;')
+            s = string.join(string.split(s, "'"), '&quot;')
+
+        (namespace, localName) = splitProperty(predicate)
+        if value[0] == "^":
+            self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(value[1:]), self.namespaces[namespace], localName) )
+        else:
+            if value[0:len(self.base)+1]==self.base+"#":
+                value = value[len(self.base):]
+            self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
+
+
+# $Log$
