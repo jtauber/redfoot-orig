@@ -147,6 +147,10 @@ if __name__ == '__main__':
     t.setDaemon(1)
     t.start()
 
+    sys.stderr.write("REDFOOT: serving %s (%s) with %s on port %s..." % (location, uri, interface, port))
+    sys.stderr.flush()
+        
+
     while 1:
         try:
             threading.Event().wait(100)
@@ -155,6 +159,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.27  2000/10/13 04:10:43  eikeon
+# now depends on BNH server... as we where having stability problems with BaseHTTPServer and company that we could not track down
+#
 # Revision 1.24  2000/10/10 05:20:54  eikeon
 # added show/hide neighbour logic
 #
