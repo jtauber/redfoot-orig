@@ -10,7 +10,7 @@ except:
     # use directory of script importing us as base for relative names
     RFHOME = os.path.dirname(sys.argv[0])
 
-    paths = ["lib", "examples", "medusa-0.5.2-rf1/", "chump-1.1/src/"]
+    paths = ["lib", "examples", "chump-1.1/src/"]
     
     for path in paths:
         sys.path.append(os.path.join(RFHOME, path))
