@@ -268,8 +268,30 @@ Adds app defined in package_name.app_name to previously running server. If a ser
         (uid, addr)= arg.split(" ", 1)
         (address, port) = addr.split(":", 1)
 
-        from redfootlib.redp2p import CacheNode
-        node =  CacheNode("%s-node" % uid, ("", int(port)))
+        from redfootlib.p2p import Node, Cache
+
+        class CacheNode(Cache, Node, Cmd):
+            message_uid = uid
+            message_id = 0
+            
+            def default(self, line):
+                print line
+                    
+            def do_add(self, arg):
+                self.redcmd.do_add(arg)
+        
+            def message(self, to, frm, message_id, message):
+                self.onecmd(message)
+                super(CacheNode, self).message(to, frm, message_id, message)
+
+            def get_message_id(self):
+                CacheNode.message_id += 1
+                return "%s-%s" % (CacheNode.message_uid, CacheNode.message_id)
+
+        node =  CacheNode()
+        node.redcmd = self
+        #node.listen_on(("", int(port)))
+        self.context.node = node
 
         if not self.is_looping:
             import asyncore
@@ -281,56 +303,24 @@ Adds app defined in package_name.app_name to previously running server. If a ser
             import time
             time.sleep(1)
         
-        edge = Edge(self, node, uid)
-        node.register(uid, edge)
-        self.context.edge = edge
-        self.context.node = node
 
     def do_tell(self, arg):
         """tell uid message"""
         (to, message) = arg.split(" ", 1)
         node = self.context.node
-        frm = self.context.edge.uid
+        frm = "me"
         message_id = node.get_message_id()
         node.tell(to, frm, message_id, message)
 
+    def do_run(self, arg):
+        if not self.is_looping:
+            import asyncore
+            import threading
+            t = threading.Thread(target = asyncore.loop, args = (1.0,))
+            t.setDaemon(1)
+            t.start()
 
-class Edge(Cmd, object):
-    def __init__(self, redcmd, node, uid):
-        super(Edge, self).__init__()        
-        self.redcmd = redcmd
-        self.node = node
-        self.remote_uid = node.uid
-        self.uid = uid
-        print "????", self.uid, self.remote_uid
-
-    def join(self, uid):
-        self.node.register(uid, self)
-
-    def do_echo(self, arg):
-        print arg
-
-    def do_add(self, arg):
-        self.redcmd.do_add(arg)
+            import time
+            time.sleep(1)
         
-    def tell(self, arg):
-        (to, message) = arg.split(" ", 1)
-        node = self.node
-        frm = self.uid
-        message_id = node.get_message_id()
-        node.tell(to, frm, message_id, message)
 
-    def send_says(self, to, frm, message_id, message):
-        print frm, ":", message
-        self.onecmd(message)        
-        #if message and message[0]==".":
-
-    def send_connected(self):
-        connected_list = self.node.who(avoid=self.uid)
-        print "CONNECTED %s\r\n" % " ".join(connected_list)
-
-    def send_who(self):
-        print "SEND_WHO"
-
-    def send_pass_on(self, to, frm, message_id, message):
-        print "SEND_PASS_ON"
