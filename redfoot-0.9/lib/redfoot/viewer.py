@@ -7,7 +7,8 @@ class Viewer:
     def __init__(self, storeNode, path):
         self.storeNode = storeNode
         self.path = path
-        self.qstore = QueryStore(storeNode)
+        #self.qstore = QueryStore(storeNode)
+        self.qstore = storeNode
 
         self.showNeighbours=0
         
@@ -189,7 +190,7 @@ class Viewer:
         """)
 
         if self.showNeighbours==1:
-            self.qstore.resourcesByClassV(self.displayClass, self.displayResource)
+            self.qstore.resourcesByClassAllV(self.displayClass, self.displayResource)
         else:
             self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
     
@@ -219,7 +220,7 @@ class Viewer:
         """)
 
         if self.showNeighbours==1:
-            self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+            self.qstore.subClassAllV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
         else:
             self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
             
@@ -234,7 +235,7 @@ class Viewer:
         self.response.write("""
             <H2>%s</H2>
             <P>%s</P>
-        """ % (self.qstore.label(subject), subject))
+        """ % (self.qstore.labelAll(subject), subject))
 
     def view(self, subject):
         self.response.write("""
@@ -267,7 +268,7 @@ class Viewer:
     def displayClass(self, klass):
         self.response.write("""
         <DT>%s</DT>
-        """ % self.qstore.label(klass))
+        """ % self.qstore.labelAll(klass))
 
     def displayResource(self, resource):
         self.response.write("""
@@ -275,7 +276,7 @@ class Viewer:
         """ % self.link(resource))
 
     def displayParent(self, resource):
-        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.label(resource)))
+        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.labelAll(resource)))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
@@ -284,7 +285,7 @@ class Viewer:
         if recurse==0:
             self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.qstore.comment(klass)))
 
-        self.response.write("<B>%s</B>" % self.qstore.label(klass))
+        self.response.write("<B>%s</B>" % self.qstore.labelAll(klass))
 
         if recurse==0:
             self.response.write("</A>")
@@ -299,7 +300,7 @@ class Viewer:
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
      self.qstore.comment(resource),
-     self.qstore.label(resource))
+     self.qstore.labelAll(resource))
 
     def displayPropertyValue(self, property, value):
         propertyDisplay = self.link(property)
@@ -358,7 +359,7 @@ class Viewer:
             return string.join(string.split(s,'#'),'%23')
 
     def RDF(self, subject=None, predicate=None, object=None):
-        self.storeNode.getStore().output(self.response, subject, predicate, object)
+        self.storeNode.output(self.response, subject, predicate, object)
 
     def Triples(self, subject=None, predicate=None, object=None):
         self.response.write("""
@@ -406,7 +407,7 @@ class Viewer:
         for s in subjects:
             self.response.write("""
               <OPTION VALUE="%s">%s</OPTION>
-            """ % (s, self.qstore.label(s)))
+            """ % (s, self.qstore.labelAll(s)))
         self.response.write("""
             </SELECT>
             <FORM ACTION="test" METHOD="GET">
@@ -419,13 +420,13 @@ class Viewer:
             self.response.write("""<UL>""")
             for s in subjects:
                 upper_uri = string.upper(s)
-                upper_label = string.upper(self.qstore.label(s))
+                upper_label = string.upper(self.qstore.labelAll(s))
                 upper_comment = string.upper(self.qstore.comment(s))
                 if (string.find(upper_uri,upper_search)!=-1) or \
                    (string.find(upper_label, upper_search)!=-1):
                        self.response.write("""
                          <LI><A HREF="javascript:document.all.a.value='%s'">%s</A></LI>
-                       """ % (s, self.qstore.label(s)))
+                       """ % (s, self.qstore.labelAll(s)))
         self.response.write("""</UL>""")
         self.response.write("""
            </BODY>
@@ -433,6 +434,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.3  2000/12/04 01:35:40  eikeon
+#~ changed plumbing to new style output method
+#~
 #~ Revision 4.2  2000/11/23 02:34:07  jtauber
 #~ added a test of new UI for picking resources
 #~

@@ -54,11 +54,11 @@ class Editor(Viewer):
         self.response.write("""
             <H2>%s</H2>
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
-        """ % (self.qstore.label(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
+        """ % (self.qstore.labelAll(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
     def edit(self, subject):
         if subject!=None and subject!="" and subject[0]=="#":
-            subject = self.qstore.getStore().getStore().URI + subject
+            subject = self.qstore.URI + subject
 
         self.response.write("""
           <HTML>
@@ -98,7 +98,7 @@ class Editor(Viewer):
                     for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
                         self.response.write("""
                         <OPTION value="%s">%s</OPTION>
-                        """ % (domain[0], self.qstore.label(domain[0])))
+                        """ % (domain[0], self.qstore.labelAll(domain[0])))
                         
             self.response.write("""
                   </SELECT>
@@ -135,10 +135,10 @@ class Editor(Viewer):
                     <INPUT TYPE="HIDDEN" NAME="prop%s_name" VALUE="%s">
                   </TD>
                   <TD VALIGN="TOP">
-        """ % (self.qstore.label(property), self.property_num, property))
+        """ % (self.qstore.labelAll(property), self.property_num, property))
 
         def callback(s, p, o, self=self):
-            self.response.write("%s<BR>" % self.qstore.label(o))
+            self.response.write("%s<BR>" % self.qstore.labelAll(o))
         self.qstore.visit(callback, property, self.qstore.RANGE, None)
 
         self.response.write("""
@@ -170,7 +170,7 @@ class Editor(Viewer):
 
                 possibleValues = {}
                 def possibleValue(s, p, o, qstore=self.qstore, possibleValues=possibleValues):
-                    label = qstore.label(s)
+                    label = qstore.labelAll(s)
                     # we use a key of 'label + s' to insure uniqness of key
                     possibleValues[label+s] = s 
 
@@ -184,11 +184,11 @@ class Editor(Viewer):
                     if v==value:
                         self.response.write("""
                         <OPTION SELECTED="TRUE" VALUE="%s">%s</OPTION>
-                        """ % (v, self.qstore.label(v)))
+                        """ % (v, self.qstore.labelAll(v)))
                     else:
                         self.response.write("""
                         <OPTION VALUE="%s">%s</OPTION>
-                        """ % (v, self.qstore.label(v)))
+                        """ % (v, self.qstore.labelAll(v)))
                     
 
 
@@ -255,7 +255,7 @@ class Editor(Viewer):
             for klass in self.qstore.get(None, self.qstore.TYPE, self.qstore.CLASS):
                 self.response.write("""
                     <OPTION VALUE="%s">%s</OPTION>
-                """ % (klass[0], self.qstore.label(klass[0])))
+                """ % (klass[0], self.qstore.labelAll(klass[0])))
             self.response.write("""
                   </SELECT>
             """)
@@ -294,7 +294,7 @@ class Editor(Viewer):
         subject = parameters['uri']
         count = parameters['prop_count']
         i = 0
-	self.qstore.getStore().remove(subject)
+	self.qstore.remove(subject)
         while i < int(count):
             i = i + 1
             property = parameters['prop%s_name' % i]
@@ -302,16 +302,16 @@ class Editor(Viewer):
             isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
                 value = "^" + value
-            self.qstore.getStore().add(subject, property, value)
+            self.qstore.add(subject, property, value)
         newProperty = parameters['newProperty']
         if newProperty!="":
-            self.qstore.getStore().add(subject, newProperty, "")
+            self.qstore.add(subject, newProperty, "")
 
     def delete(self, parameters):
         subject = parameters['uri']
         if subject=="":
             raise "TODO: invalid subject"
-        self.qstore.getStore().remove(subject, None, None)
+        self.qstore.remove(subject, None, None)
 
     def deleteProperty(self, parameters):
         property_num = parameters['processor'][4:]
@@ -321,7 +321,7 @@ class Editor(Viewer):
         value = parameters[vName]
         if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
-        self.qstore.getStore().remove(subject, property, value)
+        self.qstore.remove(subject, property, value)
 
     def reifyProperty(self, parameters):
         property_num = parameters['processor'][6:]
@@ -330,7 +330,7 @@ class Editor(Viewer):
         value = parameters['prop%s_value' % property_num]
         if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
-        self.qstore.reify(self.storeNode.getStore().URI+self.generateURI(), subject, property, value)
+        self.qstore.reify(self.storeNode.URI+self.generateURI(), subject, property, value)
 
     def generateURI(self):
 	import time
@@ -340,14 +340,14 @@ class Editor(Viewer):
         subject = parameters['uri']
 
         if subject[0]=="#":
-            subject = self.qstore.getStore().getStore().URI + subject
+            subject = self.qstore.URI + subject
 
-	self.qstore.getStore().remove(subject)
+	self.qstore.remove(subject)
 
 
         # TODO: what to do in the case it already exists?
-        self.qstore.getStore().add(subject, self.qstore.LABEL, "^"+parameters['label'])
-        self.qstore.getStore().add(subject, self.qstore.TYPE, parameters['type'])
+        self.qstore.add(subject, self.qstore.LABEL, "^"+parameters['label'])
+        self.qstore.add(subject, self.qstore.TYPE, parameters['type'])
 
         count = parameters["prop_count"]
         if count=="":
@@ -364,10 +364,10 @@ class Editor(Viewer):
             isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
                 value = "^" + value
-            self.qstore.getStore().add(subject, property, value)
+            self.qstore.add(subject, property, value)
 
     def save(self):
-        self.qstore.getStore().getStore().save()
+        self.qstore.save()
 
 
 #TODO: could be a separate module
@@ -416,10 +416,13 @@ class PeerEditor(Editor):
     def connect(self, parameters):
         uri = parameters["uri"]
         if uri!="":
-            self.qstore.getStore().connectTo(uri)
+            self.qstore.connectTo(uri)
 
 
 # $Log$
+# Revision 4.2  2000/11/27 19:39:10  eikeon
+# editor now alphabetically sort possible values for properties
+#
 # Revision 4.1  2000/11/21 16:49:01  eikeon
 # fixed VALIGN=top typo on reify buttons
 #

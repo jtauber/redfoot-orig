@@ -1,20 +1,8 @@
 # $Header$
 
+from store import TripleStore
+
 class StoreIO:
-    def __init__(self, store):
-        self.store = store
-
-    def visit(self, callback, subject=None, predicate=None, object=None):
-        return self.store.visit(callback, subject, predicate, object)
-        
-    def get(self, subject=None, predicate=None, object=None):
-        return self.store.get(subject, predicate, object)
-
-    def remove(self, subject=None, predicate=None, object=None):
-        return self.store.remove(subject, predicate, object)
-
-    def add(self, subject, predicate, object):
-        return self.store.add(subject, predicate, object)
 
     def load(self, location, URI=None):
         self.location = location
@@ -25,7 +13,7 @@ class StoreIO:
             self.URI = URI
 
         from rdf.parser import parseRDF
-        parseRDF(self.store.add, self.location, self.URI)
+        parseRDF(self.add, self.location, self.URI)
 
     def save(self):
         self.saveAs(self.location, self.URI)
@@ -50,6 +38,10 @@ class StoreIO:
         serializer.start()
         self.visit(serializer.triple, subject, predicate, object)
         serializer.end()
+
+
+class TripleStoreIO(StoreIO, TripleStore):
+    pass
 
 
 from threading import RLock
@@ -134,6 +126,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.11  2000/12/04 03:24:09  jtauber
+#~ bugfix: output was ignoring query
+#~
 #~ Revision 4.10  2000/12/04 02:36:29  jtauber
 #~ cleaned up code
 #~

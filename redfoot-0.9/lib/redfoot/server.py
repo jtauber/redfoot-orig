@@ -61,15 +61,17 @@ class RedServer:
             uri = "http://%s:%s%s" % (hostname,port,path)
 
         from redfoot.rednode import StoreNode
-        from rdf.storeio import StoreIO
-        from rdf.store import TripleStore
+#          from rdf.storeio import TripleStoreIO
             
-        storeIO = StoreIO(TripleStore())
-        storeIO.load(location, uri)
+#          storeIO = TripleStoreIO()
+#          storeIO.load(location, uri)
+
+#          storeNode = StoreNode()
+#          storeNode.setStore(storeIO)
 
         storeNode = StoreNode()
-        storeNode.setStore(storeIO)
-
+        storeNode.load(location, uri)
+        
     
         server = Server(('', port))
 
@@ -168,6 +170,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.8  2000/12/04 05:26:11  eikeon
+#~ changed to use new server interface
+#~
 #~ Revision 4.7  2000/12/04 05:21:24  eikeon
 #~ Split server.py into server.py, servlet.py and receiver.py
 #~

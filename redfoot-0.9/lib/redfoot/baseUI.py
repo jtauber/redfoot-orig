@@ -8,7 +8,8 @@ class BaseUI:
     def __init__(self, storeNode, path):
         self.storeNode = storeNode
         self.path = path
-        self.qstore = QueryStore(storeNode)
+#        self.qstore = QueryStore(storeNode)
+        self.qstore = storeNode
         self.editor = None
 
 
@@ -25,6 +26,9 @@ class BaseUI:
         self.getEditor().handleRequest(request, response)
 
 #~ $Log$
+#~ Revision 4.1  2000/11/07 16:55:33  eikeon
+#~ factored out creation of handler from runServer
+#~
 #~ Revision 4.0  2000/11/06 15:57:34  eikeon
 #~ VERSION 4.0
 #~
