@@ -58,11 +58,11 @@
         s_subject = self.app.request.get_parameter('s_subject', '')
 
         if copy == "true":
-            subject = self.rednode.local.uri + generate_uri()
+            subject = self.rednode.uri + generate_uri()
             self.do_update(request, response, resource(subject), 1)
         else:
             if subject == None or subject == "":
-                subject = self.rednode.local.uri + generate_uri()
+                subject = self.rednode.uri + generate_uri()
 
         subject = resource(subject)
 
@@ -97,7 +97,7 @@
         <TABLE>
           <red:if test="self.rednode.neighbourhood.exists(subject, None, None)">
             <red:exec>
-              self.rednode.local.visit(edit_property, (subject, None, None))
+              self.rednode.visit(edit_property, (subject, None, None))
               self.rednode.neighbours.visit(po(self.viewer.display_property_value), (subject, None, None))
             </red:exec>
             <red:else>

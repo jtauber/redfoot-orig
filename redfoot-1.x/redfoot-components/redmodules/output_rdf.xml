@@ -15,7 +15,7 @@
       else:
           object = resource(object)
       self.app.response.set_header('Content-Type', 'text/xml')
-      self.app.rednode.local.output(self.app.response, subject=subject, predicate=predicate, object=object)
+      self.app.rednode.output(self.app.response, subject=subject, predicate=predicate, object=object)
     </red:exec></red:facet>
 
   </red:module>

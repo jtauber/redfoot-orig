@@ -9,8 +9,10 @@
 
 	split off neighbour management code
 
-
 	Refactored Run / RedNode yet again and... Documented them!
+
+	RedNode no longer has a local, but now is the local and contains
+	its neighbourhood and neighbours as attributes. 
 	
 
 	RELEASE 1.5.0

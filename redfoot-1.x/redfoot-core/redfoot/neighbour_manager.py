@@ -17,7 +17,7 @@ class NeighbourManager(object):
     def load(self, location ,uri, create=0):
         super(NeighbourManager, self).load(location, uri, create)
         # load neighbours that are marked as connected
-        self.local.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
+        self.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
 
     def _connect(self, neighbour, p, o):
         self.connect_to(neighbour.uri)
@@ -37,5 +37,5 @@ class NeighbourManager(object):
             self.remove(resource(uri), CONNECTED, None)
             self.add(resource(uri), CONNECTED, NO)
             # Do we want to remember our neighbour?
-            if not self.local.exists(resource(uri), TYPE, NEIGHBOUR):
+            if not self.exists(resource(uri), TYPE, NEIGHBOUR):
                 self.add(resource(uri), TYPE, NEIGHBOUR)

@@ -123,6 +123,6 @@ class App(ParentModule):
 
     def stop(self):
         ParentModule.stop(self)
-        print "saving %s" % self.rednode.local.location
-        self.rednode.local.save()
+        print "saving %s" % self.rednode.location
+        self.rednode.save()
         

@@ -93,11 +93,11 @@ store.visit(print_triple, (resource("http://www.jtauber.com/"), None, None))</PR
     
     <PRE CLASS="code_sample">
 rednode = RedNode()
-rednode.local.load(<VAR>location</VAR>, <VAR>URI_if_different</VAR>)
+rednode.load(<VAR>location</VAR>, <VAR>URI_if_different</VAR>)
 rednode.connect_to(<VAR>location</VAR>)
 
 # query the local store
-rednode.local.visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))
+rednode.visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))
 
 # query only the neighbours
 rednode.neighbours.visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))

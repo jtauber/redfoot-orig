@@ -156,7 +156,7 @@
     <red:facet name="/output"
                content-type="text/rdf" >
       <red:exec>
-        self.rednode.local.output(self.app.response)
+        self.rednode.output(self.app.response)
       </red:exec>
     </red:facet>
 
