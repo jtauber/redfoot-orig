@@ -169,7 +169,7 @@ p {
   margin: 5px 40px;
 }
 
-dl ul {
+dl, ul {
   margin: 0px 40px;
 }
 
