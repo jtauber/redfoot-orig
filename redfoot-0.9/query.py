@@ -87,7 +87,7 @@ class QueryStore:
         return result
                 
     # vistor pattern
-    def resourcesByClassV(processClass, processResource):
+    def resourcesByClassV(self, processClass, processResource):
         for klass in self.store.get(None, QueryStore.TYPE, QueryStore.CLASS):
             processClass(klass[0])
             for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
