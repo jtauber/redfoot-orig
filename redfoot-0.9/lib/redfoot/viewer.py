@@ -252,7 +252,6 @@ class Viewer:
 
     def view(self, subject):
         self.header("View")
-        self.menuBar()
         self.resourceHeader(subject)
         self.response.write("""
             <TABLE>
@@ -423,6 +422,9 @@ class Viewer:
         self.footer()
 
 #~ $Log$
+#~ Revision 5.8  2000/12/09 22:52:49  eikeon
+#~ factored out the if self.showNeighbours
+#~
 #~ Revision 5.7  2000/12/09 22:33:59  jtauber
 #~ factored out header/footer
 #~
