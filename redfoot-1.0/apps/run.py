@@ -32,11 +32,7 @@ from redcode.handlers import RedcodeRootHandler
 daemon = RedDaemon((host, port), module, RedcodeRootHandler)
 
 try:
-    daemon.run()
-    if port==80:
-        print "Running at http://%s/" % host
-    else:
-        print "Running at http://%s:%s" % (host, port)
+    daemon.run()        
         
 except ImportError, msg:
     print "%s: %s" % (msg.__class__.__name__, msg)
