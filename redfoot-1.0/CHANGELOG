@@ -1,3 +1,8 @@
+2001/09/07
+	RELEASE 1.0.0
+
+	Fixed minor bug that was causing non redcode sub-modules (such as Static) not to work.
+
 
 2001/09/04
 	RELEASE 0.9.99-pre3

@@ -43,7 +43,7 @@ def create_module(klass, app=None):
 
     import sys
     module = sys.modules[klass.__module__]
-    for (instance_name, class_name) in klass._RF_sub_modules:
+    for (instance_name, class_name) in getattr(klass, '_RF_sub_modules', []):
         mod_class = module.__dict__[class_name]
         mod_instance = create_module(mod_class, app)
         instance_vars[instance_name] = mod_instance
