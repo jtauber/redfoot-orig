@@ -37,7 +37,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         storeIO = StoreIO()
         storeIO.setStore(tripleStore)
-        storeIO.load("rdfSchema.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+        storeIO.load("rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
         storeIO.load("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
 
         viewer = Viewer(self.wfile, QueryStore(tripleStore))
