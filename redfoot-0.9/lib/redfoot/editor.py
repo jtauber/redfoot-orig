@@ -155,9 +155,9 @@ class Editor(Viewer):
                   </TD>
                   <TD COLSPAN="2">
         """)
-        if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.neighbourhood.get(property, RANGE, None)[0][2]==LITERAL):
-            uitype = self.qstore.neighbourhood.get(property, self.UITYPE, None)
-            if len(uitype) > 0 and uitype[0][2]==self.TEXTAREA:
+        if (len(value) > 0 and is_literal(value[0])) or (len(value)==0 and self.qstore.neighbourhood.getRange(property)==LITERAL):
+            uitype = self.qstore.neighbourhood.getFirst(property, self.UITYPE, None)
+            if uitype != None and uitype[2]==self.TEXTAREA:
                 self.response.write("""
                 <TEXTAREA NAME="prop%s_value" ROWS="5" COLS="60">%s</TEXTAREA>
                 """ % (self.property_num, un_literal(value)))
@@ -313,7 +313,7 @@ class Editor(Viewer):
             value = parameters['prop%s_value' % i]
             isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
-                value = "^" + value
+                value = literal(value)
             self.qstore.add(subject, property, value)
         newProperty = parameters['newProperty']
         if newProperty!="":
@@ -331,8 +331,8 @@ class Editor(Viewer):
         property = parameters['prop%s_name' % property_num]
         vName = "prop%s_value" % property_num
         value = parameters[vName]
-        if self.qstore.neighbourhood.get(property, RANGE, None)[0][2]==LITERAL:
-            value = "^" + value
+        if self.qstore.neighbourhood.getRange(property)==LITERAL:
+            value = literal(value)
         self.qstore.remove(subject, property, value)
 
     def reifyProperty(self, parameters):
@@ -340,8 +340,8 @@ class Editor(Viewer):
         subject = parameters['uri']
         property = parameters['prop%s_name' % property_num]
         value = parameters['prop%s_value' % property_num]
-        if self.qstore.neighbourhood.get(property, RANGE, None)[0][2]==LITERAL:
-            value = "^" + value
+        if self.qstore.neighbourhood.getRange(property)==LITERAL:
+            value = literal(value)
         self.qstore.reify(self.storeNode.URI+self.generateURI(), subject, property, value)
 
     def generateURI(self):
@@ -358,7 +358,7 @@ class Editor(Viewer):
 
 
         # TODO: what to do in the case it already exists?
-        self.qstore.add(subject, LABEL, "^"+parameters['label'])
+        self.qstore.add(subject, LABEL, literal(parameters['label']))
         self.qstore.add(subject, TYPE, parameters['type'])
 
         count = parameters["prop_count"]
@@ -375,7 +375,7 @@ class Editor(Viewer):
             value = parameters[valueName]
             isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
-                value = "^" + value
+                value = literanl(value)
             self.qstore.add(subject, property, value)
 
     def save(self):
@@ -432,6 +432,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.9  2000/12/06 20:50:31  eikeon
+# Now uses the new getPossibleProperties* methods on query
+#
 # Revision 4.8  2000/12/05 22:43:30  eikeon
 # moved constants to rdf.const
 #
