@@ -93,6 +93,34 @@ class RedServer:
             except KeyboardInterrupt:
                 sys.exit()
 
+    def keepReloading(lm):
+        from os.path import getmtime
+        rollbackImporter = None
+        m = None
+        while 1:
+            if m==None:
+                if rollbackImporter:
+                    rollbackImporter.uninstall()
+                rollbackImporter = RollbackImporter()
+        
+                m = lm(server)
+            
+                mtime = getmtime(m.__file__)
+                sys.stderr.write("added '%s' @ '%s'\n" % (m.__name__, mtime))
+
+            if getmtime(m.__file__) > mtime+1:
+                handler = m.h
+                if handler!=None:
+                    handler.stop()
+                    sys.stderr.write("removed '%s' @ '%s'\n" % (m.__name__, mtime))
+                    m = None
+                else:
+                    sys.stderr.write("'%s': '%s' -- '%s'\n" % (m.__file__, getmtime(m.__file__), mtime))
+        
+            sys.stderr.flush()
+            import threading
+            threading.Event().wait(1)
+
 
 import string
 import sys
@@ -121,35 +149,6 @@ class RollbackImporter:
         __builtin__.__import__ = self.realImport
     
 
-def keepReloading(lm):
-    from os.path import getmtime
-    rollbackImporter = None
-    m = None
-    while 1:
-        if m==None:
-            if rollbackImporter:
-                rollbackImporter.uninstall()
-            rollbackImporter = RollbackImporter()
-        
-            m = lm(server)
-            
-            mtime = getmtime(m.__file__)
-            sys.stderr.write("added '%s' @ '%s'\n" % (m.__name__, mtime))
-
-        if getmtime(m.__file__) > mtime+1:
-            handler = m.h
-            if handler!=None:
-                handler.stop()
-                sys.stderr.write("removed '%s' @ '%s'\n" % (m.__name__, mtime))
-                m = None
-            else:
-                sys.stderr.write("'%s': '%s' -- '%s'\n" % (m.__file__, getmtime(m.__file__), mtime))
-        
-        sys.stderr.flush()
-        import threading
-        threading.Event().wait(1)
-
-
 if __name__ == '__main__':
     import sys
     redserver = RedServer()
@@ -162,6 +161,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.3  2000/11/07 18:31:17  eikeon
+#~ code to support automatic reloading of handlers... badly needs refactoring
+#~
 #~ Revision 4.2  2000/11/07 18:20:56  eikeon
 #~ fixed bug just introduced
 #~
