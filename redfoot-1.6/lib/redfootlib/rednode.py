@@ -118,14 +118,16 @@ class RedNode(Visit, NeighbourManager, AutoSave, TripleStore):
         return app
 
     def get_module(self, uri):
+        uri = URIRef(uri)
         from redfootlib.module_store import MODULE
-        value = self.neighbourhood.first_object(URIRef(uri), MODULE)
+        value = self.neighbourhood.first_object(uri, MODULE)
         if value:
             return self._exec_module(value)
         else:
             return self.load_module(uri)
 
     def load_module(self, uri):
+        uri = URIRef(uri)
         from redfootlib.module_store import MODULE        
         from urllib import urlopen
 
