@@ -4,49 +4,6 @@ import sys
 import time
 import string
 
-from threading import RLock
-from threading import Condition
-
-class Cubby:
-
-    def __init__(self):
-        self.mon = RLock()
-        self.rc = Condition(self.mon)
-        self.wc = Condition(self.mon)
-        self.queue = []
-
-    def put(self, item):
-        self.mon.acquire()
-        self.queue.append(item)
-        self.rc.notify()
-        self.mon.release()
-
-    def get(self):
-        self.mon.acquire()
-        if not self.queue:
-            item = None
-        else:
-            item = self.queue[0]
-            del self.queue[0]
-            self.wc.notify()
-        self.mon.release()
-        return item
-
-    def peek(self):
-        self.mon.acquire()
-        if not self.queue:
-            item = None
-        else:
-            item = self.queue[0]
-        self.mon.release()
-        return item
-
-    def wait(self, timeout=None):
-        self.mon.acquire()
-        self.rc.wait(timeout)
-        self.mon.release()
-
-
 class ServerConnection:
 
     def __init__(self, handler, context):
@@ -88,86 +45,6 @@ class BadRequestError(Error):
     def __init__(self, msg):
         Error.__init__(self, "%s" % msg)
         self.message = msg
-
-
-class ServerContext:
-    def __init__(self):
-        self.sessions = {}
-        self.cubby = Cubby()
-        import threading
-        t = threading.Thread(target = self._sessionReaper, args = ())
-        t.setDaemon(1)
-        t.start()
-
-    def _sessionReaper(self):
-        while 1:
-            sessionKey = self.cubby.peek()
-            if sessionKey==None:
-                self.cubby.wait(1)
-            else:
-                import time
-                now = time.time()
-                session = self.sessions[sessionKey]
-                
-                idle = (now - session.getLastAccessedTime())
-                if idle > session.getMaxInactiveInterval():
-                    self.cubby.get() # todo... pop
-                    del self.sessions[sessionKey]
-                else:
-                    delta = session.getMaxInactiveInterval() -  idle
-                    self.cubby.wait(delta)
-                    
-class Session:
-    def __init__(self, id):
-        now = time.time()
-        self._creationTime = now
-        self._setLastAccessedTime(now)
-        self._attributes = {}
-        self.maxInactiveInterval = 30 * 60 # default to 30 minutes
-        self._id = id
-
-    def getAttribute(self, name):
-        if self._attributes.has_key(name):
-            return self._attributes[name]
-        else:
-            return None
-    
-    def getAttributeNames(self):
-        return self._attributes.keys()
-    
-    def getCreationTime(self):
-        return self._creationTime
-
-    def getId(self):
-        return self._id
-
-    def getLastAccessedTime(self):
-        return self._lastAccessedTime
-
-    def _setLastAccessedTime(self, time):
-        self._lastAccessedTime = time
-
-    def getMaxInactiveInterval(self):
-        return self.maxInactiveInterval
-
-    def setMaxInactiveInterval(self, interval):
-        self._maxInactiveInterval = interval
-
-    def invalidate(self):
-        self._invalid = 1
-
-    def isNew(self):
-        return self.new==1
-
-    def removeAttribute(self, name):
-        del self.attributes[name]
-
-    def setAttribute(self, name, value):
-        self.attributes[name] = value
-
-    def setMaxInactiveInterval(self, interval):
-        self._maxInactiveInterval = interval
-    
 
 
 class Request:
@@ -251,32 +128,20 @@ class Request:
         return cookies
 
     def getSession(self):
-        self.connection.session = None
-        
-        sessions = self.connection.context.sessions
+        context = self.connection.context
         cookies = self.getCookies()
-
         if cookies.has_key('EBNH_session'):
-            sessionKey = cookies['EBNH_session'].value
-            if sessions.has_key(sessionKey):
-                session = sessions[sessionKey]
+            session_key = cookies['EBNH_session'].value
+            session = context.get_session(session_key)
+            if session!=None:
                 session._setLastAccessedTime(time.time())
                 return session
+                                
+        new_session = self.connection.context.create_session()
+        # TODO: find better way to do this
+        self.connection.response._new_session_ID = new_session.getId()
 
-        # Create a new session
-        from whrandom import random
-        rn = random()
-        session = "%s#T%s" % (rn, time.time())
-        self.connection.session = session
-
-        if sessions.has_key(session):
-            raise "TODO: exception"
-
-        sessions[session] = Session(session)
-
-        self.connection.context.cubby.put(session)
-
-        return sessions[session]
+        return new_session
 
     def close(self):
         try:
@@ -298,6 +163,7 @@ class Response:
                        'Expires': "-1",
                        'Content-Type': "text/html",
                        'Connection': "close" }
+        self._new_session_ID = None
             
         
     def _send_head(self):
@@ -312,12 +178,11 @@ class Response:
         TTL = 60*60*24 # time to live in seconds
         expire = time.time()+TTL
 
-        if hasattr(self.connection, 'session'):
-            if self.connection.session!=None:
-                cookie['EBNH_session'] = self.connection.session
-                cookie['EBNH_session']['path'] = "/"
-                cookie['EBNH_session']['Version'] = "1"
-                cookie['EBNH_session']['expires'] = date_time_string(expire)
+        if self._new_session_ID!=None:
+            cookie['EBNH_session'] = self._new_session_ID
+            cookie['EBNH_session']['path'] = "/"
+            cookie['EBNH_session']['Version'] = "1"
+            cookie['EBNH_session']['expires'] = date_time_string(expire)
         self.write(cookie.output())
 
         self.write("\r\n")
@@ -387,3 +252,6 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 5.3  2000/12/17 21:19:10  eikeon
+#~ removed old log messages
+#~

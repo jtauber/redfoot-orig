@@ -7,9 +7,9 @@ __version__ = "$Revision$"
 
 from bnh.receiver import Receiver
 from bnh.connection_cubby import ConnectionCubby
+from bnh.server_context import ServerContext
 
 from bnh.servlet import ServerConnection
-from bnh.servlet import ServerContext
 
 class Server:
     def __init__(self, serverAddress):
@@ -47,6 +47,9 @@ class Server:
                 connection_cubby.wait() 
 
 #~ $Log$
+#~ Revision 5.5  2000/12/17 22:33:10  eikeon
+#~ changing names to _ style names; moved ConnectionCubby to its own module
+#~
 #~ Revision 5.4  2000/12/17 21:19:10  eikeon
 #~ removed old log messages
 #~
