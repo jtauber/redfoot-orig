@@ -2,6 +2,8 @@
 
 
 from redfoot.modules.viewer import Viewer
+from redfoot.modules.base import Base
+
 from redfoot.rednode import RedNode
 from redfoot.server import RedServer
 
@@ -9,7 +11,7 @@ from rdf.query import QueryStore
 from rdf.const import *
 
 
-class UI(Viewer):
+class UI(Base, Viewer):
     def __init__(self, rednode):
         self.rednode = rednode
 <!--          self.rednode = RedNode() -->
@@ -22,9 +24,6 @@ class UI(Viewer):
         #Viewer.__init__(self, self.rednode)
         self.showNeighbours = 1
         
-    def handle_request(self, request, response):
-        Viewer.handle_request(self, request, response)
-
     def css(self):
         self.response.write("""
         body {

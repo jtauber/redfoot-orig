@@ -10,7 +10,8 @@ def __init__(self, rednode):
     self.rednode = rednode
     self.showNeighbours = 0
 
-def handle_request(self, request, response):
+def handle_request_local(self, request, response):
+    self.request = request
     self.response = response
 
     parameters = request.get_parameters()        
@@ -23,7 +24,7 @@ def handle_request(self, request, response):
     elif path_info == "/graphViz":
         self.graphViz()
     else:
-        self.response.write("unknown PATH of '%s'" % path_info)
+	return None
 
 def getNodeInScope(self):
     if self.showNeighbours==1:
@@ -55,7 +56,7 @@ def header(self, title):
           &lt;BODY>
             &lt;H1>RedFoot&lt;/H1>
     """ % title)
-    self.menuBar(request, response)
+    self.menuBar(self.request, self.response)
     self.response.write("""
             &lt;H2>%s&lt;/H2>
     """ % title)
@@ -90,20 +91,20 @@ for resource in node.getTypelessResources():
 root = request.get_parameters()['uri']
 if root == "":
     root = RESOURCE
-self.display_subclass(request, response, root)
+self.display_subclass(request, response, root, 1)
 </r:exec>
 </r:response>
 
 <r:response name="/subclass">
 <r:exec>
-root = request.get_parameters()['uri']
+root = request.get_parameters()['uri']	
 if root == "":
     root = RESOURCE
 self.display_subclass(request, response, root, 0)
 </r:exec>
 </r:response>
 
-<r:response name="display_subclass" args="root recurse=1">
+<r:response name="display_subclass" args="root recurse">
 <r:exec>self.header("Subclass View")</r:exec>
 <DIV CLASS="box">
 <r:exec>self.rednode.visitParentTypes(self.displayParent, root)</r:exec>
@@ -300,9 +301,9 @@ def triple(s, p, o, write=self.response.write):
       &lt;TR>&lt;TD>%s&lt;/TD>&lt;TD>%s&lt;/TD>&lt;TD>%s&lt;/TD>&lt;/TR>
     """ % (s, p, o))
 if self.showNeighbours==1:
-    self.rednode.neighbourhood.visit(triple, subject, predicate, object)
+    self.rednode.neighbourhood.visit(triple, s, p, o)
 else:
-    self.rednode.local.visit(triple, subject, predicate, object)
+    self.rednode.local.visit(triple, s, p, o)
 </r:exec>
 </TABLE>
 <r:exec>self.footer()</r:exec>
