@@ -9,7 +9,8 @@ import sys
 class StoreIO:
 
     def __init__(self):
-        self.dirty = Dirty()
+        pass
+
 
     def setStore(self, store):
         self.store = store
@@ -24,11 +25,9 @@ class StoreIO:
         return self.getStore().get(subject, property, value)
 
     def remove(self, subject=None, property=None, value=None):
-        self.dirty.set()
         self.getStore().remove(subject, property, value)
 
     def add(self, subject, property, value):
-        self.dirty.set()
         self.getStore().add(subject, property, value)
 
     def load(self, location, URI=None):
@@ -42,8 +41,6 @@ class StoreIO:
         from rdf.parser import parseRDF
         parseRDF(self.store.add, self.location, self.URI)
 
-        self.dirty.clear() # we just loaded... therefore we are clean
-        self.autosave() # TODO: make autosave optional... for now hardcoded.
 
     def save(self):
         self.saveAs(self.location, self.URI)
@@ -62,17 +59,6 @@ class StoreIO:
         t.setDaemon(1)
         t.start()
         
-    def _autosave(self, interval=5*60):
-        while 1:
-            if self.dirty.value()==1:
-                self.dirty.clear()
-                self.saveAs(self.location, self.URI)
-                self.saveAs("%s-%s" % (self.location, self.date_time_string()), self.URI)
-                # Do not save a backup more often than interval
-                import time
-                time.sleep(interval)
-            # do not bother to check if dirty until we get notified
-            self.dirty.wait()
         
     def output(self, stream, URI=None):
 
@@ -178,6 +164,45 @@ class StoreIO:
         
         s.end()
 
+
+
+class AutoSaveStoreIO(StoreIO):
+    def __init__(self):
+        StoreIO.__init__(self)
+        self.dirty = Dirty()
+
+    def remove(self, subject=None, property=None, value=None):
+        self.dirty.set()
+        StoreIO.remove(self, subject, property, value)
+
+    def add(self, subject, property, value):
+        self.dirty.set()
+        StoreIO.add(self, subject, property, value)
+
+    def load(self, location, URI=None):
+        StoreIO.load(self, location, URI)
+        self.dirty.clear() # we just loaded... therefore we are clean
+        self.autosave() 
+
+    def autosave(self, notMoreOftenThan=10):
+        """Not more often then is in seconds"""
+        import threading
+        t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
+        t.setDaemon(1)
+        t.start()
+        
+    def _autosave(self, interval=5*60):
+        while 1:
+            if self.dirty.value()==1:
+                self.dirty.clear()
+                self.saveAs(self.location, self.URI)
+                self.saveAs("%s-%s" % (self.location, self.date_time_string()), self.URI)
+                # Do not save a backup more often than interval
+                import time
+                time.sleep(interval)
+            # do not bother to check if dirty until we get notified
+            self.dirty.wait()
+        
     def date_time_string(self, t=None):
         """."""
         import time
@@ -220,6 +245,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.4  2000/12/03 22:27:07  jtauber
+#~ updated to use new parseRDF function
+#~
 #~ Revision 4.3  2000/11/29 23:29:05  eikeon
 #~ Added autosave functionailty
 #~
