@@ -58,44 +58,62 @@ class TripleStore:
         self.visit(visitor.callback, subject, predicate, object)
 
     def visit(self, callback, subject=None, predicate=None, object=None):
-        if subject!=None:
+        if subject!=None: # subject is given
             if self.spo.has_key(subject):
-                if predicate!=None:
+                if predicate!=None: # subject+predicate is given
                     if self.spo[subject].has_key(predicate):
-                        if object!=None:
+                        if object!=None: # subject+predicate+object is given
                             if self.spo[subject][predicate].has_key(object):
                                 callback(subject, predicate, object)
-                        else:
+                            else: # given object not found
+                                pass
+                        else: # subject+predicate is given, object unbound
                             for o in self.spo[subject][predicate].keys():
                                 callback(subject, predicate, o)
-                else:
+                    else: # given predicate not found
+                        pass
+                else: # subject given, predicate unbound
                     for p in self.spo[subject].keys():
-                        self.visit(callback, subject, p, object) # recurse for now
-        else:
-            if predicate!=None:
-                if self.pos.has_key(predicate):
-                    if object!=None:
-                        if self.pos[predicate].has_key(object):
-                            for s in self.pos[predicate][object].keys():
-                                callback(s, predicate, object)
-                    else:
-                        for o in self.pos[predicate].keys():
-                            for s in self.pos[predicate][o].keys():
-                                callback(s, predicate, o)
-            else:
-                if object!=None:
-                    for p in self.pos.keys():
-                        if self.pos[p].has_key(object):
-                            for s in self.pos[p][object]:
-                                callback(s, p, object)
-                else:
-                    for s in self.spo.keys():
-                        for p in self.spo[s].keys():
-                            for o in self.spo[s][p].keys():
-                                callback(s, p, o)
+                        if object!=None: # object is given
+                            if self.spo[subject][p].has_key(object):
+                                callback(subject, p, object)
+                            else: # given object not found
+                                pass
+                        else: # object unbound
+                            for o in self.spo[subject][p].keys():
+                                callback(subject, p, o)
+            else: # given subject not found
+                pass
+        elif predicate!=None: # predicate is given, subject unbound
+            if self.pos.has_key(predicate):
+                if object!=None: # predicate+object is given, subject unbound
+                    if self.pos[predicate].has_key(object):
+                        for s in self.pos[predicate][object].keys():
+                            callback(s, predicate, object)
+                    else: # given object not found
+                        pass
+                else: # predicate is given, object+subject unbound
+                    for o in self.pos[predicate].keys():
+                        for s in self.pos[predicate][o].keys():
+                            callback(s, predicate, o)
+        elif object!=None: # object is given, subject+predicate unbound
+            for p in self.pos.keys():
+                if self.pos[p].has_key(object):
+                    for s in self.pos[p][object]:
+                        callback(s, p, object)
+                else: # given object not found
+                    pass
+        else: # subject+predicate+object unbound
+            for s in self.spo.keys():
+                for p in self.spo[s].keys():
+                    for o in self.spo[s][p].keys():
+                        callback(s, p, o)
                     
 
 #~ $Log$
+#~ Revision 4.1  2000/12/03 20:17:40  jtauber
+#~ changed property/value to predicate/object
+#~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
 #~
