@@ -1,12 +1,10 @@
 # $Header$
 
 from redfoot.rednode import RedNode
-from redfoot.baseUI import BaseUI
-from redfoot.editor import PeerEditor
+from redfoot.editor import Editor
 from redfoot.server import RedServer
 from rdf.query import QueryStore
 from rdf.const import *
-
 
 def get_args():
 
@@ -47,8 +45,12 @@ class UI:
 
     def __init__(self, location, uri):
         self.storeNode = RedNode()
+        import os
+        if not os.access(location, os.F_OK):
+            # create file
+            self.storeNode.local.save(location, uri)
         self.storeNode.local.load(location, uri)
-        self.editor = PeerEditor(self.storeNode)
+        self.editor = Editor(self.storeNode)
 
     def handle_request(self, request, response):
         self.editor.handle_request(request, response)
