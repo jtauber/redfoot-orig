@@ -10,25 +10,25 @@ def parse_RDF(adder, location, baseURI=None):
     parser.SetBase(baseURI)
     RootHandler(parser, adder, None)
 
-    #parser.returns_unicode = 0
+    parser.returns_unicode = 1
     from urllib import urlopen
     f = urlopen(location)
     try:
         parser.ParseFile(f)
     except: # pyexpat.error:
         import sys
-        sys.stderr.write("Error parsing file at line '%s' and column '%s'\n" % (parser.ErrorLineNumber, parser.ErrorColumnNumber) )
+        sys.stderr.write(u"Error parsing file at line '%s' and column '%s'\n" % (parser.ErrorLineNumber, parser.ErrorColumnNumber) )
         sys.stderr.flush()
     f.close()
 
 from rdf.const import RDFNS
 from rdf.const import TYPE
 
-RDF = RDFNS+"RDF"
-DESCRIPTION = RDFNS+"Description"
-ABOUT = RDFNS+"about"
-ID = RDFNS+"ID"
-RESOURCE = RDFNS+"resource"
+RDF = RDFNS+u"RDF"
+DESCRIPTION = RDFNS+u"Description"
+ABOUT = RDFNS+u"about"
+ID = RDFNS+u"ID"
+RESOURCE = RDFNS+u"resource"
 
 from rdf.literal import literal, is_literal
 
@@ -66,7 +66,7 @@ class RootHandler(HandlerBase):
                 RDFHandler(self.parser, self.adder, self)
             else:
                 import sys
-                sys.stderr.write("warning: found more than one %s element" % RDF)
+                sys.stderr.write(u"warning: found more than one %s element" % RDF)
                 # TODO: is this a valid situation?
                 RDFHandler(self.parser, self.adder, self)
         else:
@@ -76,7 +76,7 @@ class RootHandler(HandlerBase):
         self.depth = self.depth - 1
         if self.depth==0 and self.found_root==0:
             import sys
-            sys.stderr.write("warning: Did not find a '%s' element\n" % RDF)
+            sys.stderr.write(u"warning: Did not find a '%s' element\n" % RDF)
             sys.stderr.flush()
 
     def set_handlers(self):
@@ -104,23 +104,24 @@ class DescriptionHandler(HandlerBase):
     def __init__(self, parser, adder, parent, atts):
         HandlerBase.__init__(self, parser, adder, parent)
         self.subject = None
-        if atts.has_key("about"):
-            self.subject = atts["about"]
-        elif atts.has_key("ID"):
-            self.subject = self.parser.GetBase() + "#" + atts["ID"]
+        if atts.has_key(u"about"):
+            self.subject = atts[u"about"]
+        elif atts.has_key(u"ID"):
+            self.subject = self.parser.GetBase() + u"#" + atts[u"ID"]
         elif atts.has_key(ABOUT):
             self.subject = atts[ABOUT]
         elif atts.has_key(ID):
-            self.subject = self.parser.GetBase() + "#" + atts[ID]
+            self.subject = self.parser.GetBase() + u"#" + atts[ID]
         else:
             import sys
-            sys.stderr.write("Descriptions must have either an about or an ID\n")
+            sys.stderr.write(u"Descriptions must have either an about or an ID\n")
             
         for att in atts.keys():
-            if att=="about" or att=="ID" or att==ABOUT or att==ID:
+            if att==u"about" or att==u"ID" or att==ABOUT or att==ID:
                 pass
             else:
-                self.adder(self.subject, att, literal(atts[att]))
+                #self.adder(self.subject, att, literal(atts[att]))
+                self.adder(self.subject, att, literal(u"testing"))
 
     def set_handlers(self):
         self.parser.StartElementHandler = self.child
@@ -134,33 +135,35 @@ class DescriptionHandler(HandlerBase):
 class TypedNodeHandler(DescriptionHandler):
     def __init__(self, parser, adder, parent, name, atts):
         DescriptionHandler.__init__(self, parser, adder, parent, atts)
-        self.adder(self.subject, TYPE, name)
+        self.adder(self.subject, TYPE, u"name")
 
 
 class PropertyHandler(HandlerBase):
     def __init__(self, parser, adder, parent, name, atts):    
         HandlerBase.__init__(self, parser, adder, parent)
         self.predicate = name
-        if atts.has_key("resource"):
-            self.object = atts["resource"]
-            if self.object[0]=="#":
+        if atts.has_key(u"resource"):
+            self.object = atts[u"resource"]
+            if self.object[0]==u"#":
                 self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
-                if att == "resource":
+                if att == u"resource":
                     pass
                 else:
-                    self.adder(self.object, att, literal(atts[att]))
+                    #self.adder(self.object, att, literal(atts[att]))
+                    self.adder(self.object, att, literal(u"testing"))
         elif atts.has_key(RESOURCE):
             self.object = atts[RESOURCE]
-            if self.object[0]=="#":
+            if self.object[0]==u"#":
                 self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
                 if att == RESOURCE:
                     pass
                 else:
-                    self.adder(self.object, att, literal(atts[att]))
+                    #self.adder(self.object, att, literal(atts[att]))
+                    self.adder(self.object, att, literal(u"testing"))
         else:
-            self.object = literal("")
+            self.object = literal(u"")
 
     def set_handlers(self):
         self.parser.StartElementHandler = self.child
@@ -169,7 +172,7 @@ class PropertyHandler(HandlerBase):
 
     def child(self, name, atts):
         if name==DESCRIPTION:
-            self.object = atts["about"]
+            self.object = atts[u"about"]
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
             pass
@@ -178,10 +181,15 @@ class PropertyHandler(HandlerBase):
         self.object = self.object + data
 
     def end(self, name):
+        self.object = self.object.encode('UTF-16')
         self.adder(self.parent.subject, self.predicate, self.object)
+        #self.adder(self.parent.subject, self.predicate, u"self.object")
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.5  2000/12/23 01:23:56  eikeon
+#~ added warnings and test cases for when there is no RDF root element (or when there is more than one RDF element)
+#~
 #~ Revision 5.4  2000/12/22 22:25:35  eikeon
 #~ moved definition and calculation of RDF (xml vocab) constants out of 'inner parsing loop'
 #~

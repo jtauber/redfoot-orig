@@ -5,12 +5,21 @@ import pyexpat
 from rdf.parser import *
 
 def add(subject, predicate, object):
-    print "s : %s\np : %s\no : %s\n" % (subject, predicate, object)
+    #print u"%s\n" % object
+    print object
+    #print u"%s\n" % object
+    #print u"s : %s\np : %s\no : %s\n" % (object, object, object)
+    #print u"s : %s\np : %s\no : %s\n" % (subject, predicate, object)
+    #print u"s : %s\np : %s\no : %s\n" % (subject, predicate, object)
+    #print u"s : %s\np : %s\no : %s\n" % (subject.encode('UTF-8'), subject.encode('UTF-8'), subject.encode('UTF-8'))
+    #print (subject, predicate, object)
 
 def test(rdf):
     parser = pyexpat.ParserCreate(namespace_separator="")
     RootHandler(parser, add, None)
     parser.Parse(rdf)
+    print dir(parser)
+    print "asdf"
 
 def testFile(filename, baseURI=None):
     parser = pyexpat.ParserCreate(namespace_separator="")
@@ -219,7 +228,32 @@ def test_two_roots():
     </two>
 """)
 
+def test_encoding():
+    print "\nTEST ENCODING"
+    test("""<?xml version="1.0"?>
+    <rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:s="http://description.org/schema/">
+      <rdf:Description about="http://www.w3.org/Home/Lassila">
+        <s:Creator>Ora Lassila©</s:Creator>
+      </rdf:Description>
+    </rdf:RDF>
+""")
+
+def test_encoding2():
+    print "\nTEST ENCODING"
+    test("""<?xml version="1.0" encoding="iso-8859-1"?>
+    <rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:s="http://description.org/schema/">
+      <rdf:Description about="http://www.w3.org/Home/Lassila">
+        <s:Creator>Ora Lassila©</s:Creator>
+      </rdf:Description>
+    </rdf:RDF>
+""")
+
 #test_1()
-test_no_root()
+#test_no_root()
 #test_two_roots()
+test_encoding()
 
