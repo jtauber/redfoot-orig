@@ -51,6 +51,7 @@ class QueryStore:
             l.extend(self.get(s[0], predicate, object))
         return l
 
+    # TODO: should we have a version of this that answers for subclasses too?
     def isOfType(self, resource, type):
         for s in self.store.get(resource, QueryStore.TYPE, None):
             if s[2] == type:
@@ -164,6 +165,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 1.23  2000/10/01 03:58:10  eikeon
+# fixed up all the places where I put CVS keywords as keywords in omments... duh
+#
 # Revision 1.22  2000/10/01 02:12:01  eikeon
 # subClassV now uses a zero based depth (was one based); added Header and Log CVS keywords
 #
