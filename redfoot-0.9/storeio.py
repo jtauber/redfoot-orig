@@ -33,7 +33,8 @@ class StoreIO:
         queryStore.setStore(self.getStore())
         
         s = Serializer()
-        s.setBase(self.URI)
+        s.setLocation(location)
+        s.setBase(URI)
 
         properties = queryStore.getProperties()
 
