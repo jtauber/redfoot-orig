@@ -77,7 +77,8 @@ class ParentModule(Module):
 
     def handle_request(self, request, response):
         processor = request.get_parameter('processor', None)
-        apply(getattr(self, processor, lambda :None), ())
+        if processor:
+            apply(getattr(self, processor, lambda :None), ())
 
         for module in self.modules:
             if hasattr(module, 'handle_request'):
