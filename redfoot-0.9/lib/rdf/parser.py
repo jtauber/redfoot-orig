@@ -7,16 +7,17 @@ def parseRDF(adder, location, baseURI=None):
     import pyexpat
     parser = pyexpat.ParserCreate(namespace_separator="")
 
-    if self.baseURI!=None:
-        parser.SetBase(baseURI)
-        RootHandler(parser, adder, None)
+    parser.SetBase(baseURI)
+    RootHandler(parser, adder, None)
 
-        from urllib import urlopen
-        f = urlopen(location)
-        parser.ParseFile(f)
-        f.close()
+    from urllib import urlopen
+    f = urlopen(location)
+    parser.ParseFile(f)
+    f.close()
 
 rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
+from rdf.literal import literal, is_literal
 
 class RootHandler:
     def __init__(self, parser, adder, parent):
@@ -146,6 +147,9 @@ class PropertyHandler:
         self.parent.resume()
 
 #~ $Log$
+#~ Revision 4.3  2000/12/03 22:12:12  jtauber
+#~ changed class RDFParser to function parseRDF
+#~
 #~ Revision 4.2  2000/12/03 22:07:14  jtauber
 #~ put literal handling code in store.py
 #~
