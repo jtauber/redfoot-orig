@@ -1,8 +1,6 @@
 from threading import RLock
 from threading import Condition
 
-#from redfootlib.rdf.store.storeio import TripleStoreIO
-
 class AutoSave(object):
     def __init__(self):
         super(AutoSave, self).__init__()
