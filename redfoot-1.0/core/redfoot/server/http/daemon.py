@@ -62,15 +62,15 @@ class RedDaemon(HTTPDaemon):
     def load(self, module):
         self.module = module
 
-        instance = module._RF_get_app()
-        module._app_instance = instance
-
         servername, port = self.server_address
         if port==80:
-            instance.URI = "http://%s/" % servername
+            URI = "http://%s/" % servername
         else:
-            instance.URI = "http://%s:%s/" % (servername, port)
+            URI = "http://%s:%s/" % (servername, port)
             
+        instance = module._RF_get_app(URI)
+        module._app_instance = instance
+
         handle_request = instance.handle_request
         self.set_handle_request(handle_request)            
         self.start()

@@ -92,20 +92,6 @@ class ParentModule(Module):
 
 class App(ParentModule):
 
-    def __getattr__(self, name):
-        if name=='rednode':
-            from redfoot.rednode import RedNode
-            rednode = RedNode()
-            rdf, uri = ("%s.rdf" % self.__module__, self.URI)
-            rednode.load(rdf, uri, 1)
-            self.rednode = rednode
-            return self.rednode
-        elif name=='app':
-            self.app = self
-            return self
-        else:
-            raise AttributeError, name
-
     def handle_request(self, request, response):
         ParentModule.handle_request(self, request, response)
 

@@ -93,7 +93,7 @@ VIA = resource(SESSION_URI+"via")
         if name=='sessions':
             from redfoot.rednode import RedNode
             sessions = RedNode()
-            rdf, uri = ("%s-session.rdf" % self.app.__module__, self.app.URI + "session/")
+            rdf, uri = ("%s-session.rdf" % self.app.__module__, self.app.rednode.URI + "session/")
             sessions.URI = uri
             sessions.local.load(rdf, uri, 1)
             self.app.rednode.neighbours.add_store(sessions.local)    

@@ -38,7 +38,7 @@ Redfoot can not run without the threading module. Check that your PYTHONPATH is 
     
 
 RF_HOME = ".." + os.sep
-sys.path.extend((RF_HOME + "core", RF_HOME + "components"))
+sys.path.extend((RF_HOME + "core", "../../components"))
 
 # set default value
 port = 8000
