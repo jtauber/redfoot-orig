@@ -6,7 +6,9 @@ from rdf.parser import *
 
 def add(subject, predicate, object):
     #print u"%s\n" % object
-    print object
+    print "object: '"
+    print object.encode('UTF-8')
+    print "'\n"
     #print u"%s\n" % object
     #print u"s : %s\np : %s\no : %s\n" % (object, object, object)
     #print u"s : %s\np : %s\no : %s\n" % (subject, predicate, object)
@@ -255,5 +257,16 @@ def test_encoding2():
 #test_1()
 #test_no_root()
 #test_two_roots()
-test_encoding()
+#test_encoding()
 
+from urllib import urlopen
+
+def testing():
+    parser = pyexpat.ParserCreate(encoding='UTF-8', namespace_separator="")
+    RootHandler(parser, add, None)
+    #f = urlopen('zh-utf8-8.xml')
+    f = urlopen('test.xml')
+    parser.ParseFile(f)
+    f.close()
+
+testing()
