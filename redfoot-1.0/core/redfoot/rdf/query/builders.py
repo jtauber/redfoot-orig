@@ -69,3 +69,7 @@ class SetBuilder:
 
     def sort(self, comparator):
         self.set.sort(comparator)
+
+    def visit(self, callback):
+        for item in self.set:
+            callback(item)
