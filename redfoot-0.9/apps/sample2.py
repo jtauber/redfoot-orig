@@ -21,8 +21,8 @@ class Sample2(Editor):
         sys.stderr.write("headers: %s" % request.getHeaders())
         sys.stderr.flush()
 
-        if request.getHeaders()['accept-language']=='rdf':
-            sys.stderr.write("got it")
+        if path_info=="/" and request.getHeaders()['accept-language']=='rdf':
+            sys.stderr.write("got it\n")
             sys.stderr.flush()
 
             node = self.storeNode.local.journal
