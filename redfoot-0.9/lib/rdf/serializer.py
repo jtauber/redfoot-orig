@@ -31,8 +31,8 @@ class Serializer:
     def setStream(self, stream):
         self.stream = stream
 
-    def setBase(self, base):
-        self.base = base
+    def setBaseURI(self, baseURI):
+        self.baseURI = baseURI
 
     def registerProperty(self, property):
         uri = splitProperty(property)[0]
@@ -60,8 +60,8 @@ class Serializer:
 
     def subjectStart(self, subject):
         self.stream.write( "  <%s:Description" % self.namespaces[self.rdfns] )
-        if subject[0:len(self.base)+1]==self.base+"#":
-            self.stream.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.base)+1:]) )
+        if subject[0:len(self.baseURI)+1]==self.baseURI+"#":
+            self.stream.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.baseURI)+1:]) )
         else:
             self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], subject) )
 
@@ -87,8 +87,8 @@ class Serializer:
         if is_literal(object):
             self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(un_literal(object)), self.namespaces[namespace], localName) )
         else:
-            if object[0:len(self.base)+1]==self.base+"#":
-                object = object[len(self.base):]
+            if object[0:len(self.baseURI)+1]==self.baseURI+"#":
+                object = object[len(self.baseURI):]
             self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], object) )
 
     def triple(self, subject, predicate, object):
@@ -100,6 +100,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 4.4  2000/12/04 02:44:34  jtauber
+#~ changed value to object
+#~
 #~ Revision 4.3  2000/12/04 02:40:00  jtauber
 #~ now uses literal module
 #~
