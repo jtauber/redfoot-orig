@@ -115,7 +115,7 @@ parse(URL, baseURI)
 CLASS SERIALIZER (serializer.py)
 
 setStream(stream)
-    set the stream to which the serialization it so take place
+    set the stream to which the serialization is to take place
 
 setBase(base)
     set the baseURI to assume
@@ -184,6 +184,10 @@ getByType(type,predicate,object)
     eg getByType("car","colour","red") will return statements about any car
        being of colour red.
 
+isKnownResource(resource)
+    returns a 1 or 0 depending on whether the store contains any statements
+    about the given resource
+
 isOfType(resource,type)
     returns a 1 or 0 depending on whether the given resource is of the given
     type
@@ -198,38 +202,78 @@ getProperties(subject)
 getValues(subject,property)
     get a list of the values for the given property of the given subject
 
-typeInh(type)
-    TODO
-
 transitiveSuperTypes(type)
-    TODO
+    returns a list of the give type plus the type's superclasses, plus their
+    superclass, and so on
 
 transitiveSubTypes(type)
-    TODO
+    returns a list of the given type plus the type's subclasses, plus their
+    subclasses, and so on
 
 rootClasses()
-    TODO
+    returns a list of those classes that aren't a subclass of anything
 
 resourcesByClassV(classProcessor,resourceProcessor)
     TODO
 
+propertyValuesV(subject,propertyValueProcessor)
+    TODO
 
-...TODO...
+subClassV(type,classProcessor,instanceProcessor,currentDepth,recurse)
+    TODO
 
-CLASS STOREIO
+reifiedV(subject,statementProcessor)
+    TODO
+
+reify(statement_uri,subject,predicate,object)
+    TODO
+
+dereify(statement_uri)
+    TODO
+
+getPossibleValues(property)
+    TODO
+
+CLASS STOREIO (storeio.py)
+
+TODO
 
 SERVER MODULES AND THEIR MEMBERS
 
 rednode.py
-    TODO
+    class MultiStore
+    class StoreNode
 
-server.py
-    TODO
+server.py (not really a module - this is what gets run)
+    class RedfootHTTPRequestHandler
+    function runServer
 
 viewer.py
-    TODO
+    class Viewer
 
 editor.py
-    TODO
+    class Editor
+
+CLASS MULTISTORE (rednode.py)
+TODO
+
+CLASS STORENODE (rednode.py)
+TODO
+
+CLASS REDFOOTHTTPREQUESTHANDLER (server.py)
+TODO
+
+FUNCTION RUNSERVER (server.py)
+TODO
+
+CLASS VIEWER (viewer.py)
+TODO
+
+CLASS EDITOR (editor.py)
+TODO
+
 
 $Log$
+Revision 1.1  2000/10/03 07:27:08  jtauber
+first go at Developer Manual
+
