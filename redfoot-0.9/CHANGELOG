@@ -4,11 +4,13 @@ Changes between 0.9.0 and 0.9.1
 
 - numerous refactors
 - restructured directory hierarchy
+
 - gave menu bars labels and clarified some of the items
-- sample custom UI
+- added sample custom UI
 - list of resources by class now only shows classes with instances
 - server now takes -P option to pass in path from server root to RDF
 - finished add(type) support in editor
+
 - fixed bug causing server to hang under load	
 - BNH now has example and test case for running server
 - BNH now has better exception handling
