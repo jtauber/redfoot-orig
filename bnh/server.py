@@ -122,7 +122,7 @@ class Response:
         self.wfile = clientSocket.makefile('wb', 0)        
 
         self.wfile.write("%s %s %s\r\n" % ("HTTP/1.1", "200", "OK"))
-        self.send_header('Server', "eikeon's SimpleHTTPServer")
+        self.send_header('Server', "eikeon's Bare Naked HTTP Server")
         self.send_header('Date', date_time_string())
         self.send_header('Expires', "-1")
         self.send_header('Connection', "close")
@@ -166,6 +166,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.2  2000/10/13 04:25:35  eikeon
+# fixed startup message
+#
 # Revision 1.1.1.1  2000/10/13 03:59:06  eikeon
 # initial import
 #
