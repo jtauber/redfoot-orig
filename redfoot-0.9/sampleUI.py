@@ -22,9 +22,29 @@ class SampleUI:
 
         if path_info[0:len(self.path)]==self.path:
             self.editor.handler(path_info[len(self.path):], args)
+        elif path_info=="/":
+            self.main()
         else:
             self.view()
         # self.writer.write("unknown PATH of '%s'" % path_info)
+
+    def main(self):
+        self.writer.write("""
+        <HTML>
+          <HEAD>
+            <TITLE>Main Page</TITLE>
+          </HEAD>
+          <BODY>
+            <H1>Main Page</H1>
+            <UL>
+        """)
+        for s in self.qstore.get(None, QueryStore.TYPE, "http://redfoot.sourceforge.net/2000/10/#Person"):
+            self.writer.write("<LI>%s</LI>" % self.qstore.label(s[0]))
+        self.writer.write("""
+            </UL>
+          </BODY>
+        </HTML>
+        """)
 
     def view(self):
         self.writer.write("""
@@ -39,3 +59,6 @@ class SampleUI:
         """)
 
 # $Log$
+# Revision 1.1  2000/10/17 02:31:10  jtauber
+# beginnings of a sample UI
+#
