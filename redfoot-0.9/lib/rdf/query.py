@@ -3,21 +3,8 @@ from rdf.literal import literal, un_literal, is_literal
 
 from rdf.const import *
 
+
 class QueryStore:
-
-    def query(self, visitor, subject=None, predicate=None, object=None):
-        self.visit(visitor.visit, subject, predicate, object)
-        visitor.flush()
-        
-    def get(self, subject=None, predicate=None, object=None):
-        list = []
-        
-        def callback(subject, predicate, object, list=list):
-            list.append((subject, predicate, object))
-
-        self.visit(callback, subject, predicate, object)
-
-	return list
 
     def getFirst(self, subject, predicate, object):
         statements = []
@@ -241,8 +228,30 @@ class QueryStore:
         else:
             return None
 
+    def query(self, visitor, subject=None, predicate=None, object=None):
+        self.visit(visitor.visit, subject, predicate, object)
+        visitor.flush()
+        
+    def get(self, subject=None, predicate=None, object=None):
+        listBuilder = ListBuilder()
+        self.query(listBuilder, subject, predicate, object)
+	return listBuilder.list
+
+class ListBuilder:
+    def __init__(self):
+        self.list = []
+
+    def visit(self, s, p, o):
+        self.list.append((s, p, o))
+
+    def flush(self):
+        pass
+
 
 #~ $Log$
+#~ Revision 5.4  2000/12/10 06:27:32  eikeon
+#~ added adapter method query
+#~
 #~ Revision 5.3  2000/12/09 23:48:30  eikeon
 #~ Added visitSubjects subject for conv. and efficiency
 #~
