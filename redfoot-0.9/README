@@ -16,6 +16,7 @@ REDFOOT README
        - a fully customizable UI
        - the beginnings of a peer-to-peer architecture for
          communication between different RDF databases
+        - sample applications built on top of Redfoot
 
     In the future, Redfoot will hopefully include:
 
@@ -23,9 +24,8 @@ REDFOOT README
           statements
         - an inference engine
         - connectors for mapping non-RDF data into RDF triples
-        - sample applications built on top of Redfoot
 
-    Redfoot is written in pure Python (Python 2.0 + PyExpat required) and is 
+    Redfoot is written in pure Python (Python 2.0) and is 
     being tested on both windows and linux.
 
     Redfoot currently uses eikeon's Bare Naked HTTP server which is
@@ -33,24 +33,20 @@ REDFOOT README
 
 TO SEE WHAT REDFOOT IS LIKE
 
-    Go into apps/
-    Try generic.sh (unix) or generic.bat (windows)
-    This is generic UI
-    Now try sample1.sh (unix) or sample1.bat (windows)
-    This is a very simple example of a custom UI
+    See apps/README
 
 INFORMATION FOR USERS
 
-    See docs/usermanual.txt
+    See docs/usermanual.txt [OUT OF DATE]
 
 INFORMATION FOR CUSTOM UI DEVELOPERS
 
-    See docs/CREATING_CUSTOM_UI.txt
+    See docs/CREATING_CUSTOM_UI.txt [OUT OF DATE]
 
 INFORMATION FOR REDFOOT DEVELOPERS
 
-    See lib/redfoot/DEVMANUAL
-        lib/rdf/RDFLIB_MANUAL.txt
+    See lib/redfoot/DEVMANUAL [OUT OF DATE]
+        lib/rdf/RDFLIB_MANUAL.txt [OUT OF DATE]
 
 WHERE TO GET THE LATEST REDFOOT
 
@@ -60,4 +56,5 @@ HOW TO CONTACT THE DEVELOPERS
 
     James Tauber - jtauber@jtauber.com
     Daniel Krech - eikeon@eikeon.com 
+
 
