@@ -282,6 +282,7 @@ A:hover {
         last = len(links) - 1
       </red:exec>
       <red:if test="len(links)>0">
+        <h2>List</h2>
         <dl>
       <red:for item="index" list="xrange(len(links))">
         <dt>
