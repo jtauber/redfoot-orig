@@ -22,7 +22,7 @@ def split_property(property):
 
 
     
-class Serializer:
+class Serializer(object):
     """RDF serializer.
     
     To set up the serializer, set_stream and set_base_URI are
@@ -42,6 +42,8 @@ class Serializer:
     rdfsns = "http://www.w3.org/2000/01/rdf-schema#"    
 
     def __init__(self):
+        super(Serializer, self).__init__()
+        
         self.namespaces = {}
         self.namespaces[self.rdfns] = 'rdf'
         self.namespaces[self.rdfsns] = 'rdfs'        
@@ -113,10 +115,10 @@ class Serializer:
         self.property(predicate, object, literal_object)
 
 
-class RedSerializer(Serializer):
+class RedSerializer(Serializer, object):
 
     def __init__(self):
-        Serializer.__init__(self)
+        super(RedSerializer, self).__init__()
     
     def triple(self, s, p, o):
         if o.is_literal():

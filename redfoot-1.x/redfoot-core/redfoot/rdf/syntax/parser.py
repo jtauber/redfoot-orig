@@ -264,7 +264,9 @@ class PropertyHandler(HandlerBase):
 
 from redfoot.rdf.objects import resource, literal
 
-class Parser:
+class Parser(object):
+    def __init__(self):
+        super(Parser, self).__init__()
 
     def add_statement(self, subject, predicate, object, literal_object=None, anonymous_subject=None, anonymous_object=None):
         s = resource(subject, anonymous_subject)
