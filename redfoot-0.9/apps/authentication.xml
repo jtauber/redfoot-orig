@@ -194,7 +194,7 @@ class Session:
         else:
             return 0
         
-<r:class name="Authentication" bases="(Session, )">
+<r:class name="Authentication" bases="Session">
 
 def __init__(self, rednode):
     self.logger = Logger()
