@@ -34,6 +34,7 @@ class Viewer:
         }
 
         h1 {
+          font-family: Verdana;
           background:  #990000;
           font-weight: normal;
           color:       #FFF;
@@ -64,6 +65,7 @@ class Viewer:
         }
 
         h2 {
+          font-family: Verdana;
           color:       #990000;
           margin:      0px;
         }
@@ -97,11 +99,16 @@ class Viewer:
 
         tr.REIFIED td {
           border: solid 1pt #990000;
+	  background: #FFF;
         }
 
         p.WARNING {
           color: #C00;
         }
+
+	textarea {
+	  font-family: Verdana;
+	}
         """)
 
     def menuBar(self):
@@ -184,7 +191,10 @@ class Viewer:
             <TABLE>
         """)
 
-        self.qstore.propertyValuesV(subject, self.displayPropertyValue)
+        if self.qstore.isKnownResource(subject):
+            self.qstore.propertyValuesV(subject, self.displayPropertyValue)
+        else:
+            self.writer.write("<TR><TD>Resource not known of directly</TD></TR>")
         self.qstore.reifiedV(subject, self.displayReifiedStatements)
         
         self.writer.write("""
@@ -245,7 +255,7 @@ class Viewer:
             valueDisplay = self.link(object)
         self.writer.write("""
         <TR CLASS="REIFIED"><TD>%s</TD><TD>%s</TD>
-        <TD>""" % (propertyDisplay, valueDisplay))
+        <TD>%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
         self.qstore.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
         self.writer.write("""
         </TD></TR>""")
@@ -302,6 +312,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.16  2000/10/05 19:32:03  jtauber
+# refactored out HTML for resource header
+#
 # Revision 1.15  2000/10/01 03:58:10  eikeon
 # fixed up all the places where I put CVS keywords as keywords in omments... duh
 #
