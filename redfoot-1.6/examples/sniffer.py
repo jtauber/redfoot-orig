@@ -92,6 +92,7 @@ from redfootlib.rdf.store.storeio import LoadSave
 
 class SnifferNode(Sniffer, SchemaQuery, AutoSave, LoadSave, TripleStore):
     """Default pre mixed Sniffer Node"""
+
     def __init__(self):
         super(SnifferNode, self).__init__()
         self.auto_save_min_interval = 60*60*12 # 12 hours

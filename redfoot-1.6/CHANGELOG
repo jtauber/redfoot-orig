@@ -1,5 +1,14 @@
 2002/04/23
-	RELEASE 1.5.1
+	RELEASE 1.5.2
+
+	removed split/join from parser
+
+	triple_experimental -> triple -> triple_classic
+
+	Fixed bug in generic where copy was not working
+
+	
+	RELEASE 1.5.1	
 
 	Introduced redfoot.py, a console interface for running Redfoot.
 

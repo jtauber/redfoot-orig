@@ -1,4 +1,3 @@
-from redfootlib.xml.handler import HandlerBase
 
 from redfootlib.xml.handler import HandlerBase as AbstractHandlerBase
 
@@ -9,14 +8,14 @@ class HandlerBase(AbstractHandlerBase):
         self.adder = adder
 
 from redfootlib.rdf.store.urigen import generate_uri
-from string import join, split
+
 
 ANON = "http://redfoot.sourceforge.net/2001/08/ANON/"
 
 #TODO flag for where RDF can be assumed
 #TODO proper handling of relative URIs
 
-ns_separator = "^"
+ns_separator = ""
 
 def parse(adder, file, baseURI):
     import xml.parsers.expat
@@ -109,8 +108,7 @@ class DescriptionHandler(HandlerBase):
                att == ABOUT_ATTRIBUTE or att == ID_ATTRIBUTE:
                 pass
             else:
-                new_att = join(split(att, "^"), "")
-                self.adder(self.subject, new_att, atts[att],
+                self.adder(self.subject, att, atts[att],
                            anonymous_subject=self.anonymous, literal_object=1)
 
     def child(self, name, atts):
@@ -120,7 +118,7 @@ class DescriptionHandler(HandlerBase):
 class TypedNodeHandler(DescriptionHandler):
     def __init__(self, parser, parent, adder, name, atts):
         DescriptionHandler.__init__(self, parser, parent, adder, atts)
-        type = join(split(name, "^"), "")
+        type = name
         adder(self.subject, str(TYPE), type, anonymous_subject=self.anonymous)
 
 
@@ -190,7 +188,7 @@ class LIHandler(HandlerBase):
 class PropertyHandler(HandlerBase):
     def __init__(self, parser, parent, adder, name, atts):
         HandlerBase.__init__(self, parser, parent, adder)
-        self.predicate = join(split(name, "^"), "")
+        self.predicate = name
         self.literal = 0
         self.anonymous_object = 0
         if atts.has_key("resource"):
@@ -200,8 +198,7 @@ class PropertyHandler(HandlerBase):
                 if att == "resource":
                     pass
                 else:
-                    new_att = join(split(att, "^"), "")
-                    self.adder(self.object, new_att, atts[att],
+                    self.adder(self.object, att, atts[att],
                                literal_object=1)
         elif atts.has_key(RESOURCE_ATTRIBUTE):
             self.object = atts[RESOURCE_ATTRIBUTE]
@@ -210,8 +207,7 @@ class PropertyHandler(HandlerBase):
                 if att == RESOURCE_ATTRIBUTE:
                     pass
                 else:
-                    new_att = join(split(att, "^"), "")
-                    self.adder(self.object, new_att,atts[att],
+                    self.adder(self.object, att,atts[att],
                                literal_object=1)
         else:
             self.object = ""

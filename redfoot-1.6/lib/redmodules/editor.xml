@@ -50,12 +50,14 @@
     
     <red:facet name="_edit" args="display_property_value">    
       <red:exec>
-        subject = self.app.request.get_parameter('subject', None)
-        type = self.app.request.get_parameter("type", None)
-        copy = self.app.request.get_parameter("copy", None)
-        return_to = self.app.request.get_parameter("return_to", "")
-        s_property = self.app.request.get_parameter('s_property', '')
-        s_subject = self.app.request.get_parameter('s_subject', '')
+        request = self.app.request # TODO: facets should be called with these
+        response = self.app.response 
+        subject = request.get_parameter('subject', None)
+        type = request.get_parameter("type", None)
+        copy = request.get_parameter("copy", None)
+        return_to = request.get_parameter("return_to", "")
+        s_property = request.get_parameter('s_property', '')
+        s_subject = request.get_parameter('s_subject', '')
 
         if copy == "true":
             subject = self.rednode.uri + generate_uri()

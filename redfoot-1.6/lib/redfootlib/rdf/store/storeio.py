@@ -17,7 +17,7 @@ class LoadSave(Parser, RedSerializer, object):
         super(LoadSave, self).__init__()
         self.uri = None
         self.location = None
-        self.lock = Lock()
+        self.__lock = Lock()
 
 
     def load(self, location, uri=None, create=0):
@@ -34,7 +34,7 @@ class LoadSave(Parser, RedSerializer, object):
         self.parse_URI(self.location, self.uri)
 
     def save(self, location=None, uri=None):
-        self.lock.acquire()
+        self.__lock.acquire()
         location = location or self.location
         if not location:
             print "WARNING: not saving as no location has been set"
@@ -43,5 +43,5 @@ class LoadSave(Parser, RedSerializer, object):
         stream = open(location, 'wb')
         self.output(stream, uri)
         stream.close()
-        self.lock.release()
+        self.__lock.release()
         

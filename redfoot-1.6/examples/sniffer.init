@@ -6,7 +6,12 @@ prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 !rednode = SnifferNode()
 !rednode.run()
 
+!from time import time
+!t1 = time()
 load links.rdf "http://redfoot.net://2002/04/21/"
+!print time() - t1
+
+quit
 
 server :9090
 add_app link_app.LinkApp

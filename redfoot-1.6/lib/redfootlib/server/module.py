@@ -110,10 +110,10 @@ class App(ParentModule):
         ParentModule.__init__(self, self)
 
     def handle_request(self, request, response):
-        ParentModule.handle_request(self, request, response)
-
         self.request = request
         self.response = response
+        
+        ParentModule.handle_request(self, request, response)
 
         self.app.remaining_path_info = request.get_path_info()
         
