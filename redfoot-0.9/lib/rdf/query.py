@@ -213,9 +213,18 @@ class QueryStore:
         def type(s, p, o, self=self, possibleProperty=possibleProperty):
             self.getPossibleProperties(o, possibleProperty)
         self.getTypes(subject, type)
-        
+
+    def getRange(self, property):
+        statement = self.getFirst(property, RANGE, None)
+        if statement!=None:
+            return statement[2]
+        else:
+            return None
             
 #~ $Log$
+#~ Revision 4.14  2000/12/06 20:49:38  eikeon
+#~ decomposed getPossibleProperties into two methods... one that takes a subject and the other that takes a type... also added a getTypes method
+#~
 #~ Revision 4.13  2000/12/06 20:10:04  eikeon
 #~ added getPossibleProperties method
 #~
