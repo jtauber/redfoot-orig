@@ -75,49 +75,40 @@ class Editor(Viewer):
         if self.storeNode.isKnownResource(subject):
             self.storeNode.local.visitPredicateObjectPairsForSubject(self.editProperty, subject)
             self.storeNode.neighbours.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
-        
 	    self.storeNode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
-
-            self.response.write("""
-              <TR>
-                <TD>
-                  <SELECT type="text" name="newProperty">
-
-                    <OPTION value="">Select a new Property to add</OPTION>
-            """)
-
-            def possibleProperty(s, p, o, self=self):
-                self.response.write("""
-                    <OPTION value="%s">%s</OPTION>
-                                    """ % (s, self.storeNode.label(s)))
-            self.storeNode.visitPossiblePropertiesForSubject(possibleProperty, subject)
-
-
-            def option(s, p, o, write=self.response.write, neighbourhood=self.storeNode.neighbourhood):
-                write("""
-                        <OPTION value="%s">%s</OPTION>
-                      """ % (p, neighbourhood.label(p)))
-
-            # call to non existant visitor version goes here
-    
-                        
-            self.response.write("""
-                  </SELECT>
-
-                </TD>
-
-                <TD COLSPAN="5">Click update to be able to specify value</TD>
-              </TR>
-
-            </TABLE>
-
-            <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s"/>
-            <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="update"/>
-            <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="delete"/>
-          </FORM>
-              """ % self.property_num)
         else:
-            self.response.write("<TR><TD>Resource not known of directly</TD></TR></TABLE></FORM>")
+            self.response.write("""<TR><TD>Resource not known of directly</TD></TR>""")
+    
+        self.response.write("""
+          <TR>
+            <TD>
+              <SELECT type="text" name="newProperty">
+
+                <OPTION value="">Select a new Property to add</OPTION>
+        """)
+
+        def possibleProperty(s, p, o, self=self):
+            self.response.write("""
+                <OPTION value="%s">%s</OPTION>
+                                """ % (s, self.storeNode.label(s)))
+        self.storeNode.visitPossiblePropertiesForSubject(possibleProperty, subject)
+
+
+        self.response.write("""
+              </SELECT>
+
+            </TD>
+
+            <TD COLSPAN="5">Click update to be able to specify value</TD>
+          </TR>
+
+        </TABLE>
+
+        <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s"/>
+        <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="update"/>
+        <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="delete"/>
+      </FORM>
+          """ % self.property_num)
 
         self.footer()
 
@@ -410,6 +401,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.12  2000/12/20 21:22:08  eikeon
+#~ converted many mixedCase names to _ style names
+#~
 #~ Revision 5.11  2000/12/20 04:04:39  jtauber
 #~ fixed typo in encodeAttributeValue name
 #~
