@@ -83,7 +83,11 @@ class RedCmd(object, Cmd):
             super(RedCmd, self).default(line)
 
     def do_quit(self, arg):
-        """Quit the Redfoot Command Line"""
+        """\
+Quit the Redfoot Command Line
+
+Quit, saving if possible.
+"""
         print "Saving rednode..."
         rednode = self.context.rednode
         try:
@@ -98,13 +102,18 @@ class RedCmd(object, Cmd):
         exit(1)
 
     def do_add(self, arg):
-        """add <subject> <predicate> (<object>|"object")"""
+        """\
+add <subject> <predicate> (<object>|"object")
+
+Add the triple.
+Example:  add <http://redfoot.sourceforge.net/> rdfs:label "Redfoot homepage" where rdfs is first defined using the prefix command.
+"""
         st = self.get_triple(arg)
         if st:
             self.context.rednode.add(st[0], st[1], st[2])
             print "added", st
         else:
-            print "error"
+            print "error: see 'help add'"
 
     def do_remove(self, arg):
         """remove <subject> <predicate> (<object>|"object")"""
@@ -125,6 +134,10 @@ class RedCmd(object, Cmd):
     def do_visit(self, arg):
         """\
 visit <subject>|ANY <predicate>|ANY (<object>|"object"|ANY)
+
+Examples:
+  visit ANY ANY ANY  -- will visit all triples
+  visit <http://eikeon.com/> ANY ANY -- will visit all triples with subject of http://eikeon.com/
 """
         def print_triple(s, p, o):
             print s, p, o
@@ -135,7 +148,15 @@ visit <subject>|ANY <predicate>|ANY (<object>|"object"|ANY)
             print "error"
 
     def do_prefix(self, arg):
-        """prefix p:<uri> or prefix :<uri>"""
+        """\
+prefix p:<uri> or prefix :<uri>
+
+Examples:
+  prefix rdf:http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  prefix rdfs:http://www.w3.org/TR/WD-rdf-schema#
+
+  Then rdf:label can be used as an abbreviation for <http://www.w3.org/1999/02/22-rdf-syntax-ns#label>
+"""
         prefix, uri_text = arg.split(":", 1)
         if uri_text[0] == "<" and uri_text[-1] == ">":
             uri = uri_text[1:-1]
