@@ -2,7 +2,7 @@
 
 from cmd import Cmd
 from sys import exit
-from redfootlib.rdf.nodes import URIRef, Literal, BNode
+from rdflib.nodes import URIRef, Literal, BNode
 from redfootlib.rednode import RedNode as RedStore
 from redfootlib.server import RedServer
 from redfootlib.version import VERSION

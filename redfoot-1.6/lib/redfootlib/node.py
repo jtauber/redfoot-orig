@@ -4,7 +4,7 @@ from redfootlib.util import unique_date_time as date_time
 from redfootlib.util import encode_as_single_line as encode
 from redfootlib.util import decode_from_single_line as decode
 
-from redfootlib.rdf.triple_store import TripleStore
+from rdflib.triple_store import TripleStore
 
 from threading import RLock
 from threading import Condition
@@ -44,11 +44,11 @@ class DirtyBit:
         self._rc.wait()
         self._mon.release()
 
-from redfootlib.rdf.nodes import URIRef, Literal
-from redfootlib.rdf.const import LABEL, SUBJECT, PREDICATE, OBJECT, TYPE, RESOURCE
+from rdflib.nodes import URIRef, Literal
+from rdflib.const import LABEL, SUBJECT, PREDICATE, OBJECT, TYPE, RESOURCE
 
-#from redfootlib.rdf.query.functors import sort
-#from redfootlib.rdf.query.functors import remove_duplicates
+#from rdflib.query.functors import sort
+#from rdflib.query.functors import remove_duplicates
 
 CONTEXT = URIRef("http://redfoot.net/2002/05/CONTEXT")
 MEANING = URIRef("http://redfoot.net/2002/05/MEANING")
@@ -197,7 +197,7 @@ class ReverseProxy(object):
         if data[:4] == "QUIT":
             self.handle_close()
         elif data[:3] == "ADD":
-            from redfootlib.rdf.objects import n3
+            from rdflib.objects import n3
             s, p, o = map(lambda v: n3(decode(v)), data[4:].split(" ", 2))
             self.reverse_add(s, p, o)
         elif data[:5] == "VISIT":

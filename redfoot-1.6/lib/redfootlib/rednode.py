@@ -1,15 +1,15 @@
 
-from redfootlib.rdf.triple_store import TripleStore
-from redfootlib.rdf.store.neighbourhood import Neighbourhood
-from redfootlib.rdf.store.composite import CompositeStore
-from redfootlib.rdf.store.autosave import AutoSave
+from rdflib.triple_store import TripleStore
+from rdflib.store.neighbourhood import Neighbourhood
+from rdflib.store.composite import CompositeStore
+from rdflib.store.autosave import AutoSave
 from redfootlib.neighbour_manager import NeighbourManager
-from redfootlib.rdf.model.schema import Schema
+from rdflib.model.schema import Schema
 from redfootlib import rdf_files
 
 from redfootlib.node import NodeStore, Node
 
-from redfootlib.rdf.nodes import URIRef
+from rdflib.nodes import URIRef
 
 LISTEN_ON = URIRef("http://redfoot.net/2002/05/listen_on")
 ADDRESS = URIRef("http://redfoot.net/2002/05/Address")

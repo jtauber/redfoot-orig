@@ -1,5 +1,5 @@
 #
-from redfootlib.rdf.triple_store import TripleStore
+from rdflib.triple_store import TripleStore
 
 class Store(TripleStore):
     def __init__(self):

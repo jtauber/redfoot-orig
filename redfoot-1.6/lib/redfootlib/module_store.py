@@ -1,10 +1,10 @@
-from redfootlib.rdf.triple_store import TripleStore
+from rdflib.triple_store import TripleStore
 
-from redfootlib.rdf.nodes import URIRef, Literal
+from rdflib.nodes import URIRef, Literal
 
-from redfootlib.rdf.const import LABEL, RESOURCE
-from redfootlib.rdf.const import TYPE, CLASS, SUBCLASSOF
-from redfootlib.rdf.const import PROPERTY, DOMAIN, RANGE
+from rdflib.const import LABEL, RESOURCE
+from rdflib.const import TYPE, CLASS, SUBCLASSOF
+from rdflib.const import PROPERTY, DOMAIN, RANGE
 
 from os.path import dirname, join, splitext
 from os import listdir

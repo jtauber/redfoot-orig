@@ -1,10 +1,10 @@
 import dev_hack
 
-from redfootlib.rdf.objects import resource, literal
-from redfootlib.rdf.const import TYPE, LABEL, COMMENT
-from redfootlib.rdf.const import STATEMENT, SUBJECT, PREDICATE, OBJECT
+from rdflib.objects import resource, literal
+from rdflib.const import TYPE, LABEL, COMMENT
+from rdflib.const import STATEMENT, SUBJECT, PREDICATE, OBJECT
 
-from redfootlib.rdf.query.functors import sort
+from rdflib.query.functors import sort
 
 from date_time import date_time
 import time

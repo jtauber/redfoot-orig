@@ -1,12 +1,12 @@
-from redfootlib.rdf.const import LABEL, TYPE
-from redfootlib.rdf.nodes import URIRef, Literal
+from rdflib.const import LABEL, TYPE
+from rdflib.nodes import URIRef, Literal
 
 NEIGHBOUR = URIRef("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")
 CONNECTED = URIRef("http://redfoot.sourceforge.net/2001/04/neighbour#Connected")
 YES = URIRef("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
 NO = URIRef("http://redfoot.sourceforge.net/2000/10/06/builtin#NO")
 
-from redfootlib.rdf.triple_store import TripleStore
+from rdflib.triple_store import TripleStore
 
 class Neighbour(TripleStore): pass
 
