@@ -159,6 +159,7 @@ ADD = literal("add")
 DELETE = literal("delete")
 OPERATION = "http://redfoot.sourceforge.net/2001/01/30/#operation"
 TIMESTAMP = "http://redfoot.sourceforge.net/2001/01/30/#timestamp"
+SOURCE = "http://redfoot.sourceforge.net/2001/01/30/#source"
 
 #from rdf.query import QueryStore
 #class JournalingStore(TripleStore, QueryStore):
@@ -226,7 +227,7 @@ class JournalingStore:
         self.journal.add(statement_uri, PREDICATE, predicate)
         self.journal.add(statement_uri, OBJECT, object)
         self.journal.add(statement_uri, OPERATION, ADD)
-
+        self.journal.add(statement_uri, SOURCE, self.URI)
         self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
         
     def _remove(self, subject, predicate, object):
@@ -238,7 +239,7 @@ class JournalingStore:
         self.journal.add(statement_uri, PREDICATE, predicate)
         self.journal.add(statement_uri, OBJECT, object)
         self.journal.add(statement_uri, OPERATION, DELETE)
-
+        self.journal.add(statement_uri, SOURCE, self.URI)
         self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
 
     def remove(self, subject=None, predicate=None, object=None):
@@ -252,6 +253,9 @@ class JournalingStore:
 
         
 #~ $Log$
+#~ Revision 6.3  2001/03/02 06:22:23  eikeon
+#~ JournalingStore no longer has TripleStore as a base
+#~
 #~ Revision 6.2  2001/02/27 22:31:59  eikeon
 #~ fixed up subject URI's used in Journal Store and fixed up timestamps used in Journal Store
 #~
