@@ -73,10 +73,11 @@ class QueryStore:
         self.visit(property, subject, None, None)
         return result.keys()
 
-    def getValues(self, subject, property):
+    def getValues(self, subject=None, property=None):
         result = {}
         def object(s, p, o, result=result):
             result[o] = 1
+        self.visit(object, subject, property, None)
         return result.keys()
 
     # TODO: are the following two methods transitive as they are currently implemented?
@@ -193,6 +194,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.10  2000/12/06 05:51:05  eikeon
+#~ refactored some more gets to visits
+#~
 #~ Revision 4.9  2000/12/06 01:35:59  eikeon
 #~ reimplemented isKnownResource
 #~
