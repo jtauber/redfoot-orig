@@ -176,7 +176,8 @@ class Viewer:
         """ % self.qstore.label(subject))
 
         self.qstore.propertyValuesV(subject, self.displayPropertyValue)
-
+        self.qstore.reifiedV(subject, self.displayReifiedStatements)
+        
         self.writer.write("""
             </TABLE>
           </BODY>
@@ -225,6 +226,16 @@ class Viewer:
         <TR><TD>%s</TD><TD>%s</TD></TR>
         """ % (propertyDisplay, valueDisplay))
 
+    def displayReifiedStatements(self, subject, predicate, object):
+        propertyDisplay = self.link(predicate)
+        if object[0]=="^":
+            valueDisplay = object[1:]
+        else:
+            valueDisplay = self.link(object)
+        self.writer.write("""
+        <TR CLASS="REIFIED"><TD>%s</TD><TD>%s</TD></TR>
+        """ % (propertyDisplay, valueDisplay))
+
     def encodeURI(self, s):
         import string
         return string.join( string.split(s,'#') ,'%23')
@@ -264,3 +275,4 @@ class Viewer:
           </BODY>
         </HTML>
         """)
+
