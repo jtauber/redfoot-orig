@@ -3,8 +3,6 @@ from time import sleep
 from urlparse import urlparse, urlunparse, urljoin
 
 
-from functors import slice
-
 from redfoot.rdf.store.urigen import generate_uri as get_timestamp
 from redfoot.rdf.objects import resource, literal
 from redfoot.rdf.const import TYPE, LABEL, COMMENT
@@ -94,10 +92,10 @@ class Sniffer(object):
             sleep(5)
 
     def __mark(self, subject):
-        self.add(subject, RUN, literal("1"))
+        self.add(resource(subject), RUN, literal("1"))
 
     def __unmark(self, subject):
-        self.remove(subject, RUN, None)
+        self.remove(resource(subject), RUN, None)
         
     def __timer(self):
         while 1:
@@ -106,6 +104,7 @@ class Sniffer(object):
 
 
     def sniff(self, url):
+        self.__unmark(url)        
         print "sniffing '%s'" % url
         sys.stdout.flush()
         from urllib import urlopen, quote
@@ -117,7 +116,6 @@ class Sniffer(object):
         self.parser.uri_base = "%s://%s" % (scheme, netloc)
         self.parser.feed(f.read())
         self.parser.close()
-        self.__unmark(self, resource(url))
         print "Saving..."
         sys.stdout.flush()
         self.save()

@@ -38,12 +38,16 @@ sniffer.do_prefix("rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>")
 import threading
 t = threading.Thread(target = sniffer.cmdloop(), args = ())
 t.setDaemon(1)
-t.start()
+#t.start()
 
 
 
 ####
 from redfoot.server.module import App
+from redfoot.rdf.objects import resource, literal
+from redfoot.rdf.const import TYPE, LABEL, COMMENT
+from link_sniffer import SNIFFED, SNIFFABLE, SNIFFED_ON, SNIFFED_FROM, RUN
+
 
 class LinkApp(App):
 
@@ -107,6 +111,7 @@ class LinkApp(App):
   <ul>
 """)
         callback = lambda s, p, o: self.display_link(request, response, s, p, o)
+        from functors import slice        
         sort(sniffer.reverse_chron, sniffer.visit)(slice(callback, start, end), (None, TYPE, SNIFFED))
 
         response.write("""\
