@@ -1,5 +1,6 @@
 from string import rfind
 from types import MethodType
+import new
 
 class Module:
 
@@ -93,8 +94,8 @@ class ParentModule(Module):
 
     def add_module(self, instance_name, klass):
         #print "adding module (%s) as %s to %s" % (klass, instance_name, self.__class__)
-        instance = klass()
-        instance.app = self.app
+        
+        instance = new.instance(klass, {'app': self.app})
         if hasattr(klass, "module_rdf"):
             for (location, URI) in klass.module_rdf:
                 location = to_URL(klass.__module__, location)
