@@ -287,6 +287,9 @@ A {
   font-weight: bold;
 }
 
+DIV.nav DL {
+  margin: 0.5em 0em;
+}
 DIV.nav DT {
   font-size: 10pt;
   font-weight: bold;
