@@ -32,6 +32,7 @@
         subject = self.app.request.get_parameter('subject', None)
         type = self.app.request.get_parameter("type", None)
         copy = self.app.request.get_parameter("copy", None)
+        return_to = self.app.request.get_parameter("return_to", "")
         
         if copy == "true":
             subject = self.app.rednode.local.uri + generate_uri()
@@ -45,13 +46,13 @@
         if type != None and type != "":
             self.app.rednode.add(subject, TYPE, resource(type))
             
-        self.display_edit(subject)
+        self.display_edit(subject, return_to)
       </red:exec>
     </red:facet>      
 
-    <red:facet name="display_edit" args="subject">    
+    <red:facet name="display_edit" args="subject, return_to=''">
       <FORM NAME='edit_form' ACTION='edit?subject={subject}' METHOD='POST'>
-        <INPUT NAME='subject' TYPE='HIDDEN' VALUE='{subject}'/>
+        <INPUT NAME='update_subject' TYPE='HIDDEN' VALUE='{subject}'/>
         <INPUT NAME='processor' TYPE='HIDDEN' VALUE=""/>
         <H2><red:eval>subject</red:eval></H2>
         <TABLE>
@@ -95,12 +96,17 @@
         </TABLE>
         <INPUT TYPE='HIDDEN' NAME='prop_count' VALUE='{self.property_num}'/>
         <INPUT TYPE='HIDDEN' NAME='del_num' VALUE='0'/>
+        <INPUT TYPE="HIDDEN" NAME="return_to" value="{return_to}"/>
         <INPUT TYPE='BUTTON' VALUE='update' ONCLICK="edit_form.processor.value='update'; edit_form.submit()"/>
         <INPUT TYPE='BUTTON' VALUE='delete' ONCLICK="edit_form.processor.value='delete'; edit_form.submit()"/>
         <INPUT TYPE='HIDDEN' NAME='copy' VALUE=''/>
         <INPUT TYPE="BUTTON" VALUE="copy"
                ONCLICK="edit_form.copy.value='true'; edit_form.action='edit'; edit_form.submit()"/>
-               <!-- The onclick is being used to... --> 
+               <!-- The onclick is being used to... -->
+        <red:if test="return_to != ''">
+          <INPUT TYPE="BUTTON" VALUE="done"
+               ONCLICK="edit_form.processor.value='update'; edit_form.return_to.value=''; edit_form.action='{return_to}'; edit_form.submit()"/>
+        </red:if>
       </FORM>
     </red:facet>    
 
@@ -148,7 +154,6 @@
 
             <red:else>
               <!-- RESOURCE -->
-
               <red:if test="self.app.rednode.exists(property, RANGE, None)">
                 <INPUT TYPE='HIDDEN' NAME='prop{self.property_num}_is_literal' VALUE='no'/>
                 <SELECT NAME='prop{self.property_num}_value'>
@@ -186,6 +191,21 @@
                   </SELECT>
                 </red:else>
               </red:if>
+              <red:exec>
+                return_to = self.app.request.get_parameter("return_to", "")
+              </red:exec>
+              <red:if test="return_to == ''">
+                <red:exec>
+                  subject = self.app.request.get_parameter("subject", "")
+                  query_string=""
+                  b = ListBuilder()
+                  self.app.rednode.visit(o(b.accept), (property, RANGE, None))
+                  for r in b.list:
+                    query_string = query_string + "type=" + encode_URI(r) + "&amp;"
+                  query_string = query_string + "return_to=edit%3Fsubject=" + encode_URI(subject)
+                </red:exec>
+                <A HREF="add?{query_string}">add new</A>
+              </red:if>
             </red:else>
           </red:if>  
         </TD>
@@ -205,6 +225,8 @@
 
     <red:facet name="add">
       <red:exec>type = self.app.request.get_parameter('type', RESOURCE)</red:exec>
+      <red:exec>return_to = self.app.request.get_parameter('return_to', '')</red:exec>
+      <H2>Add Resource of Type <red:eval>self.app.rednode.label(type)</red:eval></H2>
       <FORM NAME="form" ACTION="edit" METHOD="POST">
         <TABLE>
           <TR>
@@ -217,12 +239,13 @@
         </TABLE>
         <INPUT TYPE="SUBMIT" VALUE="create"/>
         <INPUT TYPE="HIDDEN" NAME="type" VALUE="{type}"/>
+        <INPUT TYPE="HIDDEN" NAME="return_to" VALUE="{return_to}"/>
       </FORM>
     </red:facet>      
 
     def update(self, subject=None, copy=0):
         if subject==None:
-            subject = resource(self.app.request.get_parameter("subject", None))
+            subject = resource(self.app.request.get_parameter("update_subject", None))
         count = self.app.request.get_parameter("prop_count", 0)
         i = 0
         while i &lt; int(count):
