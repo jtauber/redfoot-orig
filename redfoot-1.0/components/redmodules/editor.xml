@@ -179,9 +179,11 @@
                   </red:for>
                 </SELECT>
                 <red:else>
-                  <!-- TODO do something better than this -->
-                  <INPUT TYPE='TEXT' SIZE='60' NAME='prop{self.property_num}_value'
-                         VALUE='{value}'/>***
+                  <SELECT NAME='prop{self.property_num}_value'>
+                    <OPTION VALUE='{value}'>
+                      <red:eval>self.app.rednode.label(value)</red:eval>
+                    </OPTION>
+                  </SELECT>
                 </red:else>
               </red:if>
             </red:else>
