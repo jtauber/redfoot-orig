@@ -1,6 +1,6 @@
 from string import find
 
-class StoreIO:
+class StoreIO(object):
     """Store I/O.
 
     Mixed-in with a store that implements add and visit and provides I/O
@@ -8,7 +8,9 @@ class StoreIO:
     """
     
     def __init__(self):
-        self.uri = None
+        super(StoreIO, self).__init__()
+        self.uri = None        
+
 
     def load(self, location, uri=None, create=0):
         self.location = location
@@ -41,10 +43,10 @@ from redfoot.rdf.store.triple import TripleStore
 from redfoot.rdf.syntax.parser import Parser
 from redfoot.rdf.syntax.serializer import RedSerializer
 
+
 class TripleStoreIO(StoreIO, Parser, RedSerializer, TripleStore):
     """Mix-in of StoreIO and TripleStore."""
     
     def __init__(self):
-        TripleStore.__init__(self)
-        RedSerializer.__init__(self)
+        super(TripleStoreIO, self).__init__()
 

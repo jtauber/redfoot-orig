@@ -1,6 +1,6 @@
 ANY = None
 
-class TripleStore:
+class TripleStore(object):
 
     def __init__(self):
         # indexed by [subject][predicate][object]

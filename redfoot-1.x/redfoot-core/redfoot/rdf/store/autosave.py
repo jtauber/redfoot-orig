@@ -5,7 +5,7 @@ from redfoot.rdf.store.storeio import TripleStoreIO
 
 class AutoSaveStoreIO(TripleStoreIO):
     def __init__(self):
-        TripleStoreIO.__init__(self)
+        super(AutoSaveStoreIO, self).__init__()
         self.dirtyBit = DirtyBit()
         
     def remove(self, subject=None, predicate=None, object=None):
