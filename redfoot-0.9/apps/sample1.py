@@ -24,8 +24,7 @@ class UI:
         if path_info == "/":
             self.main(response)
         else:
-            if self.authenticated(request, response):
-                self.editor.handle_request(request, response)
+            self.editor.handle_request(request, response)
 
 
     def main(self, response):
@@ -39,7 +38,7 @@ class UI:
             <P>These are the people I know now:</P>
             <UL>
         """)
-        for s in self.rednode.get(None, TYPE, "http://redfoot.sourceforge.net/2000/10/#Person"):
+        for s in self.rednode.get(None, TYPE, "http://redfoot.sourceforge.net/2001/03/Person"):
             response.write("<LI>%s</LI>" % self.rednode.label(s[0]))
         response.write("""
             </UL>
@@ -48,43 +47,9 @@ class UI:
         </HTML>
         """)
 
-    def authenticated(self, request, response):
-        parameters = request.getParameters()
-        session = request.getSession()
-        if hasattr(session, 'username'):
-            return 1
-        elif parameters['username']!="" and \
-           parameters['password']!="" and parameters['password']=="redfoot":
-                session.username = parameters['username']
-                return 1
-        else:
-                response.write("""
-<HTML>
-  <HEAD>
-    <TITLE>Username</TITLE>
-  </HEAD>
-  <BODY onLoad="document.loginForm.username.focus()">
-    <H1>Username</H1>
-    <FORM name="loginForm" method="POST">
-      <TABLE>
-        <TR>
-          <TD>Username:</TD>
-          <TD><INPUT name="username" type="text"> (Hint: any username will work)</TD>
-        </TR>
-        <TR>
-          <TD>Password:</TD>
-          <TD><INPUT name="password" type="password"> (Hint: redfoot)</TD>
-        </TR>
-        <TR>
-          <TD colspan="2"><INPUT value="Login" type="submit"></TD>
-        </TR>
-      </TABLE>
-    </FORM>
-  </BODY>                            
-</HTML>
-""")
-        return 0
-
 ## $Log$
+## Revision 7.1  2001/04/09 17:16:23  eikeon
+## storeNode -> rednode
+##
 ## Revision 7.0  2001/03/26 23:41:04  eikeon
 ## NEW RELEASE
