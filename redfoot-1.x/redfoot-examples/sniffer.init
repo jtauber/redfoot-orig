@@ -1,21 +1,12 @@
-!from redfootlib.rdf.query.schema import SchemaQuery
-!from redfootlib.rdf.store.triple import TripleStore
-!from redfootlib.rdf.store.autosave import AutoSave
-!from redfootlib.rdf.store.storeio import LoadSave
-
-!from sniffer import Sniffer
-
-!class SnifferNode(Sniffer, SchemaQuery, LoadSave, TripleStore): pass
-
-!rednode = SnifferNode()
-!rednode.load("links.rdf", "http://eikeon.com", 1)
-!rednode.run()
-
 prefix sniff:<http://redfoot.net/2002/04/17/sniff/>
 prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-!#### Run LinkApp HTTP interface
-!from link_app import run_app
-!run_app(rednode) 
+!from sniffer import SnifferNode
+!rednode = SnifferNode()
+!rednode.run()
+
+load links.rdf "http://redfoot.net://2002/04/21/"
+
+add_app link_app.LinkApp
 

@@ -1,15 +1,10 @@
-!from redfootlib.redcode import importer
-!importer.install()
+redcode on
 
-load generic.rdf http://redfoot.net/
-!from generic import GenericApp
+# testing
+load generic.rdf http://redfoot.net/2002/04/22/
 
-!generic = GenericApp(rednode)
-!print generic
-!#server :9090
-!from redfootlib.server import RedServer
-!server = RedServer('', 9090)
-!server.add_app(generic)
-!server.run(1)
+add_app generic.GenericApp
+
+
 
 
