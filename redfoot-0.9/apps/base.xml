@@ -1,0 +1,68 @@
+<r:module name="base" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
+
+import string
+import sys
+
+from rdf.query import Query
+
+from rdf.const import *
+from rdf.literal import *
+
+from util import *
+
+from redfoot import redpage
+
+Neighbours = redpage.parse_red_page("neighbours.xml").Neighbours
+
+from redfoot.editor import Editor
+
+from rdf.query import QueryStore
+from rdf.storeio import TripleStoreIO
+
+class Local(QueryStore, TripleStoreIO):
+    def __init__(self):
+        TripleStoreIO.__init__(self)
+
+<r:class name="Base" bases="Editor Neighbours">
+
+def __init__(self, rednode):
+    self.rednode = rednode
+    Editor.__init__(self, rednode)
+    self.editor = Editor(self.rednode)
+    self.editor.showNeighbours = 1
+
+
+def handle_request(self, request, response):
+    path_info = request.getPathInfo()
+
+    # call handle_request on base classes
+    bases = self.__class__.__bases__
+    for base in bases:
+        if hasattr(base, 'handle_request_init') and base.handle_request_init(self, request, response):
+            # if completely handled then return now
+            return
+
+    if path_info in ['/css', '/classList', '/fullsubclass', '/subclass', '/triples', '/add',  '/view', '/edit']:
+        self.editor.handle_request(request, response)
+	return
+
+    # invoke the processor
+    processor = request.getParameters()['processor']
+    if hasattr(self, processor):
+        apply(getattr(self, processor), (request, response))
+
+    if hasattr(self, path_info):
+        apply(getattr(self, path_info), (request, response))
+        return
+
+
+</r:class>
+
+</r:module>
+
+
+
+
+
+
+

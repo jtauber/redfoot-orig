@@ -1,0 +1,70 @@
+<r:module name="sample3" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
+
+<r:load-module class="Base" location="base.xml"/>
+<r:load-module class="Common" location="common.xml"/>
+
+from rdf.const import *
+from rdf.literal import *
+from util import *
+
+TASK = "http://redfoot.sourceforge.net/2001/04/#Task"
+
+  <r:class name="UI" bases="Base Common">
+
+    <r:response name="/">
+
+      <HTML>
+        <HEAD>
+          <TITLE>Task Demo</TITLE>
+          <LINK REL="STYLESHEET" HREF="/css"/>
+        </HEAD>
+        <BODY onLoad="document.task.new_task.focus()">
+          <H1>Task Demo</H1>
+          <TABLE>
+            <r:exec>self.list(request, response, self.rednode.get(None, TYPE, TASK), self.task_row)</r:exec>
+            <TR>
+              <TD>
+                <FORM NAME="task" METHOD="POST" ACTION="/">
+                  <INPUT SIZE="30" TYPE="TEXT" NAME="new_task"/>
+                  <INPUT TYPE="HIDDEN" NAME="processor" VALUE="add_task"/>
+                </FORM>
+              </TD>
+            </TR>
+          </TABLE>
+          <P><A HREF="/classList">Go to editor</A></P>
+        </BODY>
+      </HTML>
+
+    </r:response>
+
+    <r:response name="task_row" args="triple, row">
+
+      <r:exec>subject = triple[0]</r:exec>
+      <TR>
+        <TD><a href="view?uri={encodeURI(subject)}"><r:eval>self.rednode.label(subject)</r:eval></a></TD>
+        <TD>
+          <FORM METHOD="POST" ACTION="/">
+            <INPUT TYPE="SUBMIT" VALUE="done"/>
+            <INPUT TYPE="HIDDEN" NAME="task_uri" VALUE="{subject}"/>
+            <INPUT TYPE="HIDDEN" NAME="processor" VALUE="task_done"/>
+          </FORM>
+        </TD>
+      </TR>
+
+</r:response>
+
+def add_task(self, request, response):
+    parameters = request.getParameters()
+    uri = self.rednode.local.URI + generateURI()
+    self.rednode.local.add(uri, TYPE, TASK)
+    self.rednode.local.add(uri, LABEL, literal(parameters['new_task']))
+
+def task_done(self, request, response):
+    parameters = request.getParameters()
+    task_uri = parameters['task_uri']
+    self.rednode.local.remove(task_uri)
+
+</r:class>
+
+</r:module>
+

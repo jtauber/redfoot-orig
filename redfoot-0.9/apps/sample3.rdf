@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<rdf:RDF
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/24/25Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>the third thing i have to do</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/24/46Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>yet another thing i have to do</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/23/12Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>the other thing i have to do</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/27/24Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>just one thing i have to do</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/22/39Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>the thing i have to do</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/04/#Task">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    <rdfs:label>Task</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/27/45Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>just one thing i have to do</rdfs:label>
+  </rdf:Description>
+</rdf:RDF>
