@@ -19,21 +19,24 @@ REDFOOT README
 
 TO RUN SOMETHING STRAIGHT AWAY
 
-    cd apps; python run.py generic
+    cd redfoot-examples/; python run.py generic
 
-    and go to http://localhost:8000/ with your browser
+    and go to http://localhost:8080/ with your browser
 
-    See apps/README for more details
+    See redfoot-examples/README for more details
 
 
 KNOWN ISSUES
 
-    See doc/issues.html or http://redfoot.sourceforge.net/doc/issues.html
+    See http://redfoot.sourceforge.net/doc/issues.html or
+	redfoot-doc/issues.html
 
 
 DOCUMENTATION
 
-    See doc/index.html or http://redfoot.sourceforge.net/doc/
+    See http://redfoot.sourceforge.net/doc/ or
+	redfoot-doc/index.html
+
 
 
 WHERE TO GET THE LATEST REDFOOT
