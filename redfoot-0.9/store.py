@@ -57,27 +57,47 @@ class TripleStore:
         self.visit(visitor, subject, property, value)
 
     def visit(self, visitor, subject=None, property=None, value=None):
-
         if subject!=None:
-            for s in self.spv.keys():
-                if subject == None or subject == s:
-                    for p in self.spv[s].keys():
-                        if property == None or property == p:
-                            for v in self.spv[s][p].keys():
-                                if value == None or value == v:
-                                    visitor.callback(s, p, v)
+            if self.spv.has_key(subject):
+                if property!=None:
+                    if self.spv[subject].has_key(property):
+                        if value!=None:
+                            if self.spv[subject][property].has_key(value):
+                                visitor.callback(subject, property, value)
+                        else:
+                            for v in self.spv[subject][property].keys():
+                                visitor.callback(subject, property, v)
+                else:
+                    for p in self.spv[subject].keys():
+                        self.visit(visitor, subject, p, value) # recurse for now
         else:
-            for p in self.pvs.keys():
-                if property == None or property == p:
-                    for v in self.pvs[p].keys():
-                        if value == None or value == v:
-                            for s in self.pvs[p][v].keys():
-                                if subject == None or subject == s:
-                                    visitor.callback(s, p, v)
-            
-	return list
+            if property!=None:
+                if self.pvs.has_key(property):
+                    if value!=None:
+                        if self.pvs[property].has_key(value):
+                            for s in self.pvs[property][value].keys():
+                                visitor.callback(s, property, value)
+                    else:
+                        for v in self.pvs[property].keys():
+                            for s in self.pvs[property][v].keys():
+                                visitor.callback(s, property, v)
+            else:
+                if value!=None:
+                    for p in self.pvs.keys():
+                        if self.pvs[p].has_key(value):
+                            for s in self.pvs[p][value]:
+                                visitor.callback(s, p, value)
+                else:
+                    for s in self.spv.keys():
+                        for p in self.spv[s].keys():
+                            for v in self.spv[s][p].keys():
+                                visitor.callback(s, p, v)
+                    
 
 # $Log$
+# Revision 1.17  2000/10/06 03:07:56  eikeon
+# removed pesky ^M^Ms
+#
 # Revision 1.16  2000/10/03 06:01:50  jtauber
 # moved MultiStore and StoreNode to rednode.py
 #
