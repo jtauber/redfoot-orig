@@ -1,38 +1,58 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <rdf:RDF
+   xmlns:n1="http://eikeon.com/2000/11/2001/03/24/T04/56/06"
+   xmlns:n11="http://redfoot.sourceforge.net/2000/10/#"
+   xmlns:n10="http://eikeon.com/2001/03/28/T03/32/22"
+   xmlns:n5="http://eikeon.com/2001/03/27/T17/22/10"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:n3="http://eikeon.com/2000/11/2001/03/25/T00/34/45"
+   xmlns:n9="http://eikeon.com/2001/03/28/T04/50/05"
+   xmlns:n8="http://eikeon.com/2001/03/27/T17/20/03"
    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+   xmlns:n6="http://eikeon.com/2001/03/28/T03/34/20"
+   xmlns:n2="http://eikeon.com/2000/11/2001/03/25/T00/56/05"
+   xmlns:n7="http://eikeon.com/2001/03/28/T04/49/29"
+   xmlns:n4="http://eikeon.com/2000/11/2001/03/24/T04/55/02"
 >
-  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/24/25Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>the third thing i have to do</rdfs:label>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/09/T23/35/47Z">
+    <n1:Z>69dfd376a5057bb47c33e1770bb5bbc5</n1:Z>
+    <n2:Z>71</n2:Z>
+    <n3:Z>2001/04/09T23:35:47Z</n3:Z>
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2000/10/#Person"/>
+    <n4:Z>jtauber</n4:Z>
   </rdf:Description>
-  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/24/46Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>yet another thing i have to do</rdfs:label>
+  <rdf:Description rdf:about="http://www.writetheweb.com/rss10.php">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/23/12Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>the other thing i have to do</rdfs:label>
+  <rdf:Description rdf:about="http://VAIO:8000/2001/04/09/T18/06/50Z">
+    <n5:Z>password and verify did not match</n5:Z>
+    <n6:Z></n6:Z>
+    <n3:Z>2001/04/09T18:06:50Z</n3:Z>
+    <n7:Z>localhost:8000</n7:Z>
+    <n8:Z rdf:resource="http://localhost:8000/2001/04/09/T18/14/43Z"/>
+    <n9:Z></n9:Z>
+    <rdf:type rdf:resource="http://eikeon.com/2001/03/27/T17/18/48Z"/>
+    <n10:Z>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)</n10:Z>
   </rdf:Description>
-  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/22/39Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>the thing i have to do</rdfs:label>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/09/T23/02/28Z">
+    <n6:Z></n6:Z>
+    <n3:Z>2001/04/09T23:02:28Z</n3:Z>
+    <n7:Z>localhost:8000</n7:Z>
+    <n8:Z rdf:resource="http://localhost:8000/2001/04/09/T23/35/47Z"/>
+    <n9:Z></n9:Z>
+    <rdf:type rdf:resource="http://eikeon.com/2001/03/27/T17/18/48Z"/>
+    <n10:Z>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)</n10:Z>
   </rdf:Description>
-  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/27/24Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>just one thing i have to do</rdfs:label>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/09/T18/14/43Z">
+    <n1:Z>334b473e8c2555d5eb722e0c932df793</n1:Z>
+    <rdfs:label>Daniel 'eikeon' Krech</rdfs:label>
+    <n11:emailAddress>eikeon@eikeon.com</n11:emailAddress>
+    <n3:Z>2001/04/09T18:14:43Z</n3:Z>
+    <n2:Z>81</n2:Z>
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2000/10/#Person"/>
+    <n4:Z>eikeon</n4:Z>
   </rdf:Description>
-  <rdf:Description rdf:about="http://VAIO/2001/04/15/T03/47/31Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>foo</rdfs:label>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/04/#Task">
-    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
-    <rdfs:label>Task</rdfs:label>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/27/45Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>just one thing i have to do</rdfs:label>
+  <rdf:Description rdf:about="xmlhack.rdf">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
   </rdf:Description>
 </rdf:RDF>
