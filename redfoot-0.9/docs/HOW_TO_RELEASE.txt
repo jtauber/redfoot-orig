@@ -1,6 +1,6 @@
 HOW TO RELEASE REDFOOT
 
-* checkout
+* checkout (with -P)
 * update CHANGELOG (hopefully has been done continuously)
 * tag release:
 	cvs tag Release_X_XX_XX

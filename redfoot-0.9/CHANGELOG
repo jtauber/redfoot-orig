@@ -1,5 +1,58 @@
 CHANGELOG
 
+Changes between 0.9.3 and 0.9.4
+	
+ - added 'copy' button to edit page
+ - edit now adds required properties if they are not already present
+ - first pass implementation of redpages
+ - added experimental journaling store (JournalingStoreIO)
+ - initial attempt at generating dot for graphviz
+ - can now add properties to an unknown resource using edit
+ - class list now lists typeless resources
+ - changed menu names (distinction between abstract and external resources)
+
+ - server now shuts down (more) cleanly
+ - added support in bnh for content type of multipart/form-data
+   (to allow file upload)
+ - added method for parsing RDF from a stream
+ - removed at most one rdf:RDF element constraint
+ - visitResourcesByType will now visit resources whose type is an unknown class
+ - all subjects can take the properties that RESOURCE can
+ - added input method on StoreIO (mirroring output method)
+ - edit can now take type; add just asks for URI
+ - calling edit with no subject autogenerates a URI
+
+ - converted many mixedCase names to _ style names
+ - made some reasonably straight forward optimizations (largely moving stuff
+   out of inner loops)
+ - moved a bunch of bnh stuff into separate modules
+ - added code in bnh to keep trying to bind to address
+ - started adding exception handling code around parse
+ - fixed bug in visitTransitiveSubTypes and visitPossibleValues
+ - renamed visitSubjects to visit_subjects
+ - removed unused gets
+ - fixed up *Transitive* methods
+ - refactored to use new query method; still have a few thoughts before we go
+   nuts and convert everything over
+ - added adapter method query
+ - added visitSubjects subject for conv. and efficiency
+ - added typelessResources() query
+ - Serializer will now also work with no baseURI
+ - encoding fixes
+ - URI defaults to None so that output may be called without one
+ - edit doesn't absolutize any more
+ - can now delete empty properties of range LITERAL
+ - refactored to use header and footer methods
+ - fixed font-weight and size
+ - added method to override getTypelessResources to only pay attention to
+   local resources
+ - moved the 'local in context of neighbourhood' methods to RedNode... else
+   we were overriding the corresponding methods on local, which someone may
+   care about
+ - bug fix... query parameters to output were not being passed correctly
+ - removed second menubar in view
+ - factored out the if self.showNeighbours
+
 Changes between 0.9.2 and 0.9.3
 
  - improved documentation
