@@ -48,8 +48,8 @@
     <PRE CLASS="code_sample">
 &lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.rdf.objects import resource
-  from redfoot.rdf.const import TYPE
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
 
   RSS_ITEM = resource("http://purl.org/rss/1.0/item")
   RSS_TITLE = resource("http://purl.org/rss/1.0/title")
@@ -62,7 +62,7 @@
     <P>The <CODE>resource</CODE> function that we import and then use, takes a URI string
        and returns an object representing that resource.</P>
 
-    <P><CODE>TYPE</CODE> (imported from <CODE>redfoot.rdf.const</CODE>) is a property defined in the RDF specification that we will
+    <P><CODE>TYPE</CODE> (imported from <CODE>redfootlib.rdf.const</CODE>) is a property defined in the RDF specification that we will
        use in a query a little later on.</P>
 
     <H2>The <CODE>red:module</CODE> Element</H2>
@@ -79,8 +79,8 @@
     <PRE CLASS="code_sample">
 &lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.rdf.objects import resource
-  from redfoot.rdf.const import TYPE
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
 
   RSS_ITEM = resource("http://purl.org/rss/1.0/item")
   RSS_TITLE = resource("http://purl.org/rss/1.0/title")
@@ -182,8 +182,8 @@
     <PRE CLASS="code_sample">
 &lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.rdf.objects import resource
-  from redfoot.rdf.const import TYPE
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
 
   RSS_ITEM = resource("http://purl.org/rss/1.0/item")
   RSS_TITLE = resource("http://purl.org/rss/1.0/title")
@@ -236,9 +236,9 @@
     <PRE CLASS="code_sample">
 &lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.rdf.objects import resource
-  from redfoot.rdf.const import TYPE
-  from redfoot.rdf.query.functors import s
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
+  from redfootlib.rdf.query.functors import s
 
   RSS_ITEM = resource("http://purl.org/rss/1.0/item")
   RSS_TITLE = resource("http://purl.org/rss/1.0/title")
@@ -285,13 +285,13 @@
        of a Redcode approach.</P>
 
     <PRE CLASS="code_sample">
-from redfoot.rdf.objects import resource
-from redfoot.rdf.const import TYPE
-from redfoot.rdf.query.functors import s
+from redfootlib.rdf.objects import resource
+from redfootlib.rdf.const import TYPE
+from redfootlib.rdf.query.functors import s
 
-from redfoot.util import encode_character_data
+from redfootlib.util import encode_character_data
 
-from redfoot.module import Module
+from redfootlib.module import Module
 
 RSS_ITEM = resource("http://purl.org/rss/1.0/item")
 RSS_TITLE = resource("http://purl.org/rss/1.0/title")

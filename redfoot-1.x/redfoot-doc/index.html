@@ -6,25 +6,66 @@
   <BODY>
     <DIV CLASS="NAV"><A HREF="../">Redfoot</A></DIV>
     <H1>Redfoot Documentation</H1>
-    <P><B>Redfoot</B> is a framework for building distributed data-driven applications. Redfoot
-       uses RDF as the underlying model for all data because of the extensibility and the ability
-       to express relationships between any objects.</P>
+<p>
 
-    <P>This documentation is available at <A HREF="http://redfoot.sourceforge.net/doc/">http://redfoot.sourceforge.net/doc/</A>.
-       Please check back regularly for updates.</P>
+<B>Redfoot</B> is an extensible RDF server for building {peer|distributed}
+networks of data sharing nodes upon which applications may be built.
 
+</p>
+<p>
+
+At the highest level Redfoot consists of two pieces, namely, an {RDF
+Container|RDF Application Server} for running the nodes that form the
+network and a library from which nodes may be extended with
+specialized application specific functionality. The Container is simply
+called Redfoot and the library redfootlib. See the <a
+href="architecture.html">architecture</a> section for a more in depth
+description.
+
+</p>
+
+
+<P>
+
+<span class="ednote">NOTE: The following documentation is available at
+<A
+HREF="http://redfoot.sourceforge.net/doc/">http://redfoot.sourceforge.net/doc/</A>. Please
+check back regularly for updates.</span>
+
+</P>
+
+<h2>Getting Started</h2>
     <UL>
+      <LI><A HREF="installing.html">Installing Redfoot</A></LI>
+      <LI><A HREF="running.html">Running Redfoot</A></LI>
+      <ul>
+        <li><A HREF="../redfoot-examples/index.html">Examples</A></li>
+        <LI><A HREF="config.html">Configuring Redfoot</A></LI>
+      </ul>
+
       <LI><A HREF="issues.html">Known Issues</A></LI>
-      <LI><A HREF="config.html">Configuring Redfoot</A></LI>
+
     </UL>
 
+<h2>Architecture</h2>
     <UL>
-      <LI><A HREF="architecture.html">Architecture</A></LI>
-      <LI><A HREF="queries.html">Writing queries</A></LI>
-      <LI><A HREF="modules.html">Writing modules</A></LI>
-      <LI><A HREF="tutorialExtendingGeneric.html">Tutorial: Extending the Generic App</A> Contributed by David H. Jones</LI>
-      <LI><A HREF="connectors.html">Writing connectors</A></LI>
-      <LI><A HREF="apps.html">Writing apps</A></LI>
+      <LI><A HREF="architecture.html">Architecture Overview</A></LI>
+    </UL>
+
+<h2>Extending</h2>
+    <UL>
+      <LI><A HREF="extending.html">Extending Redfoot Overview</A></LI>
+
+        <LI><A HREF="queries.html">Writing queries</A></LI>
+        <LI><A HREF="webInterfaces.html">Writing Web Interfaces</A></LI>
+        <ul>
+        <LI><A HREF="modules.html">Writing modules</A></LI>
+        <LI><A HREF="apps.html">Writing apps</A></LI>  
+        <LI><A HREF="tutorialExtendingGeneric.html">Tutorial: Extending the Generic App</A> Contributed by David H. Jones</LI>
+        </ul>
+        <LI><A HREF="connectors.html">Writing connectors</A></LI>
+
+
     </UL>
 
   <P CLASS="cvs_id">$Id$</P>

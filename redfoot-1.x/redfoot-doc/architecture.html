@@ -29,7 +29,7 @@
 
     <H3>Triple Store</H3>
 
-    <P>Redfoot stores RDF triples in a class called TripleStore (see redfoot-core/redfoot/rdf/store/triple.py).
+    <P>Redfoot stores RDF triples in a class called TripleStore (see redfoot-core/redfootlib/rdf/store/triple.py).
        There are three important methods on TripleStore:</P>
 
     <UL>
@@ -47,21 +47,21 @@
 
     <P>What types of Python object are used for each item of a triple? Technically, the triple store doesn't
        care but in Redfoot, each item in a triple is either a <CODE>Resource</CODE> or <CODE>Literal</CODE>
-       object (see redfoot-core/redfoot/rdf/objects.py).
+       object (see redfoot-core/redfootlib/rdf/objects.py).
        These classes aren't instantiated directly because then different
        instantiations of a Resource with the same URI would result in different instances representing the
        same thing. So instead, these objects are created via the <CODE>resource(<VAR>uri</VAR>)</CODE> and
        <CODE>literal(<VAR>value</VAR>)</CODE> which return the correct instance.</P>
 
     <P>There are some handy constants for syntax and schema resource URIs defined in
-       redfoot-core/redfoot/rdf/const.py</P>
+       redfoot-core/redfootlib/rdf/const.py</P>
 
     <H4>Code Example</H4>
     
     <PRE CLASS="code_sample">
-from redfoot.rdf.store.triple import TripleStore
-from redfoot.rdf.objects import resource, literal
-from redfoot.rdf.const import *
+from redfootlib.rdf.store.triple import TripleStore
+from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.const import *
 
 store = TripleStore()
 store.add(resource("http://www.jtauber.com/"), LABEL, literal("James Tauber's Website"))
@@ -73,14 +73,14 @@ store.visit(print_triple, (resource("http://www.jtauber.com/"), None, None))</PR
 
     <P>If the triple store is to be loaded from and saved to an XML serialization, <CODE>TripleStore</CODE>
        is mixed in with the <CODE>StoreIO</CODE> class and a parser and serializer.
-       See redfoot-core/redfoot/rdf/store/storeio.py for an example of this where the mix-in <CODE>TripleStoreIO</CODE>
-       is defined. Similarly, redfoot-core/redfoot/rdf/store/autosave.py extends TripleStoreIO to autosave the RDF.</P>
+       See redfoot-core/redfootlib/rdf/store/storeio.py for an example of this where the mix-in <CODE>TripleStoreIO</CODE>
+       is defined. Similarly, redfoot-core/redfootlib/rdf/store/autosave.py extends TripleStoreIO to autosave the RDF.</P>
 
     <H3>Rednodes</H3>
 
     <P>At the very core of a Redfoot application is the concept of a rednode. A rednode combines multiple
        triple stores (TripleStoreIO instances) and mixes in additional query functionality.
-       Rednodes are implemented as the class <CODE>RedNode</CODE> in redfoot-core/redfoot/rednode.py</P>
+       Rednodes are implemented as the class <CODE>RedNode</CODE> in redfoot-core/redfootlib/rednode.py</P>
 
     <P>A rednode has a local triple store (which is read/write) and any number of neighbour triple stores
        (which are read only). The combination of the local store and neighbour stores is referred to as the
