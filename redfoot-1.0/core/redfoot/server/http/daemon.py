@@ -29,8 +29,12 @@ def notify_me_of_reload(module):
     
 
 class RedDaemon(HTTPDaemon):
-    def __init__(self, serverAddress, name, handler_class):
-        HTTPDaemon.__init__(self, serverAddress)
+    def __init__(self, serverAddress, name, handler_class, exact=0):
+        if exact:
+            address = serverAddress
+        else:
+            address = ('', serverAddress[1])
+        HTTPDaemon.__init__(self, address)
         daemons.append(self)
         self.name = name
         self.handler_class = handler_class
