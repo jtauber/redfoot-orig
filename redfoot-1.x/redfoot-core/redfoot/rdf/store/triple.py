@@ -13,22 +13,22 @@ class TripleStore(object):
         
         # spo
         spo = self.spo
-        if not spo.has_key(s):
+        if not s in spo:
             spo[s] = {}
 
         subjectDictionary = spo[s]
-        if not subjectDictionary.has_key(p):
+        if not p in subjectDictionary:
             subjectDictionary[p] = {}
 
         subjectDictionary[p][o] = 1
 
         # pos
         pos = self.pos
-        if not pos.has_key(p):
+        if not p in pos:
             pos[p] = {}
 
         predicateDictionary = pos[p]
-        if not predicateDictionary.has_key(o):
+        if not o in predicateDictionary:
             predicateDictionary[o] = {}
 
         predicateDictionary[o][s] = 1
@@ -44,12 +44,12 @@ class TripleStore(object):
     def visit(self, callback, (subject, predicate, object)):
         if subject!=ANY: # subject is given
             spo = self.spo
-            if spo.has_key(subject):
+            if subject in spo:
                 subjectDictionary = spo[subject]
                 if predicate!=ANY: # subject+predicate is given
-                    if subjectDictionary.has_key(predicate):
+                    if predicate in subjectDictionary:
                         if object!=ANY: # subject+predicate+object is given
-                            if subjectDictionary[predicate].has_key(object):
+                            if object in subjectDictionary[predicate]:
                                 stop = callback(subject, predicate, object)
                                 if stop:
                                     return stop
@@ -65,7 +65,7 @@ class TripleStore(object):
                 else: # subject given, predicate unbound
                     for p in subjectDictionary.keys():
                         if object!=ANY: # object is given
-                            if subjectDictionary[p].has_key(object):
+                            if object in subjectDictionary[p]:
                                 stop = callback(subject, p, object)
                                 if stop:
                                     return stop
@@ -80,10 +80,10 @@ class TripleStore(object):
                 pass
         elif predicate!=ANY: # predicate is given, subject unbound
             pos = self.pos
-            if pos.has_key(predicate):
+            if predicate in pos:
                 predicateDictionary = pos[predicate]
                 if object!=ANY: # predicate+object is given, subject unbound
-                    if predicateDictionary.has_key(object):
+                    if object in predicateDictionary:
                         for s in predicateDictionary[object].keys():
                             stop = callback(s, predicate, object)
                             if stop:
@@ -100,7 +100,7 @@ class TripleStore(object):
             pos = self.pos
             for p in pos.keys():
                 predicateDictionary = pos[p]
-                if predicateDictionary.has_key(object):
+                if object in predicateDictionary:
                     for s in predicateDictionary[object].keys():
                         stop = callback(s, p, object)
                         if stop:
