@@ -1,11 +1,21 @@
 # $Header$
 
+from string import split, join
+
+def hack_around(name, atts):
+    new_name = join(split(name, '^'), '')
+    new_atts = {}
+    for key in atts.keys():
+        new_key = join(split(key, '^'), '')
+        new_atts[new_key] = atts[key]
+    return (new_name, new_atts)
+
 def parse_RDF(adder, location, baseURI=None):
     if baseURI==None:
         baseURI = location
 
     import pyexpat
-    parser = pyexpat.ParserCreate(namespace_separator="")
+    parser = pyexpat.ParserCreate(namespace_separator="^")
 
     parser.SetBase(baseURI)
     RootHandler(parser, adder, None)
@@ -29,7 +39,7 @@ def parse_RDF_stream(adder, stream, baseURI=None):
         baseURI = location
 
     import pyexpat
-    parser = pyexpat.ParserCreate(namespace_separator="")
+    parser = pyexpat.ParserCreate(namespace_separator="^")
 
     parser.SetBase(baseURI)
     RootHandler(parser, adder, None)
@@ -84,6 +94,8 @@ class RootHandler(HandlerBase):
         self.depth = 0
 
     def child(self, name, atts):
+        name, atts = hack_around(name, atts)
+            
         self.depth = self.depth + 1
         if name==RDF:
             RDFHandler(self.parser, self.adder, self)
@@ -92,6 +104,7 @@ class RootHandler(HandlerBase):
             pass
 
     def end(self, name):
+        name = join(split(name, '^'), '')
         self.depth = self.depth - 1
         if self.depth==0 and self.found_root==0:
             import sys
@@ -113,6 +126,7 @@ class RDFHandler(HandlerBase):
         self.parser.EndElementHandler = self.end
 
     def child(self, name, atts):
+        name, atts = hack_around(name, atts)
         if name==DESCRIPTION:
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
@@ -146,6 +160,7 @@ class DescriptionHandler(HandlerBase):
             self.subject = self.parser.GetBase() + u"#" + atts[ID]
         else:
             import sys
+            print atts
             sys.stderr.write(u"Descriptions must have either an about or an ID\n")
             
         for att in atts.keys():
@@ -160,6 +175,7 @@ class DescriptionHandler(HandlerBase):
         self.parser.EndElementHandler = self.end
 
     def child(self, name, atts):
+        name, atts = hack_around(name, atts)
         PropertyHandler(self.parser, self.adder, self, name, atts)
                         
 
@@ -200,6 +216,7 @@ class PropertyHandler(HandlerBase):
         self.parser.EndElementHandler = self.end
 
     def child(self, name, atts):
+        name, atts = hack_around(name, atts)
         if name==DESCRIPTION:
             self.object = atts[u"about"]
             DescriptionHandler(self.parser, self.adder, self, atts)
@@ -210,10 +227,14 @@ class PropertyHandler(HandlerBase):
         self.object = self.object + data
 
     def end(self, name):
+        name = join(split(name, '^'), '')
         self.adder(self.parent.subject, self.predicate, self.object)
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release
+#~
 #~ Revision 7.2  2001/04/14 23:06:13  eikeon
 #~ removed old log messages
 #~
