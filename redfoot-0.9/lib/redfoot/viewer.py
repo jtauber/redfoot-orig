@@ -26,6 +26,8 @@ class Viewer:
             o = parameters['object']
             if o=="": o=None
             self.rdf(s,p,o)
+        elif path_info == "/journal":
+            self.journal()
         elif path_info == "/fullsubclass":
             root = parameters['uri']
             if root=="":
@@ -385,6 +387,10 @@ class Viewer:
         node = self.getNodeInScope()
         node.output(self.response, None, subject, predicate, object)
 
+    def journal(self, subject=None, predicate=None, object=None):
+        node = self.storeNode.local.journal
+        node.output(self.response, None, subject, predicate, object)
+
     def triples(self, subject=None, predicate=None, object=None):
         self.header("Triples")
         self.response.write("""
@@ -452,59 +458,5 @@ class Viewer:
         """)
 
 #~ $Log$
-#~ Revision 5.18  2001/02/07 17:27:44  eikeon
-#~ bug fix... query parameters to output were not being passed correctly
-#~
-#~ Revision 5.17  2000/12/20 21:22:08  eikeon
-#~ converted many mixedCase names to _ style names
-#~
-#~ Revision 5.16  2000/12/20 04:04:39  jtauber
-#~ fixed typo in encodeAttributeValue name
-#~
-#~ Revision 5.15  2000/12/20 03:14:48  jtauber
-#~ added encoding of special chars in attribute values and character data
-#~
-#~ Revision 5.14  2000/12/19 06:04:04  eikeon
-#~ Moved the 'local in context of neighbourhood' methods to RedNode... else we where overriding the corresponding methods on local, which someone may care about
-#~
-#~ Revision 5.13  2000/12/17 23:41:58  eikeon
-#~ removed of log messages
-#~
-#~ Revision 5.12  2000/12/13 02:54:11  jtauber
-#~ moved functions in query around and renamed a lot
-#~
-#~ Revision 5.11  2000/12/10 01:19:13  jtauber
-#~ init attempt at generating dot for graphviz
-#~
-#~ Revision 5.10  2000/12/09 23:02:12  jtauber
-#~ fixed font-weight and size
-#~
-#~ Revision 5.9  2000/12/09 22:56:40  jtauber
-#~ removed second menubar in view
-#~
-#~ Revision 5.8  2000/12/09 22:52:49  eikeon
-#~ factored out the if self.showNeighbours
-#~
-#~ Revision 5.7  2000/12/09 22:33:59  jtauber
-#~ factored out header/footer
-#~
-#~ Revision 5.6  2000/12/09 22:20:25  jtauber
-#~ fullsubclass method is now subclass :-)
-#~
-#~ Revision 5.5  2000/12/09 22:16:00  jtauber
-#~ RDF -> rdf; Triples -> triple
-#~
-#~ Revision 5.4  2000/12/09 22:05:04  jtauber
-#~ subclass -> fullsubclass; subclassNR -> subclass
-#~
-#~ Revision 5.3  2000/12/09 18:37:52  jtauber
-#~ class list now lists typeless resources
-#~
-#~ Revision 5.2  2000/12/09 00:44:59  eikeon
-#~ improved encodeURI function
-#~
-#~ Revision 5.1  2000/12/08 23:02:25  eikeon
-#~ encoding fixes
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release

@@ -344,65 +344,8 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 6.1  2001/02/20 19:10:47  eikeon
+#~ added missing 'self.'
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
-#~
-#~ Revision 5.19  2001/01/08 21:16:37  eikeon
-#~ fixed required property functionality just added to edit
-#~
-#~ Revision 5.18  2001/01/08 20:38:32  eikeon
-#~ edit now adds required properties if they are not already present
-#~
-#~ Revision 5.17  2000/12/28 03:00:55  jtauber
-#~ added 'copy' button to edit page
-#~
-#~ Revision 5.16  2000/12/21 01:58:38  jtauber
-#~ edit doesn't absolutize any more
-#~
-#~ Revision 5.15  2000/12/21 01:50:12  jtauber
-#~ edit can now take type; add just asks for URI; new menu names
-#~
-#~ Revision 5.14  2000/12/21 01:11:52  jtauber
-#~ calling edit with no subject, autogenerates a URI
-#~
-#~ Revision 5.13  2000/12/21 00:35:28  jtauber
-#~ can now add properties to an unknown resource using edit
-#~
-#~ Revision 5.12  2000/12/20 21:22:08  eikeon
-#~ converted many mixedCase names to _ style names
-#~
-#~ Revision 5.11  2000/12/20 04:04:39  jtauber
-#~ fixed typo in encodeAttributeValue name
-#~
-#~ Revision 5.10  2000/12/20 03:35:28  jtauber
-#~ can now delete empty properties of range LITERAL
-#~
-#~ Revision 5.9  2000/12/20 03:14:48  jtauber
-#~ added encoding of special chars in attribute values and character data
-#~
-#~ Revision 5.8  2000/12/19 16:35:41  eikeon
-#~ changed neighbourhood to neighbours in one place
-#~
-#~ Revision 5.7  2000/12/17 23:58:44  eikeon
-#~ recatored to use header and footer methods
-#~
-#~ Revision 5.6  2000/12/17 23:41:58  eikeon
-#~ removed of log messages
-#~
-#~ Revision 5.5  2000/12/14 05:16:16  eikeon
-#~ converted a method to new query interface
-#~
-#~ Revision 5.4  2000/12/14 00:13:36  eikeon
-#~ fixed typo
-#~
-#~ Revision 5.3  2000/12/13 02:54:11  jtauber
-#~ moved functions in query around and renamed a lot
-#~
-#~ Revision 5.2  2000/12/09 23:02:12  jtauber
-#~ fixed font-weight and size
-#~
-#~ Revision 5.1  2000/12/09 22:08:33  eikeon
-#~ subclass -> fullsubclass; subclassNR -> subclass
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
