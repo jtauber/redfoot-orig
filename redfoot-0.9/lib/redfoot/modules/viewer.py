@@ -457,23 +457,11 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 8.2  2001/04/29 03:25:11  eikeon
+#~ more getXxx -> get_xxx
+#~
 #~ Revision 8.1  2001/04/29 02:58:14  eikeon
 #~ pathinfo -> path_info
 #~
 #~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release
-#~
-#~ Revision 1.2  2001/04/22 05:06:53  eikeon
-#~ RDF->HOME until we fix it to always return RDF
-#~
-#~ Revision 1.1  2001/04/14 23:40:28  eikeon
-#~ created a lib/redfoot/modules directory and moved editor/viewer into it
-#~
-#~ Revision 7.2  2001/04/14 23:10:28  eikeon
-#~ removed old log messages
-#~
-#~ Revision 7.1  2001/04/09 17:25:02  eikeon
-#~ storeNode -> rednode
-#~
-#~ Revision 7.0  2001/03/26 23:41:05  eikeon
-#~ NEW RELEASE
