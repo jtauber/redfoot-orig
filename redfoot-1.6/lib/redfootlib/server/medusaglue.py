@@ -93,7 +93,7 @@ WARNING: Running multiple servers may be problematic, as it has not yet been tes
         # all clients and servers are closed.  You may cleanly shut the system
         # down by sending SIGINT (a.k.a. KeyboardInterrupt).
         try:
-            loop()
+            loop(1.0)
         except KeyboardInterrupt:
             for app in self.hs.handlers:
                 apply(getattr(app, "stop", lambda :None), ())
