@@ -74,6 +74,11 @@ class EncodedEvalNode(EvalNode):
         result = __builtin__.eval(self.code, globals, locals)
         if result!=None:
             write = locals['_RF_write']
-            write(self.encode(result))
+            encode = self.encode
+            if encode:
+                result = self.encode(result)
+            else:
+                result = str(result)
+            write(result)
 
 
