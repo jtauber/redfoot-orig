@@ -73,6 +73,11 @@ class Serializer:
             return s
 
         (namespace, localName) = splitProperty(predicate)
+
+        # TODO: Is this what we want to do if value is None?
+        if value==None or value=="":
+            value = "^"
+            
         if value[0] == "^":
             self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(value[1:]), self.namespaces[namespace], localName) )
         else:
@@ -82,5 +87,8 @@ class Serializer:
 
 
 #~ $Log$
+#~ Revision 3.1  2000/11/02 21:48:27  eikeon
+#~ removed old log messages
+#~
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0
