@@ -16,12 +16,15 @@ def to_relative_URL(path):
 
 
 schema = Store()
+schema.save = lambda : None
 schema.load(to_relative_URL("rdfSchema.rdf"), "http://www.w3.org/2000/01/rdf-schema")
 
 syntax = Store()
+syntax.save = lambda : None
 syntax.load(to_relative_URL("rdfSyntax.rdf"), "http://www.w3.org/1999/02/22-rdf-syntax-ns")
 
 builtin = Store()
+builtin.save = lambda : None
 builtin.load(to_relative_URL("builtin.rdf"), "http://redfoot.sourceforge.net/2000/10/06/builtin")
 
 

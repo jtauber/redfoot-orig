@@ -127,7 +127,7 @@ Example:  add <http://redfoot.sourceforge.net/> rdfs:label "Redfoot homepage" wh
         """remove <subject> <predicate> (<object>|"object")"""
         st = self.get_triple(arg)
         if st:
-            self.context.redstore.remove(st[0], st[1], st[2])
+            self.context.redstore.remove_triples(st[0], st[1], st[2])
             print "removed", st
         else:
             print "error"

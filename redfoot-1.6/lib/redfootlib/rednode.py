@@ -112,6 +112,14 @@ class RedNode(Visit, NeighbourManager, AutoSave, TripleStore):
 
     def save(self, location=None, uri=None):
         super(RedNode, self).save(location, uri)
+        for store in self.neighbours.stores():
+            if hasattr(store, "save"):
+                try:
+                    store.save()
+                except Exception, e:
+                    from traceback import print_exc
+                    print_exc()
+                    print "... while trying to save: ", store
         print "Saving node_store..."
         self.node.save()
         print "done."
