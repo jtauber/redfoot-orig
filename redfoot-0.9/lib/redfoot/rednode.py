@@ -18,7 +18,7 @@ class RedNode(QueryStore):
             libDir = dirname(sys.modules["redfoot.rednode"].__file__)
             return pathname2url(join(libDir, path))
 
-        self.local = Local()
+        self.local = Local(self)
         self.neighbourhood = Neighbourhood()
 
         self.connectTo(toRelativeURL("rdfSchema.rdf"), "http://www.w3.org/2000/01/rdf-schema")
@@ -60,6 +60,19 @@ class RedNode(QueryStore):
     def _connectTo(self, store):
         self.neighbourhood.addNeighbour(store)
 
+
+from rdf.literal import literal, un_literal, is_literal
+
+
+class Local(QueryStore, AutoSaveStoreIO):
+    def __init__(self, rednode):
+        # TODO: need to clean up the __init__ calling
+        TripleStore.__init__(self)
+        self.rednode = rednode
+
+    # May need to move the following method elsewhere if we need
+    # subClassV defined for all combinations and do not wish to
+    # overload what it mean for Local
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
         def subclass(s, p, o, self=self, currentDepth=currentDepth, recurse=recurse,\
@@ -69,14 +82,16 @@ class RedNode(QueryStore):
             else:
                 processClass(s, currentDepth+1, recurse)
         # show classes in neighbourhood as well
-        self.visit(subclass, None, SUBCLASSOF, type)
+        self.rednode.visit(subclass, None, SUBCLASSOF, type)
         def instance(s, p, o, processInstance=processInstance, \
                      currentDepth=currentDepth, recurse=recurse):
             processInstance(s, currentDepth, recurse)
         # only show local instances
-        self.local.visit(instance, None, TYPE, type)
+        self.visit(instance, None, TYPE, type)
 
-
+    # May need to move the following method elsewhere if we need
+    # resourcesByClassV defined for all combinations and do not wish to
+    # overload what it mean for Local
     def resourcesByClassV(self, processClass, processResource):
         def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
             if self.getFirst(None, TYPE, s)!=None:
@@ -85,16 +100,9 @@ class RedNode(QueryStore):
                          processResource=processResource, self=self):
                 processResource(s)
             # only show local instances
-            self.local.visit(resource, None, TYPE, s)
+            self.visit(resource, None, TYPE, s)
         # show classes in neighbourhod as well as in local store
-        self.visit(klass, None, TYPE, CLASS)
-
-
-from rdf.literal import literal, un_literal, is_literal
-
-
-class Local(QueryStore, AutoSaveStoreIO):
-    pass
+        self.rednode.visit(klass, None, TYPE, CLASS)
 
 
 class Neighbourhood(QueryStore):
@@ -147,6 +155,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.14  2000/12/06 23:26:55  eikeon
+#~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
+#~
 #~ Revision 4.13  2000/12/06 21:45:13  eikeon
 #~ refactored gets to visits in subClassV and resourcesByClassV
 #~
