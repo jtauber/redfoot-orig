@@ -271,8 +271,8 @@ class SubModule(HandlerBase):
 class If(ElementHandler):
     def __init__(self, parser, parent, name, atts):
         HandlerBase.__init__(self, parser, parent)
-        #self.locals = parent.locals
-        #self.globals = parent.globals
+        self.locals = parent.locals
+        self.globals = parent.globals
         test = atts['test']
         self.element = IfNodeList(test)
 
@@ -306,8 +306,8 @@ class IfNodeList(Node):
 class For(ElementHandler):
     def __init__(self, parser, parent, name, atts):
         HandlerBase.__init__(self, parser, parent)
-        #self.locals = self.parent.locals
-        #self.globals = self.parent.globals
+        self.locals = self.parent.locals
+        self.globals = self.parent.globals
         item = atts['item']
         list = atts['list']
         code = __builtin__.compile(list, list, "eval")                
