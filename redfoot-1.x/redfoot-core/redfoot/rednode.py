@@ -93,15 +93,15 @@ class RedNode(SchemaQuery):
     def run(self, **args):
         "This method blocks until the server is shutdown"
         if len(args)==0:
-            (uri, rdf, address, port) =  process_args()
+            (self.uri, rdf, address, port) =  process_args()
             apps = redfoot.get_apps()
             Boot = None
         else:
             # TODO: get defaults from common source instead of keeping
             # them in sync with process_args defaults
-            uri = args.get('uri', 'TODO: compute')
+            self.uri = args.get('uri', 'TODO: compute')
             rdf = args.get('rdf', 'rednode.rdf')
-            self.load(rdf, uri, 1)
+            self.load(rdf, self.uri, 1)
             address = args.get('address', '')
             port = args.get('port', 8080)
             Boot = args.get('Boot', None)
@@ -111,9 +111,9 @@ class RedNode(SchemaQuery):
                 raise "No Apps Found"
             else:
                 # TODO: add way to specify Boot
-                uri, app_class = apps[0]
+                app_uri, app_class = apps[0]
                 Boot = app_class
-            self.load(rdf, uri, 1)
+            self.load(rdf, self.uri, 1)
 
         self.server = server = RedServer(address, port)
         server.add_app(Boot(self))        
