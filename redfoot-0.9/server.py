@@ -45,6 +45,8 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             path_info = self.path[:i]
             
         args = cgi.parse_qs(data)
+
+        self.send_head()
         self.process(args, path_info)
 
     def do_GET(self):
@@ -196,6 +198,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.25  2000/10/10 05:58:21  jtauber
+# removed send_head from do_POST
+#
 # Revision 1.24  2000/10/10 05:20:54  eikeon
 # added show/hide neighbour logic
 #
