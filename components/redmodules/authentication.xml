@@ -126,8 +126,6 @@
     <red:facet name="create">
       <red:if test="not self.session.sessions.exists(resource(self.session.session_uri), IDENTITY, None)">
 
-      <div class="content_area">
-    
         <div style="colored: #990000;">
           <red:eval>self.status</red:eval>
         </div>
@@ -162,7 +160,6 @@
           <input name="processor" value="do_create_user" type="hidden"/>
           <input name="view" value="create" type="hidden"/>          
         </form>
-      </div>
 
         <red:else>
           <a href="create">Welcome, <red:eval>self.get_username()</red:eval></a>
@@ -175,11 +172,10 @@
     
     <red:facet name="login">    
      <red:if test="not self.authenticated()">
-      <div class="content_area">
 
         <form name="main" method="POST" style="margin: 0">
 
-        <div style="colored: #990000;">
+        <div style="color: #990000;">
           <red:eval>self.status</red:eval>
         </div>
         
@@ -209,7 +205,6 @@
             </tr>
           </table>
         </form>
-      </div>
       <red:else>
         <red:exec>self.app.remaining_path_info = "welcome"</red:exec>
         <red:apply search="self.app"/>
