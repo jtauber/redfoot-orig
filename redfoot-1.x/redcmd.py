@@ -192,7 +192,8 @@ class RedCmd(object, Cmd):
 
         if not self.context.server:
             self.context.server = RedServer('', 9090)
+            self.context.server.run(background=1)                    
 
         self.context.server.add_app(app)
-        self.context.server.run(background=1)        
+
     
