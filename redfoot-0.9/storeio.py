@@ -1,7 +1,3 @@
-#from redfoot.store import *
-from redfoot.parser import *
-from redfoot.query import QueryStore
-from redfoot.serializer import Serializer
 
 class StoreIO:
 
@@ -19,6 +15,7 @@ class StoreIO:
         else:
             self.URI = URI
 
+        from redfoot.parser import RDFParser
         rdfParser = RDFParser()
         rdfParser.setAdder(self.store.add)
 
@@ -29,9 +26,11 @@ class StoreIO:
 
     def saveAs(self, location, URI):
         
+        from redfoot.query import QueryStore
         queryStore = QueryStore()
         queryStore.setStore(self.getStore())
         
+        from redfoot.serializer import Serializer
         s = Serializer()
         s.setLocation(location)
         s.setBase(URI)
