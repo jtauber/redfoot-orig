@@ -1,5 +1,10 @@
 # Convience script for installing both medusa and redfoot at the same
 # time
+#
+# usage:  python install.py
+#            (NOTE: while in this directory)
+#
+
 import sys, os
 
 dot = os.path.abspath(os.curdir)
