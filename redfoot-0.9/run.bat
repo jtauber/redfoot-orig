@@ -6,7 +6,7 @@ set PYTHONPATH=../
 @echo on
 
 
-python server.py -p 8000 -l ./example.rdf -u http://www.bowstreet.com/2000/08/20 -i redfoot.editor.PeerEditor
+python server.py -p 8000 -l ./example.rdf -u http://www.bowstreet.com/2000/08/20 -i PeerEditor
 
 
 @echo off
