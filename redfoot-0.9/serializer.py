@@ -18,6 +18,13 @@ def splitProperty(property):
 class Serializer:
     rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
+    def setLocation(self, location):
+        try:
+            print location
+            self.file = open(location, 'w')
+        except IOError:
+            print IOError
+
     def setBase(self, base):
         self.base = base
 
@@ -35,30 +42,30 @@ class Serializer:
         if not self.rdfns in self.namespaces.keys():
             self.namespaces[self.rdfns] = 'rdf'
 
-        print "<?xml version=\"1.0\"?>"
-        print "<%s:RDF" % self.namespaces[self.rdfns]
+        self.file.write( "<?xml version=\"1.0\"?>\n" )
+        self.file.write( "<%s:RDF\n" % self.namespaces[self.rdfns])
         for uri in self.namespaces.keys():
-            print "   xmlns:%s=\"%s\"" % (self.namespaces[uri],uri)
-        print ">"
+            self.file.write( "   xmlns:%s=\"%s\"\n" % (self.namespaces[uri],uri) )
+        self.file.write( ">\n" )
 
     def end(self):
-        print "</%s:RDF>" % self.namespaces[self.rdfns]
+        self.file.write( "</%s:RDF>\n" % self.namespaces[self.rdfns] )
 
     def subjectStart(self, subject):
-        print "  <%s:Description" % self.namespaces[self.rdfns]
+        self.file.write( "  <%s:Description" % self.namespaces[self.rdfns] )
         if subject[0:len(self.base)+1]==self.base+"#":
-            print "    %s:ID=\"%s\"" % (self.namespaces[self.rdfns], subject[len(self.base)+1:])
+            self.file.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.base)+1:]) )
         else:
-            print "    %s:about=\"%s\"" % (self.namespaces[self.rdfns], subject)
+            self.file.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], subject) )
 
     def subjectEnd(self):
-        print "  </%s:Description>" % self.namespaces[self.rdfns]
+        self.file.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
 
     def property(self, predicate, value):
             (namespace, localName) = splitProperty(predicate)
             if value[0] == "^":
-                print "    <%s:%s>%s</%s:%s>" % (self.namespaces[namespace], localName, value[1:], self.namespaces[namespace], localName)
+                self.file.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, value[1:], self.namespaces[namespace], localName) )
             else:
                 if value[0:len(self.base)+1]==self.base+"#":
                     value = value[len(self.base):]
-                print "    <%s:%s %s:resource=\"%s\"/>" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value)
+                self.file.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
