@@ -58,7 +58,13 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 viewer.create(args)
             elif args["processor"][0] == "save":
                 viewer.save()
-                
+            elif args["processor"][0] == "delete":
+                viewer.delete(args)
+            elif args["processor"][0][0:4] == "del_":
+                viewer.deleteProperty(args)
+            elif args["processor"][0][0:6] == "reify_":
+                viewer.reifyProperty(args)
+	                
         if path_info == "/":
             viewer.mainPage()
         elif path_info == "/subclass":
@@ -148,6 +154,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.13  2000/10/06 02:44:56  jtauber
+# added save functionality but note it doesn't work yet
+#
 # Revision 1.12  2000/10/05 18:48:30  jtauber
 # add now actually creates the resource entry
 #
