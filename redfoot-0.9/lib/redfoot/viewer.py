@@ -374,15 +374,22 @@ class Viewer:
             <H2>Triples</H2>
             <TABLE>
         """)
-        for statement in self.storeNode.get(subject, predicate, object):
-            self.response.write("""
+
+        def triple(s, p, o, write=self.response.write):            
+            write("""
               <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
-            """ % (statement[0], statement[1], statement[2]))
+            """ % (s, p, o))
+        if self.showNeighbours==1:
+            self.storeNode.visit(triple, subject, predicate, object)
+        else:
+            self.storeNode.local.visit(triple, subject, predicate, object)
+
         self.response.write("""
             </TABLE>
           </BODY>
         </HTML>
         """)
+        
 
     def test(self, search):
         self.response.write("""
@@ -433,6 +440,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.9  2000/12/07 17:54:04  eikeon
+#~ Viewer (and Editor, PeerEditor) no longer have both a qstore and a storeNode
+#~
 #~ Revision 4.8  2000/12/06 23:26:55  eikeon
 #~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
 #~
