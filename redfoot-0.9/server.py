@@ -23,6 +23,7 @@ import BaseHTTPServer
 import urllib
 import cgi
 from StringIO import StringIO
+import getopt
 
 
 class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -128,11 +129,27 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 def runServer():
 
+    # defaults
+
+    port = 8000
+    location = "tests/example.rdf"
+    uri = "http://redfoot.sourceforge.net/2000/09/24"
+    interface = "PeerEditor"
+    
     import sys
-    if sys.argv[1:]:
-        port = string.atoi(sys.argv[1])
-    else:
-        port = 8000
+
+    optlist, args = getopt.getopt(sys.argv[1:], 'i:l:p:u:')
+    for optpair in optlist:
+        opt, value = optpair
+        if opt=="-l":
+            location = value
+        elif opt=="-u":
+            uri = value
+        elif opt=="-p":
+            port = string.atoi(value)
+        elif opt=="-i":
+            interface = value
+
     server_address = ('', port)
 
     httpd = BaseHTTPServer.HTTPServer(server_address, RedfootHTTPRequestHandler)
@@ -142,17 +159,13 @@ def runServer():
 
     storeIO = StoreIO()
     storeIO.setStore(TripleStore())
-    if sys.argv[3:]:
-        storeIO.load(sys.argv[2], sys.argv[3])
-    else:
-        storeIO.load("tests/example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
+    storeIO.load(location, uri)
 
     storeNode.setStore(storeIO)
 
-    UI = "PeerEditor"
-    RedfootHTTPRequestHandler.viewer = eval("%s(None, storeNode)" % UI)
+    RedfootHTTPRequestHandler.viewer = eval("%s(None, storeNode)" % interface)
 
-    print "Serving HTTP on port", port, "...\n"
+    print "REDFOOT: serving %s (%s) with %s on port %s..." % (location, uri, interface, port)
     httpd.serve_forever()
 
 
@@ -161,6 +174,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.18  2000/10/09 06:08:30  jtauber
+# the UI to use is now specified in a variable (preempting the ability to set it via a command-line option
+#
 # Revision 1.17  2000/10/08 06:27:41  jtauber
 # switched over to using PeerEditor and added handling of connect page and connect processor
 #
