@@ -218,26 +218,5 @@ if test4: add(("_X","num-legs","4"),("_X","type","turtle"))
 if test4: print goal(("fred","num-legs","_X"))
 
 # $Log$
-# Revision 7.0  2001/03/26 23:41:04  eikeon
-# NEW RELEASE
-#
-# Revision 6.0  2001/02/19 05:01:23  jtauber
+# Revision 8.0  2001/04/27 00:52:13  eikeon
 # new release
-#
-# Revision 5.0  2000/12/08 08:34:52  eikeon
-# new release
-#
-# Revision 4.0  2000/11/06 15:57:33  eikeon
-# VERSION 4.0
-#
-# Revision 1.4  2000/11/04 06:13:47  jtauber
-# greatly improve capabilities of inference engine. in particular, goals can have variables
-#
-# Revision 1.3  2000/11/02 21:48:26  eikeon
-# removed old log messages
-#
-# Revision 1.2  2000/10/31 06:30:28  eikeon
-# removed ^M's
-#
-# Revision 1.1  2000/10/31 06:15:45  jtauber
-# initial attempt at prolog-like inference in python

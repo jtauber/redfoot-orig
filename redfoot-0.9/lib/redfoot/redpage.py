@@ -436,39 +436,8 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 8.1  2001/04/27 02:47:15  eikeon
+#~ added a namespace_separator character to be 'more' correct
+#~
 #~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release
-#~
-#~ Revision 7.10  2001/04/21 04:55:11  eikeon
-#~ removed RF_LOAD as the corresponding load-module tag has already been removed
-#~
-#~ Revision 7.9  2001/04/15 16:58:42  eikeon
-#~ removed load-module tag (for now)
-#~
-#~ Revision 7.8  2001/04/15 03:37:38  eikeon
-#~ now opening redpages as files instead of urls
-#~
-#~ Revision 7.7  2001/04/14 23:10:28  eikeon
-#~ removed old log messages
-#~
-#~ Revision 7.6  2001/04/14 16:43:43  eikeon
-#~ the args attribute of the response tag now takes space separated args
-#~
-#~ Revision 7.5  2001/04/13 03:35:11  eikeon
-#~ probably should not be checking this in since it is incomplete, but am so that it will serve as a reminder to finish (or start again)
-#~
-#~ Revision 7.4  2001/04/11 16:06:17  jtauber
-#~ changed bases attr to take whitespace-delimited list; added load-module element
-#~
-#~ Revision 7.3  2001/04/09 22:29:26  eikeon
-#~ change <string>'s to the actual string... TODO: may want to change this back?
-#~
-#~ Revision 7.2  2001/04/09 17:25:02  eikeon
-#~ storeNode -> rednode
-#~
-#~ Revision 7.1  2001/04/05 05:11:54  eikeon
-#~ responses can now have names composed of any strings
-#~
-#~ Revision 7.0  2001/03/26 23:41:05  eikeon
-#~ NEW RELEASE
-

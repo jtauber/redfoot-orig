@@ -21,8 +21,5 @@ DOMAIN = RDFSNS+u"domain"
 LITERAL = RDFSNS+u"Literal"
 
 # $Log$
-# Revision 7.1  2001/04/14 23:06:13  eikeon
-# removed old log messages
-#
-# Revision 7.0  2001/03/26 23:41:04  eikeon
-# NEW RELEASE
+# Revision 8.0  2001/04/27 00:52:13  eikeon
+# new release

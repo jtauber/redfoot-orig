@@ -173,11 +173,5 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
-#~ Revision 7.2  2001/04/14 23:10:28  eikeon
-#~ removed old log messages
-#~
-#~ Revision 7.1  2001/04/09 22:30:02  eikeon
-#~ added remove_store method
-#~
-#~ Revision 7.0  2001/03/26 23:41:05  eikeon
-#~ NEW RELEASE
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release

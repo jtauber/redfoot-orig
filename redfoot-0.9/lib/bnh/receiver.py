@@ -105,14 +105,5 @@ class Receiver:
     
 
 #~ $Log$
-#~ Revision 7.3  2001/04/24 01:51:10  eikeon
-#~ added TODO
-#~
-#~ Revision 7.2  2001/04/14 16:43:43  eikeon
-#~ the args attribute of the response tag now takes space separated args
-#~
-#~ Revision 7.1  2001/04/09 17:25:02  eikeon
-#~ storeNode -> rednode
-#~
-#~ Revision 7.0  2001/03/26 23:41:04  eikeon
-#~ NEW RELEASE
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release

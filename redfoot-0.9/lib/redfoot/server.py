@@ -207,26 +207,5 @@ if __name__ == '__main__':
 
 
 #~ $Log$
-#~ Revision 7.7  2001/04/24 05:49:58  eikeon
-#~ collapsed almost parallel code for runing module into one method
-#~
-#~ Revision 7.6  2001/04/22 05:20:28  jtauber
-#~ fixed bug where start was being called twice
-#~
-#~ Revision 7.5  2001/04/21 04:55:22  jtauber
-#~ changed shutdown message
-#~
-#~ Revision 7.4  2001/04/17 03:55:41  jtauber
-#~ fixed bug where redmodules weren't being added to sys.modules
-#~
-#~ Revision 7.3  2001/04/15 03:42:07  eikeon
-#~ can now import redpages ending in .xml
-#~
-#~ Revision 7.2  2001/04/14 23:10:28  eikeon
-#~ removed old log messages
-#~
-#~ Revision 7.1  2001/04/13 03:20:25  eikeon
-#~ Can now run a RedServer by 'running' redfoot.server -- as RedServer now created a RedNode and runs a redpage give a redpage name
-#~
-#~ Revision 7.0  2001/03/26 23:41:05  eikeon
-#~ NEW RELEASE
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release

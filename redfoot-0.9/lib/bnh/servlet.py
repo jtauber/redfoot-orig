@@ -285,23 +285,8 @@ def _date_time_string():
 
 
 #~ $Log$
+#~ Revision 8.1  2001/04/29 02:58:14  eikeon
+#~ pathinfo -> path_info
+#~
 #~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release
-#~
-#~ Revision 7.5  2001/04/14 23:08:49  eikeon
-#~ removed old log messages
-#~
-#~ Revision 7.4  2001/04/14 03:58:34  eikeon
-#~ removed unused code and added LICENSE to top of source files
-#~
-#~ Revision 7.3  2001/04/13 23:51:19  eikeon
-#~ modified date_time_string to not generate string more than once per second; also added _ prefix to indicate private
-#~
-#~ Revision 7.2  2001/04/12 22:52:18  eikeon
-#~ removed management of session objects; BNH now only deals with the setting/getting of the EBNH_session cookie
-#~
-#~ Revision 7.1  2001/04/03 03:15:43  eikeon
-#~ added get_session_uri method
-#~
-#~ Revision 7.0  2001/03/26 23:41:04  eikeon
-#~ NEW RELEASE

@@ -1,3 +1,5 @@
+# $Header$
+
 from rdf.literal import *
 
 def encodeURI(s):
@@ -85,3 +87,7 @@ def get_instances_of(rednode, type):
     rednode.visitTransitiveSubTypes(ofTypeVisitor, type)
     rednode.query(visitor, None, TYPE, type) # trans sub types must not include itself.
     return visitor.set.keys()
+
+#~ $Log$
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release
