@@ -3,9 +3,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 >
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/21/T22/06/45Z">
-    <rdf:type></rdf:type>
-  </rdf:Description>
   <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/03/Person">
     <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
     <rdfs:label>Person</rdfs:label>
