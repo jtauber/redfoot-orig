@@ -13,7 +13,13 @@ class StoreIO:
         
     def get(self, subject=None, property=None, value=None):
         self.getStore().get(subject, property, value)
-        
+
+    def remove(self, subject=None, property=None, value=None):
+        self.getStore().remove(subject, property, value)
+
+    def add(self, subject, property, value):
+        self.getStore().add(subject, property, value)
+
     def load(self, location, URI=None):
         self.location = location
         if URI==None:
@@ -83,6 +89,9 @@ class StoreIO:
 
 
 # $Log$
+# Revision 1.12  2000/10/01 03:58:10  eikeon
+# fixed up all the places where I put CVS keywords as keywords in omments... duh
+#
 # Revision 1.11  2000/10/01 03:04:10  eikeon
 # added visit and get method so that StoreIOs can be treated as Stores; changed output to use self.URI if no URI is passed in; added Header and Log CVS keywords
 #
