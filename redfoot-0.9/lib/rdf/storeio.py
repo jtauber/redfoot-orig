@@ -2,8 +2,10 @@
 
 from store import TripleStore
 
+# the following class can't be used by itself, it must be inherited by
+# or along with a class that implements add(s,p,o) and
+# visit(callback,s,p,o) 
 class StoreIO:
-
     def load(self, location, URI=None):
         self.location = location
         if URI==None:
@@ -41,12 +43,7 @@ class StoreIO:
 
 
 class TripleStoreIO(StoreIO, TripleStore):
-    def add(self, subject, predicate, object):
-        TripleStore.add(self, subject, predicate, object)
-
-    def remove(self, subject=None, predicate=None, object=None):
-        TripleStore.remove(self, subject, predicate, object)
-        
+    pass
         
 from threading import RLock
 from threading import Condition
@@ -54,20 +51,20 @@ from threading import Condition
 class AutoSaveStoreIO(TripleStoreIO):
 
     def remove(self, subject=None, predicate=None, object=None):
-        self.dirty.set()
+        self.dirtyBit.set()
         TripleStoreIO.remove(self, subject, predicate, object)
 
     def add(self, subject, predicate, object):
-        self.dirty.set()
+        self.dirtyBit.set()
         TripleStoreIO.add(self, subject, predicate, object)
 
     def load(self, location, URI=None):
-        self.dirty = Dirty()
+        self.dirtyBit = DirtyBit()
         TripleStoreIO.load(self, location, URI)
-        self.dirty.clear() # we just loaded... therefore we are clean
-        self.autosave() 
+        self.dirtyBit.clear() # we just loaded... therefore we are clean
+        self._startThread() 
 
-    def autosave(self, notMoreOftenThan=10):
+    def _startThread(self, notMoreOftenThan=10):
         """Not more often then is in seconds"""
         import threading
         t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
@@ -76,16 +73,18 @@ class AutoSaveStoreIO(TripleStoreIO):
         
     def _autosave(self, interval=5*60):
         while 1:
-            if self.dirty.value()==1:
-                self.dirty.clear()
+            if self.dirtyBit.value()==1:
+                self.dirtyBit.clear()
+                # TODO: catch exceptions
                 self.saveAs(self.location, self.URI)
                 self.saveAs("%s-%s" % (self.location, self.date_time_string()), self.URI)
                 # Do not save a backup more often than interval
                 import time
                 time.sleep(interval)
             # do not bother to check if dirty until we get notified
-            self.dirty.wait()
-        
+            self.dirtyBit.wait()
+
+    # TODO: move somewhere more general
     def date_time_string(self, t=None):
         """."""
         import time
@@ -100,34 +99,37 @@ class AutoSaveStoreIO(TripleStoreIO):
         return s
 
 
-class Dirty:
+class DirtyBit:
     def __init__(self):
-        self.mon = RLock()
-        self.rc = Condition(self.mon)
-        self.dirty = 0
+        self._mon = RLock()
+        self._rc = Condition(self._mon)
+        self._dirty = 0
         
     def clear(self):
-        self.mon.acquire()
-        self.dirty = 0
-        #self.rc.notify() only interested in knowing why we are dirty
-        self.mon.release()
+        self._mon.acquire()
+        self._dirty = 0
+        #self._rc.notify() only interested in knowing when we are dirty
+        self._mon.release()
 
     def set(self):
-        self.mon.acquire()
-        self.dirty = 1
-        self.rc.notify()
-        self.mon.release()
+        self._mon.acquire()
+        self._dirty = 1
+        self._rc.notify()
+        self._mon.release()
 
     def value(self):
         return self.dirty
 
     def wait(self):
-        self.mon.acquire()
-        self.rc.wait()
-        self.mon.release()
+        self._mon.acquire()
+        self._rc.wait()
+        self._mon.release()
 
 
 #~ $Log$
+#~ Revision 4.15  2000/12/05 07:12:43  eikeon
+#~ fixed date time format option to pad with zero
+#~
 #~ Revision 4.14  2000/12/05 07:11:27  eikeon
 #~ finished refactoring rednode refactor of the local / neighbourhood split
 #~
