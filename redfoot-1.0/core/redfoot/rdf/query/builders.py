@@ -16,9 +16,6 @@ class StatementBuilder:
     def accept(self, s, p, o):
         self.statement = Statement(s, p, o)
 
-    def end(self):
-        pass
-
 
 def triple2statement(func):
     return lambda s, p, o, func=func: func(Statement(s, p, o))
@@ -48,19 +45,13 @@ class ListBuilder:
         for item in self.list:
             callback(item)
 
-    def end(self):
-        pass
 
-# TODO sort should perhaps be made more like ListBuilder
 class SetBuilder:
     def __init__(self):
         self.dict = {}
 
     def accept(self, item):
         self.dict[item] = 1
-
-    def end(self):
-        pass
 
     def __getattr__(self, attr):
         if attr == "set":
