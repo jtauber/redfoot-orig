@@ -6,9 +6,13 @@ HOW TO RELEASE REDFOOT
 * up major revision:
 	cvs commit -m "new release" -r x.0
 	cvs update -A
-* cd ..; cvs export -r HEAD -d redfoot-X.X.X
+* cd ..; cvs export -r Release_X_XX_XX -d redfoot-X.X.X
 * tar
 	tar cvzf redfoot-X.X.X.tgz redfoot-X.X.X
+
+        find redfoot-0.9.6 | grep "\.sh" | xargs chmod +x
+        tar --exclude=.cvsignore --exclude=redfoot-0.9.6/lib/pylog -zcvf redfoot-0.9.6.tgz redfoot-0.9.6
+
 * upload
 	ftp download.sourceforge.net as user ftp
 	put in /incoming
