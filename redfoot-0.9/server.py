@@ -9,46 +9,60 @@ __version__ = "$Revision$"
 from bnh.server import Server, ServerConnection
 import string
 
+
 class RedfootHandler:
 
     def __init__(self):
         import threading
         self.lock = threading.Lock()
+        self.viewer = None
+
+    def getViewer(self):
+        if self.viewer==None:
+            from redfoot.rednode import StoreNode
+            from redfoot.storeio import StoreIO
+            from redfoot.store import TripleStore
+            from redfoot.viewer import *
+            from redfoot.editor import *
+            
+            storeNode = StoreNode()
+
+            storeIO = StoreIO()
+            storeIO.setStore(TripleStore())
+            storeIO.load(location, uri)
+
+            storeNode.setStore(storeIO)
+            self.viewer = eval("%s(None, storeNode)" % interface)
+
+        return self.viewer
 
     def handleRequest(self, request, response):
         args = request.parameters
         path_info = request.path_info
 
         self.lock.acquire()
-        self.viewer.setWriter(response)
-        self.viewer.handler(path_info, args)
+        viewer = self.getViewer()
+        viewer.setWriter(response)
+        viewer.handler(path_info, args)
         self.lock.release()            
 
 
-class ServerConnectionFactory:
+class RedfootServerConnection(ServerConnection):
 
-    def __init__(self, handler):
-        self.handler = handler
-
-    def createServerConnection(self):
-        return ServerConnection(self.handler)
-    
-
-from redfoot.store import *
-from redfoot.storeio import *
-from redfoot.viewer import *
-from redfoot.query import *
-from redfoot.editor import *
+    def __init__(self):
+        ServerConnection.__init__(self, None)
+        self.handler = RedfootHandler()
+        
 
 if __name__ == '__main__':
 
+    # set default values
     port = 8000
     location = "local.rdf"
     uri = None
     interface = "PeerEditor"
     
     import sys
-
     import getopt
     optlist, args = getopt.getopt(sys.argv[1:], 'i:l:p:u:')
     for optpair in optlist:
@@ -62,28 +76,14 @@ if __name__ == '__main__':
         elif opt=="-i":
             interface = value
 
+    # uri defaults to url when no uri is specified
     if uri==None:
         import socket
+        # method for calculating absolute hostname
         hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
         uri = "http://%s:%s/" % (hostname,port)
 
-    server_address = ('', port)
-
-    from redfoot.rednode import StoreNode
-    storeNode = StoreNode()
-
-    storeIO = StoreIO()
-    storeIO.setStore(TripleStore())
-    storeIO.load(location, uri)
-
-    storeNode.setStore(storeIO)
-
-    redfootHandler = RedfootHandler()
-    redfootHandler.viewer = eval("%s(None, storeNode)" % interface)
-
-    serverConnectionFactory =  ServerConnectionFactory(redfootHandler)
-    
-    server = Server(server_address, serverConnectionFactory.createServerConnection)
+    server = Server(('', port), lambda : RedfootServerConnection())
     
     import threading
     t = threading.Thread(target = server.start,
@@ -103,6 +103,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 2.2  2000/10/16 01:56:10  eikeon
+# removed 1.x log history
+#
 # Revision 2.1  2000/10/16 01:45:32  eikeon
 # moved viewer request handling code from server to viewer
 #
