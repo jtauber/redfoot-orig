@@ -56,7 +56,9 @@ class ObjectTypeError(TypeCheckError):
 
 class ParserError(Error):
     """RDF Parser error."""
-
+    def __init__(self, msg):
+        self.msg = msg
+        
     def __str__(self):
         return self.msg
 
@@ -65,9 +67,8 @@ class ParserError(Error):
 class MalformedDescriptionError(ParserError):
     """Descriptions must have either an about or an ID."""
 
-    def __init__(self, name):
-        self.name = name
-        self.msg = "Descriptions must have either an about or an ID '%s'" % self.name
+    def __init__(self):
+        self.msg = "Descriptions must have either an about or an ID"
 
 
 class ResourceAndCharContentError(ParserError):

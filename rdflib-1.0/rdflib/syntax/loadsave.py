@@ -3,6 +3,7 @@ from __future__ import generators
 from urlparse import urlparse        
 
 from rdflib.syntax.parser import Parser
+from rdflib.syntax.nt_parser import NTParser
 from rdflib.syntax.serializer import Serializer
 
 from rdflib.nodes import URIRef
@@ -33,7 +34,7 @@ def generate_path():
 path_generator = generate_path()
 
 
-class LoadSave(Parser, Serializer, object):
+class LoadSave(NTParser, Parser, Serializer, object):
     """LoadSave
 
     Mixed-in with a store that implements add and visit and provides
@@ -61,8 +62,11 @@ class LoadSave(Parser, Serializer, object):
             # TODO: is this equiv to os.path.exists?            
             if not os.access(path, os.F_OK): 
                 self.save(path, None)
-            
-        self.parse_URI(self.location, self.uri)
+
+        if self.location[-3:]==".nt":
+            self.parse_nt_URI(location, self.uri)
+        else:
+            self.parse_URI(self.location, self.uri)
 
     def save(self, location=None, uri=None):
         try:
