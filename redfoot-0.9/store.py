@@ -29,7 +29,6 @@ class TripleStore:
         self.remove(subject, property, value)
         self.add(subject, property, value)
 
-
     def get(self, subject=None, property=None, value=None):
         class Visitor:
             def __init__(self):
@@ -43,7 +42,6 @@ class TripleStore:
 
 	return visitor.list
 
-
     def remove(self, subject=None, property=None, value=None):
         class Visitor:
             def __init__(self, store):
@@ -55,7 +53,6 @@ class TripleStore:
 
         visitor = Visitor(self)
         self.visit(visitor, subject, property, value)
-
 
     def visit(self, visitor, subject=None, property=None, value=None):
 
@@ -79,7 +76,30 @@ class TripleStore:
 	return list
 
 
+class MultiStore:
+    ""
+    
+    def __init__(self):
+        self.stores = {}
 
+    def addStore(self, store):
+        self.stores[store] = 1
 
+    def getStores(self):
+        return self.stores.keys()
 
+    def get(self, subject=None, property=None, value=None):
+        class Visitor:
+            def __init__(self):
+                self.list = []
 
+            def callback(self, subject, property, value):
+                self.list.append((subject, property, value))
+
+        visitor = Visitor()
+        for store in self.getStores():
+            store.visit(visitor, subject, property, value)
+
+	return visitor.list
+        
+        
