@@ -1,35 +1,21 @@
 REDFOOT README
 
-    This version: 0.9.99-pre2
+    This version: 0.9.99-pre3
 
-    Redfoot is a framework for distributed RDF-based applications,
-    written in Python by James Tauber and Daniel Krech.
+    Redfoot is a framework for building distributed data-driven web
+    applications with RDF and Python. It is being developed by James
+    Tauber and Daniel Krech. 
 
-    At present, Redfoot includes:
+    Redfoot includes:
 
-       - an RDF database
-       - a query API for RDF with numerous higher-level query
-         functions 
-       - an RDF parser and serializer
-       - a simple HTTP server providing a web interface for viewing
-         and editing RDF
-       - a fully customizable UI
-       - the beginnings of a peer-to-peer architecture for
-         communication between different RDF databases
-       - sample applications built on top of Redfoot
+      - in-memory RDF database 
+      - RDF parser and serializer 
+      - query API 
+      - templating language for building RDF-driven web-sites
+      - reusable module architecture and sample modules (including
+        schema-driven RDF editor module and RSS viewer module) 
+      - beginnings of a peer-to-peer architecture for communication between Redfeet 
 
-    In the future, Redfoot will hopefully include:
-
-        - a full peer-to-peer architecture for discovery of RDF
-          statements
-        - an inference engine
-        - connectors for mapping non-RDF data into RDF triples
-
-    Redfoot is written in pure Python (Python 2.x) and is 
-    being tested on both windows and linux.
-
-    Redfoot currently uses a custom HTTP server which is included
-    in the standard distribution.
 
 TO RUN SOMETHING STRAIGHT AWAY
 
@@ -39,17 +25,21 @@ TO RUN SOMETHING STRAIGHT AWAY
 
     See apps/README for more details
 
+
 KNOWN ISSUES
 
     See doc/issues.html
+
 
 DOCUMENTATION
 
     See doc/index.html
 
+
 WHERE TO GET THE LATEST REDFOOT
 
     See http://redfoot.sourceforge.net/
+
 
 HOW TO CONTACT THE DEVELOPERS
 
