@@ -1,5 +1,7 @@
 # $Header$
 
+from redfoot.store import TripleStore
+
 class MultiStore:
     ""
     
@@ -97,3 +99,6 @@ class StoreNode:
 	return visitor.list
 
 # $Log$
+# Revision 1.1  2000/10/03 06:01:50  jtauber
+# moved MultiStore and StoreNode to rednode.py
+#

@@ -111,7 +111,7 @@ def runServer():
 
     httpd = BaseHTTPServer.HTTPServer(server_address, RedfootHTTPRequestHandler)
 
-    from redfoot.store import StoreNode
+    from redfoot.rednode import StoreNode
     storeNode = StoreNode()
 
     storeIO = StoreIO()
@@ -134,6 +134,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.8  2000/10/01 07:41:09  eikeon
+# fixed missing imports etc from previous premature checkin ;(
+#
 # Revision 1.7  2000/10/01 07:31:47  eikeon
 # StoreNode now does the loading of the rdf-syntax and rdf-schema; the runServer function now creates the Editor and gives it to the RedfootHTTPRequestHandler
 #
