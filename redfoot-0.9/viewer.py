@@ -26,7 +26,7 @@ class Viewer:
         }
 
         h1 {
-          background:  #336699;
+          background:  #990000;
           font-weight: normal;
           color:       #FFF;
           padding:     5px 10px;
@@ -34,7 +34,7 @@ class Viewer:
         }
 
         h2 {
-          color:       #336699;
+          color:       #990000;
           margin:      0px;
         }
 
@@ -47,7 +47,7 @@ class Viewer:
         }
 
         a:hover {
-          color:       #336699;
+          color:       #990000;
         }
 
         dt {
