@@ -1,5 +1,8 @@
 
 class URIRef(str):
+    def __add__(self, val):
+        return URIRef(str(self) + val)
+
     def n3(self):
         return "<%s>" % self
 
@@ -11,6 +14,9 @@ class Literal(str):
         return '"%s"' % self
 
 class BNode(str):
+    def __str__(self):
+        return self.n3()
+    
     def n3(self):
         return "_:a%s" % id(self)
 
