@@ -6,7 +6,8 @@
 
   from redfoot.rdf.objects import resource, literal
 
-  SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')  
+  SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
+  HTML = resource('http://redfoot.sourceforge.net/2001/09/site/html')
 
   <red:module name="RedSite">
 
@@ -218,7 +219,7 @@ A:hover {
 
     <red:facet name="_menu">
       <red:if test="self.authentication.authenticated()">
-          <red:exec>self.app.apply()</red:exec>                                
+          <red:exec>self._body()</red:exec>                                
         <red:else>
           <red:exec>view = self.app.request.get_parameter('view', None)</red:exec>
           <red:if test="view=='login'">
@@ -230,14 +231,32 @@ A:hover {
               <red:eval>self.create()</red:eval>
            </red:elif>
            
-           <red:else>           
-             <red:exec>self.app.apply()</red:exec>                        
+           <red:else>
+             <red:exec>self._body()</red:exec>
            </red:else>          
           </red:if>
 
         </red:else>
       </red:if>
     </red:facet>
+
+    <red:facet name="_body">
+    <red:exec>
+      uri = resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
+    </red:exec>
+      <h1>
+        <red:eval>self.app.rednode.label(uri)</red:eval>
+      </h1>
+      <red:exec>
+        html = self.app.rednode.get_first_value(uri, HTML, None)
+      </red:exec>
+      <red:if test="html">
+        <red:eval encode="None">html</red:eval>
+        <red:else>
+          <red:exec>self.app.apply()</red:exec>
+        </red:else>
+      </red:if>  
+    </red:facet>    
     
     <red:facet name="/robots.txt" content_type="text/plain">
 User-agent: *
