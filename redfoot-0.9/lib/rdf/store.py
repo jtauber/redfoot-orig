@@ -1,11 +1,5 @@
 # $Header$
 
-def literal(str):
-    return "^"+str
-
-def is_literal(str):
-    return str[0]=="^"
-
 class TripleStore:
 
     def __init__(self):
@@ -108,6 +102,9 @@ class TripleStore:
                     
 
 #~ $Log$
+#~ Revision 4.4  2000/12/03 22:00:03  jtauber
+#~ put literal handling code in store.py
+#~
 #~ Revision 4.3  2000/12/03 21:21:49  jtauber
 #~ removed put; refactored remove to use callback function
 #~
