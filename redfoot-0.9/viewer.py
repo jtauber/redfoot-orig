@@ -153,3 +153,32 @@ class Viewer:
     def encodeURI(self, s):
         import string
         return string.join( string.split(s,'#') ,'%23')
+
+    def RDF(self):
+        self.writer.write("RDF")
+
+    def Triples(self):
+        self.writer.write("""
+        <HTML>
+          <HEAD>
+            <TITLE>Redfoot Triples</TITLE>
+            <LINK REL="STYLESHEET" HREF="css"/>
+          </HEAD>
+          <BODY>
+            <H1>ReDFoot</H1>
+            <P><A HREF=".">Class List</A>
+             | <A HREF="RDF">Download RDF</A>
+             | <A HREF="Triples">Show Triples</A>
+            </P>
+            <H2>Triples</H2>
+            <TABLE>
+        """)
+        for statement in self.qstore.get(None, None, None):
+            self.writer.write("""
+              <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
+            """ % (statement[0], statement[1], statement[2]))
+        self.writer.write("""
+            </TABLE>
+          </BODY>
+        </HTML>
+        """)

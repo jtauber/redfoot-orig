@@ -55,9 +55,9 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if path_info == "/":
             viewer.mainPage()
         elif path_info == "/RDF":
-            pass
+            viewer.RDF()
         elif path_info == "/Triples":
-            pass
+            viewer.Triples()
         elif path_info == "/css":
             viewer.css()
         elif path_info == "/view":
