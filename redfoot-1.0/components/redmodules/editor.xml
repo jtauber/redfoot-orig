@@ -68,7 +68,6 @@
           <red:exec>
             b = SetBuilder()
             self.app.rednode.visit_possible_properties_for_subject(b.accept, subject)
-            b.end()
             for prop in b.set:
                 if self.app.rednode.exists(prop, REQUIRED_PROPERTY, YES):
                     self.edit_property(prop, literal(""), 0)
