@@ -15,7 +15,11 @@
 
 	Replaced string based exceptions with class based exceptions.
 
-	
+	Added PyUnit TestCase for parser.py
+
+	Added N-Triples parser.
+
+	Added __len__ and __eq__ methods to store interface.
 	
 	
 2002/06/04
