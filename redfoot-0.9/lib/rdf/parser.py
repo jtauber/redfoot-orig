@@ -61,14 +61,8 @@ class RootHandler(HandlerBase):
     def child(self, name, atts):
         self.depth = self.depth + 1
         if name==RDF:
-            if self.found_root==0:
-                self.found_root = 1
-                RDFHandler(self.parser, self.adder, self)
-            else:
-                import sys
-                sys.stderr.write(u"warning: found more than one %s element" % RDF)
-                # TODO: is this a valid situation?
-                RDFHandler(self.parser, self.adder, self)
+            RDFHandler(self.parser, self.adder, self)
+            self.found_root = 1
         else:
             pass
 
@@ -182,6 +176,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.9  2000/12/23 04:01:19  eikeon
+#~ Why did this get in there?!?! -- still have no clue how these got checked in!
+#~
 #~ Revision 5.8  2000/12/23 03:59:24  eikeon
 #~ Why did this get in there?!?!
 #~
