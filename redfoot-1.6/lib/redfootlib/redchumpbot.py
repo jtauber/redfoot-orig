@@ -198,7 +198,7 @@ class RedChurnEntry(ChurnEntry, object):
         titled_img_search = re.compile('\+\[([^|]+)\|([^\]]+)\]')
         while titled_img_search.search(comment_html) != None:
             match = titled_img_search.search(comment_html)
-            if string.find(match.group(1),"http") == 0: # begins with http
+            if match.group(1).find("http") == 0: # begins with http
                 url_index = 1
                 title_index = 2
             else:
@@ -215,7 +215,7 @@ class RedChurnEntry(ChurnEntry, object):
         titled_url_search = re.compile('\[([^|]+)\|([^\]]+)\]')
         while titled_url_search.search(comment_html) != None:
             match = titled_url_search.search(comment_html)
-            if string.find(match.group(1),"http") == 0: # begins with http
+            if match.group(1).find("http") == 0: # begins with http
                 url_index = 1
                 title_index = 2
             else:
