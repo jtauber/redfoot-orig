@@ -143,6 +143,12 @@ class Neighbourhood(QueryStore):
     def remove(self, subject=None, predicate=None, object=None):
         raise "Can not remove from Neighbourhood store!"
 
+    def remove_store(self, uri):
+        for store in self.stores.stores.keys():
+            if uri==store.URI:
+                self.stores.removeStore(store)
+        
+
 
 class MultiStore(StoreIO, QueryStore):
     ""
@@ -167,6 +173,9 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:05  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.2  2001/03/13 02:16:39  eikeon
 #~ another small refactor
 #~
