@@ -56,6 +56,8 @@ def process_args():
         try:
             __import__(arg)
         except ImportError:
+            # TODO: print out info regaurding the exception... else it
+            # is a bit hard to know what is going on ;)
             print """
 Error: Could not import '%s'
 
