@@ -43,7 +43,7 @@ class Viewer:
             self.view(args['uri'][0]) # TODO: check why values of args are lists
         else:
             # make a proper 404
-            response.write("unknown PATH of '%s'" % path_info)
+            self.writer.write("unknown PATH of '%s'" % path_info)
 
     def css(self):
         self.writer.write("""
@@ -377,6 +377,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 2.4  2000/10/16 05:27:17  jtauber
+# gave menu bars labels and clarified some of the items
+#
 # Revision 2.3  2000/10/16 04:10:07  jtauber
 # refactored editor-specific http handling code from viewer to editor
 #
