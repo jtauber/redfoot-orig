@@ -96,7 +96,7 @@ class AutoSaveStoreIO(TripleStoreIO):
         # http://www.w3.org/TR/NOTE-datetime
         # 1994-11-05T08:15:30-05:00 corresponds to November 5, 1994, 8:15:30 am, US Eastern Standard Time
         #s = "%0004d-%02d-%2dT%02d:%02d:%02dZ" % ( year, month, day, hh, mm, ss)
-        s = "%0004d-%02d-%2dT%02d_%02d_%02dZ" % ( year, month, day, hh, mm, ss)        
+        s = "%0004d-%02d-%02dT%02d_%02d_%02dZ" % ( year, month, day, hh, mm, ss)        
         return s
 
 
@@ -128,6 +128,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.14  2000/12/05 07:11:27  eikeon
+#~ finished refactoring rednode refactor of the local / neighbourhood split
+#~
 #~ Revision 4.13  2000/12/05 05:05:52  eikeon
 #~ Switched RedNode to use AutoSaveStoreIO and fixed up AutoSaveStoreIO to work with new class inheritance
 #~
