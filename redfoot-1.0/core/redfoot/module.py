@@ -76,6 +76,9 @@ class ParentModule(Module):
                 self.apply_next(path)
 
     def handle_request(self, request, response):
+        processor = request.get_parameter('processor', None)
+        apply(getattr(self, processor, lambda :None), ())
+
         for module in self.modules:
             if hasattr(module, 'handle_request'):
                 module.handle_request(request, response)
@@ -102,16 +105,6 @@ class App(ParentModule):
 
         self.request = request
         self.response = response
-
-        processor = request.get_parameter('processor', None)
-        if processor:
-            if hasattr(self, processor):
-                apply(getattr(self, processor), ())
-            else:
-                for module in self.modules:
-                    if hasattr(module, processor):
-                        apply(getattr(module, processor), ())
-                        break
 
         self.app.remaining_path_info = request.get_path_info()
         
