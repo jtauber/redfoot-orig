@@ -2,5 +2,5 @@
 
 export PYTHONPATH=../
 
-python example.py -p 8000
+python example.py -p 8000 $*
 
