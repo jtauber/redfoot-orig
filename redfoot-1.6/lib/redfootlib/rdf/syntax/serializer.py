@@ -121,10 +121,14 @@ class RedSerializer(Serializer, object):
         super(RedSerializer, self).__init__()
     
     def triple(self, s, p, o):
-        if o.is_literal():
-            Serializer.triple(self, s, p, o, 1)
-        else:
-            Serializer.triple(self, s, p, o, 0)
+        try:
+            if o.is_literal():
+                Serializer.triple(self, s, p, o, 1)
+            else:
+                Serializer.triple(self, s, p, o, 0)
+        except:
+            # TODO: could write out as literal in this case?
+            print "WARNING: ignoring (%s, %s, %s)" % (s, p, o)
 
     def register_property(self, s, p, o):
         return Serializer.register_property(self, p)
