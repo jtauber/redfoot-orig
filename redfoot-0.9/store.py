@@ -52,13 +52,11 @@ class RDFStore:
 	return list
 
     def remove(self, subject, property, value):
-        if subject in self.localRDF.keys() and
-        property in self.localRDF[subject].keys():
+        if subject in self.localRDF.keys() and property in self.localRDF[subject].keys():
             if self.localRDF[subject][property].has_key(value):
                 del self.localRDF[subject][property][value]
 
-        if property in self.localByProperty.keys() and
-        value in self.localByProperty[property].keys():
+        if property in self.localByProperty.keys() and value in self.localByProperty[property].keys():
             if self.localByProperty[property][value].has_key(subject):
                 del self.localByProperty[property][value][subject]
 
