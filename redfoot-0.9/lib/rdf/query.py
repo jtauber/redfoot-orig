@@ -202,13 +202,13 @@ class QueryStore:
         for superType in self.transitiveSuperTypes(type):
             self.visit(possibleProperty, None, DOMAIN, superType)
 
-    def getTypes(self, subject, callback):
+    def visitTypes(self, callback, subject=None):
         self.visit(callback, subject, TYPE, None)
 
     def getPossiblePropertiesForSubject(self, subject, possibleProperty):
         def type(s, p, o, self=self, possibleProperty=possibleProperty):
             self.getPossibleProperties(o, possibleProperty)
-        self.getTypes(subject, type)
+        self.visitTypes(type, subject)
 
     def getRange(self, property):
         statement = self.getFirst(property, RANGE, None)
@@ -218,6 +218,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 4.16  2000/12/06 21:45:13  eikeon
+#~ refactored gets to visits in subClassV and resourcesByClassV
+#~
 #~ Revision 4.15  2000/12/06 21:22:40  eikeon
 #~ added getRange function
 #~
