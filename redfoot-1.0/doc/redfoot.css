@@ -27,7 +27,6 @@ h2 {
 .announcement {
   border: 1px solid #990000;
   padding: 5px;
-  font-weight: bold;
 }
  
 pre.code_sample {
@@ -41,6 +40,10 @@ dt {
 
 dl {
   margin-left: 3em;
+}
+
+DIV.announcement dl {
+  margin-left: 0px;
 }
 
 div.NAV {
