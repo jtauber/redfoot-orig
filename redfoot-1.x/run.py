@@ -39,6 +39,6 @@ app = AppClass(rednode)
 server.add_app(app)
 
 # Run the App
-server.run() # blocks until server is shutdown
+server.run(0) # blocks until server is shutdown
 
 
