@@ -100,35 +100,11 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 5.2  2000/12/09 21:01:44  eikeon
+#~ abouts were not getting encoded
+#~
 #~ Revision 5.1  2000/12/08 23:02:23  eikeon
 #~ encoding fixes
 #~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
-#~
-#~ Revision 4.5  2000/12/07 19:52:02  jtauber
-#~ changed base to baseURI
-#~
-#~ Revision 4.4  2000/12/04 02:44:34  jtauber
-#~ changed value to object
-#~
-#~ Revision 4.3  2000/12/04 02:40:00  jtauber
-#~ now uses literal module
-#~
-#~ Revision 4.2  2000/12/04 02:25:18  jtauber
-#~ serializer has new method for serializing statements that keeps track of subject start/end for you
-#~
-#~ Revision 4.1  2000/12/03 19:38:51  jtauber
-#~ moved ^ trick to functions
-#~
-#~ Revision 4.0  2000/11/06 15:57:33  eikeon
-#~ VERSION 4.0
-#~
-#~ Revision 3.2  2000/11/04 01:24:50  eikeon
-#~ fixed string index out of range bug in serializer
-#~
-#~ Revision 3.1  2000/11/02 21:48:27  eikeon
-#~ removed old log messages
-#~
-# Revision 3.0  2000/10/27 01:23:10  eikeon
-# bump-ing version to 3.0

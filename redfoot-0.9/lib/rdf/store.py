@@ -121,38 +121,8 @@ class TripleStore:
                     
 
 #~ $Log$
+#~ Revision 5.1  2000/12/11 06:30:14  eikeon
+#~ made some reasonably straight forward optimizations
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
-#~
-#~ Revision 4.8  2000/12/06 19:40:30  eikeon
-#~ moved get method to query as it can be layered on top of a TripleStore like all the other queries
-#~
-#~ Revision 4.7  2000/12/05 22:14:12  jtauber
-#~ changed visitor class to function
-#~
-#~ Revision 4.6  2000/12/04 22:56:55  eikeon
-#~ visit will now stop if None is not returned
-#~
-#~ Revision 4.5  2000/12/03 22:25:14  jtauber
-#~ moved literal stuff to literal.py
-#~
-#~ Revision 4.4  2000/12/03 22:00:03  jtauber
-#~ put literal handling code in store.py
-#~
-#~ Revision 4.3  2000/12/03 21:21:49  jtauber
-#~ removed put; refactored remove to use callback function
-#~
-#~ Revision 4.2  2000/12/03 20:49:38  jtauber
-#~ refactored+documented visit function
-#~
-#~ Revision 4.1  2000/12/03 20:17:40  jtauber
-#~ changed property/value to predicate/object
-#~
-#~ Revision 4.0  2000/11/06 15:57:33  eikeon
-#~ VERSION 4.0
-#~
-#~ Revision 3.1  2000/11/02 21:48:27  eikeon
-#~ removed old log messages
-#~
-# Revision 3.0  2000/10/27 01:23:10  eikeon
-# bump-ing version to 3.0

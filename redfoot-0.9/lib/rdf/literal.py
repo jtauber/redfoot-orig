@@ -10,9 +10,5 @@ def un_literal(str):
     return str[1:]
 
 # $Log$
-# Revision 1.2  2000/12/04 02:38:12  jtauber
-# added un_literal
-#
-# Revision 1.1  2000/12/03 22:23:13  jtauber
-# created literal.py for literal handling
-#
+# Revision 5.0  2000/12/08 08:34:52  eikeon
+# new release
