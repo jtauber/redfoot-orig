@@ -41,10 +41,12 @@ class RedfootHandler:
         path_info = request.path_info
 
         self.lock.acquire()
-        viewer = self.getViewer()
-        viewer.setWriter(response)
-        viewer.handler(path_info, args)
-        self.lock.release()            
+        try:
+            viewer = self.getViewer()
+            viewer.setWriter(response)
+            viewer.handler(path_info, args)
+        finally:
+            self.lock.release()            
 
 
 class RedfootServerConnection(ServerConnection):
@@ -104,6 +106,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 2.4  2000/10/16 06:31:49  eikeon
+# fixed bug I just introduced where a new RedfootHandler is beging created for each request
+#
 # Revision 2.3  2000/10/16 04:58:19  eikeon
 # refactored plumb-ing between bnh.Server and RedfootHandler
 #
