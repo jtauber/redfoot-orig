@@ -55,13 +55,11 @@ class Viewer:
         else:
             self.response.write("unknown PATH of '%s'" % path_info)
 
-
     def getNodeInScope(self):
         if self.showNeighbours==1:
             return self.storeNode
         else:
             return self.storeNode.local
-
 
     def css(self):
         self.response.write("""
@@ -117,12 +115,14 @@ class Viewer:
 
         h2 {
           font-family: Verdana;
+          font-weight: normal;
           color:       #990000;
           margin:      0px;
         }
 
         h3 {
           font-family: Verdana;
+          font-weight: normal;
         }
 
         a {
@@ -246,7 +246,7 @@ class Viewer:
 
     def resourceHeader(self, subject):
         self.response.write("""
-            <H2>%s</H2>
+            <H3>%s</H3>
             <P>%s</P>
         """ % (self.storeNode.label(subject), subject))
 
@@ -422,6 +422,9 @@ class Viewer:
         self.footer()
 
 #~ $Log$
+#~ Revision 5.9  2000/12/09 22:56:40  jtauber
+#~ removed second menubar in view
+#~
 #~ Revision 5.8  2000/12/09 22:52:49  eikeon
 #~ factored out the if self.showNeighbours
 #~

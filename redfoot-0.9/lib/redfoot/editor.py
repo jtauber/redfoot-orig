@@ -44,7 +44,6 @@ class Editor(Viewer):
             request.setPathInfo(path_info)
             Viewer.handleRequest(self, request, response)
 
-
     def menuBar(self):
         Viewer.menuBar(self)
         self.response.write("""
@@ -56,7 +55,7 @@ class Editor(Viewer):
 
     def resourceHeader(self, subject):
         self.response.write("""
-            <H2>%s</H2>
+            <H3>%s</H3>
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
         """ % (self.storeNode.label(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
@@ -439,6 +438,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 5.1  2000/12/09 22:08:33  eikeon
+# subclass -> fullsubclass; subclassNR -> subclass
+#
 # Revision 5.0  2000/12/08 08:34:52  eikeon
 # new release
 #
