@@ -16,9 +16,7 @@ def handle_request(self, request, response):
     parameters = request.get_parameters()        
     path_info = request.get_path_info()
 
-    if path_info == "/classList":
-        self.classList()
-    elif path_info == "/triples":
+    if path_info == "/triples":
         s = parameters['subject']
         if s=="": s=None
         p = parameters['predicate']
@@ -81,29 +79,24 @@ def footer(self):
         </HTML>
     """)
 
-def classList(self):
-    self.header("Resources by Class")
-    self.response.write("""
-        <DIV CLASS="box">
-          <DL>
-    """)
-
-    node = self.getNodeInScope()
-    node.visitResourcesByType(self.displayClass, self.displayResource)
-
-    firstTypeless = 1
-
-    for resource in node.getTypelessResources():
-        if firstTypeless==1:
-            self.response.write("""<DT>Typeless</DT>""")
-            firstTypeless=0
-        self.displayResource(resource)
-
-    self.response.write("""
-          </DL>
-        </DIV>
-    """)
-    self.footer()
+<r:response name="/classList">
+<r:exec>self.header("Resources by Class")</r:exec>
+<DIV CLASS="box">
+<DL>
+<r:exec>
+node = self.getNodeInScope()
+node.visitResourcesByType(self.displayClass, self.displayResource)
+firstTypeless = 1
+for resource in node.getTypelessResources():
+    if firstTypeless==1:
+        self.response.write("""<DT>Typeless</DT>""")
+        firstTypeless=0
+    self.displayResource(resource)
+</r:exec>
+</DL>
+</DIV>
+<r:exec>self.footer()</r:exec>
+</r:response>
 
 <r:response name="/fullsubclass">
 <r:exec>
