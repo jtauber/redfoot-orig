@@ -32,13 +32,12 @@ class TripleStore:
 
         predicateDictionary[object][subject] = 1
 
-    def remove(self, subject=None, predicate=None, object=None):
-        
-        def callback(subject, predicate, object, spo=self.spo, pos=self.pos):
-            del spo[subject][predicate][object]
-            del pos[predicate][object][subject]
+    def _remove(self, subject, predicate, object):
+        del self.spo[subject][predicate][object]
+        del self.pos[predicate][object][subject]
 
-        self.visit(callback, subject, predicate, object)
+    def remove(self, subject=None, predicate=None, object=None):
+        self.visit(self._remove, subject, predicate, object)
 
     def visit(self, callback, subject=None, predicate=None, object=None):
         if subject!=None: # subject is given
@@ -120,7 +119,66 @@ class TripleStore:
             callback(s)
                     
 
+
+from rdf.const import *
+
+from rdf.literal import literal
+import time
+
+ADD = literal("add")
+DELETE = literal("delete")
+OPERATION = "http://redfoot.sourceforge.net/2001/01/30/#operation"
+TIMESTAMP = "http://redfoot.sourceforge.net/2001/01/30/#timestamp"
+
+class JournalingStore(TripleStore):
+
+    def __init__(self, journal):
+        TripleStore.__init__(self)
+        self.journal = journal
+        self.sn = 0
+        
+    def generateURI(self):
+        self.sn = self.sn + 1
+        return "%s#T%s-%s" % (self.URI, time.time(), self.sn)
+
+    def add(self, subject, predicate, object):
+        TripleStore.add(self, subject, predicate, object)
+
+        statement_uri = self.generateURI()
+        self.journal.add(statement_uri, TYPE, STATEMENT)
+        self.journal.add(statement_uri, SUBJECT, subject)
+        self.journal.add(statement_uri, PREDICATE, predicate)
+        self.journal.add(statement_uri, OBJECT, object)
+        self.journal.add(statement_uri, OPERATION, ADD)
+
+        self.journal.add(statement_uri, TIMESTAMP, date_time_filename())        
+        
+    def _remove(self, subject, predicate, object):
+        TripleStore._remove(self, subject, predicate, object)
+
+        statement_uri = self.generateURI()
+        self.journal.add(statement_uri, TYPE, STATEMENT)
+        self.journal.add(statement_uri, SUBJECT, subject)
+        self.journal.add(statement_uri, PREDICATE, predicate)
+        self.journal.add(statement_uri, OBJECT, object)
+        self.journal.add(statement_uri, OPERATION, DELETE)
+
+        self.journal.add(statement_uri, TIMESTAMP, date_time_filename())        
+
+def date_time_filename(t=None):
+    """."""
+    import time
+    if t==None:
+        t = time.time()
+
+    year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
+    s = "%0004d-%02d-%02dT%02d_%02d_%02dZ" % ( year, month, day, hh, mm, ss)        
+    return s
+
 #~ $Log$
+#~ Revision 5.3  2000/12/17 20:56:09  eikeon
+#~ renamed visitSubjects to visit_subjects
+#~
 #~ Revision 5.2  2000/12/17 20:41:22  eikeon
 #~ removed log message prior to currently worked on release
 #~
