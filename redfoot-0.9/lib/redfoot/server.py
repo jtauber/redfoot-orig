@@ -162,11 +162,15 @@ if __name__ == '__main__':
     from redfoot.editor import PeerEditor
 
     handler = PeerEditor(redserver.storeNode, redserver.path)
-    redserver.server.addHandler(handler)
+    redserver.server.setHandler(handler)
+    redserver.server.start()
     
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.7  2000/12/04 05:21:24  eikeon
+#~ Split server.py into server.py, servlet.py and receiver.py
+#~
 #~ Revision 4.6  2000/12/04 01:26:44  eikeon
 #~ no more getStore() on StoreIO
 #~
