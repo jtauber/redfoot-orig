@@ -32,11 +32,16 @@ class Server:
             except socket.error:
                 break
 
-            sc = apply(self.serverConnectionFactory, ())
-            import threading
-            t = threading.Thread(target = sc.handleRequest,
-                                 args = (self, clientSocket))
-            t.start()
+            try:
+                sc = apply(self.serverConnectionFactory, ())
+                import threading
+                t = threading.Thread(target = sc.handleRequest,
+                                     args = (self, clientSocket))
+                t.start()
+            except:
+                import traceback
+                traceback.print_exc()
+                
 
         
 class ServerConnection:
@@ -50,18 +55,11 @@ class ServerConnection:
 
         try:
             self.request.setClientSocket(clientSocket)
-        except:
-            import traceback
-            traceback.print_exc()
-
-        try:
             self.response.setClientSocket(clientSocket)
+            self.handler.handleRequest(self.request, self.response)
         except:
             import traceback
             traceback.print_exc()
-
-        self.handler.handleRequest(self.request, self.response)
-
             
         self.response.close()
         clientSocket.shutdown(1)
@@ -166,6 +164,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.3  2000/10/13 04:45:27  eikeon
+# changed Server header value
+#
 # Revision 1.2  2000/10/13 04:25:35  eikeon
 # fixed startup message
 #
