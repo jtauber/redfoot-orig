@@ -17,7 +17,7 @@ class StoreIO:
         from rdf.parser import parse_RDF
         parse_RDF(self.add, self.location, self.URI)
 
-    def save(self, location=None, URI=none):
+    def save(self, location=None, URI=None):
         if location==None:
             location = self.location
         if URI==None:
@@ -128,6 +128,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 5.2  2000/12/17 21:11:11  eikeon
+#~ changed a couple mixed case names to _ style names
+#~
 #~ Revision 5.1  2000/12/17 20:41:22  eikeon
 #~ removed log message prior to currently worked on release
 #~
