@@ -1,15 +1,14 @@
 HOW TO RELEASE REDFOOT
 
-* checkout (with -P)
-* update CHANGELOG (hopefully has been done continuously)
+* update CHANGELOG (perhaps automatically)
 * tag release:
 	cvs tag Release_X_XX_XX
 * up major revision:
 	cvs commit -m "new release" -r x.0
 	cvs update -A
-* rename directory to redfoot-X.X.X
+* cd ..; cvs export -r HEAD -d redfoot-X.X.X
 * tar
-	tar --exclude=CVS cvzf redfoot-X.X.X.tgz redfoot-X.X.X
+	tar cvzf redfoot-X.X.X.tgz redfoot-X.X.X
 * upload
 	ftp download.sourceforge.net as user ftp
 	put in /incoming

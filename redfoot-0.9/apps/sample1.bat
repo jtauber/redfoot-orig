@@ -4,7 +4,7 @@ setlocal
 set PYTHONPATH=../lib/
 @echo on
 
-python ./sample1Main.py %*
+python ./sample1.py %*
 
 @echo off
 endlocal

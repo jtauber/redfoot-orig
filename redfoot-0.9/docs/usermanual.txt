@@ -8,7 +8,7 @@ REDFOOT USER MANUAL
 
 REQUIREMENTS
 
-    You must be running Python 2.0 including pyexpat.
+    You must be running Python 2.0.
 
 INTRODUCTION
 
@@ -34,26 +34,10 @@ STARTING REDFOOT WITH GENERIC UI
     To access the viewer/editor, try going to
         http://www.localhost:8000/classList
 
-    Often, it is not desirable for Redfoot to run at the root of the
-    server's URI space. The -P option allows you to specify the path
-    on which Redfoot should operate. For example
-        redfoot.sh -P /2000/11/redfoot
-    would mean that the RDF is available at
-        http://localhost:8000/2000/11/redfoot
-    and the viewer/editor at
-        http://localhost:8000/2000/11/redfoot/classList
-
 STARTING REDFOOT WITH A CUSTOM UI
 
-    Typically, a custom UI will be provided as a python class which is
-    a subclass of BaseUI. A special file will be run to start up
-    Redfoot with that particular UI. See apps/sample1.sh for an
-    example.
-
-    Note that in almost all cases, a Redfoot with a custom UI will
-    have the -P path specified. The generic Redfoot UI will then be
-    available at that path with the rest of server's URI space
-    available for the custom UI.
+    Typically, a custom UI will be provided as a python script. See
+    apps/sample1.py for an example.
 
     Often, the generic UI will be retained for editing the RDF,
     although the custom UI may provide custom editing as well as
@@ -69,13 +53,10 @@ STARTUP COMMANDLINE OPTIONS
 
         -u uri to treat that file as
            (eg http://redfoot.sourceforge.net/2000/10/.
-            defaults to http://hostname.domain:port/path)
+            defaults to http://hostname.domain:port/)
 
         -p port number to run on
            (defaults to 8000)
-
-        -P path from server root to actual RDF
-           (eg /2000/10/redfoot. defaults to /)
 
 USING GENERIC UI: VIEWS
 
@@ -155,6 +136,9 @@ USING GENERIC UI: EDITING RESOURCE PROPERTIES
 
 USING GENERIC UI: ADDING A RESOURCE
 
+    [TODO: update this section in light of external / abstract
+    distinction and new resource URI convention]     
+
     To make a statement about a resource not currently known, or to
     create a new resource, click on Add a Resource in the EDIT menu.
 
@@ -172,6 +156,9 @@ USING GENERIC UI: ADDING A RESOURCE
 [TODO: PEER stuff]
 
 $Log$
+Revision 6.0  2001/02/19 05:01:23  jtauber
+new release
+
 Revision 5.0  2000/12/08 08:34:52  eikeon
 new release
 

@@ -12,7 +12,39 @@ import string
 import threading
 
 class RedServer(Server):
-        
+
+    def __init__(self, (host, port)):
+        Server.__init__(self, (host, port))
+        sys.stderr.write("REDFOOT: listening on port %s...\n" % port)
+        # TODO localhost might not be the correct thing to use
+        sys.stderr.write("... try hitting http://localhost:%s/\n" % port)    
+        sys.stderr.flush()
+
+    def run(self, modulename, *args):
+        self._uiargs = args
+        self.modulename = modulename
+        self._load()
+        self.start()
+        try:
+            self.keepRunning()
+        except KeyboardInterrupt:
+            self.stop()
+
+    def run_autoload(self, modulename, *args):
+        self._uiargs = args
+        self.modulename = modulename
+        try:
+            self.keepReloading()
+        except KeyboardInterrupt:
+            self.stop()
+    
+    def _load(self):
+        # TODO do we need to worry about passing in globals and locals?
+        module = __import__(self.modulename)
+        handler = apply(module.UI, self._uiargs)
+        self.set_handler(handler)
+        self.start()
+        return module
 
     def keepRunning(self):
         while 1:
@@ -26,9 +58,8 @@ class RedServer(Server):
         if file[-3:]=="pyc":
             file = file[:-1]
         return file
-        
 
-    def keepReloading(self, lm):
+    def keepReloading(self):
         from os.path import getmtime
         rollbackImporter = None
         m = None
@@ -39,7 +70,7 @@ class RedServer(Server):
                 rollbackImporter = RollbackImporter()
         
                 try:
-                    m = lm(self)
+                    m = self._load()
                     filename = self._getFilename(m)
                 except:
 	            import traceback
@@ -63,6 +94,12 @@ class RedServer(Server):
                     sys.stderr.flush()
             else:
                 threading.Event().wait(1)
+
+    def stop(self):
+        sys.stderr.write("Shutting down Sample1\n")
+        sys.stderr.flush()
+        Server.stop(self)
+
 
 
 import string
@@ -99,5 +136,8 @@ class RollbackImporter:
     
 
 #~ $Log$
+#~ Revision 6.1  2001/02/26 22:41:03  eikeon
+#~ removed old log messages
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release

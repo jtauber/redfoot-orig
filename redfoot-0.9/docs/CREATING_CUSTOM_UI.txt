@@ -1,5 +1,6 @@
 $Header$
 
+*** @@ This document is complete out of date now ***
 
 CREATING CUSTOM UI IN REDFOOT
 
@@ -100,6 +101,9 @@ PROVIDING HTTP TO THE UNDERLYING REDFOOT
 TODO
 
 $Log$
+Revision 6.0  2001/02/19 05:01:23  jtauber
+new release
+
 Revision 5.0  2000/12/08 08:34:52  eikeon
 new release
 

@@ -1,46 +1,32 @@
 # $Header$
 
-from rdf.query import QueryStore
+from redfoot.server import RedServer
 from redfoot.rednode import RedNode
-from redfoot.baseUI import BaseUI
-from redfoot.editor import PeerEditor
-
+from redfoot.editor import Editor
+from rdf.query import QueryStore
 from rdf.const import *
 
 
-class Sample1UI:
+if __name__ == "__main__":
+    server = RedServer(("", 8000))
+    server.run_autoload("sample1", "sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
+    
 
-    def __init__(self):
+class UI:
+
+    def __init__(self, location, uri):
         self.storeNode = RedNode()
-        self.storeNode.local.load("sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
-        self.path = "/2000/12/sample1"
-        self.editor = None
-
-    def getEditor(self):
-        if self.editor==None:
-            self.editor = PeerEditor(self.storeNode, self.path)
-        return self.editor
-
-    def path_match(self, path_info):
-        return path_info[0:len(self.path)]==self.path
-
-    def call_editor(self, request, response):
-        request._pathInfo = request.getPathInfo()[len(self.path):]
-        self.getEditor().handle_request(request, response)
-
+        self.storeNode.local.load(location, uri)
+        self.editor = Editor(self.storeNode)
+        
     def handle_request(self, request, response):
         path_info = request.getPathInfo()
 
-	if path_info[:-1]==self.path:
-            self.call_editor(request, response)
-        elif self.path_match(path_info):
-            if not self.authenticated(request, response):
-                return
-            self.call_editor(request, response)
-        elif path_info=="/":
+        if path_info == "/":
             self.main(response)
         else:
-            self.view(response)
+            if self.authenticated(request, response):
+                self.editor.handle_request(request, response)
 
     def main(self, response):
         response.write("""
@@ -50,30 +36,17 @@ class Sample1UI:
           </HEAD>
           <BODY>
             <H1>Main Page</H1>
-            <P>These are the people I know about:</P>
+            <P>These are the people I know now:</P>
             <UL>
         """)
-        for s in self.storeNode.get(None, TYPE, "http://redfoot.sourceforge.net/2000/10/#Person"):
+        for s in self.storeNode.get(None, TYPE, "http://redfoot.sourceforge.net/2001/03/Person"):
             response.write("<LI>%s</LI>" % self.storeNode.label(s[0]))
         response.write("""
             </UL>
-            <P><A HREF="%s/classList">Go to editor</A>
-          </BODY>
-        </HTML>
-        """% self.path)
-
-    def view(self, response):
-        response.write("""
-        <HTML>
-          <HEAD>
-            <TITLE>Sample1 UI</TITLE>
-          </HEAD>
-          <BODY>
-            <H1>Sample1 UI</H1>
+            <P><A HREF="/classList">Go to editor</A>
           </BODY>
         </HTML>
         """)
-
 
     def authenticated(self, request, response):
         parameters = request.getParameters()
@@ -110,12 +83,12 @@ class Sample1UI:
   </BODY>                            
 </HTML>
 """)
-                return 0
-
-        raise "TODO: exception indicating we should never fall though to here"
-             
+        return 0
 
 # $Log$
+# Revision 6.0  2001/02/19 05:01:23  jtauber
+# new release
+#
 # Revision 5.2  2000/12/23 03:54:45  eikeon
 # fixed missed handleRequest in prior name change
 #

@@ -6,9 +6,8 @@ from rdf.const import *
 
 class Viewer:
 
-    def __init__(self, storeNode, path="?"):
+    def __init__(self, storeNode):
         self.storeNode = storeNode
-        self.path = path
         self.showNeighbours = 0
         
     def handle_request(self, request, response):
@@ -458,6 +457,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 6.2  2001/02/27 21:14:05  eikeon
+#~ made path optional
+#~
 #~ Revision 6.1  2001/02/26 22:41:04  eikeon
 #~ removed old log messages
 #~

@@ -3,21 +3,11 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 >
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/06/T08/37/37Z">
-    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/06/T08/28/49Z"/>
-    <rdfs:label>Truck</rdfs:label>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/21/T22/06/45Z">
+    <rdf:type></rdf:type>
   </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/06/T08/28/49Z">
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/03/Person">
     <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
-    <rdfs:label>Car</rdfs:label>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/06/T07/20/09Z">
-    <rdfs:label></rdfs:label>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/06/T08/05/58Z">
-    <rdfs:label></rdfs:label>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2000/12/sample1/2001/03/06/T08/06/49Z">
-    <rdfs:label></rdfs:label>
+    <rdfs:label>Person</rdfs:label>
   </rdf:Description>
 </rdf:RDF>
