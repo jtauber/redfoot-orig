@@ -1,8 +1,8 @@
 ####
-from redfoot.server.module import App
-from redfoot.rdf.objects import resource, literal
-from redfoot.rdf.const import TYPE, LABEL, COMMENT
-from redfoot.rdf.query.functors import sort
+from redfootlib.server.module import App
+from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.const import TYPE, LABEL, COMMENT
+from redfootlib.rdf.query.functors import sort
 from link_sniffer import SNIFFED, SNIFFABLE, SNIFFED_ON, SNIFFED_FROM, RUN
 
 class LinkApp(App):
@@ -80,7 +80,7 @@ class LinkApp(App):
 
 def run_app(sniffer):
     """Runs the LinkApp on a RedServer for the given sniffer."""
-    from redfoot.server import RedServer
+    from redfootlib.server import RedServer
 
     server = RedServer('', 9090)
 
