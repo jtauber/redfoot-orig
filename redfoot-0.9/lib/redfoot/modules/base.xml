@@ -4,15 +4,10 @@ from rdf.const import *
 from rdf.literal import *
 from redfoot.util import *
 
-from redfoot.modules.neighbours import Neighbours
-from redfoot.modules.editor import Editor
-
-<r:class name="Base" bases="Editor Neighbours">
+<r:class name="Base">
 
 def __init__(self, rednode):
     self.rednode = rednode
-    Editor.__init__(self, rednode)
-
 
 def handle_request(self, request, response):
     path_info = request.get_path_info()
@@ -20,19 +15,16 @@ def handle_request(self, request, response):
     # call handle_request on base classes
     bases = self.__class__.__bases__
     for base in bases:
-        if hasattr(base, 'handle_request_init') and base.handle_request_init(self, request, response):
+        if hasattr(base, 'handle_request_local') and base.handle_request_local(self, request, response):
             # if completely handled then return now
             return
-
-    if path_info in ['/css', '/classList', '/fullsubclass', '/subclass', '/triples', '/add',  '/view', '/edit']:
-        Editor.handle_request(self, request, response)
-	return
 
     # invoke the processor
     processor = request.get_parameters()['processor']
     if hasattr(self, processor):
         apply(getattr(self, processor), (request, response))
 
+    # invoke the path_info
     if hasattr(self, path_info):
         apply(getattr(self, path_info), (request, response))
         return
