@@ -42,6 +42,10 @@ dl {
   margin-left: 3em;
 }
 
+td {
+  font-size:   10pt;
+}
+
 DIV.announcement dl {
   margin-left: 0px;
 }
