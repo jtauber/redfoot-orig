@@ -3,7 +3,8 @@ import os, sys
 
 from asyncore import loop
 
-from medusa import http_server
+from medusa import http_server, producers
+from types import StringType
 from medusa import resolver, logger
 #from medusa import filesys, default_handler
 
@@ -236,6 +237,13 @@ class MedusaHandler(object):
             if self.head_sent==0:
                 self.head_sent = 1
                 self._send_head()
+
+            # TODO: This should get done down in the medusa code... we
+            # should not have to do this. It is a result of medusa
+            # using "if type(thing) == type('')" as the test.
+            if isinstance(data, StringType):
+                data = producers.simple_producer(data)
+                
             self.__request.push(data)
         except IOError:
             raise BadRequestError("write failed")                            
