@@ -1,5 +1,43 @@
 CHANGELOG
 
+Changes between 0.9.5 and 0.9.6
+
+ - Can now run a RedServer by 'running' redfoot.server -- as RedServer now created a RedNode and runs a redpage give a redpage name
+
+ - can now import redpages ending in .xml
+
+ - now opening redpages as files instead of urls
+
+ - changed bases attr to take whitespace-delimited list
+ - the args attribute of the response tag now takes space separated args
+
+ - created a lib/redfoot/modules directory and moved editor/viewer into it
+ - responses can now have names composed of any strings
+
+ - change <string>'s to the actual string... TODO: may want to change this back?
+
+ - removed unused code and added LICENSE to top of source files
+
+ - added get_session_uri method
+   - removed management of session objects
+   - BNH now only deals with the setting/getting of the EBNH_session cookie
+
+ - modified date_time_string to not generate string more than once per second
+
+ - added printing of stack trace for parsing exceptions 
+ - added an IgnoreHandler to correctly ignore bits that we do not parse yet
+
+ - added a message to stderr when auto saving
+ - added a try catch around auto save so that thread does not die when there is an error saving (like disk being full:)
+
+ - fixed bug where redmodules weren't being added to sys.modules
+ - fixed bug where start was being called twice
+ - changed shutdown message
+
+ - RDF->HOME until we fix it to always return RDF
+ - added remove_store method
+
+
 Changes between 0.9.4 and 0.9.5
 
  - **refactor of apps and the way servers are started by them**
