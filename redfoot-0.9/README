@@ -54,7 +54,15 @@ WHERE TO GET THE LATEST REDFOOT
 
 See http://www.sourceforge.net/projects/redfoot
 
+HOW TO CONTACT THE DEVELOPERS
+
+James Tauber - jtauber@bowstreet.com
+Daniel Krech - dkrech@bowstreet.com
+
 $Log$
+Revision 2.0  2000/10/14 01:14:04  jtauber
+next version
+
 Revision 1.4  2000/10/13 23:23:58  jtauber
 updated README to reflect python 2.0c1 and eikeon's BNH
 
