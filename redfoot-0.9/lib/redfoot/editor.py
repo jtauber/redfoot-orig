@@ -207,7 +207,7 @@ class Editor(Viewer):
                 #TODO 
                 self.response.write("""
                     <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">***
-                """ % (self.property_num, encodeAttributeValue(value)))
+                """ % (self.property_num, self.encodeAttributeValue(value)))
         self.response.write("""
                 </TD>""")
         if exists:
@@ -344,6 +344,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ new release
+#~
 #~ Revision 5.19  2001/01/08 21:16:37  eikeon
 #~ fixed required property functionality just added to edit
 #~
