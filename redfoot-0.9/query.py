@@ -69,8 +69,12 @@ class QueryStore:
 
     def getSubjects(self):
         result = {}
-        for s in self.store.get(None, None, None):
-            result[s[0]] = 1
+
+        def subject(s, p, o, result=result):
+            result[s] = 1
+        
+        self.store.visit(subject, None, None, None)
+
         return result.keys()
 
     def getProperties(self, subject=None):
@@ -131,7 +135,8 @@ class QueryStore:
                 processResource(resource[0])
 
     def parentTypesV(self, type, processType):
-        self.visit(lambda s, p, o: processType(o), type, QueryStore.SUBCLASSOF, None)
+        self.visit(lambda s, p, o, processType=processType: processType(o),\
+                   type, QueryStore.SUBCLASSOF, None)
 
     def propertyValuesV(self, subject, processPropertyValue):
         def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
@@ -202,6 +207,9 @@ class QueryStore:
         return resultset.keys()
 
 # $Log$
+# Revision 2.5  2000/10/16 19:29:16  eikeon
+# fixed to getPossibleValues bug I just introduced
+#
 # Revision 2.4  2000/10/16 18:49:05  eikeon
 # converted a number of store.get()s to store.visit()s
 #
