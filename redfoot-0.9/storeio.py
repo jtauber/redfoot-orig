@@ -1,3 +1,4 @@
+# $Header$
 
 class StoreIO:
 
@@ -7,6 +8,12 @@ class StoreIO:
     def getStore(self):
         return self.store
 
+    def visit(self, visitor, subject=None, property=None, value=None):
+        self.getStore().visit(visitor, subject, property, value)
+        
+    def get(self, subject=None, property=None, value=None):
+        self.getStore().get(subject, property, value)
+        
     def load(self, location, URI=None):
         self.location = location
         if URI==None:
@@ -32,8 +39,11 @@ class StoreIO:
         except IOError:
             print IOError
 
-    def output(self, stream, URI):
-        
+    def output(self, stream, URI=None):
+
+        if URI==None:
+            URI = self.URI
+
         from redfoot.query import QueryStore
         queryStore = QueryStore()
         queryStore.setStore(self.getStore())
@@ -70,3 +80,6 @@ class StoreIO:
             s.subjectEnd()
         
         s.end()
+
+
+# $Log$
