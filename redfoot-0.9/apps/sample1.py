@@ -13,7 +13,7 @@ class Sample1UI:
     def __init__(self):
         self.storeNode = RedNode()
         self.storeNode.local.load("sample1.rdf", "http://redfoot.sourceforge.net/2000/12/sample1/")
-        self.path = "/2000/12/sample1/"
+        self.path = "/2000/12/sample1"
         self.editor = None
 
     def getEditor(self):
@@ -130,6 +130,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.2  2000/12/07 21:21:56  eikeon
+# added startup message; fixed type; added focus to username
+#
 # Revision 1.1  2000/12/07 19:04:20  eikeon
 # apps moved here from elsewhere
 #
