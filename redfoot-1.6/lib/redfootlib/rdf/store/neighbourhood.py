@@ -17,6 +17,18 @@ class Neighbourhood(object):
         for triple in self.neighbours.triples(s, p, o):
             yield triple
 
+    def subjects(self, p, o):
+        for subject in self.local.subjects(p, o):
+            yield subject
+        for subject in self.neighbours.subjects(p, o):
+            yield subject
+
+    def objects(self, s, p):
+        for object in self.local.objects(s, p):
+            yield object
+        for object in self.neighbours.objects(s, p):
+            yield object
+
     def visit(self, callback, triple):
         stop = self.local.visit(callback, triple)
         if stop:

@@ -94,10 +94,54 @@ pos[p][o][s] = 1.
                 for p in subjectDictionary.keys():
                     for o in subjectDictionary[p].keys():
                         yield s, p, o
-                        
-    def subjects(self):
-        for s in self.__spo.keys():
-            yield s
+
+    def subjects(self, predicate=None, object=None):
+        if predicate!=None:
+            if predicate in self.__pos:
+                os_list = [self.__pos[predicate], ]
+            else:
+                return
+        else:
+            if object!=None:
+                os_list = self.__pos[predicate].values()                
+            else:
+                for s in self.__spo.keys():
+                    yield s
+                return
+            
+        for os in os_list:
+            if object==None:
+                s_list = os.values()
+            else:                
+                if object in os:
+                    s_list = [os[object], ]
+                else:
+                    return
+            for s in s_list:
+                for subject in s.keys():
+                    yield subject
+
+    def objects(self, subject, predicate):
+        spo = self.__spo
+        if not subject==None:
+            po_list = []
+            if subject in spo:
+                po_list.append(spo[subject])
+        else:
+            po_list = spo.values()
+        
+        for po in po_list:
+            if not predicate==None:
+                o_list = []
+                if predicate in po:
+                    o_list.append(po[predicate])
+            else:
+                o_list = po.values()
+
+            for o in o_list:
+                for object in o.keys():
+                    yield object
+            
  
 
 
