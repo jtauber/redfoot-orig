@@ -116,7 +116,7 @@ class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleSt
 
     def get_module(self, uri):
         from redfootlib.rdf.store.module_store import MODULE
-        value = self.neighbourhood.get_first_value(uri, MODULE, None)
+        value = self.neighbourhood.first_object(uri, MODULE)
         if value:
             filename = "<%s MODULE>" % uri
             from new import module
