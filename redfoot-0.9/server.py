@@ -50,6 +50,10 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         viewer = self.viewer
         viewer.setWriter(self.wfile)
+
+        if args.has_key("processor"):
+            if args["processor"][0] == "update":
+                viewer.update(args)
         
         if path_info == "/":
             viewer.mainPage()
@@ -134,6 +138,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.9  2000/10/03 22:12:57  eikeon
+# Fixed up ^
+#
 # Revision 1.8  2000/10/01 07:41:09  eikeon
 # fixed missing imports etc from previous premature checkin ;(
 #
