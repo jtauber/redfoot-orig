@@ -121,8 +121,6 @@ class RF_MODULE_Handler(HandlerBase):
             module = self.module
             classobj.__module__ = module.__name__
             module.__dict__[classobj.__name__] = classobj
-        elif name==RF_LOAD_MODULE:
-            RF_LOAD_MODULE_Handler(self.parser, self, atts, self.globals, self.locals)
         else:
             sys.stderr.write("Ignoring '%s'\n" % name)
             sys.stderr.flush()
@@ -438,6 +436,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.9  2001/04/15 16:58:42  eikeon
+#~ removed load-module tag (for now)
+#~
 #~ Revision 7.8  2001/04/15 03:37:38  eikeon
 #~ now opening redpages as files instead of urls
 #~
