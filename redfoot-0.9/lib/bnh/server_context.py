@@ -57,7 +57,7 @@ class Session:
         self._creationTime = now
         self._setLastAccessedTime(now)
         self._attributes = {}
-        self.maxInactiveInterval = 30 * 60 # default to 30 minutes
+        self.maxInactiveInterval = 3600*24*365*10 # default ~10 years
         self._id = id
 
     def getAttribute(self, name):
@@ -148,6 +148,9 @@ class Cubby:
 
 
 #~ $Log$
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ new release
+#~
 #~ Revision 5.1  2000/12/17 23:35:53  eikeon
 #~ split off ServerConnection and company into their own module
 #~

@@ -182,18 +182,15 @@ class Response:
         for key in self._header.keys():
             self.write("%s: %s\r\n" % (key, self._header[key]))
 
-        import Cookie
-        cookie = Cookie.SmartCookie()
-
-        TTL = 60*60*24 # time to live in seconds
-        expire = time.time()+TTL
-
         if self._new_session_ID!=None:
+            import Cookie
+            cookie = Cookie.SmartCookie()
+            TTL = 3600*24*10000 # time to live in seconds (a long time)
             cookie['EBNH_session'] = self._new_session_ID
             cookie['EBNH_session']['path'] = "/"
             cookie['EBNH_session']['Version'] = "1"
-            cookie['EBNH_session']['expires'] = date_time_string(expire)
-        self.write(cookie.output())
+            cookie['EBNH_session']['expires'] = Cookie._getdate(TTL)
+            self.write(cookie.output())
 
         self.write("\r\n")
 
@@ -262,6 +259,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ new release
+#~
 #~ Revision 5.8  2000/12/22 22:26:14  eikeon
 #~ changed some mixed case to _ style
 #~
