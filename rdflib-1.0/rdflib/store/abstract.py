@@ -24,5 +24,17 @@ class AbstractStore(object):
         for s, p, o in self.triples(subject, predicate, None):
             yield o
 
+    def subject_predicates(self, object=None):
+        for s, p, o in self.triples(None, None, object):
+            yield s, p
+            
+    def subject_objects(self, predicate=None):
+        for s, p, o in self.triples(None, predicate, None):
+            yield s, o
+        
+    def predicate_objects(self, subject=None):
+        for s, p, o in self.triples(subject, None, None):
+            yield p, o
+
     def __iter__(self):
         return self.triples(None, None, None)
