@@ -98,7 +98,7 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             viewer.add(type)
         else:
             # make a proper 404
-            self.wfile.write("unknown PATH")
+            self.wfile.write("unknown PATH of '%s'" % path_info)
 
         self.wfile.flush()
         self.wfile.close()
@@ -154,6 +154,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.14  2000/10/07 02:22:16  jtauber
+# added handling of processor HTTP parameter for deletion and reification buttons
+#
 # Revision 1.13  2000/10/06 02:44:56  jtauber
 # added save functionality but note it doesn't work yet
 #
