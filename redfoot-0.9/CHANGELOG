@@ -4,9 +4,9 @@ Changes between 0.9.6 and 0.9.6.1
 
 - added LICENSE to __init__ files
    - fixes tar / untar problem on zero length files
- - fixed issues regaurding Python2.1
+- fixed issues regaurding Python2.1
    - added workaround for lack of support for namespace_separator of ''
- - fixed trailing slash problem in URI for generic
+- fixed trailing slash problem in URI for generic
 
 	
 Changes between 0.9.5 and 0.9.6

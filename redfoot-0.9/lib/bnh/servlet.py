@@ -103,20 +103,20 @@ class Request:
 
             i = string.find(self._path, "?")
             if i==-1:
-                self._pathInfo = self._path
+                self._path_info = self._path
                 self._queryString = ""
             else:
-                self._pathInfo = self._path[:i]
+                self._path_info = self._path[:i]
                 self._queryString = self._path[i+1:]
 
         return self._firstline
     
-    def getPathInfo(self):
+    def get_path_info(self):
         self._get_first_line()
-        return self._pathInfo
+        return self._path_info
 
-    def setPathInfo(self, pathInfo):
-        self._pathInfo = pathInfo
+    def setPath_info(self, path_info):
+        self._path_info = path_info
 
     def getParameters(self):
         if self._parameters==None:
@@ -285,6 +285,9 @@ def _date_time_string():
 
 
 #~ $Log$
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release
+#~
 #~ Revision 7.5  2001/04/14 23:08:49  eikeon
 #~ removed old log messages
 #~

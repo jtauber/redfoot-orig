@@ -64,7 +64,7 @@ THE UI CLASS
     Typically this method will grab the parameters and path_info via
 
         parameters = request.getParameters()
-        path_info = request.getPathInfo()
+        path_info = request.get_path_info()
 
     and then will serve up the appropriate page given the value of
     path_info and the parameters.
@@ -101,6 +101,9 @@ PROVIDING HTTP TO THE UNDERLYING REDFOOT
 TODO
 
 $Log$
+Revision 8.0  2001/04/27 00:52:12  eikeon
+new release
+
 Revision 7.0  2001/03/26 23:41:04  eikeon
 NEW RELEASE
 

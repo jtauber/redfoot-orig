@@ -31,7 +31,7 @@ def handle_request(self, request, response):
         self.rednode.local.add(uploaded_uri, TYPE, LINK)
         self.rednode.local.add(uploaded_uri, CONTENT_TYPE_PROP, parameters["Content-Type"])
 
-    path_info = request.getPathInfo()
+    path_info = request.get_path_info()
 
     if path_info.find("/static")>=0 and path_info.find("..")&lt;0:
         type = self.rednode.getFirst("http://eikeon.com"+path_info, CONTENT_TYPE_PROP, None)

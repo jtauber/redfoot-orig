@@ -21,7 +21,7 @@ def __init__(self, rednode):
 
 def handle_request(self, request, response):
     # For now, write log to stderr.
-    path_info = request.getPathInfo()
+    path_info = request.get_path_info()
     sys.stderr.write(path_info+"\n")
     sys.stderr.flush()
 
@@ -35,7 +35,7 @@ def handle_request(self, request, response):
 
         
 def content(self, request, response):
-    path_info = request.getPathInfo()
+    path_info = request.get_path_info()
     if hasattr(self, path_info):
         apply(getattr(self, path_info), (request, response))
         return

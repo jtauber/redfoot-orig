@@ -15,7 +15,7 @@ def __init__(self, rednode):
 
 
 def handle_request(self, request, response):
-    path_info = request.getPathInfo()
+    path_info = request.get_path_info()
 
     # call handle_request on base classes
     bases = self.__class__.__bases__

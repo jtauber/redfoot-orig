@@ -25,7 +25,7 @@ class UI:
         self.editor = Editor(self.rednode)
         
     def handle_request(self, request, response):
-        path_info = request.getPathInfo()
+        path_info = request.get_path_info()
         if path_info == "/":
             self.main(response)
         else:
@@ -53,6 +53,9 @@ class UI:
         """)
 
 ## $Log$
+## Revision 8.0  2001/04/27 00:52:12  eikeon
+## new release
+##
 ## Revision 7.6  2001/04/24 05:42:53  eikeon
 ## all samples can now be run using 'run module_name'
 ##

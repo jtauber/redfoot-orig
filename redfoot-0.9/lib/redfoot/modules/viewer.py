@@ -14,7 +14,7 @@ class Viewer:
         self.response = response
         
         parameters = request.getParameters()        
-        path_info = request.getPathInfo()
+        path_info = request.get_path_info()
         
         if path_info == "/":
             response.setHeader("Content-Type", "text/xml")
@@ -457,6 +457,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release
+#~
 #~ Revision 1.2  2001/04/22 05:06:53  eikeon
 #~ RDF->HOME until we fix it to always return RDF
 #~

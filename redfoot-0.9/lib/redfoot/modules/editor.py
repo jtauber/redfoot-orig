@@ -13,7 +13,7 @@ class Editor(Viewer):
         self.request = request
         
         parameters = request.getParameters()
-        path_info = request.getPathInfo()
+        path_info = request.get_path_info()
 
         processor = parameters['processor']
         if processor == "update":
@@ -357,6 +357,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release
+#~
 #~ Revision 1.3  2001/04/24 04:21:07  eikeon
 #~ added serial number to end of generated URIs to ensure uniqeness
 #~
