@@ -17,6 +17,7 @@ class Triple(object):
 
     
 from redfootlib.rdf.store.memory import InMemoryStore
+from redfootlib.rdf.store.concurrent import Concurrent
 
-class TripleStore(Triple, InMemoryStore):
+class TripleStore(Triple, Concurrent, InMemoryStore):
     pass
