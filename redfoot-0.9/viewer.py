@@ -1,8 +1,13 @@
+# $Header$
+
+from redfoot.query import QueryStore
+
 class Viewer:
 
-    def __init__(self, writer, qstore):
+    def __init__(self, writer, storeNode):
         self.writer = writer;
-        self.qstore = qstore;
+        self.storeNode = storeNode
+        self.qstore = QueryStore(storeNode)
 
     def setWriter(self, writer):
         self.writer = writer
@@ -263,12 +268,8 @@ class Viewer:
         return string.join( string.split(s,'#') ,'%23')
 
     def RDF(self):
-        from storeio import StoreIO
-        sio = StoreIO()
-        # seems silly to get the store from the qstore only to have StoreIO create a new qstore from it
-        sio.setStore(self.qstore.store)
-        # the URI shouldn't be hardcoded like this. doesn't storeio know it??
-        sio.output(self.writer,"http://redfoot.sourceforge.met/2000/09/24")
+        #from storeio import StoreIO
+        self.storeNode.getStore().output(self.writer)
 
     def Triples(self):
         self.writer.write("""
@@ -294,3 +295,5 @@ class Viewer:
         </HTML>
         """)
 
+
+# $Log$
