@@ -47,13 +47,11 @@ class RedServer:
 
 
     def add_handler(self, handler):
-        adapter = RequestResponseAdapter(handler.handle_request)
-        self.hs.install_handler(adapter)
+        self.hs.install_handler(handler)
 
     def remove_handler(self, handler):
-        for adapter in self.hs.handlers:
-            if handler==adapter._handle_request:
-                self.hs.remove_handler(adapter)
+        for handler in self.hs.handlers:
+            self.hs.remove_handler(handler)
 
     def run(self):
         become_nobody()
@@ -64,6 +62,8 @@ class RedServer:
         try:
             loop()
         except KeyboardInterrupt:
+            for adapter in self.hs.handlers:
+                apply(getattr(adapter, "stop", lambda :None), ())
             print "Shut down."
         
         
@@ -78,13 +78,13 @@ def become_nobody():
 
 
             #path, params, query, fragment = request.split_uri()
-            path, params, query = split_uri(self.request.uri)            
+            path, params, query = split_uri(self.__request.uri)            
 
             self.path = path
             self.params = (params or ';')[1:]
             self.query = (query or '?')[1:]
             
-            self._handle_request(self, self)
+            super(AppAdapter, self).handle_request(self, self) 
 
             self.state = NEW_REQUEST
         
@@ -93,58 +93,60 @@ from urllib import unquote
 
 NEW_REQUEST, FINISH_REQUEST = [1, 2]
 
-class RequestResponseAdapter:
-    def __init__(self, handle_request):
-        self._handle_request = handle_request
-        self.state = NEW_REQUEST
+class AppAdapter(object):
+    "Object to adapt redfoot.module Apps so that they have medusa \
+    style handle_requests"
+    
+    def __init__(self):
+        self.state = NEW_REQUEST    
 
-    def match (self, request):
+    def match (self, __request):
         return 1        
 
-    def handle_request (self, request):
+    def handle_request (self, __request):        
         if self.state == NEW_REQUEST:
             self._header = {}
             self.head_sent = 0
             self._new_session_uri = None        
-            self.request = request        
+            self.__request = __request        
             self.data = ''
-            length = self.request.get_header('content-length')
+            length = self.__request.get_header('content-length')
         
             if length and length!='':
-                self.request.channel.set_terminator(int(length))            
-                request.collector = self
+                self.__request.channel.set_terminator(int(length))            
+                __request.collector = self
             else:
-                request.collector = self
+                __request.collector = self
                 self.state = FINISH_REQUEST
 
         if self.state == FINISH_REQUEST:
-            request['Server'] = "Redfoot HTTP Server"
-            request['Content-Type'] =  "text/html; charset=UTF-8"
-            request['Connection'] =  "close"
-            request['Expires'] = '-1'
+            __request['Server'] = "Redfoot HTTP Server"
+            __request['Content-Type'] =  "text/html; charset=UTF-8"
+            __request['Connection'] =  "close"
+            __request['Expires'] = '-1'
             self._parameters = None
         
-            #path, params, query, fragment = request.split_uri()
-            path, params, query = split_uri(self.request.uri)            
+            #path, params, query, fragment = __request.split_uri()
+            path, params, query = split_uri(self.__request.uri)            
             
             self.path = path
             self.params = (params or ';')[1:]
             self.query = (query or '?')[1:]
             
-            self._handle_request(self, self)
+            super(AppAdapter, self).handle_request(self, self)
 
             self.state = NEW_REQUEST
         
     def found_terminator (self):
-        self.request.channel.set_terminator('\r\n\r\n')
+        self.__request.channel.set_terminator('\r\n\r\n')
         self.state = FINISH_REQUEST
-        self.handle_request(self.request)
+        self.handle_request(self.__request)
 
     def collect_incoming_data (self, data):
         self.data = self.data + data
 
     def get_header(self, name, default=''):
-        return self.request.get_header(name) or default
+        return self.__request.get_header(name) or default
 
     def get_cookies(self):
         cookieStr = self.get_header('cookie')
@@ -206,14 +208,14 @@ class RequestResponseAdapter:
 
     def set_header(self, keyword, value):
         """Send a MIME header."""
-        self.request[keyword] = value
+        self.__request[keyword] = value
 
     def write(self, data):
         try:
             if self.head_sent==0:
                 self.head_sent = 1
                 self._send_head()
-            self.request.push(data)
+            self.__request.push(data)
         except IOError:
             raise BadRequestError("write failed")                            
 
@@ -227,6 +229,13 @@ class RequestResponseAdapter:
         
     def close(self):
         self.flush()
-        self.request.done()        
+        self.__request.done()        
 
-
+        
+from redfoot import module
+AppOrig = module.App
+class App(AppAdapter, AppOrig):
+    def __init__(self, rednode):
+        AppAdapter.__init__(self)
+        AppOrig.__init__(self, rednode)
+module.App = App

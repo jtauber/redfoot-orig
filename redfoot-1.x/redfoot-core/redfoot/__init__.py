@@ -3,6 +3,7 @@
 # install_redcode_module_importer
 from redfoot.redcode.importer import RedcodeModuleImporter
 
+from redfoot.server import medusaglue
 from redfoot.module import App
 
 __modules = {}
