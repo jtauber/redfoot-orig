@@ -24,7 +24,6 @@
 
     <red:facet name="class_list">
       <UL>
-        <!-- TODO: only visits local... is this what we want here? -->
         <red:visit match="(None, TYPE, CLASS)">
           <LI>
             <A HREF="grid_view?class={encode_URI(subject)}"
