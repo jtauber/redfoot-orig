@@ -13,12 +13,12 @@ Building Release from CVS
     - cvs commit -m "NEW RELEASE" -r y.0 
     - cvs update -A 
   - export to a new directory 
-    - cvs -d eikeon@cvs.redfoot.sourceforge.net:/cvsroot/redfoot export -r RELEASE_01_XX_XX -d redfoot-X.X.X redfoot-1.x
+
 
   - extract medusa into redfoot-X.X.X/medusa/
 
   - tar, zip
-    - tar -cvz --exclude=CVS_README --exclude=.cvsignore -f redfoot-1.5.0.tgz redfoot-1.5.0 
+    - tar -cvz --exclude=CVS_README --exclude=.cvsignore --exclude=install.py --exclude=*/setup.py -f redfoot-1.5.0.tgz redfoot-1.5.0 
 
   - release on sourceforge (or whereever hosted) 
   - send freshmeat announcement 
