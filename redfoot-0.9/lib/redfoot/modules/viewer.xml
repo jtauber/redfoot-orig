@@ -253,8 +253,7 @@ def encodeCharacterData(self, s):
     s = string.join(string.split(s, '&lt;'), '&amp;lt;')
     return s
 
-<r:response name="/">
-<r:exec>
+<r:response name="/"><r:exec>
 response.setHeader("Content-Type", "text/xml")
 parameters = request.get_parameters()
 s = parameters['subject']
