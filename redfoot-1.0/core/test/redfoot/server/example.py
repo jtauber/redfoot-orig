@@ -100,6 +100,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 5.0  2001/08/28 04:04:11  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 4.0  2001/08/21 22:09:52  eikeon
 #~ NEW RELEASE
 #~
