@@ -25,14 +25,11 @@ class UI:
         self.editor = Editor(self.rednode)
         
     def handle_request(self, request, response):
-        response.setHeader('Content-Type', 'application/zip')
-        import shutil
-        source = open("."+"/ebxmllib.zip", 'rb')
-        destination = response
-        shutil.copyfileobj(source, destination)
-        source.close()
-        return 
-        
+        path_info = request.get_path_info()
+        if path_info == "/":
+            self.main(response)
+        else:
+            self.editor.handle_request(request, response)
 
 
     def main(self, response):
