@@ -125,6 +125,11 @@ class QueryStore:
             for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
                 processResource(resource[0])
 
+    def parentTypesV(self, type, processType):
+	#TODO: could use visit rather than get
+        for subclassStatement in self.get(type, QueryStore.SUBCLASSOF, None):
+	    processType(subclassStatement[2])
+
     def propertyValuesV(self, subject, processPropertyValue):
         for statement in self.store.get(subject, None, None):
             property = statement[1]
@@ -185,6 +190,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 1.26  2000/10/08 07:03:29  jtauber
+# made new varieties of propertyValuesV that only visit local or neighbourhood
+#
 # Revision 1.25  2000/10/07 02:16:36  jtauber
 # implemented isKnownResource method and made a note about typeInh no longer being used
 #
