@@ -1,0 +1,22 @@
+2002/04/23
+	RELEASE 0.9.0
+
+	There is now a remove and a remove_triples (no more overloaded
+	remove).
+
+	Layer 2 has been merged with layer 1 since there is no longer a
+	need for them to be separate layers.
+
+	The generate_uri method has moved to LoadSave since triple stores
+	do not have a notion of a uri. [Also, with proper bNode support on
+	its way the need for a generate_uri might not be as high.]
+
+	Fixed bug in node's n3 function: URI -> URIRef 
+	
+	
+2002/04/13
+	RELEASE 0.9.0
+
+	Initial release after being split from redfootlib.
+
+
