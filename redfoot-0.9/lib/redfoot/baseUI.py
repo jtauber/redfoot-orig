@@ -20,10 +20,14 @@ class BaseUI:
     def path_match(self, path_info):
         return path_info[0:len(self.path)]==self.path
 
-    def call_editor(self, path_info, args):
-        self.editor.handler(path_info[len(self.path):], args)
+    def call_editor(self, request, response):
+        request.path_info = request.path_info[len(self.path):]
+        self.editor.handleRequest(request, response)
 
 # $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0
+#
 # Revision 1.2  2000/10/26 03:42:33  eikeon
 # split lib/redfoot into lib/redfoot, lib/rdf
 #

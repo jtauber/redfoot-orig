@@ -5,11 +5,12 @@ from redfoot.baseUI import BaseUI
 
 class SampleUI(BaseUI):
 
-    def handler(self, path_info, args):
-        ""
+    def handleRequest(self, request, response):
+        args = request.parameters
+        path_info = request.path_info
 
         if self.path_match(path_info):
-            self.call_editor(path_info, args)
+            self.call_editor(request, response)
         elif path_info=="/":
             self.main()
         else:
@@ -55,6 +56,9 @@ if __name__ == '__main__':
     runServer(sys.argv[1:], SampleUI)
 
 # $Log$
+# Revision 1.2  2000/10/26 03:42:33  eikeon
+# split lib/redfoot into lib/redfoot, lib/rdf
+#
 # Revision 1.1  2000/10/25 20:40:31  eikeon
 # changes relating to new directory structure
 #

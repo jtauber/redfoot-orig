@@ -4,39 +4,39 @@ from redfoot.viewer import Viewer
 
 class Editor(Viewer):
 
-    def handler(self, path_info, args):
-        if args.has_key("processor"):
-            if args["processor"][0] == "update":
-                self.update(args)
-            elif args["processor"][0] == "create":
-                self.create(args)
-            elif args["processor"][0] == "save":
-                self.save()
-            elif args["processor"][0] == "delete":
-                self.delete(args)
-            elif args["processor"][0][0:4] == "del_":
-                self.deleteProperty(args)
-            elif args["processor"][0][0:6] == "reify_":
-                self.reifyProperty(args)
-            elif args["processor"][0] == "connect":
-                self.connect(args)
-            elif args["processor"][0] == "showNeighbours":
-                self.showNeighbours=1
-            elif args["processor"][0] == "hideNeighbours":
-                self.showNeighbours=0
+    def handleRequest(self, request, response):
+        parameters = request.getParameters()
+        path_info = request.path_info
+
+        processor = parameters['processor']
+        if processor == "update":
+            self.update(parameters)
+        elif processor == "create":
+            self.create(parameters)
+        elif processor == "save":
+            self.save()
+        elif processor == "delete":
+            self.delete(parameters)
+        elif processor[0:4] == "del_":
+            self.deleteProperty(parameters)
+        elif processor[0:6] == "reify_":
+            self.reifyProperty(parameters)
+        elif processor == "connect":
+            self.connect(parameters)
+        elif processor == "showNeighbours":
+            self.showNeighbours=1
+        elif processor == "hideNeighbours":
+            self.showNeighbours=0
     
         if path_info == "/edit":
-            self.edit(args['uri'][0]) # TODO: check why values of args are lists
+            self.edit(parameters['uri']) 
 	elif path_info == "/add":
-            if args.has_key("type"):
-                type = args["type"][0]
-            else:
-                type = None
-            self.add(type)
+            self.add(parameters['type'])
         elif path_info == "/connect":
             self.connectPage()
         else:
-            Viewer.handler(self,path_info,args)
+            request.path_info = path_info
+            Viewer.handleRequest(self, request, response)
 
     def menuBar(self):
         Viewer.menuBar(self)
@@ -228,7 +228,7 @@ class Editor(Viewer):
                 <TD>""")
 
         self.property_num = 0
-        if type == None:
+        if type == "":
             self.writer.write("""
                   <SELECT SIZE="1" NAME="type">
             """)
@@ -270,49 +270,44 @@ class Editor(Viewer):
           </HTML>
         """)
 
-    def update(self, params):
-        subject = params["uri"][0]
-        count = params["prop_count"][0]
+    def update(self, parameters):
+        subject = parameters['uri']
+        count = parameters['prop_count']
         i = 0
 	self.qstore.getStore().remove(subject)
         while i < int(count):
             i = i + 1
-            property = params["prop%s_name" % i][0]
-            if params.has_key("prop%s_value" % i):
-                value = params["prop%s_value" % i][0]
-            else:
-                value = ""
-            isLiteral = params["prop%s_isLiteral" % i][0]
+            property = parameters['prop%s_name' % i]
+            value = parameters['prop%s_value' % i]
+            isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
                 value = "^" + value
             self.qstore.getStore().add(subject, property, value)
-        if params.has_key("newProperty"):
-            newProperty = params["newProperty"][0]
-            if newProperty!=None and newProperty!="":
-                self.qstore.getStore().add(subject, newProperty, "")
+        newProperty = parameters['newProperty']
+        if newProperty!="":
+            self.qstore.getStore().add(subject, newProperty, "")
 
-    def delete(self, params):
-        subject = params["uri"][0]
+    def delete(self, parameters):
+        subject = parameters['uri']
+        if subject=="":
+            raise "TODO: invalid subject"
         self.qstore.getStore().remove(subject, None, None)
 
-    def deleteProperty(self, params):
-        property_num = params["processor"][0][4:]
-        subject = params["uri"][0]
-        property = params["prop%s_name" % property_num][0]
+    def deleteProperty(self, parameters):
+        property_num = parameters['processor'][4:]
+        subject = parameters['uri']
+        property = parameters['prop%s_name' % property_num]
         vName = "prop%s_value" % property_num
-        if params.has_key(vName):
-            value = params[vName][0]
-        else:
-            value = ''
+        value = parameters[vName]
         if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
         self.qstore.getStore().remove(subject, property, value)
 
-    def reifyProperty(self, params):
-        property_num = params["processor"][0][6:]
-        subject = params["uri"][0]
-        property = params["prop%s_name" % property_num][0]
-        value = params["prop%s_value" % property_num][0]
+    def reifyProperty(self, parameters):
+        property_num = parameters['processor'][6:]
+        subject = parameters['uri']
+        property = parameters['prop%s_name' % property_num]
+        value = parameters['prop%s_value' % property_num]
         if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
         self.qstore.reify(self.storeNode.getStore().URI+self.generateURI(), subject, property, value)
@@ -321,8 +316,8 @@ class Editor(Viewer):
 	import time
         return "#T%s" % time.time()
 
-    def create(self, params):
-        subject = params["uri"][0]
+    def create(self, parameters):
+        subject = parameters['uri']
 
         if subject[0]=="#":
             subject = self.qstore.getStore().getStore().URI + subject
@@ -331,24 +326,25 @@ class Editor(Viewer):
 
 
         # TODO: what to do in the case it already exists?
-        self.qstore.getStore().add(subject, self.qstore.LABEL, "^"+params["label"][0])
-        self.qstore.getStore().add(subject, self.qstore.TYPE, params["type"][0])
+        self.qstore.getStore().add(subject, self.qstore.LABEL, "^"+parameters['label'])
+        self.qstore.getStore().add(subject, self.qstore.TYPE, parameters['type'])
 
-        if params.has_key("prop_count"):
-            count = params["prop_count"][0]
-            i = 0
-            while i < int(count):
-                i = i + 1
-                property = params["prop%s_name" % i][0]
-                valueName = "prop%s_value" % i
-                if params.has_key(valueName):
-                    value = params[valueName][0]
-                else:
-                    value = ""
-                isLiteral = params["prop%s_isLiteral" % i][0]
-                if isLiteral == "yes":
-                    value = "^" + value
-                self.qstore.getStore().add(subject, property, value)
+        count = parameters["prop_count"]
+        if count=="":
+            count=0
+        else:
+            count = int(count)
+        
+        i = 0
+        while i < count:
+            i = i + 1
+            property = parameters['prop%s_name' % i]
+            valueName = "prop%s_value" % i
+            value = parameters[valueName]
+            isLiteral = parameters['prop%s_isLiteral' % i]
+            if isLiteral == "yes":
+                value = "^" + value
+            self.qstore.getStore().add(subject, property, value)
 
     def save(self):
         self.qstore.getStore().getStore().save()
@@ -397,12 +393,16 @@ class PeerEditor(Editor):
           </HTML>
           """)
 
-    def connect(self, params):
-        if params.has_key("uri"):
-            self.qstore.getStore().connectTo(params["uri"][0])
+    def connect(self, parameters):
+        uri = parameters["uri"]
+        if uri!="":
+            self.qstore.getStore().connectTo(uri)
 
 
 # $Log$
+# Revision 3.1  2000/10/29 01:54:35  eikeon
+# fixed Unknown Attribute property_num bug I introduced just before 0.9.1 ;(
+#
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0
 #

@@ -17,7 +17,10 @@ class ExampleHandler:
         self.lock = threading.Lock()
 
     def handleRequest(self, request, response):
-        args = request.parameters
+        parameters = request.getParameters()
+        headers = request.getHeaders()
+        cookies = request.getCookies()
+        
         path_info = request.path_info
 
         self.lock.acquire()
@@ -31,11 +34,24 @@ class ExampleHandler:
 <H1>Example</H1>
 """)
 
-            response.write("<H2>Args:</H2>")
+            response.write("<H2>Parameters:</H2>")
             response.write("<DL>")
-            for arg in args.keys():
-                response.write("<DT>%s</DT><DD>%s</DD>" % (arg, args[arg]))
+            for arg in parameters.keys():
+                response.write("<DT>%s</DT><DD>%s</DD>" % (arg, parameters[arg]))
             response.write("</DL>")
+
+            response.write("<H2>Headers:</H2>")
+            response.write("<DL>")
+            for arg in headers.keys():
+                response.write("<DT>%s</DT><DD>%s</DD>" % (arg, headers[arg]))
+            response.write("</DL>")
+
+            response.write("<H2>Cookies:</H2>")
+            response.write("<DL>")
+            for arg in cookies.keys():
+                response.write("<DT>%s</DT><DD>%s</DD>" % (arg, cookies[arg].value))
+            response.write("</DL>")
+
             response.write("""
 </BODY>
 </HTML>
@@ -73,5 +89,8 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 3.1  2000/10/27 16:20:02  eikeon
+# small cleanup... mostly formatting
+#
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0

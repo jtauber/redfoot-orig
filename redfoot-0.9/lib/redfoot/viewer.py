@@ -17,21 +17,20 @@ class Viewer:
         self.writer = writer
 
 
-    def handler(self, path_info, args):
-        ""
+    def handleRequest(self, request, response):
+        parameters = request.getParameters()        
+        path_info = request.path_info
         
         if path_info == "/":
             self.RDF()
         elif path_info == "/subclass":
-            if args.has_key("uri"):
-                root = args["uri"][0] # TODO: check why values of args are lists
-            else:
+            root = parameters['uri']
+            if root=="":
                 root = QueryStore.RESOURCE
             self.subclass(root)
         elif path_info == "/subclassNR":
-            if args.has_key("uri"):
-                root = args["uri"][0] # TODO: check why values of args are lists
-            else:
+            root = parameters['uri']
+            if root=="":
                 root = QueryStore.RESOURCE
             self.subclass(root, 0)
         elif path_info == "/classList":
@@ -41,7 +40,7 @@ class Viewer:
         elif path_info == "/css":
             self.css()
         elif path_info == "/view":
-            self.view(args['uri'][0]) # TODO: check why values of args are lists
+            self.view(parameters['uri'])
         else:
             # make a proper 404
             self.writer.write("unknown PATH of '%s'" % path_info)
@@ -377,6 +376,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0
+#
 # Revision 1.2  2000/10/26 03:42:33  eikeon
 # split lib/redfoot into lib/redfoot, lib/rdf
 #

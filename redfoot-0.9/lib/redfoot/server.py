@@ -18,14 +18,11 @@ class RedfootHandler:
         self.viewer = None
 
     def handleRequest(self, request, response):
-        args = request.parameters
-        path_info = request.path_info
-
         self.lock.acquire()
         try:
             viewer = self.viewer
             viewer.setWriter(response)
-            viewer.handler(path_info, args)
+            viewer.handleRequest(request, response)
         finally:
             self.lock.release()            
 
@@ -99,6 +96,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0
+#
 # Revision 1.5  2000/10/26 21:29:45  eikeon
 # tweaked handling of path; added additional startup message for where to find editor
 #

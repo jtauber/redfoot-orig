@@ -28,13 +28,8 @@ class Server:
         while 1:
             try:
                 clientSocket, client_address = self.socket.accept()
-            except socket.error:
-                #TODO: log
-                break
-
-            try:
                 self.queue.put(clientSocket)
-            except:
+            except socket.error:
                 #TODO: log
                 break
 
@@ -45,7 +40,6 @@ class Server:
         t = threading.Thread(target = self._acceptRequests, args = ())
         t.setDaemon(1)
         t.start()
-
 
     def addHandler(self, handler):
         class Handler:
@@ -65,7 +59,6 @@ class Server:
         t.start()
 
 
-        
 class ServerConnection:
 
     def __init__(self, handler):
@@ -109,7 +102,7 @@ class BadRequestError(Error):
 
 
 class Request:
-    
+
     def setClientSocket(self, clientSocket):
         rfile = clientSocket.makefile('rb', 0)
 
@@ -125,12 +118,12 @@ class Request:
         if i==-1:
             self.path_info = self.path
             self.query_string = ""
-            self.parameters = {}
+            parameters = {}
         else:
             self.path_info = self.path[:i]
             self.query_string = self.path[i+1:]
             import cgi
-            self.parameters = cgi.parse_qs(self.query_string)
+            parameters = cgi.parse_qs(self.query_string)
 
         headers = {}
         line = rfile.readline()
@@ -149,7 +142,25 @@ class Request:
             import cgi
             params = cgi.parse_qs(body)
             for param in params.keys():
-                self.parameters[param] = params[param]
+                parameters[param] = params[param]
+
+        self.parameters = Parameters(parameters)
+        self.headers = Headers(headers)
+
+
+    def getParameters(self):
+        return self.parameters
+
+    def getHeaders(self):
+        return self.headers
+
+    def getCookies(self):
+        cookieStr = self.headers['cookie']
+        
+        import Cookie
+        cookies = Cookie.SmartCookie()
+        cookies.load(cookieStr)
+        return cookies
 
 
 class Response:
@@ -166,6 +177,15 @@ class Response:
         self.send_header('Date', date_time_string())
         self.send_header('Expires', "-1")
         self.send_header('Connection', "close")
+        import Cookie
+        cookie = Cookie.SmartCookie()
+        cookie['foo'] = "bar"
+        cookie['foo']['path'] = "/"
+        cookie['foo']['Version'] = "1"
+        cookie['biz'] = "baz"
+        cookie['biz']['path'] = "/"
+        cookie['biz']['Version'] = "1"
+        self.write(cookie.output())
         self.write("\r\n")
 
     
@@ -194,6 +214,27 @@ class Response:
         except IOError:
             raise BadRequestError("close failed")            
 
+
+from UserDict import UserDict
+
+class Parameters(UserDict):
+    def __getitem__(self, key):
+        if self.data.has_key(key):
+            list = self.data[key]
+            if not len(list)==1:
+                "Parameter does not have exactly one value"
+            return list[0]
+        else:
+            return ""
+
+class Headers(UserDict):
+    def __getitem__(self, key):
+        if self.data.has_key(key):
+            return self.data[key]
+        else:
+            return ""
+
+
 def date_time_string():
     """Return the current date and time formatted for a message header."""
 
@@ -214,5 +255,8 @@ def date_time_string():
 
 
 # $Log$
+# Revision 3.1  2000/10/27 16:20:02  eikeon
+# small cleanup... mostly formatting
+#
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0
