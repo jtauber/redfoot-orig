@@ -30,9 +30,9 @@ class HandlerBase:
         self.parser = parser
         self.adder = adder
         self.parent = parent
-        self.setHandlers()
+        self.set_handlers()
 
-    def setHandlers(self):
+    def set_handlers(self):
         pass
 
     def char(self, data):
@@ -42,7 +42,7 @@ class HandlerBase:
         pass
     
     def end(self, name):
-        self.parent.setHandlers()
+        self.parent.set_handlers()
 
     
 class RootHandler(HandlerBase):
@@ -55,7 +55,7 @@ class RootHandler(HandlerBase):
         else:
             pass
 
-    def setHandlers(self):
+    def set_handlers(self):
         self.parser.StartElementHandler = self.child
 
 
@@ -63,7 +63,7 @@ class RDFHandler(HandlerBase):
     def __init__(self, parser, adder, parent):
         HandlerBase.__init__(self, parser, adder, parent)
 
-    def setHandlers(self):
+    def set_handlers(self):
         self.parser.StartElementHandler = self.child
         self.parser.CharacterDataHandler = self.char
         self.parser.EndElementHandler = self.end
@@ -97,7 +97,7 @@ class DescriptionHandler(HandlerBase):
             else:
                 self.adder(self.subject, att, literal(atts[att]))
 
-    def setHandlers(self):
+    def set_handlers(self):
         self.parser.StartElementHandler = self.child
         self.parser.CharacterDataHandler = self.char
         self.parser.EndElementHandler = self.end
@@ -137,7 +137,7 @@ class PropertyHandler(HandlerBase):
         else:
             self.object = literal("")
 
-    def setHandlers(self):
+    def set_handlers(self):
         self.parser.StartElementHandler = self.child
         self.parser.CharacterDataHandler = self.char
         self.parser.EndElementHandler = self.end
@@ -154,9 +154,12 @@ class PropertyHandler(HandlerBase):
 
     def end(self, name):
         self.adder(self.parent.subject, self.predicate, self.object)
-        self.parent.setHandlers()
+        self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.2  2000/12/17 21:11:11  eikeon
+#~ changed a couple mixed case names to _ style names
+#~
 #~ Revision 5.1  2000/12/17 20:40:47  eikeon
 #~ started adding exception handling code around parse
 #~

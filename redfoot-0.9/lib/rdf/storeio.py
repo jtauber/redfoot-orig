@@ -41,10 +41,10 @@ class StoreIO:
         from rdf.serializer import Serializer
         serializer = Serializer()
 
-        serializer.setStream(stream)
-        serializer.setBaseURI(URI)
+        serializer.set_stream(stream)
+        serializer.set_base_URI(URI)
 
-        self.visit(lambda s, p, o, registerProperty=serializer.registerProperty: registerProperty(p), subject, predicate, object)
+        self.visit(lambda s, p, o, register_property=serializer.register_property: register_property(p), subject, predicate, object)
 
         serializer.start()
         self.visit(serializer.triple, subject, predicate, object)
@@ -74,9 +74,9 @@ class AutoSaveStoreIO(TripleStoreIO):
         self.dirtyBit = DirtyBit()
         TripleStoreIO.load(self, location, URI)
         self.dirtyBit.clear() # we just loaded... therefore we are clean
-        self._startThread() 
+        self._start_thread() 
 
-    def _startThread(self, notMoreOftenThan=10):
+    def _start_thread(self, notMoreOftenThan=10):
         """Not more often then is in seconds"""
         import threading
         t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
@@ -139,6 +139,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 5.4  2000/12/19 05:48:00  eikeon
+#~ URI defaults to None so that output may be called without one; calling of __init__'s cleaned up
+#~
 #~ Revision 5.3  2000/12/17 21:12:46  eikeon
 #~ fixed typo
 #~

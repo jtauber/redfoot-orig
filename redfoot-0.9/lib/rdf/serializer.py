@@ -17,7 +17,7 @@ def encode(s):
     s = string.join(string.split(s, '"'), '&quot;')
     return s
 
-def splitProperty(property):
+def split_property(property):
     length = len(property)
     for i in range(length):
         if not property[-1-i] in namechars:
@@ -35,17 +35,17 @@ class Serializer:
     def __init__(self):
         self.namespaces = {}
         self.namespaceCount = 0
-        self.currentSubject = None
+        self.current_subject = None
         self.baseURI = None
 
-    def setStream(self, stream):
+    def set_stream(self, stream):
         self.stream = stream
 
-    def setBaseURI(self, baseURI):
+    def set_base_URI(self, baseURI):
         self.baseURI = baseURI
 
-    def registerProperty(self, property):
-        uri = splitProperty(property)[0]
+    def register_property(self, property):
+        uri = split_property(property)[0]
         if not self.namespaces.has_key(uri):
             self.namespaceCount = self.namespaceCount + 1
             prefix = "n%s" % self.namespaceCount
@@ -64,23 +64,23 @@ class Serializer:
         self.stream.write( ">\n" )
 
     def end(self):
-        if self.currentSubject != None:
-            self.subjectEnd()
+        if self.current_subject != None:
+            self.subject_end()
         self.stream.write( "</%s:RDF>\n" % self.namespaces[self.rdfns] )
 
-    def subjectStart(self, subject):
+    def subject_start(self, subject):
         self.stream.write( "  <%s:Description" % self.namespaces[self.rdfns] )
         if self.baseURI and subject[0:len(self.baseURI)+1]==self.baseURI+"#":
             self.stream.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.baseURI)+1:]) )
         else:
             self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], encode(subject)) )
 
-    def subjectEnd(self):
-        self.currentSubject = None
+    def subject_end(self):
+        self.current_subject = None
         self.stream.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
 
     def property(self, predicate, object):
-        (namespace, localName) = splitProperty(predicate)
+        (namespace, localName) = split_property(predicate)
 
         # TODO: Is this what we want to do if object is None?
         if object==None or object=="":
@@ -94,14 +94,17 @@ class Serializer:
             self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], encode(object)) )
 
     def triple(self, subject, predicate, object):
-        if self.currentSubject != subject:
-            if self.currentSubject != None:
-                self.subjectEnd()
-            self.subjectStart(subject)
-            self.currentSubject = subject
+        if self.current_subject != subject:
+            if self.current_subject != None:
+                self.subject_end()
+            self.subject_start(subject)
+            self.current_subject = subject
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 5.5  2000/12/19 05:37:08  eikeon
+#~ Serializer will now also work with no baseURI
+#~
 #~ Revision 5.4  2000/12/17 20:55:27  eikeon
 #~ pulled len(property) out of loop
 #~
