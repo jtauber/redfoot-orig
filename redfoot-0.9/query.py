@@ -121,8 +121,11 @@ class QueryStore:
     # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
         for klass in self.store.get(None, QueryStore.TYPE, QueryStore.CLASS):
-            processClass(klass[0])
+            first = 1
             for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
+                if first:
+                    processClass(klass[0])
+                    first = 0
                 processResource(resource[0])
 
     def parentTypesV(self, type, processType):
@@ -190,6 +193,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 2.0  2000/10/14 01:14:04  jtauber
+# next version
+#
 # Revision 1.27  2000/10/08 23:28:01  jtauber
 # added parent types visitor function
 #

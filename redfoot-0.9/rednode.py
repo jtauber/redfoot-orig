@@ -110,12 +110,17 @@ class StoreNode:
     def resourcesByClassV(self, processClass, processResource):
         from redfoot.query import QueryStore
         for klass in self.get(None, QueryStore.TYPE, QueryStore.CLASS):
-            processClass(klass[0])
+            first = 1
             for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
+                if first:
+                    processClass(klass[0])
+                    first = 0
                 processResource(resource[0])
 
 
     # Or for the adventurous :)
+    # but note, this one will call processClass even for classes with no
+    # instances unlike resourcesByClassV)
     def resourcesByClassVV(self, processClass, processResource):
         class Visitor:
             def __init__(self, store, processClass, processResource):
@@ -156,6 +161,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 # $Log$
+# Revision 2.0  2000/10/14 01:14:04  jtauber
+# next version
+#
 # Revision 1.8  2000/10/13 23:42:28  jtauber
 # moved rdf files from tests to top-level
 #
