@@ -181,12 +181,14 @@ class PropertyHandler(HandlerBase):
         self.object = self.object + data
 
     def end(self, name):
-        self.object = self.object.encode('UTF-16')
         self.adder(self.parent.subject, self.predicate, self.object)
         #self.adder(self.parent.subject, self.predicate, u"self.object")
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.6  2000/12/23 02:30:17  eikeon
+#~ added warnings and test cases for when there is no RDF root element (or when there is more than one RDF element)
+#~
 #~ Revision 5.5  2000/12/23 01:23:56  eikeon
 #~ added warnings and test cases for when there is no RDF root element (or when there is more than one RDF element)
 #~
