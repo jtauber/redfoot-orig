@@ -7,7 +7,7 @@
   from redfoot.rdf.objects import *
   from redfoot.util import *
 
-  from redfoot.module import ParentModule
+  from redfoot.server.module import ParentModule
 
   REQUIRED_PROPERTY = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#requiredProperty")
   YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")

@@ -1,5 +1,7 @@
 import new
-import redfoot
+
+from redfoot.server import register_module, get_module
+
 from string import find, split, join, strip, lstrip, whitespace
 
 from redfoot.xml.handler import HandlerBase as AbstractHandlerBase
@@ -44,7 +46,7 @@ def sub_modules(self):
     import sys        
     list = []
     for (instance_name, class_name) in getattr(self.__class__, '_RF_sub_modules', []):
-        mod_class = redfoot.get_module(class_name)
+        mod_class = get_module(class_name)
         list.append((instance_name, mod_class))
     return list
 
@@ -204,10 +206,10 @@ class CodeHandler(HandlerBase):
                 bases = "(" + atts['bases'] + ",)"
                 base_classes = eval(bases, self.globals, self.locals)
             else:
-                base_classes = (__import__('redfoot.module', self.globals, self.locals, ['ParentModule']).ParentModule, )
+                base_classes = (__import__('redfoot.server.module', self.globals, self.locals, ['ParentModule']).ParentModule, )
             eh = ModuleHandler(self.parser, self, atts['name'], base_classes)
         elif name==APP:
-            base_classes = (__import__('redfoot.module', self.globals, self.locals, ['App']).App, )
+            base_classes = (__import__('redfoot.server.module', self.globals, self.locals, ['App']).App, )
             eh = ModuleHandler(self.parser, self, atts['name'], base_classes)
             
         else:
@@ -258,7 +260,7 @@ class ModuleHandler(HandlerBase):
         classobj = new.classobj(self.name.encode('ascii'), self.base_classes, self.locals )
         classobj.sub_modules = sub_modules
         module = self.module
-        redfoot.register_module(self.name, classobj)
+        register_module(self.name, classobj)
         module.__dict__[classobj.__name__] = classobj
         module.__dict__['_RF_APP'] = classobj
         module.__dict__['_RF_get_app'] = lambda uri, app_class=classobj: app_class(uri)

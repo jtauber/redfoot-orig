@@ -1,4 +1,4 @@
-from redfoot.module import Module
+from redfoot.server.module import Module
 import os
 
 class Static(Module):

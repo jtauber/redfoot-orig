@@ -15,5 +15,5 @@ class HelloWorld(App):
         response.close()
 
 # 
-from redfoot import register_app
+from redfoot.server import register_app
 register_app("http://redfoot.net/2002/04/08/HelloWorld", HelloWorld)

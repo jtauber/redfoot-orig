@@ -9,9 +9,9 @@ import dev_hack # Needed only when developing redfoot-core
 
 from redfoot.rednode import RedNode
 from redfoot.server import RedServer
-from redfoot import get_apps as get_app_classes
+from redfoot.server import get_apps as get_app_classes
 from redfoot.command_line import process_args
-
+from redfoot import redcode # Installs redcode imported
 
 # Let redfoot.command_line process_args for us
 (uri, location, address, port) =  process_args()
