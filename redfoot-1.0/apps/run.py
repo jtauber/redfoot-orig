@@ -4,10 +4,14 @@ def usage():
     
 import string, sys, getopt
 
-sys.path.extend(('../core', '../components'))
+import os
+dir = "../" + os.sep
+sys.path.extend((dir + "core", dir + "components"))
 
 # set default value
+host = 'localhost'
 port = 8000
+
 optlist, args = getopt.getopt(sys.argv[1:], 'p:')
 for optpair in optlist:
     opt, value = optpair
@@ -25,10 +29,15 @@ if module[-4:] == ".xml":
 from redfoot.server.http.daemon import RedDaemon
 from redcode.handlers import RedcodeRootHandler
 
-daemon = RedDaemon(('localhost', port), module, RedcodeRootHandler)
+daemon = RedDaemon((host, port), module, RedcodeRootHandler)
 
 try:
     daemon.run()
+    if port==80:
+        print "Running at http://%s/" % host
+    else:
+        print "Running at http://%s:%s" % (host, port)
+        
 except ImportError, msg:
     print "%s: %s" % (msg.__class__.__name__, msg)
     
