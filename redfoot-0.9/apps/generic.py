@@ -7,13 +7,6 @@ from redfoot.server import RedServer
 from rdf.query import QueryStore
 from rdf.const import *
 
-if __name__ == '__main__':
-
-    (port, location, uri) = get_args()
-
-    server = RedServer(('', port))
-    server.run("generic", location, uri)
-
 
 def get_args():
 
@@ -59,6 +52,15 @@ class UI:
 
     def handle_request(self, request, response):
         self.editor.handle_request(request, response)
+
+
+if __name__ == '__main__':
+
+    (port, location, uri) = get_args()
+
+    server = RedServer(('', port))
+    server.run("generic", location, uri)
+
 
 
 
