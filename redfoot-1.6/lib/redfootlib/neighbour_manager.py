@@ -27,13 +27,13 @@ class NeighbourManager(object):
         self.neighbours.append_store(neighbour)
         self.remove(URIRef(location), TYPE, NEIGHBOUR)
         self.add(URIRef(location), TYPE, NEIGHBOUR)        
-        self.remove(URIRef(location), CONNECTED, None)
+        self.remove_triples(URIRef(location), CONNECTED, None)
         self.add(URIRef(location), CONNECTED, YES)        
 
     def disconnect_from(self, uri):
         for store in [store for store in self.neighbours if store.uri==uri]:
             self.neighbours.remove(store)
-            self.remove(URIRef(uri), CONNECTED, None)
+            self.remove_triples(URIRef(uri), CONNECTED, None)
             self.add(URIRef(uri), CONNECTED, NO)
             # Do we want to remember our neighbour?
             if not self.exists(URIRef(uri), TYPE, NEIGHBOUR):
