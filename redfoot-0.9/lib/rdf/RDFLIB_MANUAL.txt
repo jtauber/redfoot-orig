@@ -2,168 +2,45 @@ $Header$
 
 RDF LIB DEVELOPERS MANUAL
 
-The rdf package provides a Python library for processing RDF including:
+The rdf package provides a Python library for processing RDF
+including:
     - parsing
     - storing
     - serializing
     - querying
 
-Although designed specifically for use in Redfoot, the rdf package should be
-of use to anyone developing RDF applications in Python.
+Although designed specifically for use in Redfoot, the rdf package
+should be of use to anyone developing RDF applications in Python.
 
-The rdf package is written in pure Python and requires Python 2.0 + PyExpat.
+The rdf package is written in pure Python and requires Python 2.0 +
+PyExpat.
 
 This document assumes a knowledge of RDF.
 
-NOTE: Redfoot makes extensive use of callbacks as a means of processing RDF
-structures rather than building large temporary data structures in memory.
+ARCHITECTURE NOTES
 
+* Redfoot makes extensive use of callbacks as a means of processing
+  RDF structures rather than building large temporary data structures
+  in memory.
 
-MODULES AND THEIR CLASSES/FUNCTIONS
+* Redfoot also makes use of multiple inheritance to combine
+  functionality provided by independent classes
 
-There are a small number of additional classes and functions not listed here
-but they are not typically called by code outside the module they are in.
+MODULES
 
-store.py
-    class TripleStore         a database of RDF triples
+rdf.const      - useful common RDF constants
+rdf.literal    - code for treating strings as literals vs resources
+rdf.store      - an RDF triple store
+rdf.parser     - RDF parser
+rdf.serializer - RDF serializer
+rdf.storeio    - aggreates a store with a parser and serializer
+rdf.query      - layer to assist with RDF queries
 
-literal.py		      functions for dealing with the ^ literal hack
+MODULE RDF.CONST
 
-parser.py
-    function parseRDF         top-level function for parsing RDF
-
-serializer.py
-    class Serializer          class with callbacks for serializing RDF to
-                              a stream
-
-storeio.py
-    class StoreIO             class providing I/O for a store by aggregating
-                              a store, a location, a URI, a parser and a
-                              serializer
-    class AutoSaveStoreIO     an extension of StoreIO that autosaves 
-
-query.py
-    class QueryStore          a wrapper around a store providing an extensive
-                              collection of higher-level query functions
-
-CLASS TRIPLESTORE (store.py)
-
-The TripleStore class represents an in-memory RDF model.
-
-add(subject,predicate,object)
-    add the given statement to the store
-
-remove(subject,predicate,object)
-    removes any statements matching the given subject, predicate and object
-    where a value of None for an argument means a wildcard.
-    eg remove("foo", None, None) means remove all statements about "foo"
-
-get(subject,predicate,object)
-    return a list of triples matching the given subject, predicate and object
-    where a value of None for an argument means a wildcard.
-    eg get(None, "foo", "bar") means all statements where the predicate is
-       "foo" and the object "bar" regardless of subject
-
-visit(callback,subject,property,value)
-    similar to get except that instead of return the result, visit takes
-    a callback function of signature callback(subject,predicate,object) that
-    then gets called for every statement matching the subject, predicate
-    and object given to this visit method.
-
-
-LITERAL HANDLING FUNCTIONS (literal.py)
-
-To distinguish values of properties that are URIs of resources from
-literals, the RDF package internally prepends all literals with "^".
-
-This choice is contained within this one module. All other modules use the
-functions in this module to hide this particular implementation hack.
-
-literal(str)
-    turns the given string into a literal
-
-is_literal(str)
-    tests whether the given object string is a literal
-
-un_literal(str)
-    given a literal, return the actual string value
-
-
-FUNCTION PARSERDF (parser.py)
-
-parseRDF(adder,location,baseURI)
-    parses the RDF at the given location. A base URI can be specified if different
-    from the actual location. The parser works by calling adder for each triple.
-    adder must have signature adder(subject,predicate,object)
-
-TODO: explain handlers (perhaps as an advanced topic in an appendix)
-
-
-CLASS SERIALIZER (serializer.py)
-
-setStream(stream)
-    set the stream to which the serialization is to take place
-
-setBase(base)
-    set the baseURI to assume
-    TODO: should this be baseURI?
-
-registerProperty(property)
-    this has to be done for each property before start() is run. This is
-    necessary to set up the namespace declarations which depend on the
-    properties in the RDF
-
-start()
-    start the serialization
-
-end()
-    end the serialization
-
-subjectStart(subject)
-    called to start the serialization of the given subject
-
-subjectEnd()
-    called to end the serialization of the current subject
-
-property(predicate,object)
-    called between subjectStart and subjectEnd for each statement made about
-    that subject
-
-triple(subject,predicate,object)
-    an alternative to using subjectStart/subjectEnd/property. Called between
-    start and end for each triple
-
-
-CLASS STOREIO (storeio.py)
-
-A class providing I/O for a store by aggregating a store, a location, a URI,
-a parser and a serializer.
-
-StoreIO(store)
-    constructor takes the TripleStore to use
-
-visit/get/remove/add
-    calls the corresponding methods on the underlying triple store
-
-load(location,URI)
-    TODO
-
-save()
-    TODO
-
-saveAs(location,URI)
-    TODO
-
-output(stream,URI,subject,predicate,object)
-    TODO
-
-
-CLASS QUERYSTORE (query.py)
-
-Either pass the underlying store in the constructor or using setStore(store)
-
-QueryStore provides constants for the URIs of common resources defined in the
-RDF syntax & model and RDF schema specifications. These include:
+This module provides constants for the URIs of common resources
+defined in the RDF syntax & model and RDF schema specifications. These
+include:
 
 Syntax
     type
@@ -182,48 +59,195 @@ Schema
     domain
     Literal
 
-get(subject,predicate,object)
-    see get in TripleStore
+MODULE RDF.LITERAL
 
-label(subject)
-    return the first label of the given subject or the subject URI if there
-    is no label
+To distinguish values of properties that are URIs of resources from
+literals, the RDF package internally prepends all literals with "^".
+
+This choice is contained within this one module. All other modules use
+the functions in this module to hide this particular implementation
+hack.
+
+literal(str)
+    turns the given string into a literal
+
+is_literal(str)
+    tests whether the given object string is a literal
+
+un_literal(str)
+    given a literal, return the actual string value
+
+MODULE RDF.STORE
+
+CLASS TRIPLESTORE
+
+The TripleStore class represents an in-memory RDF model.
+
+add(subject, predicate, object)
+    add the given statement to the store
+
+remove(subject, predicate, object)
+    removes any statements matching the given subject, predicate and
+    object where a value of None for an argument means a wildcard.
+    eg remove("foo", None, None) means remove all statements about
+    "foo"
+
+visit(callback, subject, predicate, object)
+    visit takes a callback function of signature callback(subject,
+    predicate, object) that then gets called for every statement
+    matching the subject, predicate and object given to this visit
+    method where a value of None for an argument means a wildcard.
+    eg visit(callback, None, "foo", "bar") means call the given
+    callback for all statements where the predicate is "foo" and the
+    object "bar" regardless of subject
+    Note: if the callback returns a non-None value, the visit will
+    not continue
+
+MODULE RDF.PARSER
+
+FUNCTION PARSERDF
+
+parseRDF(adder, location, baseURI)
+    parses the RDF at the given location. A base URI can be specified
+    if different from the actual location. The parser works by calling
+    adder for each triple. adder must have signature
+    adder(subject, predicate, object)
+
+TODO: explain handlers (perhaps as an advanced topic in an appendix)
+
+MODULE RDF.SERIALIZER
+
+CLASS SERIALIZER
+
+To set up the serializer, setStream and setBaseURI are called. This is
+followed by registerProperty being called for each property. The
+serialization is started with start and ended with end. Between start
+and end, there are two options:
+
+- call startSubject, call property one or more times, call endSubject
+- call triple for each statement
+
+The former is a little lower level but provided for cases where it
+would be more efficient.
+
+setStream(stream)
+    set the stream to which the serialization is to take place
+
+setBaseURI(baseURI)
+    set the baseURI to assume
+
+registerProperty(property)
+    this has to be done for each property before start() is run. This
+    is necessary to set up the namespace declarations which depend on
+    the properties in the RDF
+
+start()
+    start the serialization
+
+end()
+    end the serialization
+
+subjectStart(subject)
+    called to start the serialization of the given subject
+
+subjectEnd()
+    called to end the serialization of the current subject
+
+property(predicate,object)
+    called between subjectStart and subjectEnd for each statement made
+    about that subject
+
+triple(subject,predicate,object)
+    an alternative to using subjectStart/subjectEnd/property. Called
+    between start and end for each triple
+
+MODULE RDF.STOREIO
+
+CLASS STOREIO
+
+A class providing I/O for a store by aggregating a store, a location,
+a URI, a parser and a serializer.
+
+This class hardcodes the parser and serializer classes to use but not
+the triple store. To use StoreIO, it must be inherited by or along
+with a class that implements add(subject, predicate, object) and
+visit(callback, subject, predicate, object)
+
+The module includes an example in the one line:
+
+    class TripleStoreIO(StoreIO, TripleStore): pass
+
+which combines rdf.store.TripleStore with the StoreIO. 
+
+load(location,URI)
+    TODO
+
+save()
+    TODO
+
+saveAs(location,URI)
+    TODO
+
+output(stream,URI,subject,predicate,object)
+    TODO
+
+CLASS AUTOSAVESTOREIO
+
+A subclass of TripleStoreIO (the combination of TripleStore + StoreIO)
+that provides auto-saving capabilities.
+
+MODULE RDF.QUERY
+
+CLASS QUERYSTORE
+
+TODO: Note about how this combines with a store
+
+get(subject, predicate, object)
+    TODO
+
+getFirst(subject, predicate, object)
+    TODO
+
+label(subject, default)
+    return the first label of the given subject or the given default
+    if there is no label or the subject URI if there is no default
 
 comment(subject)
-    return the first comment of the given subject or label(subject) if there
-    is no comment
+    return the first comment of the given subject or the given default
+    if there is no comment or label(subject) if there is no default
 
-getByType(type,predicate,object)
-    return a list of the relevant statements where a resource of the given
-    type has a predicate of value object
-    eg getByType("car","colour","red") will return statements about any car
-       being of colour red.
+getByType(type, predicate, object)
+    return a list of the relevant statements where a resource of the
+    given type has a predicate of value object
+    eg getByType("car","colour","red") will return statements about
+       any car being of colour red.
 
 isKnownResource(resource)
-    returns a 1 or 0 depending on whether the store contains any statements
-    about the given resource
+    returns a 1 or 0 depending on whether the store contains any
+    statements about the given resource
 
 isOfType(resource,type)
-    returns a 1 or 0 depending on whether the given resource is of the given
-    type
+    returns a 1 or 0 depending on whether the given resource is of the
+    given type
 
 getSubjects()
     return a list of all the subjects of the statements in the store
 
 getProperties(subject)
-    return a list of all the properties specified for the given subject
-    (or overall if subject is None)
+    return a list of all the properties specified for the given
+    subject (or overall if subject is None)
 
 getValues(subject,property)
-    get a list of the values for the given property of the given subject
+    get a list of the values for the given property of the given
+    subject
 
 transitiveSuperTypes(type)
-    returns a list of the give type plus the type's superclasses, plus their
-    superclass, and so on
+    returns a list of the give type plus the type's superclasses, plus
+    their superclass, and so on
 
 transitiveSubTypes(type)
-    returns a list of the given type plus the type's subclasses, plus their
-    subclasses, and so on
+    returns a list of the given type plus the type's subclasses, plus
+    their subclasses, and so on
 
 rootClasses()
     returns a list of those classes that aren't a subclass of anything
@@ -231,6 +255,9 @@ rootClasses()
 resourcesByClassV(classProcessor,resourceProcessor)
     for each class, calls classProcessor(uri) and then for each
     instance of that class, calls resourceProcessor(uri)
+
+parentTypesV
+    TODO
 
 propertyValuesV(subject,propertyValueProcessor)
     calls propertyValueProcessor(property,value) for each of the
@@ -253,5 +280,20 @@ dereify(statement_uri)
 getPossibleValues(property)
     returns a list of the possible values the given property can take
 
+getPossibleProperties
+    TODO
+
+visitTypes(callback, subject)
+    calls callback(subject, predicate, object) for all statements
+    about the type of the given subject (or the type of all subjects
+    if subject is None)
+
+getPossiblePropertiesForSubject
+    TODO
+
+getRange
+    TODO
 
 $Log$
+Revision 1.1  2000/12/04 03:23:04  jtauber
+parts of DEVMANUAL about rdf lib now moved into own file and updated
