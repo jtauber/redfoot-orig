@@ -29,7 +29,12 @@ class RedCmd(object, Cmd):
 
     def __exec(self, code):
         locals = globals = self.context.__dict__
-        exec code in globals, locals
+        try:
+            exec code in globals, locals
+        except:
+            print "The following exception occured while trying to exec '%s'" % code
+            from traceback import print_exc
+            print_exc()
         
     def process_resource(self, text):
         if text == "ANY":
