@@ -56,8 +56,7 @@ class RedDaemon(HTTPDaemon):
                 import threading
                 threading.Event().wait(100)
         except KeyboardInterrupt:
-            print "Shutting down... autosaving"
-            module._app_instance.rednode.local.save()
+            print "Shutting down..."
             self.stop()
 
     def load(self, module):
@@ -79,6 +78,10 @@ class RedDaemon(HTTPDaemon):
             print "Running at http://%s/" % servername
         else:
             print "Running at http://%s:%s/" % (servername, port)
+
+    def stop(self):
+        self.module._app_instance.stop()
+        HTTPDaemon.stop(self)
 
     def notify_me_of_reload(self, module):
         if module.__name__==self.module.__name__:

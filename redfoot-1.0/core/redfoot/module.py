@@ -111,3 +111,7 @@ class App(ParentModule):
         self.apply(self.app.remaining_path_info)
 
         response.flush()
+
+    def stop(self):
+        print "saving rednode"
+        self.rednode.local.save()        
