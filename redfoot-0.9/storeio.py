@@ -12,7 +12,7 @@ class StoreIO:
         self.getStore().visit(visitor, subject, property, value)
         
     def get(self, subject=None, property=None, value=None):
-        self.getStore().get(subject, property, value)
+        return self.getStore().get(subject, property, value)
 
     def remove(self, subject=None, property=None, value=None):
         self.getStore().remove(subject, property, value)
@@ -89,6 +89,9 @@ class StoreIO:
 
 
 # $Log$
+# Revision 1.13  2000/10/05 00:48:40  jtauber
+# added remove and add methods which just call the corresponding methods on the store
+#
 # Revision 1.12  2000/10/01 03:58:10  eikeon
 # fixed up all the places where I put CVS keywords as keywords in omments... duh
 #
