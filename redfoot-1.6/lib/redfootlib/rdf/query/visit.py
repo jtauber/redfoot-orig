@@ -118,3 +118,12 @@ class Visit(object):
 
         
 
+    def not_exists(self, subject, predicate, object):
+        """ TODO: seems like this method is a bit too
+        convenient... should # it go away? """
+        return not self.exists(subject, predicate, object)
+
+    def get_first_value(self, subject, predicate, default=None):
+        for object in self.objects(subject, predicate):
+            return object
+        return default
