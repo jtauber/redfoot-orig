@@ -35,3 +35,9 @@ class Query:
                    (None, property, root))
 
 
+    # TODO: not really a query
+    def generate_uri(self):
+        from redfootlib.rdf.store.urigen import generate_uri
+        from redfootlib.rdf.objects import resource
+        return resource(self.uri + generate_uri())
+
