@@ -256,7 +256,11 @@ class Editor(Viewer):
         property_num = params["processor"][0][4:]
         subject = params["uri"][0]
         property = params["prop%s_name" % property_num][0]
-        value = params["prop%s_value" % property_num][0]
+        vName = "prop%s_value" % property_num
+        if params.has_key(vName):
+            value = params[vName][0]
+        else:
+            value = ''
         if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
         self.qstore.getStore().remove(subject, property, value)
