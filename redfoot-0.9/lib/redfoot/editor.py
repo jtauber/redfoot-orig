@@ -74,7 +74,7 @@ class Editor(Viewer):
 	copy = parameters['copy']
 
 	if copy!=None and copy=="copy":
-            subject = self.storeNode.local.URI + self.generateURI()
+            subject = self.rednode.local.URI + self.generateURI()
 	    self.update(parameters, subject, copy=1)
         if subject==None or subject=="":
             subject = self.rednode.local.URI + self.generateURI()
@@ -281,10 +281,10 @@ class Editor(Viewer):
             if isLiteral == "yes":
                 value = literal(value)
             if copy:
-                self.storeNode.local.add(subject, property, value)
+                self.rednode.local.add(subject, property, value)
             elif value!=orig:
-                self.storeNode.local.remove(subject, property, orig)
-                self.storeNode.local.add(subject, property, value)
+                self.rednode.local.remove(subject, property, orig)
+                self.rednode.local.add(subject, property, value)
         newProperty = parameters['newProperty']
         newPropertyValue = ""
         if self.rednode.getRange(newProperty)==LITERAL:
@@ -369,6 +369,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 7.1  2001/04/09 17:25:02  eikeon
+#~ storeNode -> rednode
+#~
 #~ Revision 7.0  2001/03/26 23:41:05  eikeon
 #~ NEW RELEASE
 #~
