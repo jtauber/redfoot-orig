@@ -20,6 +20,7 @@ class SchemaQuery(Query):
 
     # TODO: method to return all labels
     def label(self, subject, default=None):
+        # TODO: could be rewritten to use get_first_value
         b = ItemBuilder()
         self.visit(first(o(b.accept)), (subject, LABEL, None))
         if b.item == None:
@@ -34,6 +35,7 @@ class SchemaQuery(Query):
             return subject
 
     def comment(self, subject, default=None):
+        # TODO: could be rewritten to use get_first_value
         b = ItemBuilder()
         self.visit(first(o(b.accept)), (subject, COMMENT, None))
         if b.item == None:
