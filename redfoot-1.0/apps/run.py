@@ -11,12 +11,11 @@ USAGE: run.py <options> <app name>
            [--help]
 
     hostname
-        Defaults to the computers fully qualified name. 
+        Defaults to the computer's fully qualified name. 
     port
         Defaults to 8000.
     exact
-        Defaults to false.
-        If true, listen to request coming to host via the exact host name only. Else listens to request coming to host via any of its names.
+        If exact server will listen to request coming to host via the exact host name only. Else listens to all request coming to host regaurdless of what name they come in on.
 """    
     sys.exit(-1)
 
@@ -33,7 +32,7 @@ try:
     import threading
 except ImportError:
     print """
-Can not run redfoot without threading module. 
+Redfoot can not run without the threading module. Check that your PYTHONPATH is right and that you have threading.py
 """
     sys.exit(-1)
     
