@@ -42,12 +42,9 @@ def run():
         print "failed 2"
 
     def my_filter(a):
-        print a.value
         if int(a.value) > 36:
-            print 1
             return 1
         else:
-            print 0
             return 0
 
     b = ListBuilder()
