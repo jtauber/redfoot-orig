@@ -1,4 +1,39 @@
 # $Header$
+#
+#  Copyright (c) 2000, James Tauber and Daniel Krech
+#
+#  All rights reserved.
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions are
+#  met:
+#
+#   * Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#
+#   * Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the
+#     distribution.
+#
+#   * Neither name of James Tauber nor Daniel Krech may be used to
+#     endorse or promote products derived from this software without
+#     specific prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+#  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+#  HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+#  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+#  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+#  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+#  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+#  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+#  DAMAGE.
+#
+
 import socket
 import sys
 import time
@@ -7,8 +42,8 @@ import string
 class ServerConnection:
 
     def __init__(self, handler):
-        self.request = Request(self)
-        self.response = Response(self)
+        self.request = Request()
+        self.response = Response()
         self.handler = handler
 
     def handle_request(self, server, client_socket):
@@ -47,8 +82,8 @@ class BadRequestError(Error):
 
 
 class Request:
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self):
+        pass
 
     def _set_client_socket(self, client_socket):
         self._rfile = client_socket.makefile('rb', 0)
@@ -95,9 +130,6 @@ class Request:
             ctype, pdict = cgi.parse_header(self.getHeaders()['content-type'])
             
             if ctype == 'multipart/form-data':
-                sys.stderr.write("MULTI\n")
-                sys.stderr.flush()
-
                 params = cgi.parse_multipart(self._rfile, pdict)
                 for param in params.keys():
                     parameters[param] = params[param]
@@ -120,11 +152,10 @@ class Request:
             line = self._rfile.readline()
             while line and not line in ('\r\n', '\n'):
                 i = string.find(line, ':')
-                if i<0:
-                    continue
-                header = string.lower(line[:i])
-                headers[header] = string.strip(line[len(header)+1:])
-                line = self._rfile.readline()
+                if i>=0:
+                    header = string.lower(line[:i])
+                    headers[header] = string.strip(line[len(header)+1:])
+                    line = self._rfile.readline()
             self._headers = Headers(headers)
         return self._headers
 
@@ -153,8 +184,8 @@ class Request:
 
 class Response:
 
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self):
+        pass
 
     def _set_client_socket(self, client_socket):
         self._wfile = client_socket.makefile('wb', 0)
@@ -254,6 +285,9 @@ def _date_time_string():
 
 
 #~ $Log$
+#~ Revision 7.3  2001/04/13 23:51:19  eikeon
+#~ modified date_time_string to not generate string more than once per second; also added _ prefix to indicate private
+#~
 #~ Revision 7.2  2001/04/12 22:52:18  eikeon
 #~ removed management of session objects; BNH now only deals with the setting/getting of the EBNH_session cookie
 #~
