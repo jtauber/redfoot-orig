@@ -84,8 +84,68 @@ class StoreIO:
         
         s.end()
 
+    #TODO: I don't know if this belongs here - JKT
+    #TODO: Perhaps this could merge with self.output - JKT
+    def output_query(self, subject, predicate, object, stream, URI=None):
+
+        if URI==None:
+            URI = self.URI
+
+        from rdf.query import QueryStore
+        queryStore = QueryStore()
+        queryStore.setStore(self.getStore())
+        
+        from rdf.serializer import Serializer
+        s = Serializer()
+
+        s.setStream(stream)
+        s.setBase(URI)
+
+        # TODO: there's probably a more efficient way - JKT
+
+        spv = {}
+        
+        for st in queryStore.get(subject, predicate, object):
+            su = st[0]
+            pr = st[1]
+            ob = st[2]
+            if not spv.has_key(su):
+                spv[su] = {}
+            if not spv[su].has_key(pr):
+                spv[su][pr] = {}
+            spv[su][pr][ob] = 1
+
+        properties = queryStore.getProperties()
+
+        for property in properties:
+            s.registerProperty(property)
+
+        s.start()
+        
+        subjects = spv.keys()
+        subjects.sort() 
+
+        for subject in subjects:
+            s.subjectStart(subject)
+
+            properties = spv[subject].keys()
+            properties.sort()
+            
+            for property in properties:
+                values = spv[subject][property].keys()
+                values.sort()
+                
+                for value in values:
+                    s.property(property, value)
+
+            s.subjectEnd()
+        
+        s.end()
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:33  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.1  2000/11/02 21:48:27  eikeon
 #~ removed old log messages
 #~
