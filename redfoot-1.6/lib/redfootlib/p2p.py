@@ -46,7 +46,6 @@ import asyncore
 import socket
 import sys
 
-
 #### GENERIC SET DATA STRUCTURE
 
 class set:
@@ -188,6 +187,7 @@ class Node(asyncore.dispatcher):
 
         print "node %s listening at %s" % (uid, repr(addr))
 
+
     ### asyncore.dispatcher methods
 
     def handle_accept(self):
@@ -252,7 +252,7 @@ class Node(asyncore.dispatcher):
         This is generally because the connection has been lost.
         """
         
-        for id in self.connections:
+        for id in self.connections.keys():
             if connection in self.connections[id]:
                 self.deregister(id, connection)
     
@@ -283,27 +283,27 @@ class Node(asyncore.dispatcher):
 
         return list
 
+    def _add_proxy(self, proxy, node_list):
+        self.proxies[proxy] = set(node_list)
+        print "proxies:", self.proxies
+        self.refresh()
+
     def can_proxy(self, proxy, node_list):
         """
         Informs this node that proxy can act as proxy for nodes in node_list.
         """
 
-        def _can_proxy(proxy, node_list):
-            self.proxies[proxy] = set(node_list)
-            print "proxies:", self.proxies
-            self.refresh()
-
         # @@@ this can be simplified using sets
         if not proxy in self.proxies:
-            _can_proxy(proxy, node_list)
+            self._add_proxy(proxy, node_list)
             return
         for item in self.proxies[proxy]:
             if not item in node_list:
-                _can_proxy(proxy, node_list)
+                self._add_proxy(proxy, node_list)
                 return
         for item in node_list:
             if not item in self.proxies[proxy]:
-                _can_proxy(proxy, node_list)
+                self._add_proxy(proxy, node_list)
                 return
         
     def get_message_id(self):
@@ -315,13 +315,8 @@ class Node(asyncore.dispatcher):
         self.next_message_id = self.next_message_id + 1
         return message_id
         
-    def tell(self, to, frm, message_id, message):
-        """
-        Send the given message directly and/or indirectly.
-        """
-        
-        result = 0
-
+    # TODO: better name
+    def _check(self, to, frm, message_id, message):
         # if message has already been sent, don't resend
         if message_id in self.message_set:
             return 1 # 1 otherwise a duplicate is considered a failure
@@ -329,8 +324,20 @@ class Node(asyncore.dispatcher):
         # remember that this message has been sent
         # @@@ should this only be done if result == 1?
         self.message_set.add(message_id)
-
         print "message set size", len(self.message_set)
+        
+        return 0
+        
+
+    def tell(self, to, frm, message_id, message):
+        """
+        Send the given message directly and/or indirectly.
+        """
+        
+        result = 0
+
+        if self._check(to, frm, message_id, message):
+            return 1
 
         # send directly if possible
         if to in self.connections:
@@ -344,11 +351,16 @@ class Node(asyncore.dispatcher):
                 if proxy in self.connections:
                     # the above should be true but let's just check
                     for connection in self.connections[proxy]:
-                        connection.send_pass_on(to, frm, message_id, message)
+                        msg = (to, frm, message_id, message)
+                        self._send_pass_on(connection, msg)
                         # @@@ we don't really know if it got to destination
                         result = 1
 
         return result
+
+    def _send_pass_on(self, connection, (to, frm, message_id, message)):
+        connection.send_pass_on(to, frm, message_id, message)
+
 
     def call(self, host, port):
         """
@@ -383,6 +395,7 @@ class Connection(asynchat.async_chat):
         self.state = 0
         self.remote_uid = None
         self.send_i_am()
+        self.set_reuse_addr()
 
     ### asynchat.async_chat methods
     
@@ -545,7 +558,12 @@ class OutwardConnection(Connection):
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         Connection.__init__(self, server)
         self.connect((host, port))
+        self.send_i_am()
         print "connection to", host, port
+
+
+        
+        
 
 
 #### MAINLINE
