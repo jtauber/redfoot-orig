@@ -2,25 +2,23 @@ CHANGELOG
 
 Changes between 0.9.1 and 0.9.2
 
-./lib/bnh/example.py:
-./lib/bnh/server.py:
- - small cleanup... mostly formatting
-
-./lib/pylog/core.py:
- - initial attempt at prolog-like inference in python
-
-./lib/redfoot/viewer.py:
-./lib/redfoot/baseUI.py:
-./lib/redfoot/server.py:
-./lib/redfoot/editor.py:
-./lib/bnh/server.py:
-./lib/bnh/example.py	
- - mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
-
-./lib/redfoot/editor.py:
  - fixed bug that was causing problems when trying to save when on the edit page
  - fixed Unknown Attribute property_num bug I introduced just before 0.9.1 ;(
+ - fixed string index out of range bug in serializer
 
+ - added authentication to sample
+ - added support for cookies and sessions
+
+ - cleaned up handler interface 
+ - refactored how parameters are accessed (no more [0]'s)
+ - prefixed a number of methods and variables with _ to indicate they are private
+ - changed a number of methods to mixed case for consistency
+ - added a setHeader method on response -- headers where hardcoded before
+ - replaced writer with response as writer predates and is redundant with repsonse
+
+ - moved creation of editor to getEditor method so that subclasses can override getEditor to create an editor of their like-ing
+
+ - changed to python 2.0 method of getting the fully qualified domain name... as the 1.6 method in some instances would take a long time
 
 Changes between 0.9.0 and 0.9.1	
 
