@@ -95,7 +95,7 @@ class RedNode(SchemaQuery):
         if len(args)==0:
             (uri, rdf_filename, port) =  process_args()
             address='' # TODO: add to process_args
-            self.load(rdf_filename, uri)
+            self.load(rdf_filename, uri, 1)
         else:
             address = args.get('address', '')
             port = args.get('port', 8080)
