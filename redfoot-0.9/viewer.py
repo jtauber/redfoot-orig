@@ -262,7 +262,9 @@ class Viewer:
 
     def displayPropertyValue(self, property, value):
         propertyDisplay = self.link(property)
-        if value[0]=="^":
+        if len(value)<1:
+            valueDisplay = ""
+        elif value[0]=="^":
             valueDisplay = value[1:]
         else:
             valueDisplay = self.link(value)
@@ -272,7 +274,9 @@ class Viewer:
 
     def displayReifiedStatements(self, subject, predicate, object):
         propertyDisplay = self.link(predicate)
-        if object[0]=="^":
+        if len(object)<1:
+            valueDisplay = ""
+        elif object[0]=="^":
             valueDisplay = object[1:]
         else:
             valueDisplay = self.link(object)
@@ -293,6 +297,8 @@ class Viewer:
         if property==self.qstore.OBJECT:
             return
         propertyDisplay = self.link(property)
+        if len(value)<1:
+            valueDisplay = ""
         if value[0]=="^":
             valueDisplay = value[1:]
         else:
@@ -340,6 +346,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.25  2000/10/10 05:20:54  eikeon
+# added show/hide neighbour logic
+#
 # Revision 1.24  2000/10/10 04:31:21  jtauber
 # work-around in string joining between non-unicode and unicode for 2.0b
 #
