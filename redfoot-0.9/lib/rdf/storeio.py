@@ -39,11 +39,8 @@ class StoreIO:
         else:
             self.URI = URI
 
-        from rdf.parser import RDFParser
-        rdfParser = RDFParser()
-        rdfParser.setAdder(self.store.add)
-
-        rdfParser.parse(self.location, self.URI)
+        from rdf.parser import parseRDF
+        parseRDF(self.store.add, self.location, self.URI)
 
         self.dirty.clear() # we just loaded... therefore we are clean
         self.autosave() # TODO: make autosave optional... for now hardcoded.
@@ -223,6 +220,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.3  2000/11/29 23:29:05  eikeon
+#~ Added autosave functionailty
+#~
 #~ Revision 4.2  2000/11/21 03:16:46  eikeon
 #~ rewrote slow inefficient output method
 #~
