@@ -231,13 +231,13 @@
         <TABLE>
           <TR>
             <TD VALIGN="TOP">URI</TD>
-            <!--<TD>&nbsp;</TD>-->
             <TD>
               <INPUT TYPE="TEXT" SIZE="60" NAME="subject"/>
             </TD>
           </TR>
         </TABLE>
-        <INPUT TYPE="SUBMIT" VALUE="create"/>
+        <P>NOTE: Leave blank if you'd like a URI automatically generated</P>
+        <INPUT TYPE="SUBMIT" VALUE="add"/>
         <INPUT TYPE="HIDDEN" NAME="type" VALUE="{type}"/>
         <INPUT TYPE="HIDDEN" NAME="return_to" VALUE="{return_to}"/>
       </FORM>
