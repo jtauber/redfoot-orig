@@ -5,31 +5,38 @@ from rdf.const import *
 
 class QueryStore:
 
+    def getFirst(self, subject, predicate, object):
+        statements = []
+        def callback(subject, predicate, object, statements=statements):
+            statements.append((subject, predicate, object))
+            return 1 # tell visitor to stop
+        self.visit(callback, subject, predicate, object)
+        if len(statements)>0:
+            return statements[0]
+        else:
+            return None
+
     def label(self, subject, default=None):
-        list = []
-        def callback(subject, property, value, list=list):
-            list.append((subject, property, value))
-            return 0 # tell the visitor to stop
-        
-        self.visit(callback, subject, LABEL, None)
+        statement = self.getFirst(subject, LABEL, None)
 
-        if len(list) > 0:
-            return un_literal(list[0][2])     # TODO: currently only returns first label
+        if statement!=None:
+            return un_literal(statement[2])
+        elif default!=None:
+            return default
         else:
             return subject
 
+     # TODO: method to return all labels
+     
     def comment(self, subject, default=None):
-        list = []
-        def callback(subject, property, value, list=list):
-            list.append((subject, property, value))
-            return 0 # tell the visitor to stop
-        
-        self.visit(callback, subject, COMMENT, None)
+        statement = self.getFirst(subject, COMMENT, None)
 
-        if len(list) > 0:
-            return un_literal(list[0][2])     # TODO: currently only returns first label
+        if statement!=None:
+            return un_literal(statement[2])
+        elif default!=None:
+            return default
         else:
-            return subject
+            return self.label(subject)
 
     def getByType(self, type, predicate, object):
         l = []
@@ -190,6 +197,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.6  2000/12/05 22:09:36  jtauber
+#~ moved constants to new file
+#~
 #~ Revision 4.5  2000/12/05 03:49:07  eikeon
 #~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
 #~
