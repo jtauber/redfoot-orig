@@ -31,7 +31,7 @@ Common = common.Common
 RSS = rss.RSS
 Neighbours = neighbours.Neighbours
 
-<r:class name="UI" bases="(Authentication, RSS, Common, Editor, Neighbours)">
+<r:class name="UI" bases="Authentication RSS Common Editor Neighbours">
 
 def __init__(self, rednode):
     self.rednode = rednode
