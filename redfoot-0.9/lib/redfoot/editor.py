@@ -189,7 +189,7 @@ class Editor(Viewer):
                 <TD VALIGN="TOP">
                   <INPUT TYPE="SUBMIT" NAME="processor" VALUE="del_%s">
                 </TD>
-		<TD VALIG="TOP">
+		<TD VALIGN="TOP">
                   <INPUT TYPE="SUBMIT" NAME="processor" VALUE="reify_%s">
                 </TD>"""  % (self.property_num, self.property_num))
         self.response.write("""
@@ -403,6 +403,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.0  2000/11/06 15:57:34  eikeon
+# VERSION 4.0
+#
 # Revision 3.6  2000/11/04 03:39:10  eikeon
 # moved sample authentication from editor.py to sample.py
 #
