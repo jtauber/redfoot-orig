@@ -194,23 +194,31 @@ class QueryStore:
         self.store.add(subject, predicate, object)
         #self.store.removeAll(statement)
 
-    # TODO: NEED TO MAKE A VISITOR VERSION
-    # If we want to remove duplicates the non visitor version is the best we can do? -eik
     def getPossibleValues(self, property):
         resultset = {}
 
         def possibleSubject(subject, property, value, resultset=resultset):
             resultset[subject] = 1
 
-        def rangeitem(s, p, o, self=self, qstore=self, possibleSubject=possibleSubject):
+        self.getPossibleValuesV(property, possibleSubject)
+
+        return resultset.keys()
+        
+    # callback may be called more than once for the same possibleValue... user
+    # of this method will have to remove duplicates
+    def getPossibleValuesV(self, property, possibleValue):        
+        def rangeitem(s, p, o, self=self, qstore=self, possibleValue=possibleValue):
             for type in qstore.transitiveSubTypes(o):
-                qstore.visit(possibleSubject, None, QueryStore.TYPE, type)
+                qstore.visit(possibleValue, None, QueryStore.TYPE, type)
 
         self.store.visit(rangeitem, property, QueryStore.RANGE, None)
         
-        return resultset.keys()
+
 
 #~ $Log$
+#~ Revision 4.1  2000/11/21 17:34:31  jtauber
+#~ reify no longer removes original triple
+#~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
 #~

@@ -166,7 +166,21 @@ class Editor(Viewer):
                     <SELECT NAME="prop%s_value">
                       <OPTION value="">Select a value for this property</OPTION>
                 """ % (self.property_num, self.property_num))
-                for v in self.qstore.getPossibleValues(property):
+
+
+                possibleValues = {}
+                def possibleValue(s, p, o, qstore=self.qstore, possibleValues=possibleValues):
+                    label = qstore.label(s)
+                    # we use a key of 'label + s' to insure uniqness of key
+                    possibleValues[label+s] = s 
+
+                self.qstore.getPossibleValuesV(property, possibleValue)
+
+                pvs = possibleValues.keys()
+                pvs.sort()
+
+                for pv in pvs:
+                    v = possibleValues[pv]
                     if v==value:
                         self.response.write("""
                         <OPTION SELECTED="TRUE" VALUE="%s">%s</OPTION>
@@ -175,6 +189,9 @@ class Editor(Viewer):
                         self.response.write("""
                         <OPTION VALUE="%s">%s</OPTION>
                         """ % (v, self.qstore.label(v)))
+                    
+
+
                 self.response.write("""
                     </SELECT>
                 """)
@@ -403,6 +420,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.1  2000/11/21 16:49:01  eikeon
+# fixed VALIGN=top typo on reify buttons
+#
 # Revision 4.0  2000/11/06 15:57:34  eikeon
 # VERSION 4.0
 #
