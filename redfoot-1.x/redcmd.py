@@ -108,7 +108,7 @@ class RedCmd(object, Cmd):
             print s, p, o
         st = self.get_triple(arg)
         if st:
-            self.context.visit(print_triple, st)
+            self.context.rednode.visit(print_triple, st)
         else:
             print "error"
 
