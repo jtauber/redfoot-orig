@@ -18,7 +18,8 @@ class RedCmd(object, Cmd):
     def __init__(self):
         super(RedCmd, self).__init__()
         self.prefix_map = {}
-
+        self.default_uri = None
+        
     def process_resource(self, text):
         if text == "ANY":
             r = None
@@ -26,7 +27,12 @@ class RedCmd(object, Cmd):
             r = resource(text[1:-1])
         elif text.find(":") != -1:
             prefix, local_name = text.split(":")
-            if prefix in self.prefix_map:
+            if prefix == "":
+                if self.default_uri:
+                    r = resource(self.default_uri + local_name)
+                else:
+                    return -1 # error
+            elif prefix in self.prefix_map:
                 r = resource(self.prefix_map[prefix] + local_name)
             else:
                 return -1 # error
@@ -62,7 +68,7 @@ class RedCmd(object, Cmd):
             self.add(st[0], st[1], st[2])
             print "added", st
         else:
-            print "syntax error"
+            print "error"
 
     def do_remove(self, arg):
         """remove <subject> <predicate> (<object>|"object")"""
@@ -71,7 +77,7 @@ class RedCmd(object, Cmd):
             self.remove(st[0], st[1], st[2])
             print "removed", st
         else:
-            print "syntax error"
+            print "error"
         
     def do_shell(self, arg):
         """! <python-statement>"""
@@ -88,12 +94,21 @@ class RedCmd(object, Cmd):
         if st:
             self.visit(print_triple, st)
         else:
-            print "syntax error"
+            print "error"
 
     def do_prefix(self, arg):
-        prefix, uri = arg.split()
-        self.prefix_map[prefix] = uri
-        print "mapped prefix", prefix, "to", uri
+        """prefix p:<uri> or prefix :<uri>"""
+        prefix, uri_text = arg.split(":", 1)
+        if uri_text[0] == "<" and uri_text[-1] == ">":
+            uri = uri_text[1:-1]
+            if prefix == "":
+                self.default_uri = uri
+                print "mapped default prefix to", uri
+            else:
+                self.prefix_map[prefix] = uri
+                print "mapped prefix", prefix, "to", uri
+        else:
+            print "error"
 
 from redfoot.rdf.store.triple import TripleStore
 
