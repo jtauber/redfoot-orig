@@ -94,8 +94,6 @@ class Request:
             length = self.getHeaders()['content-length']
 
             ctype, pdict = cgi.parse_header(self.getHeaders()['content-type'])
-            sys.stderr.write("ctype: %s\n" % ctype)
-            sys.stderr.flush()
             
             if ctype == 'multipart/form-data':
                 sys.stderr.write("MULTI\n")
@@ -264,6 +262,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 5.5  2000/12/18 18:59:44  eikeon
+#~ added support for content type of multipart/form-data
+#~
 #~ Revision 5.4  2000/12/17 23:35:53  eikeon
 #~ split off ServerConnection and company into their own module
 #~
