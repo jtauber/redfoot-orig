@@ -3,7 +3,7 @@ from redfootlib.server.module import App
 from redfootlib.rdf.objects import resource, literal
 from redfootlib.rdf.const import TYPE, LABEL, COMMENT
 from redfootlib.rdf.query.functors import sort
-from sniffer import SNIFFED, SNIFFABLE, SNIFFED_ON, SNIFFED_FROM, RUN
+from sniffer import SNIFFED, SNIFFABLE, SNIFFED_ON, SNIFFED_FROM
 
 class LinkApp(App):
 
