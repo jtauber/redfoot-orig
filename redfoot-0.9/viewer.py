@@ -33,6 +33,11 @@ class Viewer:
           margin:      -10px -10px 10px -10px;
         }
 
+        h2 {
+          color:       #336699;
+          margin:      0px;
+        }
+
         a {
           color:       #000000;
         }
@@ -78,7 +83,8 @@ class Viewer:
           </HEAD>
           <BODY>
             <H1>ReDFoot</H1>
-            <P><A HREF="RDF">Download RDF</A>
+            <P><A HREF=".">Class List</A>
+             | <A HREF="RDF">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
             </P>
             <DIV CLASS="box">
@@ -94,6 +100,30 @@ class Viewer:
         </HTML>
         """)
 
+    def view(self, subject):
+        self.writer.write("""
+        <HTML>
+          <HEAD>
+            <TITLE>ReDFoot</TITLE>
+            <LINK REL="STYLESHEET" HREF="css"/>
+          </HEAD>
+          <BODY>
+            <H1>ReDFoot</H1>
+            <P><A HREF=".">Class List</A>
+             | <A HREF="RDF">Download RDF</A>
+             | <A HREF="Triples">Show Triples</A>
+            </P>
+            <H2>%s</H2>
+            <TABLE>
+        """ % self.qstore.label(subject))
+
+        self.qstore.propertyValuesV(subject, self.displayPropertyValue)
+
+        self.writer.write("""
+            </TABLE>
+          </BODY>
+        </HTML>
+        """)
 
     def displayClass(self, klass):
         self.writer.write("""
@@ -102,10 +132,23 @@ class Viewer:
 
     def displayResource(self, resource):
         self.writer.write("""
-        <DD><A HREF="view?uri=%s" TITLE="%s">%s</A><BR></DD>
-        """ % (self.encodeURI(resource),
-               self.qstore.comment(resource),
-               self.qstore.label(resource)))
+        <DD>%s<BR></DD>
+        """ % self.link(resource))
+
+    def link(self, resource):
+        return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
+     self.qstore.comment(resource),
+     self.qstore.label(resource))
+
+    def displayPropertyValue(self, property, value):
+        propertyDisplay = self.link(property)
+        if value[0]=="^":
+            valueDisplay = value[1:]
+        else:
+            valueDisplay = self.link(value)
+        self.writer.write("""
+        <TR><TD>%s</TD><TD>%s</TD></TR>
+        """ % (propertyDisplay, valueDisplay))
 
     def encodeURI(self, s):
         import string
