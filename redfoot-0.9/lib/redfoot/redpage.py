@@ -371,14 +371,5 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
-#~ Revision 1.1  2001/02/09 23:04:16  eikeon
-#~ first pass implementation
-#~
-
-#  a_mod = parse_red_page("test.xml")
-#  testing = new.instance(a_mod.testing, {})
-#  testing.test()
-#  print dir(a_mod)
-#  import sys
-#  sys.stdout.flush()
-
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ new release
