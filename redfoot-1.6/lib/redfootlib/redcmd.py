@@ -30,7 +30,6 @@ class RedCmd(object, Cmd):
 
         self.context.server = None
 
-
     def __exec(self, code):
         locals = globals = self.context.__dict__
         try:
@@ -252,3 +251,45 @@ Adds app defined in package_name.app_name to previously running server. If a ser
         self.context.server.add_app(app)
 
     
+    def do_start_node(self, arg):
+            
+        (uid, addr)= arg.split(" ", 1)
+        (address, port) = arg.split(":", 1)
+
+        from redfootlib.p2p import Node
+        node =  Node("%s-node" % uid, ("", int(port)))
+
+        import asyncore
+        import threading
+        t = threading.Thread(target = asyncore.loop, args = ())
+        t.setDaemon(1)
+        t.start()
+        
+        edge = Edge(self, node, uid)
+        node.register(uid, edge)
+        self.context.edge = edge
+        self.context.node = node
+        
+    def do_tell(self, arg):
+        (to, message) = arg.split(" ", 1)
+        node = self.context.node
+        frm = self.context.edge.uid
+        message_id = node.get_message_id()
+        node.tell(to, frm, message_id, message)
+
+class Edge(object):
+    def __init__(self, redcmd, node, uid):
+        self.redcmd = redcmd
+        self.node = node
+        self.uid = uid        
+
+    def send_says(self, to, frm, message_id, message):
+        print frm, ":", message
+    def send_connected(self):
+        connected_list = self.node.who(avoid=self.uid)
+        print "CONNECTED %s\r\n" % " ".join(connected_list)
+    def send_who(self):
+        print "SEND_WHO"
+    def send_pass_on(self, to, frm, message_id, message):
+        print "SEND_PASS_ON"
+
