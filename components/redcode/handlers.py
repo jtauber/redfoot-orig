@@ -110,7 +110,7 @@ class ElementHandler(HandlerBase):
         
     def child(self, name, atts):
         if name==EVAL:
-            h = Eval(self.parser, self)
+            h = Eval(self.parser, self, atts)
         elif name==EXEC:
             h = Exec(self.parser, self)
         elif name==VISIT:
@@ -253,7 +253,7 @@ class ModuleHandler(HandlerBase):
         classobj.__module__ = module.__name__
         module.__dict__[classobj.__name__] = classobj
         module.__dict__['_RF_APP'] = classobj
-        module.__dict__['_RF_get_app'] = lambda app=classobj: create_module(app)
+        module.__dict__['_RF_get_app'] = lambda app_class=classobj: create_module(app_class)
 
 
 class SubModule(HandlerBase):
@@ -427,13 +427,18 @@ def _RF_facet(self, subject, property, object, _RF_node=_RF_node):
 
 class Eval(HandlerBase):
 
-    def __init__(self, parser, parent):
+    def __init__(self, parser, parent, atts={}):
         HandlerBase.__init__(self, parser, parent)
         self.locals = self.parent.locals
         self.globals = self.parent.globals
         self.codestr = ""
+        encode = atts.get("encode", None)
+        if encode:
+            encode = __builtin__.eval(encode, self.globals, self.locals)
+        else:
+            encode = encode_character_data
         # TODO: add supoprt for EvalNode without Encoding?
-        self.element = EncodedEvalNode(None, encode_character_data)
+        self.element = EncodedEvalNode(None, encode)
         
     def child(self, name, atts):
         msg = "No children allowed. Found '%s'" % name
