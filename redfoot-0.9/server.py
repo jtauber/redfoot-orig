@@ -51,9 +51,9 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     storeIO.setStore(TripleStore())
     storeIO.load("tests/example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
 
-    storeNode.setStore(storeIO.getStore())
+    storeNode.setStore(storeIO)
 
-    viewer = Editor(None, QueryStore(storeNode))
+    viewer = Editor(None, storeNode)
 
 
     def do_GET(self):
@@ -143,3 +143,6 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.4  2000/10/01 02:25:09  eikeon
+# modified to use the new StoreNode class; added $Header$ and $Log$
+#
