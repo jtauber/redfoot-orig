@@ -1,5 +1,6 @@
 import pyexpat
 
+from redfoot.store import *
 from redfoot.storeio import *
 from redfoot.query import *
 
