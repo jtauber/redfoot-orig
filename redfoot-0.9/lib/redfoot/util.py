@@ -1,10 +1,38 @@
 # $Header$
 
 from rdf.literal import *
+import string
 
 def encodeURI(s):
-    import string
-    return string.join(string.split(s,'#'),u'%23')
+    return encode_URI(s)
+
+
+def encode_attribute_value(s):
+    s = string.join(string.split(s, '&'), '&amp;')
+    s = string.join(string.split(s, '"'), '&quot;')
+    return s
+
+def encode_character_data(s):
+    s = string.join(string.split(s, '&'), '&amp;')
+    s = string.join(string.split(s, '&lt;'), '&lt;')
+    return s
+
+def encode_URI(s, safe='/'):
+    always_safe = string.letters + string.digits + ' _,.-'
+    safe = always_safe + safe
+    res = []
+    for c in s:
+        if c not in safe:
+            res.append('%%%02x'%ord(c))
+        else:
+            if c==' ':
+                res.append('+')
+            else:
+                res.append(c)
+
+    # TODO: check to see if joinfields has been replaced by
+    # join... think it has.
+    return string.joinfields(res, '')
 
 def generateURI():
     import time
@@ -89,5 +117,8 @@ def get_instances_of(rednode, type):
     return visitor.set.keys()
 
 #~ $Log$
+#~ Revision 8.1  2001/04/29 03:08:02  eikeon
+#~ removed old log messages
+#~
 #~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release
