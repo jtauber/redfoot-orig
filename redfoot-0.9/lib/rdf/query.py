@@ -245,21 +245,25 @@ class QueryStore(QueryBase):
         else:
             return self.label(subject)
 
-    # TODO: is this broken?
     def getTransitiveSuperTypes(self, type):
         objectSetBuilder = ObjectSetBuilder()
         objectSetBuilder.set[type] = 1
-        query = Query(self.query, (objectSetBuilder,), lambda s, p, o: (o, SUBCLASSOF, None))
-        self.query(query, type, SUBCLASSOF, None)
+        self.visitTransitiveSuperTypes(objectSetBuilder, type)
         return objectSetBuilder.set.keys()
 
-    # TODO: is this broken?
+    def visitTransitiveSuperTypes(self, callback, type):
+        trans = And(callback, Query(self.visitTransitiveSuperTypes, (callback,), lambda s, p, o: (o,)))
+        self.query(trans, type, SUBCLASSOF, None)
+
     def getTransitiveSubTypes(self, type):
-        subjectSetBuilder = SubjectSetBuilder()
-        subjectSetBuilder.set[type] = 1
-        query = Query(self.query, (subjectSetBuilder,), lambda s, p, o: (None, SUBCLASSOF, s))
-        self.query(query, None, SUBCLASSOF, type)
-        return subjectSetBuilder.set.keys()
+        objectSetBuilder = ObjectSetBuilder()
+        objectSetBuilder.set[type] = 1
+        self.visitTransitiveSubTypes(objectSetBuilder, type)
+        return objectSetBuilder.set.keys()
+
+    def visitTransitiveSubTypes(self, callback, type):
+        trans = And(callback, Query(self.visitTransitiveSubTypes, (callback,), lambda s, p, o: (s,)))
+        self.query(trans, None, SUBCLASSOF, type)
 
     def getRootClasses(self):
         """returns those classes that aren't a subclass of anything"""
@@ -330,12 +334,15 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 5.9  2000/12/13 02:54:11  jtauber
+#~ moved functions in query around and renamed a lot
+#~
 #~ Revision 5.8  2000/12/13 00:43:11  eikeon
 #~ half baked changes
 #~
 #~ Revision 5.7  2000/12/10 07:44:59  eikeon
 #~ refactored label to use new query method; still have a few thoughts before we go nuts and convert everything over
-#~
+ #~
 #~ Revision 5.6  2000/12/10 06:54:39  eikeon
 #~ refactored getFirst to use new query method
 #~
