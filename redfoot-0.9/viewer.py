@@ -230,7 +230,12 @@ class Viewer:
         return string.join( string.split(s,'#') ,'%23')
 
     def RDF(self):
-        self.writer.write("RDF")
+        from storeio import StoreIO
+        sio = StoreIO()
+        # seems silly to get the store from the qstore only to have StoreIO create a new qstore from it
+        sio.setStore(self.qstore.store)
+        # the URI shouldn't be hardcoded like this. doesn't storeio know it??
+        sio.output(self.writer,"http://redfoot.sourceforge.met/2000/09/24")
 
     def Triples(self):
         self.writer.write("""
