@@ -295,21 +295,5 @@ TODO
 
 
 $Log$
-Revision 1.1  2000/10/25 20:40:31  eikeon
-changes relating to new directory structure
-
-Revision 2.0  2000/10/14 01:14:04  jtauber
-next version
-
-Revision 1.4  2000/10/08 04:49:04  jtauber
-made a start on storeio method descriptions
-
-Revision 1.3  2000/10/08 03:46:26  jtauber
-filled out rest of query method descriptions except for subClassV
-
-Revision 1.2  2000/10/07 02:12:40  jtauber
-filled out a few more descriptions of classes and methods and fixed the odd typo
-
-Revision 1.1  2000/10/03 07:27:08  jtauber
-first go at Developer Manual
-
+Revision 3.0  2000/10/27 01:23:10  eikeon
+bump-ing version to 3.0

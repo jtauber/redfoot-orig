@@ -166,46 +166,6 @@ class StoreNode:
         for instanceStatement in self.store.get(None, QueryStore.TYPE, type):
             processInstance(instanceStatement[0], currentDepth, recurse)
 
-# $Log$
-# Revision 1.3  2000/10/26 19:37:13  eikeon
-# changed RemoteStore property to be from sourceforge 'namespace'
-#
-# Revision 1.2  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.2  2000/10/16 17:19:02  eikeon
-# visit method now takes a callback function instead of a visitor object
-#
-# Revision 2.1  2000/10/16 04:45:48  jtauber
-# resourcesByClassV on query and rednode now only call processClass if the class has instances
-#
-# Revision 2.0  2000/10/14 01:14:04  jtauber
-# next version
-#
-# Revision 1.8  2000/10/13 23:42:28  jtauber
-# moved rdf files from tests to top-level
-#
-# Revision 1.7  2000/10/10 04:27:24  eikeon
-# added a resourceByClassV and subClassV methods that query the localStore in the context of the neighbourhood; also added a visit method and a resourcesByClassVV method ;)
-#
-# Revision 1.6  2000/10/08 07:27:40  jtauber
-# fixed bug where visitor wasn't being instantiated
-#
-# Revision 1.5  2000/10/08 05:46:32  jtauber
-# refactored creation and use of storeIO for connectTo into own method
-#
-# Revision 1.4  2000/10/07 02:19:03  jtauber
-# rednode now loads in builtin.rdf
-#
-# Revision 1.3  2000/10/05 00:58:50  jtauber
-# added remove and add methods which just call the corresponding methods on the store
-#
-# Revision 1.2  2000/10/03 22:12:57  eikeon
-# Fixed up ^
-#
-# Revision 1.1  2000/10/03 06:01:50  jtauber
-# moved MultiStore and StoreNode to rednode.py
-#
+#~ $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0

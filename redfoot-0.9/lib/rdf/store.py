@@ -94,43 +94,6 @@ class TripleStore:
                                 callback(s, p, v)
                     
 
-# $Log$
-# Revision 1.1  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.1  2000/10/16 17:19:02  eikeon
-# visit method now takes a callback function instead of a visitor object
-#
-# Revision 2.0  2000/10/14 01:14:04  jtauber
-# next version
-#
-# Revision 1.18  2000/10/08 04:49:11  eikeon
-# reimplemented visit method to be much more efficient... was just a first pass implementation before ;(
-#
-# Revision 1.17  2000/10/06 03:07:56  eikeon
-# removed pesky ^M^Ms
-#
-# Revision 1.16  2000/10/03 06:01:50  jtauber
-# moved MultiStore and StoreNode to rednode.py
-#
-# Revision 1.15  2000/10/01 16:42:44  eikeon
-# added a preCacheRemoteStores method that looks for and wholesale caches any RemoteStores if finds
-#
-# Revision 1.14  2000/10/01 07:41:09  eikeon
-# fixed missing imports etc from previous premature checkin ;(
-#
-# Revision 1.13  2000/10/01 07:24:26  eikeon
-# moved loading of the rdf-schema and rdf-syntax into StoreNode
-#
-# Revision 1.12  2000/10/01 03:58:10  eikeon
-# fixed up all the places where I put CVS keywords as keywords in omments... duh
-#
-# Revision 1.11  2000/10/01 02:23:06  eikeon
-# Changing Id to Header
-#
-# Revision 1.10  2000/10/01 02:18:05  eikeon
-# MultiStore now has both visit and get methods; Added a StoreNode class; added Header and Log CVS keywords
-
+#~ $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0

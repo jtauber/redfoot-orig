@@ -210,55 +210,6 @@ class QueryStore:
         
         return resultset.keys()
 
-# $Log$
-# Revision 1.2  2000/10/26 03:52:23  eikeon
-# fixed bug in subClassV
-#
-# Revision 1.1  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.7  2000/10/17 04:32:44  eikeon
-# fixed typo
-#
-# Revision 2.6  2000/10/17 00:14:05  eikeon
-# changed one more get to visit
-#
-# Revision 2.5  2000/10/16 19:29:16  eikeon
-# fixed to getPossibleValues bug I just introduced
-#
-# Revision 2.4  2000/10/16 18:49:05  eikeon
-# converted a number of store.get()s to store.visit()s
-#
-# Revision 2.3  2000/10/16 17:23:35  eikeon
-# reimplemented parentTypesV to use visit instead of get
-#
-# Revision 2.2  2000/10/16 15:39:13  eikeon
-# added visit method
-#
-# Revision 2.1  2000/10/16 04:45:48  jtauber
-# resourcesByClassV on query and rednode now only call processClass if the class has instances
-#
-# Revision 2.0  2000/10/14 01:14:04  jtauber
-# next version
-#
-# Revision 1.27  2000/10/08 23:28:01  jtauber
-# added parent types visitor function
-#
-# Revision 1.26  2000/10/08 07:03:29  jtauber
-# made new varieties of propertyValuesV that only visit local or neighbourhood
-#
-# Revision 1.25  2000/10/07 02:16:36  jtauber
-# implemented isKnownResource method and made a note about typeInh no longer being used
-#
-# Revision 1.24  2000/10/05 00:39:00  jtauber
-# added TODO about extending isOfType function
-#
-# Revision 1.23  2000/10/01 03:58:10  eikeon
-# fixed up all the places where I put CVS keywords as keywords in omments... duh
-#
-# Revision 1.22  2000/10/01 02:12:01  eikeon
-# subClassV now uses a zero based depth (was one based); added Header and Log CVS keywords
-#
+#~ $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0

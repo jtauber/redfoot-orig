@@ -81,22 +81,6 @@ class Serializer:
             self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
 
 
-# $Log$
-# Revision 1.1  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.0  2000/10/14 01:14:04  jtauber
-# next version
-#
-# Revision 1.9  2000/10/09 21:57:42  eikeon
-# made a fix to the encoding of special XML characters; added encoding declaration, as work around for now, to handle special characters comming from browsers
-#
-# Revision 1.8  2000/10/06 03:06:32  eikeon
-# added missing return statement that was causing None for literal values
-#
-# Revision 1.7  2000/10/01 07:19:22  eikeon
-# fixed output to encode &'s, <'s and ''s
-#
+#~ $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0

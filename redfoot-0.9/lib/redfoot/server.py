@@ -95,45 +95,9 @@ if __name__ == '__main__':
     runServer(sys.argv[1:], PeerEditor)
 
 
-# $Log$
+#~ $Log$
+# Revision 3.1  2000/10/31 05:03:08  eikeon
+# mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
+#
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0
-#
-# Revision 1.5  2000/10/26 21:29:45  eikeon
-# tweaked handling of path; added additional startup message for where to find editor
-#
-# Revision 1.4  2000/10/26 03:38:39  eikeon
-# one line :)
-#
-# Revision 1.3  2000/10/26 02:34:52  eikeon
-# got redfoot.{bat,sh} working
-#
-# Revision 1.2  2000/10/26 01:18:36  eikeon
-# changed interface to server and dependant code
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.7  2000/10/17 02:29:43  jtauber
-# set up server to be able to use SampleUI; fixed slash problem with path
-#
-# Revision 2.6  2000/10/17 01:50:43  jtauber
-# server now takes -P option to pass in path which gets passed to the viewer
-#
-# Revision 2.5  2000/10/17 00:12:47  eikeon
-# fixed bug causing server to hang under load
-#
-# Revision 2.4  2000/10/16 06:31:49  eikeon
-# fixed bug I just introduced where a new RedfootHandler is beging created for each request
-#
-# Revision 2.3  2000/10/16 04:58:19  eikeon
-# refactored plumb-ing between bnh.Server and RedfootHandler
-#
-# Revision 2.2  2000/10/16 01:56:10  eikeon
-# removed 1.x log history
-#
-# Revision 2.1  2000/10/16 01:45:32  eikeon
-# moved viewer request handling code from server to viewer
-#
-# Revision 2.0  2000/10/14 01:14:04  jtauber
-# next version

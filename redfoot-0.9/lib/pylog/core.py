@@ -154,7 +154,10 @@ print goal(("human","socrates"))
 # and goal(("mortal","socrates")) should return 1
 print goal(("mortal","socrates"))
 
-# $Log$
+#~ $Log$
+# Revision 1.2  2000/10/31 06:30:28  eikeon
+# removed ^M's
+#
 # Revision 1.1  2000/10/31 06:15:45  jtauber
 # initial attempt at prolog-like inference in python
 #

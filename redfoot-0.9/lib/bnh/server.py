@@ -162,6 +162,10 @@ class Request:
         cookies.load(cookieStr)
         return cookies
 
+#    def getSession(self):
+#        cookies = self.getCookies()
+#        cookies['
+
 
 class Response:
 
@@ -254,7 +258,10 @@ def date_time_string():
     return s
 
 
-# $Log$
+#~ $Log$
+# Revision 3.2  2000/10/31 05:03:07  eikeon
+# mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
+#
 # Revision 3.1  2000/10/27 16:20:02  eikeon
 # small cleanup... mostly formatting
 #

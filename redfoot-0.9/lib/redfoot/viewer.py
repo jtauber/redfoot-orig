@@ -375,33 +375,9 @@ class Viewer:
         """)
 
 
-# $Log$
+#~ $Log$
+# Revision 3.1  2000/10/31 05:03:08  eikeon
+# mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
+#
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0
-#
-# Revision 1.2  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.6  2000/10/17 01:50:43  jtauber
-# server now takes -P option to pass in path which gets passed to the viewer
-#
-# Revision 2.5  2000/10/16 15:37:07  eikeon
-# fixed bug... unknown response is now self.writer
-#
-# Revision 2.4  2000/10/16 05:27:17  jtauber
-# gave menu bars labels and clarified some of the items
-#
-# Revision 2.3  2000/10/16 04:10:07  jtauber
-# refactored editor-specific http handling code from viewer to editor
-#
-# Revision 2.2  2000/10/16 01:56:10  eikeon
-# removed 1.x log history
-#
-# Revision 2.1  2000/10/16 01:45:32  eikeon
-# moved viewer request handling code from server to viewer
-#
-# Revision 2.0  2000/10/14 01:14:04  jtauber
-# next version

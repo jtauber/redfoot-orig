@@ -85,28 +85,6 @@ class StoreIO:
         s.end()
 
 
-# $Log$
-# Revision 1.1  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.1  2000/10/16 17:19:02  eikeon
-# visit method now takes a callback function instead of a visitor object
-#
-# Revision 2.0  2000/10/14 01:14:04  jtauber
-# next version
-#
-# Revision 1.14  2000/10/08 07:15:50  jtauber
-# fixed bug where get on storeio was not returning
-#
-# Revision 1.13  2000/10/05 00:48:40  jtauber
-# added remove and add methods which just call the corresponding methods on the store
-#
-# Revision 1.12  2000/10/01 03:58:10  eikeon
-# fixed up all the places where I put CVS keywords as keywords in omments... duh
-#
-# Revision 1.11  2000/10/01 03:04:10  eikeon
-# added visit and get method so that StoreIOs can be treated as Stores; changed output to use self.URI if no URI is passed in; added Header and Log CVS keywords
-#
+#~ $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0

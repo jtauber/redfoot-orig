@@ -169,13 +169,6 @@ class PropertyHandler:
         self.adder(self.parent.subject, self.predicate, self.object)
         self.parent.resume()
 
-# $Log$
-# Revision 1.1  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.1  2000/10/16 19:35:26  eikeon
-# added header and log
-#
+#~ $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0

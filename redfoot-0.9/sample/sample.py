@@ -56,25 +56,3 @@ if __name__ == '__main__':
     runServer(sys.argv[1:], SampleUI)
 
 # $Log$
-# Revision 1.2  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 1.4  2000/10/19 00:47:36  jtauber
-# refactored common code in SampleUI into BaseUI
-#
-# Revision 1.3  2000/10/19 00:33:07  jtauber
-# sample ui now links to peer editor
-#
-# Revision 1.2  2000/10/17 03:42:45  jtauber
-# included rdf file for sample ui and added a page that does a query
-#
-# Revision 1.1  2000/10/17 02:31:10  jtauber
-# beginnings of a sample UI
-#
-
-
-
-

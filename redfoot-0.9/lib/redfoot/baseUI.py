@@ -24,17 +24,9 @@ class BaseUI:
         request.path_info = request.path_info[len(self.path):]
         self.editor.handleRequest(request, response)
 
-# $Log$
+#~ $Log$
+# Revision 3.1  2000/10/31 05:03:08  eikeon
+# mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
+#
 # Revision 3.0  2000/10/27 01:23:10  eikeon
 # bump-ing version to 3.0
-#
-# Revision 1.2  2000/10/26 03:42:33  eikeon
-# split lib/redfoot into lib/redfoot, lib/rdf
-#
-# Revision 1.1  2000/10/25 20:40:31  eikeon
-# changes relating to new directory structure
-#
-# Revision 2.1  2000/10/19 00:51:57  jtauber
-# first version of base custom UI
-#
-
