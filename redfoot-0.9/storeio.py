@@ -61,7 +61,6 @@ class StoreIO:
             properties.sort()
             
             for property in properties:
-
                 values = queryStore.getValues(subject, property)
                 values.sort()
                 
