@@ -54,7 +54,9 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if args.has_key("processor"):
             if args["processor"][0] == "update":
                 viewer.update(args)
-        
+            elif args["processor"][0] == "create":
+                viewer.create(args)
+
         if path_info == "/":
             viewer.mainPage()
         elif path_info == "/subclass":
@@ -144,6 +146,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.11  2000/10/05 02:42:35  jtauber
+# implemented UI for 'add' in editor
+#
 # Revision 1.10  2000/10/05 01:02:19  jtauber
 # server now knows how to call update on editor
 #

@@ -14,6 +14,9 @@ class Editor(Viewer):
         """)
 
     def edit(self, subject):
+        if subject[0]=="#":
+            subject = self.qstore.getStore().getStore().URI + subject
+
         self.writer.write("""
           <HTML>
             <HEAD>
@@ -157,7 +160,7 @@ class Editor(Viewer):
             """)
             for klass in self.qstore.get(None, self.qstore.TYPE, self.qstore.CLASS):
                 self.writer.write("""
-                    <OPTION vluae="%s">%s</OPTION>
+                    <OPTION VALUE="%s">%s</OPTION>
                 """ % (klass[0], self.qstore.label(klass[0])))
             self.writer.write("""
                   </SELECT>
@@ -207,3 +210,25 @@ class Editor(Viewer):
 
     def generateURI(self):
         return "#foo"
+
+    def create(self, params):
+        subject = params["uri"][0]
+
+        if subject[0]=="#":
+            subject = self.qstore.getStore().getStore().URI + subject
+
+	self.qstore.getStore().remove(subject)
+
+
+        # TODO: what to do in the case it already exists?
+        self.qstore.getStore().add(subject, self.qstore.LABEL, "^"+params["label"][0])
+        self.qstore.getStore().add(subject, self.qstore.TYPE, params["type"][0])
+
+        if params.has_key("prop_count"):
+            count = params["prop_count"][0]
+            i = 0
+            while i < int(count):
+                i = i + 1
+                property = params["prop%s_name" % i][0]
+                value = params["prop%s_value" % i][0]
+                self.qstore.getStore().add(subject, property, value)
