@@ -20,9 +20,9 @@ class Receiver:
     def _getSocket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
+        sys.stderr.write("Attempting to bind to socket")
         while 1:
             try:
-                sys.stderr.write("Attempting to bind to socket")
                 sys.stderr.flush()
                 self.socket.bind(self.server_address)
                 break
@@ -113,6 +113,9 @@ class HandlerCubby:
     
 
 #~ $Log$
+#~ Revision 5.3  2000/12/14 00:32:38  eikeon
+#~ added code to keep trying to bind to address
+#~
 #~ Revision 5.2  2000/12/13 00:03:37  eikeon
 #~ server now shuts down cleanly
 #~
