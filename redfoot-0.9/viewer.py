@@ -294,7 +294,12 @@ class Viewer:
 
     def encodeURI(self, s):
         import string
-        return string.join( string.split(s,'#') ,'%23')
+        # work-around for 2.0b
+        import sys
+        if sys.version_info[0]==2:
+            return string.join(string.split(s,'#'),u'%23')
+        else:
+            return string.join(string.split(s,'#'),'%23')
 
     def RDF(self):
         #from storeio import StoreIO
@@ -326,6 +331,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.23  2000/10/10 04:29:56  eikeon
+# call resourceByClassV and subClassV on storeNode so that we see only what is in the local store for now
+#
 # Revision 1.22  2000/10/09 22:34:31  jtauber
 # RDF is now default view
 #
