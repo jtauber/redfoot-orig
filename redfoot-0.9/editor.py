@@ -299,3 +299,51 @@ class Editor(Viewer):
 
     def save(self):
         self.qstore.getStore().getStore().save()
+
+
+#TODO: could be a separate module
+class PeerEditor(Editor):
+    def menuBar(self):
+        self.writer.write("""
+            <P CLASS="MENUBAR"><A HREF=".">Class List</A>
+             | <A HREF="subclass">Full Subclass View</A>
+             | <A HREF="subclassNR">Collapsed Subclass View</A>
+             | <A HREF="RDF">Download RDF</A>
+             | <A HREF="Triples">Show Triples</A>
+             | <A HREF="add">Add a Resource</A>
+             | <A HREF=".?processor=save">Save Node to Disk</A>
+             | <A HREF="connect">Connect Neighbour</A>
+            </P>
+        """)
+    
+    def connectPage(self):
+        self.writer.write("""
+          <HTML>
+            <HEAD>
+              <TITLE>ReDFoot: Connect</TITLE>
+              <LINK REL="STYLESHEET" HREF="css"/>
+            </HEAD>
+            <BODY>
+              <H1>ReDFoot</H1>
+              <H2>Connect Neighbour</H2>""")
+        self.menuBar()
+        
+        self.writer.write("""
+              <FORM NAME="form" ACTION="." METHOD="GET">
+                <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri"></P>
+                <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
+              </FORM>
+            </BODY>
+          </HTML>
+          """)
+
+    def connect(self, params):
+        if params.has_key("uri"):
+            self.qstore.getStore().connectTo(param["uri"][0])
+
+
+
+
+
+
+
