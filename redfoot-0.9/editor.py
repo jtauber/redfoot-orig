@@ -9,7 +9,7 @@ class Editor(Viewer):
              | <A HREF="subclassNR">Collapsed Subclass View</A>
              | <A HREF="RDF">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
-             | EDITOR!!
+             | <A HREF="add">Add a Resource</A>
             </P>
         """)
 
