@@ -190,6 +190,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 1.27  2000/10/08 23:28:01  jtauber
+# added parent types visitor function
+#
 # Revision 1.26  2000/10/08 07:03:29  jtauber
 # made new varieties of propertyValuesV that only visit local or neighbourhood
 #

@@ -159,6 +159,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.29  2000/10/13 14:00:28  eikeon
+# added newline to end of startup message
+#
 # Revision 1.28  2000/10/13 04:23:23  eikeon
 # added startup message that shows port number etc back in
 #

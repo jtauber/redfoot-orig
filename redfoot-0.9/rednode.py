@@ -156,6 +156,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 # $Log$
+# Revision 1.8  2000/10/13 23:42:28  jtauber
+# moved rdf files from tests to top-level
+#
 # Revision 1.7  2000/10/10 04:27:24  eikeon
 # added a resourceByClassV and subClassV methods that query the localStore in the context of the neighbourhood; also added a visit method and a resourcesByClassVV method ;)
 #

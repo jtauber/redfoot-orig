@@ -89,6 +89,9 @@ class StoreIO:
 
 
 # $Log$
+# Revision 1.14  2000/10/08 07:15:50  jtauber
+# fixed bug where get on storeio was not returning
+#
 # Revision 1.13  2000/10/05 00:48:40  jtauber
 # added remove and add methods which just call the corresponding methods on the store
 #

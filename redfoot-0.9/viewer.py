@@ -346,6 +346,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.26  2000/10/13 21:49:03  eikeon
+# added code for when value does not have a value ;)
+#
 # Revision 1.25  2000/10/10 05:20:54  eikeon
 # added show/hide neighbour logic
 #

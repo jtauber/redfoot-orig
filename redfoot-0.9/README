@@ -55,6 +55,9 @@ WHERE TO GET THE LATEST REDFOOT
 See http://www.sourceforge.net/projects/redfoot
 
 $Log$
+Revision 1.4  2000/10/13 23:23:58  jtauber
+updated README to reflect python 2.0c1 and eikeon's BNH
+
 Revision 1.3  2000/10/10 05:07:03  jtauber
 made README a little clear on meaning of URI and what to do once the server is up and running
 

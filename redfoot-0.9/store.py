@@ -95,6 +95,9 @@ class TripleStore:
                     
 
 # $Log$
+# Revision 1.18  2000/10/08 04:49:11  eikeon
+# reimplemented visit method to be much more efficient... was just a first pass implementation before ;(
+#
 # Revision 1.17  2000/10/06 03:07:56  eikeon
 # removed pesky ^M^Ms
 #

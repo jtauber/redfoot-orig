@@ -168,6 +168,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.5  2000/10/13 22:19:47  eikeon
+# catching all exceptions so that server does not hang
+#
 # Revision 1.4  2000/10/13 05:03:10  eikeon
 # catching a few more exception
 #

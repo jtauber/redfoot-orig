@@ -82,6 +82,9 @@ class Serializer:
 
 
 # $Log$
+# Revision 1.9  2000/10/09 21:57:42  eikeon
+# made a fix to the encoding of special XML characters; added encoding declaration, as work around for now, to handle special characters comming from browsers
+#
 # Revision 1.8  2000/10/06 03:06:32  eikeon
 # added missing return statement that was causing None for literal values
 #

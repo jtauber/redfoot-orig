@@ -295,6 +295,9 @@ TODO
 
 
 $Log$
+Revision 1.4  2000/10/08 04:49:04  jtauber
+made a start on storeio method descriptions
+
 Revision 1.3  2000/10/08 03:46:26  jtauber
 filled out rest of query method descriptions except for subClassV
 
