@@ -19,7 +19,6 @@ Changes between 0.9.5 and 0.9.6
 
  - added get_session_uri method
    - removed management of session objects
-   - BNH now only deals with the setting/getting of the EBNH_session cookie
 
  - modified date_time_string to not generate string more than once per second
 
