@@ -22,8 +22,10 @@ class RedfootHandler:
             from redfoot.rednode import StoreNode
             from redfoot.storeio import StoreIO
             from redfoot.store import TripleStore
+            # TODO: the following shouldn't be hardcoded
             from redfoot.viewer import *
             from redfoot.editor import *
+            from redfoot.sampleUI import *
             
             storeNode = StoreNode()
 
@@ -65,7 +67,7 @@ if __name__ == '__main__':
     location = "local.rdf"
     uri = None
     interface = "PeerEditor"
-    path = ""
+    path = "/"
         
     import sys
     import getopt
@@ -88,7 +90,7 @@ if __name__ == '__main__':
         import socket
         # method for calculating absolute hostname
         hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
-        uri = "http://%s:%s/%s" % (hostname,port,path)
+        uri = "http://%s:%s%s" % (hostname,port,path)
 
     server = Server(('', port), lambda : RedfootServerConnection())
     
@@ -109,6 +111,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 2.6  2000/10/17 01:50:43  jtauber
+# server now takes -P option to pass in path which gets passed to the viewer
+#
 # Revision 2.5  2000/10/17 00:12:47  eikeon
 # fixed bug causing server to hang under load
 #
