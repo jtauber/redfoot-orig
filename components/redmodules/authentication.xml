@@ -1,0 +1,208 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+<!--
+
+    *** Not finished or tested yet... use accordingly ***
+
+  -->
+
+  from redfoot.rdf.const import TYPE
+  from redfoot.rdf.objects import resource, literal
+  from redfoot.util import date_time  
+  from redfoot.rdf.query.functors import first, o
+  from redfoot.rdf.store.urigen import generate_uri   
+
+  from redmodules.session import Session
+
+  from md5 import md5  
+
+  AUTH_URI = "http://redfoot.sourceforge.net/2001/08/AUTH/"
+  IDENTITY = resource(AUTH_URI + "identity")
+
+  USERNAME = resource(AUTH_URI + "username")
+  MD5_HEX_DIGEST = resource(AUTH_URI + "md5_hex_digest")
+  PERSON = resource(AUTH_URI + "person")
+  CREATED = resource(AUTH_URI + "created")
+  
+  <red:module name="Authentication">
+
+    <red:sub-module instance="session" class="Session"/>
+
+    def create_link(self):
+        # TODO: this could be done instead by telling Authentication
+        # module where it has been 'installed' (part before /create)
+        return "/create"    
+
+    def get_status(self):
+        if not hasattr(self, 'status'):
+            self.status = ''
+        return self.status
+
+    def set_status(self, status):
+        self.status = status
+
+    def set_identity(self, identity):
+        self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
+        self.session.sessions.add(resource(self.session.session_uri), IDENTITY, identity)
+
+    def get_identity(self):
+        return self.session.sessions.local.get_first_value(resource(self.session.session_uri), IDENTITY, None)
+
+    def authenticated(self):
+        if self.get_identity():
+            return 1	
+        else:
+            return 0
+
+    def get_username(self, default=None):
+        identity = self.get_identity()
+        if identity:
+            username = self.session.sessions.local.get_first_value(identity, USERNAME, None)
+            if username:
+                return username
+            else:
+                return "Identity has no USERNAME property"
+        else:
+            return "Session has no IDENTITY"
+
+    def do_login(self):
+        username = self.app.request.get_parameter('username')
+        password = self.app.request.get_parameter('password')        
+        s = self.session.sessions.local.get_first(None, USERNAME, literal(username))
+        if s:
+            md5_hex_digest = self.session.sessions.local.get_first_value(s.subject, MD5_HEX_DIGEST, None)
+
+            if md5_hex_digest and md5(password).hexdigest()==md5_hex_digest.value:
+                self.set_identity(s.subject)
+                self.set_status('Welcome, %s' % username)
+            else:
+                self.set_status('Unknown username, password')
+        else:
+            self.set_status('Unknown username')
+
+    def do_logout(self):
+        self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
+        self.set_status('')
+            
+    def do_create_user(self):
+        username = self.app.request.get_parameter('username')
+        password = self.app.request.get_parameter('password')
+        verify = self.app.request.get_parameter('verify')        
+        if not self.session.sessions.exists(None, USERNAME, literal(username)):
+            if password==verify:
+                md5_hex_digest = md5(password).hexdigest()
+
+                # Create identity
+                uri = resource(self.session.sessions.URI + generate_uri())
+                self.session.sessions.add(uri, TYPE, PERSON)
+                self.session.sessions.add(uri, MD5_HEX_DIGEST, literal(md5_hex_digest))
+                self.session.sessions.add(uri, USERNAME, literal(username))
+                time = date_time()
+                self.app.rednode.add(uri, CREATED, literal(time))
+                
+                self.set_identity(uri)
+                self.set_status("Welcome, %s" % username)
+            else:
+                self.set_status("password and verify did not match")
+        else:
+            self.set_status("Already user with username '%s'" % username)
+                
+    
+
+    <red:facet name="">
+      <H2>Authentication Info</H2>
+      <DL>
+        <DT>Current Username:</DT>
+        <DD>
+          <red:eval>self.get_username("Unknown")</red:eval>
+        </DD>
+      </DL>
+    </red:facet>
+
+    <red:facet name="create">
+      <red:if test="not self.session.sessions.exists(resource(self.session.session_uri), IDENTITY, None)">
+
+      <DIV class="content_area">
+    
+        <DIV style="colored: #990000;">
+          <red:eval>self.get_status()</red:eval>
+        </DIV>
+    
+        <FORM name="main" action=""
+              method="POST" style="margin: 0">
+          <TABLE>
+            <TR>
+              <TD>Username:</TD>
+              <TD><INPUT name="username" type="text"/></TD>
+            </TR>
+            <TR>
+              <TD>Password:</TD>
+              <TD><INPUT name="password" type="password"/>
+              </TD>
+            </TR>
+            <TR>
+              <TD>Verify:</TD>
+              <TD><INPUT name="verify" type="password"/>
+              </TD>
+            </TR>
+            <TR>
+              <TD align="right"><INPUT value="Create User" type="submit"/></TD>
+              <TD align="left"><INPUT value="Cancel" type="reset"/></TD>
+            </TR>
+          </TABLE>
+          <INPUT name="processor" value="do_create_user" type="hidden"/>
+          <INPUT name="view" value="create" type="hidden"/>          
+        </FORM>
+      </DIV>
+
+        <red:else>
+          <A href="create">Welcome, <red:eval>self.get_username()</red:eval></A>
+        </red:else>
+        
+      </red:if>
+    
+      
+    </red:facet>
+    
+    <red:facet name="login">    
+     <red:if test="not self.authenticated()">
+      <DIV class="content_area">
+
+        <FORM name="main" method="POST" style="margin: 0">
+
+        <DIV style="colored: #990000;">
+          <red:eval>self.get_status()</red:eval>
+        </DIV>
+        
+          <TABLE>
+            <TR>
+              <TD>Username:</TD>
+              <TD><INPUT name="username" type="text"/></TD>
+            </TR>
+            <TR>
+              <TD>Password:</TD>
+              <TD><INPUT name="password" type="password"/></TD>
+            </TR>
+            <TR>
+              <TD align="right">
+                <!--<INPUT value="Login" type="submit"/>-->
+                <INPUT value="Login" type="submit"/>
+              </TD>
+              <TD align="left">
+                <INPUT value="Cancel" type="reset"/>
+                <INPUT name="processor" value="do_login" type="hidden"/>
+                <INPUT name="view" value="login" type="hidden"/>
+              </TD>
+            </TR>
+          </TABLE>
+        </FORM>
+      </DIV>
+      <red:else>
+        <red:exec>self.app.remaining_path_info = "welcome"</red:exec>
+        <red:apply search="self.app"/>
+      </red:else>
+     </red:if> 
+    </red:facet>
+
+  </red:module>
+</red:code>  

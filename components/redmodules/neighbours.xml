@@ -1,0 +1,135 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.rdf.const import LABEL, TYPE
+  from redfoot.rdf.objects import resource, literal
+  from redfoot.rdf.query.functors import filter, s, remove_duplicates
+
+  from redfoot.rednode import NEIGHBOUR, CONNECTED, YES, NO
+
+  <red:module name="Neighbours">
+    def __init__(self):
+       self.status = {}
+
+    <red:facet name="neighbours">
+      <H2>Neighbours</H2>
+
+      <DIV class="content_area">
+        <H3 CLASS="content_header">Connected</H3>
+        <TABLE>
+
+        <red:exec>self.app.rednode.visit_by_type(self._connected_row, NEIGHBOUR, CONNECTED, YES)</red:exec>        
+        
+        </TABLE>
+      </DIV>
+
+      <DIV class="content_area">
+        <H3 class="content_header">Other Known</H3>
+
+        <FORM name="other" method="POST" style="margin: 0">
+          <INPUT name="uri" value="" type="hidden"/>
+          <INPUT name="processor" value="" type="hidden"/>          
+          <TABLE>
+
+          <red:exec>
+            subjects = lambda (s, p, o): s          
+            self.app.rednode.visit(remove_duplicates(filter(self._other_row, s(self.app.rednode.not_exists, CONNECTED, YES)), subjects), (None, TYPE, NEIGHBOUR))
+          </red:exec>
+            
+          </TABLE>
+        </FORM>
+      </DIV>
+
+      <DIV class="content_area">
+        <SPAN class="content_header">Add Neighbour</SPAN>
+        <FORM name="add" method="POST" action="" style="margin: 0">
+          <TABLE>
+            <TR>
+              <TD>URI:</TD>
+              <TD><INPUT name="uri" type="text" size="50"/></TD>
+            </TR>
+            <TR>
+              <TD align="right">
+                <INPUT value="Add" type="submit"/>
+              </TD>
+              <TD align="left">
+                <INPUT value="Cancel" type="reset"/>
+                <INPUT name="processor" value="add_neighbour" type="hidden"/>      
+              </TD>
+            </TR>
+          </TABLE>
+        </FORM>
+      </DIV>
+    </red:facet>
+
+    <red:facet name="_connected_row" args="neighbour, p, o">
+          <FORM name="main" method="POST" style="margin: 0">
+            <TR>
+              <TD><red:eval>neighbour</red:eval>
+                <INPUT name="uri" value="{neighbour}" type="hidden"/>
+              </TD>
+              <TD align="right">
+                <INPUT value="Disconnect" type="submit"/>
+                <INPUT name="processor" value="disconnect_neighbour" type="hidden"/>
+              </TD>
+            </TR>
+          </FORM>
+    </red:facet>
+
+
+    <red:facet name="_other_row" args="neighbour, p, o">
+            <TR>
+              <TD><red:eval>neighbour</red:eval></TD>
+              <TD>
+                <INPUT value="Connect" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='connect_neighbour';other.submit()"/>
+              </TD>
+              <TD align="right">
+                <INPUT value="Remove" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
+              </TD>
+
+              <!-- Make the status red -->
+              <TD><red:eval>self.status.get(neighbour.uri, '')</red:eval></TD>
+            </TR>
+    </red:facet>
+
+    def disconnect_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+       self.app.rednode.disconnect_from(uri)
+
+    def connect_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+       try:
+          self.app.rednode.connect_to(uri)
+          self.status[uri] = None
+       except Exception, msg:
+          self.status[uri] = "%s: %s" % (msg.__class__.__name__, msg)
+
+    def remove_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+       self.app.rednode.remove(resource(uri), TYPE, NEIGHBOUR)
+       self.app.rednode.remove(resource(uri), CONNECTED, None)
+       self.status[uri] = None
+
+    def add_neighbour(self):
+       uri = self.app.request.get_parameter('uri')
+
+       from urlparse import urlparse, urlunparse
+       from urllib import quote, quote_plus
+
+       scheme, netloc, url, params, query, fragment = urlparse(uri)
+       orig = uri
+       url = quote(url, safe="/%")
+       query = quote_plus(query, safe="=&amp;")
+       uri = urlunparse((scheme, netloc, url, params, query, fragment))
+       # TODO: check to see if uri has been further encoded by the
+       # above and if so, added a warning message to that effect.
+       if uri!=orig:
+          self.status[uri] = "URI contained illegal characters. Encoded '%s' as '%s'" % (orig, uri)
+
+       
+       self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)
+       self.app.rednode.add(resource(uri), CONNECTED, NO)
+
+  </red:module>
+</red:code>
+
+

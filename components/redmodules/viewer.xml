@@ -1,0 +1,178 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  # TODO: typeless resources
+  # TODO: reification
+
+  from redfoot.util import *
+  from redfoot.rdf.query.functors import *
+  from redfoot.rdf.objects import resource, literal
+  from redfoot.rdf.const import *
+
+  <red:module name="Viewer">
+
+    <red:facet name="class_list">
+      <DL>
+        <red:exec>
+          self.app.rednode.visit_resources_by_type(self.display_class, self.display_resource)
+        </red:exec>
+      </DL>
+    </red:facet>
+
+    <red:facet name="display_class" args="klass">
+      <DT>
+        <SPAN CLASS="CLASS">
+          <red:eval>
+            self.app.rednode.label(klass)
+          </red:eval>
+        </SPAN>
+      </DT>
+    </red:facet>
+        
+    <red:facet name="display_resource" args="res">
+      <DD>
+        <red:exec>
+          self.view_link(res)
+        </red:exec>
+      </DD>
+    </red:facet>
+
+    <red:facet name="full_subclass_tree">
+      <UL>
+        <LI>
+          <red:eval>self.subclass_tree(RESOURCE)</red:eval>
+        </LI>
+      </UL>
+    </red:facet>
+
+    <red:facet name="subclass_tree" args="root">
+      <SPAN CLASS="CLASS">
+        <red:eval>
+          self.app.rednode.label(root)
+        </red:eval>
+      </SPAN>
+      <UL>
+        <red:exec>
+          self.app.rednode.visit(self.subclass, (None, SUBCLASSOF, root))
+          self.app.rednode.visit(s(self.subclass_resource), (None, TYPE, root))
+        </red:exec>
+      </UL>
+    </red:facet>
+  
+    <red:facet name="subclass" args="s, p, o">
+      <LI>
+        <red:exec>
+          self.subclass_tree(s)
+        </red:exec>
+      </LI>
+    </red:facet>    
+
+    <red:facet name="subclass_resource" args="res">
+      <LI>
+        <red:exec>
+          self.view_link(res)
+        </red:exec>
+      </LI>
+    </red:facet>    
+
+    <red:facet name="view_link" args="res">
+      <red:if test="res.is_literal()">
+        <red:eval>res</red:eval>
+        <red:else>
+          <A HREF='view?subject={encode_URI(res)}'
+             TITLE='{self.app.rednode.comment(res)}'>
+            <red:eval>
+              self.app.rednode.label(res)
+            </red:eval>
+           </A>
+        </red:else>        
+      </red:if>       
+    </red:facet>
+
+    <red:facet name="view">
+      <red:exec>
+        s = resource(self.app.request.get_parameter('subject')) 
+      </red:exec>
+      <H2><red:eval>s</red:eval></H2>
+      <TABLE>
+        <red:if test="self.app.rednode.exists(s, None, None)">
+          <red:exec>
+            self.app.rednode.visit(po(self.display_property_value), (s, None, None))
+          </red:exec>
+          <red:else>
+            <TR>
+              <TD>Resource not known of directly</TD>
+            </TR>
+            <!-- TODO: reified statements -->
+          </red:else>
+        </red:if> 
+      </TABLE>
+    </red:facet>
+
+    <red:facet name="display_property_value" args="property, value">
+      <TR>
+        <TD>
+          <red:exec>
+            self.view_link(property)
+          </red:exec>
+        </TD>
+        <TD>
+          <red:exec>
+            self.view_link(value)
+          </red:exec>
+        </TD>
+      </TR>
+    </red:facet>
+    
+    <red:facet name="partial_subclass_tree">
+      <red:exec>
+        root = self.app.request.get_parameter('root', None)
+        if root == None:
+            root = RESOURCE
+        else:
+            root = resource(root)
+      </red:exec>
+      <H2>
+        <red:eval>
+          self.app.rednode.label(root)
+        </red:eval>
+      </H2>
+      <DIV>
+        Super classes:
+        <red:exec>
+          self.app.rednode.neighbourhood.visit_parent_types(o(self.parent), root)
+        </red:exec>
+      </DIV>
+      Sub classes:
+      <UL>
+        <red:exec>
+          self.app.rednode.visit(s(self.partial_subclass_class), (None, SUBCLASSOF, root))
+        </red:exec>    
+      </UL>
+      Instances:
+      <UL>
+        <red:exec>
+          self.app.rednode.visit(s(self.subclass_resource), (None, TYPE, root))
+        </red:exec>
+      </UL>
+    </red:facet>
+    
+    <red:facet name="parent" args="klass">
+      <A HREF='partial_subclass_tree?root={encode_URI(klass)}'>
+        <red:eval>
+          self.app.rednode.label(klass)
+        </red:eval>
+      </A>&amp;nbsp;
+    </red:facet>
+
+    <red:facet name="partial_subclass_class" args="klass">
+      <LI>
+        <A HREF='partial_subclass_tree?root={encode_URI(klass)}'>
+          <red:eval>
+            self.app.rednode.label(klass)
+          </red:eval>
+        </A>
+      </LI>
+    </red:facet>    
+
+  </red:module>
+</red:code>  

@@ -1,0 +1,38 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.rdf.objects import resource
+  from redfoot.rdf.const import TYPE
+
+  RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+  RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+  RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+  RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+  <red:module name="RSS">
+
+    <red:facet name="display_rss">
+      <DL CLASS="RSS_ITEM">
+        <red:visit match="(None, TYPE, RSS_ITEM)">
+          <DT>
+            <red:eval>
+              self.app.rednode.get_first_value(subject, RSS_TITLE, '')
+            </red:eval>
+          </DT>
+          <DD>
+            <DIV>
+              <red:eval>
+                self.app.rednode.get_first_value(subject, RSS_DESCRIPTION, '')
+              </red:eval>
+            </DIV>
+            <DIV>
+              <A HREF="{self.app.rednode.get_first_value(subject, RSS_LINK, '')}">Read Story</A>
+            </DIV>
+          </DD>
+        </red:visit>
+      </DL>
+    </red:facet>
+
+  </red:module>
+
+</red:code>
+

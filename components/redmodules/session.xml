@@ -1,0 +1,137 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+<!--
+
+    *** Not finished or tested yet... use accordingly ***
+
+  -->
+
+
+from redfoot.rdf.const import LABEL, TYPE
+from redfoot.rdf.objects import resource, literal
+from redfoot.rdf.store.urigen import generate_uri
+from redfoot.util import encode_URI, date_time
+from redfoot.rdf.store.urigen import generate_uri
+from redfoot.rdf.query.functors import first, o
+
+SESSION_URI = "http://redfoot.sourceforge.net/2001/08/SESSION/"
+
+SESSION = resource(SESSION_URI+"session")
+CREATED = resource(SESSION_URI+"created")
+USER_AGENT = resource(SESSION_URI+"userAgent")
+REFERER = resource(SESSION_URI+"referer")
+HOST = resource(SESSION_URI+"host")
+VIA = resource(SESSION_URI+"via")
+
+  <red:module name="Session">
+
+    <red:facet name="">
+        <DL>
+          <DT>Current Session URI:</DT>
+          <DD>
+            <red:eval>self.session_uri</red:eval>
+          </DD>
+          <DT>Session Count:</DT>
+          <DD>
+            <red:eval>self.session_count()</red:eval>
+          </DD>
+        </DL>
+        <A href="by-date">Session list by date</A>
+    </red:facet>
+
+    <red:facet name="by-date">
+      <H2>Sessions by date</H2>
+      <UL>
+        <red:exec>
+          self.sessions.visit(self.session_row ,(None, TYPE, SESSION))
+        </red:exec>
+      </UL>
+    </red:facet>
+
+    <red:facet name="session_row" args="s, p, o">
+      <LI>
+        <A href="session?subject={encode_URI(s)}">
+          <red:eval>s</red:eval>
+        </A>
+      </LI>
+    </red:facet>
+
+    <red:facet name="session">
+      <red:exec>subject = resource(self.app.request.get_parameter('subject', None))</red:exec>
+      <H2>Session Info</H2>
+ 
+      <DL>
+        <DT>Session URI:</DT>
+        <DD>
+          <red:eval>subject</red:eval>
+        </DD>
+        <DT>Created on:</DT>
+        <DD>
+          <red:exec>
+            self.sessions.visit(first(o(self.display_object)), (subject, CREATED, None))
+          </red:exec>
+        </DD>
+      </DL>
+    </red:facet>
+
+    <red:facet name="display_object" args="o">
+      <red:eval>str(o)</red:eval>
+    </red:facet>
+
+
+    def session_count(self):
+        class Counter:
+           def __init__(self):
+               self.count = 0
+           def accept(self, s, p, o):
+               self.count = self.count + 1
+        counter = Counter()
+        self.sessions.visit(counter.accept, (None, TYPE, SESSION))
+        return counter.count
+
+    def __getattr__(self, name):
+        if name=='sessions':
+            from redfoot.rednode import RedNode
+            sessions = RedNode()
+            rdf, uri = ("%s-session.rdf" % self.app.__module__, "http://localhost:8000/sessions/")
+            sessions.URI = uri
+            sessions.local.load(rdf, uri, 1)
+            self.app.rednode.neighbours.add_store(sessions.local)    
+            self.sessions = sessions
+            return sessions
+        raise AttributeError, name                
+
+    
+    def stop(self):
+        print "saving sessions"
+        self.sessions.local.save()
+
+    def handle_request(self, request, response):
+        # TODO: This is on behalf of Authentication module
+        self.status = ''
+
+        self.app.request = request
+        self.app.response = response
+
+        sessions = self.sessions.local
+
+        session_uri = request.get_session_uri()
+        if not session_uri or not sessions.exists(resource(session_uri), TYPE, SESSION):
+            session_uri = sessions.URI + generate_uri()
+            response.set_session_uri(session_uri)
+
+            headers = request.get_headers()
+            sessions.add(resource(session_uri), TYPE, SESSION)
+            sessions.add(resource(session_uri), CREATED, literal(date_time()))
+            #sessions.add(session_uri, USER_AGENT, literal(headers['user-agent']))
+            #sessions.add(session_uri, REFERER, request.get_header('referer'))
+            #sessions.add(session_uri, HOST, literal(headers['host']))
+            #sessions.add(session_uri, VIA, literal(headers['via']))
+
+        self.session_uri = session_uri
+
+  </red:module>
+
+</red:code>  
+
+
