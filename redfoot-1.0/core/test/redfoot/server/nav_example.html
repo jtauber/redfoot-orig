@@ -1,0 +1,89 @@
+<HTML>
+  <STYLE>
+    A.NAV {
+      TEXT-DECORATION: none;
+      FONT-FAMILY: "Trebuchet MS",  sans-serif;
+      COLOR: #FFF;
+      FONT-SIZE: 9pt;
+    }
+    TD.NAV {
+      BORDER-RIGHT: #000000 1px solid;
+      BORDER-TOP: #990000 1px solid;
+      BACKGROUND: #660000;
+      BORDER-LEFT: #990000 1px solid;
+      BORDER-BOTTOM: #000000 1px solid;
+    }
+    BODY {
+      MARGIN: 0px;
+      FONT-FAMILY: "Trebuchet MS", sans-serif;
+    }
+    H1 {
+      PADDING: 5px;
+      BORDER-RIGHT: #000000 1px solid;
+      BORDER-TOP: #990000 1px solid;
+      BACKGROUND: #660000;
+      BORDER-LEFT: #990000 1px solid;
+      BORDER-BOTTOM: #000000 1px solid;
+      MARGIN: 0px;
+      COLOR: #FFF;
+      FONT-FAMILY: "Trebuchet MS", sans-serif;
+      FONT-WEIGHT: normal;
+    }
+    TABLE.NAV {
+      BACKGROUND: #990000;
+      HEIGHT: 100%;
+    }
+    DIV.CONTENT_AREA {
+      MARGIN: 10px;
+    }
+  </STYLE>
+  <SCRIPT>
+    function over(el) {
+      el.style.backgroundColor="#990000";
+      el.style.cursor="hand";
+    }
+    function out(el) {
+      el.style.backgroundColor="#660000";
+      el.style.cursor="hand";
+    }
+  </SCRIPT>
+  <BODY>
+    <H1>Some Site</H1>
+    <TABLE CELLSPACING="0" CELLPADDING="0">
+      <TR>
+        <TD VALIGN="TOP">
+          <TABLE CLASS="NAV" CELLSPACING="0" WIDTH="200">
+            <TR>
+              <TD
+                 CLASS="NAV"
+                 ONMOUSEOVER="over(this)"
+                 ONMOUSEOUT="out(this)"
+                 ONCLICK="location.href='whatever'">
+                <A CLASS="NAV" HREF="whatever">Section One</a>
+              </TD></TR><TR>
+              <TD CLASS="NAV"
+                 ONMOUSEOVER="over(this)"
+                 ONMOUSEOUT="out(this)"
+                 ONCLICK="location.href='whatever'">
+                <A CLASS="NAV" HREF="whatever">Section Two</a>
+              </TD></TR><TR>
+              <TD CLASS="NAV"
+                 ONMOUSEOVER="over(this)"
+                 ONMOUSEOUT="out(this)"
+                 ONCLICK="location.href='whatever'">
+                <A CLASS="NAV" HREF="whatever">Section Three</a>
+              </TD>
+            </TR>
+          </TABLE>
+        </TD>
+        <TD VALIGN="TOP">
+          <DIV CLASS="CONTENT_AREA">
+            <P>Hello!</P>
+          </DIV>
+        </TD>
+      </TR>
+    </TABLE>
+  </BODY>
+</HTML>
+ 
+

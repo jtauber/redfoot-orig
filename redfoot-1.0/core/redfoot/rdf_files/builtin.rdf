@@ -1,0 +1,71 @@
+<rdf:RDF
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:b="http://redfoot.sourceforge.net/2000/10/06/builtin#"
+>
+
+  <rdf:Description rdf:ID="UIType">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    <rdfs:label>UIType</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="TEXTAREA">
+    <rdf:type rdf:resource="#UIType"/>
+    <rdfs:label>TEXTAREA</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="TEXTINPUT">
+    <rdf:type rdf:resource="#UIType"/>
+    <rdfs:label>TEXTINPUT</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="uiType">
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>uiType</rdfs:label>
+    <rdfs:range rdf:resource="#UIType"/>
+  </rdf:Description>
+
+  <rdf:Description about="http://www.w3.org/2000/01/rdf-schema#comment">
+    <b:uiType rdf:resource="#TEXTAREA"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:ID="YesNo">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"></rdf:type>
+    <rdfs:label>YesNo</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"></rdfs:subClassOf>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="YES">
+    <rdf:type rdf:resource="#YesNo"></rdf:type>
+    <rdfs:label>YES</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="NO">
+    <rdf:type rdf:resource="#YesNo"></rdf:type>
+    <rdfs:label>NO</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="requiredProperty">
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"></rdf:type>
+    <rdfs:domain rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"></rdfs:domain>
+    <rdfs:label>requiredProperty</rdfs:label>
+    <rdfs:range rdf:resource="#YesNo"></rdfs:range>
+  </rdf:Description>
+
+<!-- bug fixes -->
+
+  <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#domain">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+
+<!-- temporary -->
+
+  <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#object">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Description>
+
+</rdf:RDF>

@@ -1,0 +1,48 @@
+<r:module xmlns:r="http://redfoot.sourceforge.net/2001/06/">
+
+tmp = 'asfd'
+
+  <r:pages name="Redpages">
+
+    <r:page name="noarg"/>
+
+    <r:page name="boo" args="foo=None">
+      This <b>is</b> a page!!
+      <ul>
+        <li><a href="{tmp}"><r:eval>tmp</r:eval></a></li>
+<r:exec>tmp = 2*tmp</r:exec>
+        <li><a href="{tmp}"><r:eval>tmp</r:eval></a></li>
+      </ul>  
+
+      <r:for item="i" list="[0, 1, 2]">
+        <r:if test="i==0">
+	  <b>foo is '<r:eval>foo</r:eval>'</b>
+          <r:elseif test="i==1">
+            Not sure
+          </r:elseif>
+          <r:else>
+            Less
+          </r:else>
+        </r:if>
+      </r:for>
+
+    </r:page>
+
+def handle(self, request, response):
+    self.request = request
+    self.response = response
+    self.boo()
+
+  </r:pages>
+
+rp = Redpages()
+
+def handle_request(request, response):
+    if request.get_path_info()=='/':
+        rp.handle(request, response)
+    else:
+        response.write("boo")
+
+
+</r:module>
+

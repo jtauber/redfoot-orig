@@ -1,0 +1,8 @@
+<module xmlns="http://redfoot.sourceforge.net/2001/06/"
+        name="rc">
+
+a = 'asdf123'
+  <class name="FooClass">
+foo = 'cool!'
+  </class>
+</module>

@@ -1,0 +1,14 @@
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:s="http://description.org/schema/">
+
+<rdf:Bag ID="pages">
+  <rdf:li resource="http://foo.org/foo.html" />
+  <rdf:li resource="http://bar.org/bar.html" />
+</rdf:Bag>
+
+<rdf:Description about="#pages">
+  <s:Creator>Ora Lassila</s:Creator>
+</rdf:Description>
+
+</rdf:RDF>

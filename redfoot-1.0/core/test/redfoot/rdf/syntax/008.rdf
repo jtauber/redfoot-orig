@@ -1,0 +1,14 @@
+<rdf:RDF
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:s="http://description.org/schema/"
+         xmlns:v="foo/"
+>
+  <rdf:Description about="http://www.w3.org/Home/Lassila">
+    <s:Creator rdf:resource="http://www.w3.org/staffId/85740"/>
+  </rdf:Description>
+
+  <rdf:Description about="http://www.w3.org/staffId/85740">
+    <v:Name>Ora Lassila</v:Name>
+    <v:Email>lassila@w3.org</v:Email>
+  </rdf:Description>
+</rdf:RDF>
