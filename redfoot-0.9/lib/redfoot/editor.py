@@ -54,7 +54,7 @@ class Editor(Viewer):
         self.response.write("""
             <H2>%s</H2>
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
-        """ % (self.qstore.labelAll(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
+        """ % (self.qstore.neighbourhood.label(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
     def edit(self, subject):
         if subject!=None and subject!="" and subject[0]=="#":
@@ -98,7 +98,7 @@ class Editor(Viewer):
                     for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
                         self.response.write("""
                         <OPTION value="%s">%s</OPTION>
-                        """ % (domain[0], self.qstore.labelAll(domain[0])))
+                        """ % (domain[0], self.qstore.neighbourhood.label(domain[0])))
                         
             self.response.write("""
                   </SELECT>
@@ -135,10 +135,10 @@ class Editor(Viewer):
                     <INPUT TYPE="HIDDEN" NAME="prop%s_name" VALUE="%s">
                   </TD>
                   <TD VALIGN="TOP">
-        """ % (self.qstore.labelAll(property), self.property_num, property))
+        """ % (self.qstore.neighbourhood.label(property), self.property_num, property))
 
         def callback(s, p, o, self=self):
-            self.response.write("%s<BR>" % self.qstore.labelAll(o))
+            self.response.write("%s<BR>" % self.qstore.neighbourhood.label(o))
         self.qstore.visit(callback, property, self.qstore.RANGE, None)
 
         self.response.write("""
@@ -170,7 +170,7 @@ class Editor(Viewer):
 
                 possibleValues = {}
                 def possibleValue(s, p, o, qstore=self.qstore, possibleValues=possibleValues):
-                    label = qstore.labelAll(s)
+                    label = qstore.neighbourhood.label(s)
                     # we use a key of 'label + s' to insure uniqness of key
                     possibleValues[label+s] = s 
 
@@ -184,11 +184,11 @@ class Editor(Viewer):
                     if v==value:
                         self.response.write("""
                         <OPTION SELECTED="TRUE" VALUE="%s">%s</OPTION>
-                        """ % (v, self.qstore.labelAll(v)))
+                        """ % (v, self.qstore.neighbourhood.label(v)))
                     else:
                         self.response.write("""
                         <OPTION VALUE="%s">%s</OPTION>
-                        """ % (v, self.qstore.labelAll(v)))
+                        """ % (v, self.qstore.neighbourhood.label(v)))
                     
 
 
@@ -255,7 +255,7 @@ class Editor(Viewer):
             for klass in self.qstore.get(None, self.qstore.TYPE, self.qstore.CLASS):
                 self.response.write("""
                     <OPTION VALUE="%s">%s</OPTION>
-                """ % (klass[0], self.qstore.labelAll(klass[0])))
+                """ % (klass[0], self.qstore.neighbourhood.label(klass[0])))
             self.response.write("""
                   </SELECT>
             """)
@@ -420,6 +420,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.3  2000/12/04 22:00:59  eikeon
+# got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
+#
 # Revision 4.2  2000/11/27 19:39:10  eikeon
 # editor now alphabetically sort possible values for properties
 #
