@@ -57,23 +57,13 @@ class QueryBase:
     # TODO: need a visitor version
     def getByType(self, type, predicate, object):
         listBuilder = ListBuilder()
-        query = Query(self.query, (listBuilder,), lambda s, p, o: (s,), (predicate, object))
+        query = Query(self.query, (listBuilder, lambda s, p, o: (s,), predicate, object))
         self.query(query, None, TYPE, type)
         return listBuilder.list
 
     def visitByType(self, visitor, type, predicate, object):
-        query = Query(self.query, (visitor,), lambda s, p, o: (s,), (predicate, object))
+        query = Query(self.query, (visitor, lambda s, p, o: (s,), predicate, object))
         self.query(query, None, TYPE, type)
-
-    def visitResourcesByType_orig(self, type_callback, resource_callback):
-        resourceVisitor = Query(resource_callback, (), lambda s, p, o: (s,))
-        queryV = Query(self.query, (resourceVisitor,), lambda s, p, o: (None, TYPE, s))
-
-        typeVisitor = Query(type_callback, (), lambda s, p, o: (s,))
-
-        classVisitor = And(typeVisitor, queryV)
-
-        self.query(classVisitor, None, TYPE, CLASS)
 
     def visitResourcesByType(self, processClass, processResource):
         setBuilder = ObjectSetBuilder()
@@ -99,7 +89,7 @@ class QueryBase:
         def adapter(callback, subject, getFirst):
             callback(subject, getFirst(subject, PREDICATE, None)[2], getFirst(subject, OBJECT, None)[2])
 
-        visitor = Query(adapter, (callback,), lambda s, p, o: (s,), (self.getFirst,))
+        visitor = Query(adapter, (callback, lambda s, p, o: (s,), self.getFirst))
         self.visitByType(visitor, STATEMENT, SUBJECT, subject)
 
     # should perhaps just autogenerate statement_uri
@@ -178,11 +168,25 @@ class ObjectSetBuilder:
         pass
 
 class Query:
-    def __init__(self, query, pre, adapter, post=()):
+    def __init__(self, query, args):
         self.query = query
-        self.adapter = adapter
-        self.pre = pre
-        self.post = post
+        self.pre = []
+        self.post = []
+        self.adapter = None
+        for arg in args:
+            if hasattr(arg, 'func_name'): # is arg a function
+                self.adapter = arg
+            else:
+                if self.adapter == None:
+                    self.pre.append(arg)
+                else:
+                    self.post.append(arg)
+
+#    def __init__(self, query, pre, adapter, post=()):
+#        self.query = query
+#        self.adapter = adapter
+#        self.pre = pre
+#        self.post = post
 
     def visit(self, s, p, o):
         return apply(self.query, self.pre + self.adapter(s, p, o) + self.post)
@@ -218,13 +222,29 @@ class If:
         pass
 
 class Alpha:
-    def __init__(self, query, pre, adapter, post, label):
+    def __init__(self, query, args, label):
         self.query = query
-        self.adapter = adapter
-        self.pre = pre
-        self.post = post
         self.statements = {}
         self.label = label
+        self.pre = []
+        self.post = []
+        self.adapter = None
+        for arg in args:
+            if hasattr(arg, 'func_name'): # is arg a function
+                self.adapter = arg
+            else:
+                if self.adapter == None:
+                    self.pre.append(arg)
+                else:
+                    self.post.append(arg)
+
+#    def __init__(self, query, pre, adapter, post, label):
+#        self.query = query
+#        self.adapter = adapter
+#        self.pre = pre
+#        self.post = post
+#        self.statements = {}
+#        self.label = label
 
     def visit(self, s, p, o):
         label = self.label(s, '')
@@ -267,7 +287,7 @@ class QueryStore(QueryBase):
         return objectSetBuilder.set.keys()
 
     def visitTransitiveSuperTypes(self, callback, type):
-        trans = And(callback, Query(self.visitTransitiveSuperTypes, (callback,), lambda s, p, o: (o,)))
+        trans = And(callback, Query(self.visitTransitiveSuperTypes, (callback, lambda s, p, o: (o,))))
         self.query(trans, type, SUBCLASSOF, None)
 
     def getTransitiveSubTypes(self, type):
@@ -277,7 +297,7 @@ class QueryStore(QueryBase):
         return subjectSetBuilder.set.keys()
 
     def visitTransitiveSubTypes(self, callback, type):
-        trans = And(callback, Query(self.visitTransitiveSubTypes, (callback,), lambda s, p, o: (s,)))
+        trans = And(callback, Query(self.visitTransitiveSubTypes, (callback, lambda s, p, o: (s,))))
         self.query(trans, None, SUBCLASSOF, type)
 
     def getRootClasses(self):
@@ -298,12 +318,12 @@ class QueryStore(QueryBase):
         class_callback(type, currentDepth, recurse)
 
         if recurse:
-            query = Query(self.visitSubclasses, (class_callback, instance_callback), lambda s, p, o: (s,), (currentDepth+1,))
+            query = Query(self.visitSubclasses, (class_callback, instance_callback, lambda s, p, o: (s,), currentDepth+1))
         else:
-            query = Query(class_callback, (), lambda s, p, o: (s,), (currentDepth+1, 0))
+            query = Query(class_callback, (lambda s, p, o: (s,), currentDepth+1, 0))
         self.query(query, None, SUBCLASSOF, type)
         
-        instanceQuery = Query(instance_callback, (), lambda s, p, o: (s,), (currentDepth, recurse))
+        instanceQuery = Query(instance_callback, (lambda s, p, o: (s,), currentDepth, recurse))
         self.query(instanceQuery, None, TYPE, type)
 
     def getPossibleValues(self, property):
@@ -348,6 +368,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ new release
+#~
 #~ Revision 5.15  2001/02/09 21:51:28  eikeon
 #~ Fixed but in visitTransitiveSubTypes and visitPossibleValues
 #~
