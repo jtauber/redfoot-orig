@@ -12,10 +12,10 @@ import sys
 class Receiver:
     ""
 
-    def __init__(self, server_address):
+    def __init__(self, server_address, connection_cuby):
         ""
         self.server_address = server_address
-        self.handlerCubby = HandlerCubby(5)
+        self.connection_cubby = connection_cuby
 
     def _getSocket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,11 +40,11 @@ class Receiver:
 
     def _acceptRequests(self):
         serverSocket = self._getSocket()
-        handlerCubby = self.handlerCubby
+        connection_cubby = self.connection_cubby
         while 1:
             try:
                 clientSocket, client_address = serverSocket.accept()
-                handlerCubby.put(clientSocket)
+                connection_cubby.put(clientSocket)
             except socket.error:
                 #TODO: log
                 break
@@ -52,7 +52,7 @@ class Receiver:
                 import traceback
                 traceback.print_exc()
                 sys.stderr.flush()
-                sys.exit()
+                break
         
     def start(self):
         sys.stderr.write("Started eikeon's Bare Naked HTTP Server.\n")
@@ -64,55 +64,16 @@ class Receiver:
         t.setDaemon(1)
         t.start()
 
-
     def stop(self):
         self.socket.close()
         del self.socket
 
-from threading import RLock
-from threading import Condition
-
-class HandlerCubby:
-
-    def __init__(self, limit):
-        self.mon = RLock()
-        self.rc = Condition(self.mon)
-        self.wc = Condition(self.mon)
-        self.limit = limit
-        self.queue = []
-
-    def put(self, item):
-        self.mon.acquire()
-        while len(self.queue) >= self.limit:
-            self.wc.wait()
-        self.queue.append(item)
-        self.rc.notify()
-        self.mon.release()
-
-    def get(self):
-        self.mon.acquire()
-        if not self.queue:
-            item = None
-        else:
-            item = self.queue[0]
-            del self.queue[0]
-            self.wc.notify()
-        self.mon.release()
-        return item
-
-    def wait(self, timeout=None):
-        self.mon.acquire()
-        self.rc.wait(timeout)
-        self.mon.release()
-
-    def stop(self, handler):
-        self.mon.acquire()
-        handler.running = 0
-        self.rc.notifyAll()
-        self.mon.release()
     
 
 #~ $Log$
+#~ Revision 5.5  2000/12/17 21:19:10  eikeon
+#~ removed old log messages
+#~
 #~ Revision 5.4  2000/12/14 00:39:32  eikeon
 #~ moved attempting to bind to socket message out of loop
 #~

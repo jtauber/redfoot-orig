@@ -6,15 +6,19 @@ eikeon's Bare Naked HTTP Server
 __version__ = "$Revision$"
 
 from bnh.receiver import Receiver
+from bnh.connection_cubby import ConnectionCubby
+
 from bnh.servlet import ServerConnection
 from bnh.servlet import ServerContext
 
 class Server:
     def __init__(self, serverAddress):
-        self.context = ServerContext()        
-        self.receiver = Receiver(serverAddress)
-        self.receiver.start()
-        self.running = 0
+        self.context = ServerContext()
+        self.connection_cubby = ConnectionCubby(5)
+
+        # Listen for requests and queue up the connections in the ConnectionCubby
+        receiver = Receiver(serverAddress, self.connection_cubby)
+        receiver.start()
         
     def setHandler(self, handler):
         self.handler = handler
@@ -23,23 +27,29 @@ class Server:
         serverConnection = ServerConnection(self.handler, self.context)
         import threading
         t = threading.Thread(target = self._handleRequest, args = (serverConnection,))
+        self.thread = t
         t.setDaemon(1)
         t.start()
 
     def stop(self):
         self.running = 0
+        self.connection_cubby.notify()
+        self.thread.join() # wait for pending request to finish
 
     def _handleRequest(self, serverConnection):
         self.running = 1            
-        handlerCubby = self.receiver.handlerCubby
-        while self.running==1:
-            clientSocket = handlerCubby.get()
+        connection_cubby = self.connection_cubby
+        while self.running==1 or not connection_cubby.empty():
+            clientSocket = connection_cubby.get()
             if clientSocket!=None:
                 serverConnection.handleRequest(self, clientSocket)
             else:
-                handlerCubby.wait(0.05) # TODO: can we make this wait()?
+                connection_cubby.wait() 
 
 #~ $Log$
+#~ Revision 5.4  2000/12/17 21:19:10  eikeon
+#~ removed old log messages
+#~
 #~ Revision 5.3  2000/12/14 00:53:19  eikeon
 #~ removed self.receiver.stop()... only want to stop server handler
 #~
