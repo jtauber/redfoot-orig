@@ -44,3 +44,17 @@ class sort:
         list.sort(self.comparator)
         for args in list:
             apply(callback, args)
+
+
+class remove_duplicates:
+    def __init__(self, callback, adapter):
+        self.callback = callback
+        self.adapter = adapter
+        self.items = []
+
+    def __call__(self, *args):
+        items = self.items
+        item = self.adapter(args)
+        if item not in items:
+            items.append(item)
+            apply(self.callback, args)
