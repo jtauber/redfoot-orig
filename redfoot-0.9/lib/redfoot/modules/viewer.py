@@ -175,7 +175,7 @@ class Viewer:
              : <A HREF="classList">Resources by Class</A>
              | <A HREF="fullsubclass">Full Subclass Tree</A>
              | <A HREF="subclass">Partial Subclass Tree</A>
-             | <A HREF=".">RDF</A>
+             | <A HREF=".">HOME</A>
              | <A HREF="triples">Triples</A>
             </P>
         """)
@@ -457,6 +457,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 1.1  2001/04/14 23:40:28  eikeon
+#~ created a lib/redfoot/modules directory and moved editor/viewer into it
+#~
 #~ Revision 7.2  2001/04/14 23:10:28  eikeon
 #~ removed old log messages
 #~
