@@ -1,0 +1,101 @@
+<r:module name="neighbours" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
+
+import sys
+
+from rdf.const import *
+from rdf.literal import *
+
+NEIGHBOUR = "http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"
+
+<r:class name="Neighbours">
+
+def __init__(self, rednode):
+    #TODO:
+    #self.rednode = rednode # This should already be done for us...
+    #   as we are expecting this to be used as a mixin class.
+
+    self._load_neighbours()
+    self.showNeighbours=1
+
+def _load_neighbours(self):
+    neighbours = self.rednode.get(None, TYPE, NEIGHBOUR)
+    for neighbour in neighbours:
+        location = neighbour[0]
+        location = location.encode('ascii') # TODO: ?
+        self.rednode.connectTo(location)
+
+<r:response name="/neighbours">
+<ul>
+<r:for item="neighbour" list="self.rednode.neighbours.stores.stores.keys()">
+<li><r:eval>neighbour.URI</r:eval></li>
+</r:for>
+</ul>
+</r:response>
+
+<r:response name="remove_neighbour">
+<r:exec>
+uri = request.getParameters()['uri']
+self.rednode.neighbours.remove_store(uri=uri)
+</r:exec>
+</r:response>
+
+<r:response name="add_neighbour">
+<r:exec>
+uri = request.getParameters()['uri']
+self.rednode.connectTo(uri)
+</r:exec>
+</r:response>
+
+<r:response name="/add_neighbour">
+  <DIV class="content_area">
+    <SPAN class="content_header">Add Neighbour</SPAN>
+    <FORM name="main" method="POST" style="margin: 0">
+      <TABLE>
+        <TR>
+          <TD>URI:</TD>
+          <TD><INPUT name="uri" type="text"/></TD>
+        </TR>
+        <TR>
+          <TD align="right">
+            <INPUT value="Login" type="submit"/>
+          </TD>
+          <TD align="left">
+            <INPUT value="Cancel" type="button" onclick="javascript: history.back()"/>
+            <INPUT name="processor" value="add_neighbour" type="hidden"/>      
+          </TD>
+        </TR>
+      </TABLE>
+    </FORM>
+  </DIV>
+</r:response>
+
+
+<r:response name="/remove_neighbour">
+  <DIV class="content_area">
+    <SPAN class="content_header">Remove Neighbour</SPAN>
+
+  <TABLE>
+
+
+<r:for item="neighbour" list="self.rednode.neighbours.stores.stores.keys()">
+    <FORM name="main" method="POST" style="margin: 0">
+      <TR>
+        <TD><r:eval>neighbour.URI</r:eval>
+          <INPUT name="uri" value="{neighbour.URI}" type="hidden"/>
+        </TD>
+        <TD align="right">
+          <INPUT value="remove" type="submit"/>
+          <INPUT name="processor" value="remove_neighbour" type="hidden"/>
+        </TD>
+      </TR>
+    </FORM>
+</r:for>
+  </TABLE>
+  </DIV>
+</r:response>
+
+
+
+</r:class>
+
+</r:module>

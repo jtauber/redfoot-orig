@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<rdf:RDF 
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns="http://purl.org/rss/1.0/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+ >
+
+  <channel rdf:about="http://xmlhack.com/rss10.php">
+      <title>XMLhack</title>
+      <link>http://xmlhack.com/</link>
+      <dc:source resource="http://xmlhack.com/" />
+      <description>
+         Developer news from the XML community
+      </description>
+      <dc:language>en-us</dc:language>
+      <dc:publisher>Edd Dumbill (mailto:webmaster@xmlhack.com)</dc:publisher>
+      <dc:creator>Edd Dumbill (mailto:editor@xmlhack.com)</dc:creator>
+      <dc:rights>Copyright 1999-2001, xmlhack team.</dc:rights>
+
+      <image rdf:resource="http://xmlhack.com/images/mynetscape88.gif" />
+
+      <items>
+          <rdf:Seq>
+            <rdf:li resource="http://xmlhack.com/read.php?item=1162" />
+            <rdf:li resource="http://xmlhack.com/read.php?item=1161" />
+            <rdf:li resource="http://xmlhack.com/read.php?item=1160" />
+            <rdf:li resource="http://xmlhack.com/read.php?item=1159" />
+            <rdf:li resource="http://xmlhack.com/read.php?item=1158" />
+            <rdf:li resource="http://xmlhack.com/read.php?item=1157" />
+            <rdf:li resource="http://xmlhack.com/read.php?item=1156" />
+            <rdf:li resource="http://xmlhack.com/read.php?item=1154" />
+          </rdf:Seq>
+      </items>
+
+  </channel>
+
+  <image rdf:about="http://xmlhack.com/images/mynetscape88.gif">
+    <title>xmlhack</title>
+    <url>http://xmlhack.com/images/mynetscape88.gif</url>
+    <link>http://xmlhack.com</link>
+    <dc:description>News, opinions, tips and issues concerning XML development</dc:description>
+  </image>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1162">
+        <title>JXUnit applies XML to unit testing</title>
+        <link>http://xmlhack.com/read.php?item=1162</link>
+        <dc:description>JXUnit combines JUnit and Quick to create an XML-based open source unit testing system.</dc:description>
+        <dc:subject>Java</dc:subject>
+        <dc:subject>Community</dc:subject>
+    </item>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1161">
+        <title>New Media Queries, Intro to CSS drafts</title>
+        <link>http://xmlhack.com/read.php?item=1161</link>
+        <dc:description>The W3C has released an initial draft of Media Queries and a revised working draft of Introduction to CSS3.</dc:description>
+        <dc:subject>CSS</dc:subject>
+        <dc:subject>W3C</dc:subject>
+    </item>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1160">
+        <title>XHTML 1.1 reaches Proposed Recommendation</title>
+        <link>http://xmlhack.com/read.php?item=1160</link>
+        <dc:description>Fifteen months after the previous Working Draft, the W3C has published a Proposed Recommendation of XHTML 1.1.</dc:description>
+        <dc:subject>XHTML</dc:subject>
+        <dc:subject>W3C</dc:subject>
+    </item>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1159">
+        <title>When XSLT gets (more) extensible</title>
+        <link>http://xmlhack.com/read.php?item=1159</link>
+        <dc:description>Jeni
+Tennison has announced EXSLT, "an open community initiative to standardise
+and document extensions to XSLT" led by herself, Jim Fuller, Uche Ogbuji
+and Dave Pawson; it takes its roots in the controversial discussion about the
+XSLT 1.1 xsl:script element.</dc:description>
+        <dc:subject>XSLT</dc:subject>
+        <dc:subject>Community</dc:subject>
+    </item>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1158">
+        <title>XTM in quest for a new home</title>
+        <link>http://xmlhack.com/read.php?item=1158</link>
+        <dc:description>After the announcement that
+GCA/IDEAlliance will stop supporting the XTM (XML Topic Maps) project, the project is
+looking for a new hosting organization -- and the names of OASIS, TEI-c and KnoW
+have been the first to be mentioned.</dc:description>
+        <dc:subject>RDF</dc:subject>
+        <dc:subject>Community</dc:subject>
+    </item>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1157">
+        <title>New XForms requirements</title>
+        <link>http://xmlhack.com/read.php?item=1157</link>
+        <dc:description>The W3C has released a new draft of the XForms Requirements.</dc:description>
+        <dc:subject>XHTML</dc:subject>
+        <dc:subject>W3C</dc:subject>
+    </item>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1156">
+        <title>New XSLT Standard Library (XSLTSL) requests participation</title>
+        <link>http://xmlhack.com/read.php?item=1156</link>
+        <dc:description>Steve Ball
+has announced the XSLT Standard
+Library, a SourceForge hosted open source project to develop a "collection
+of commonly-used templates written purely in XSLT".</dc:description>
+        <dc:subject>XSLT</dc:subject>
+        <dc:subject>Community</dc:subject>
+    </item>
+
+    <item rdf:about="http://xmlhack.com/read.php?item=1154">
+        <title>OASIS release DOM Level 1 conformance tests</title>
+        <link>http://xmlhack.com/read.php?item=1154</link>
+        <dc:description>OASIS, together with
+NIST, have released two test suites
+for XML DOM Level 1 implementations.</dc:description>
+        <dc:subject>OASIS</dc:subject>
+        <dc:subject>XML</dc:subject>
+    </item>
+
+    <rdf:Description ID="manifest">
+      <channels>
+      <rdf:Seq>
+        <rdf:li resource="http://xmlhack.com/rss10.php" />
+      </rdf:Seq>
+      </channels>
+    </rdf:Description>
+
+</rdf:RDF>

@@ -1,0 +1,226 @@
+<r:module name="eikeon" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
+
+RSS_ITEM = "http://purl.org/rss/1.0/item"
+RSS_TITLE = "http://purl.org/rss/1.0/title"
+
+# TODO: ??
+# RSS_DESCRIPTION = "http://purl.org/rss/1.0/description"
+RSS_DESCRIPTION = "http://purl.org/dc/elements/1.1/description"
+
+RSS_LINK = "http://purl.org/rss/1.0/link"
+
+
+NEWS_ITEM = "http://eikeon.com/2000/11/2001/03/25/T04/01/41Z"
+LINK = "http://eikeon.com/2000/11/#Link"
+
+
+BY = "http://eikeon.com/2000/11/2001/03/25/T04/19/34Z"
+
+AUDIENCE = "http://eikeon.com/2001/03/26/T01/17/46Z"
+INTENDED_AUDIENCE = "http://eikeon.com/2001/03/26/T01/21/06Z"
+
+PUBLIC = "http://eikeon.com/2001/03/26/T03/09/54Z"
+
+CREATED = "http://eikeon.com/2000/11/2001/03/25/T00/34/45Z"
+
+from util import *
+
+<r:class name="RSS">
+
+def load_rss(self, request, response):
+    if hasattr(self, 'rss_store') and self.rss_store:
+        self.rednode.neighbours.stores.removeStore(self.rss_store)
+        self.rss_store = None
+    store = Local()
+    store.load(request.getParameters()['url'], None)
+    self.rednode.neighbours.stores.addStore(store)
+    self.rss_store = store
+
+
+def news(self, request, response):
+    self.subclass(request, response, NEWS_ITEM, self.news_row, sort=self.reverse_chron, filter=self.news_filter)
+
+
+def rss(self, request, response):
+    self.subclass(request, response, RSS_ITEM, self.rss_row)
+
+
+<r:response name="/news">
+    <dl class="content_area" style="padding: 0px;">
+
+<r:exec>
+triples = self.get_instances_of(NEWS_ITEM)
+triples = filter_triples(triples, self.news_filter)
+triples.sort(self.reverse_chron)
+triples = triples[0:5]
+
+self.list(request, response, triples, self.news_row)
+</r:exec>
+
+    </dl>    
+</r:response>
+
+
+<r:response name="rss_row" args="triple, row">
+<r:exec>
+if row % 2 == 0:
+    color = 'DDDDFF'
+else:
+    color = 'DDFFDD'
+</r:exec>
+<dl style="margin: 0px; padding: 2px 5px; background: #{color};">
+  <dt style="padding: 0px; margin: 0px;">
+  <r:if test="self.authorized()">
+    <a href="/edit?uri={encodeURI(triple[0])}">
+      <r:eval>self.get_property_value(triple[0], RSS_TITLE, '')</r:eval>
+    </a>
+    <r:else>
+      <r:eval>self.get_property_value(triple[0], RSS_TITLE, '')</r:eval>
+    </r:else>
+  </r:if>
+  </dt>
+<!--
+  <dd style="margin-bottom: 5px;font-size: 8pt;">
+    by
+<r:exec>
+who = self.rednode.getFirst(triple[0], BY, None)[2]
+username = self.get_property_value(who, RSS_CREATOR, '')
+</r:exec>
+    <r:eval>username</r:eval>
+      on
+    <r:eval>self.get_property_value(triple[0], CREATED, '')</r:eval>
+  </dd>
+-->
+  <dd style="padding-bottom: 10px">
+    <r:eval>self.get_property_value(triple[0], RSS_DESCRIPTION, '')</r:eval>
+  </dd>
+  <dd style="padding-bottom: 10px">
+    <a href="{self.get_property_value(triple[0], RSS_LINK, '')}">Read Story</a>
+  </dd>
+</dl>
+</r:response>
+
+
+
+
+
+def news_filter(self, subject):
+    uri = self.get_uri()
+    if uri:
+        if self.rednode.getFirst(subject[0], BY, uri):
+            return 0
+        list = self.rednode.get(subject[0], INTENDED_AUDIENCE, None)
+        for ia in list:
+
+            if uri==ia[2] or self.is_instance_of(uri, ia[2]):
+                return 0
+    else:
+        if self.rednode.getFirst(subject[0], INTENDED_AUDIENCE, PUBLIC):
+            return 0
+    return 1
+
+
+<r:response name="news_row" args="triple, row">
+<r:exec>
+if row % 2 == 0:
+    color = 'DDDDFF'
+else:
+    color = 'DDFFDD'
+color = 'FFFFFF'
+</r:exec>
+<dl class="news" style="margin: 0px; padding: 2px 5px; background: #{color};">
+<dt style="padding: 0px; margin: 0px;">
+  <r:if test="self.authorized()">
+    <a href="/edit?uri={encodeURI(triple[0])}">
+      <r:eval>self.get_property_value(triple[0], LABEL, '')</r:eval>
+    </a>
+    <r:else>
+      <r:eval>self.get_property_value(triple[0], LABEL, '')</r:eval>
+    </r:else>
+  </r:if>
+</dt>
+<dd style="xmargin-bottom: 5px;font-size: 8pt;">
+  by
+<r:exec>
+who = self.rednode.getFirst(triple[0], BY, None)[2]
+username = self.get_property_value(who, LABEL, '')
+</r:exec>
+<r:eval>username</r:eval>
+  on
+<r:eval>self.get_property_value(triple[0], CREATED, '')</r:eval>
+</dd>
+<dd xstyle="padding-bottom: 10px">
+ <p>
+  <r:eval>self.get_property_value(triple[0], COMMENT, '')</r:eval>
+ </p>
+</dd>
+</dl>
+</r:response>
+
+
+
+<r:response name="create_news_item_page">
+  <DIV class="content_area">
+    <FORM name="main" action="/" method="POST" style="margin: 0">
+      <TABLE>
+        <TR>
+          <TD>Title:</TD>
+          <TD><INPUT name="title" type="text" size="40"/></TD>
+        </TR>
+        <TR>
+          <TD>Body:</TD>
+          <TD><textarea name="body" ROWS="6" COLS="40"/>
+          </TD>
+        </TR>
+        <TR>
+          <TD>Intended Audience:</TD>
+          <TD>
+            <SELECT name="intended_audience">
+        <r:if test="self.authorized()">
+          <r:exec>callback = Query(self.option, (lambda s, p, o, request=request, response=response: [request, response, s],))</r:exec>
+          <r:for item="type" 
+                 list="self.rednode.getTransitiveSubTypes(AUDIENCE)">
+             <r:exec>self.rednode.query(callback, None, TYPE, type)</r:exec>
+          </r:for>
+          <r:else>
+            <r:exec>self.option(request, response, EIKEON)</r:exec> 
+          </r:else>
+        </r:if>
+            </SELECT>
+          </TD>
+        </TR>
+        <TR>
+          <TD align="right">
+            <INPUT value="Create News Item" type="submit"/>
+          </TD>
+          <TD align="left"> 
+            <INPUT value="Cancel" type="button" 
+                   onclick="javascript: history.back()"/>
+          </TD>
+        </TR>
+      </TABLE>
+      <INPUT name="processor" value="create_news_item" type="hidden"/>
+    </FORM>
+  </DIV>
+</r:response>
+
+
+def create_news_item(self, request, response):
+    session = authentication.EikeonSession(request, response, self.rednode)
+    parameters = request.getParameters()
+
+    uri = self.rednode.local.URI + generateURI()
+
+    self.rednode.local.add(uri, TYPE, NEWS_ITEM)
+    self.rednode.local.add(uri, LABEL, literal(parameters['title']))
+    self.rednode.local.add(uri, COMMENT, literal(parameters['body']))    
+    self.rednode.local.add(uri, INTENDED_AUDIENCE, parameters['intended_audience'])    
+
+    time = date_time()
+    self.rednode.local.add(uri, CREATED, literal(time))
+
+    self.rednode.local.add(uri, BY, session.get_uri())    
+
+</r:class>
+
+</r:module>

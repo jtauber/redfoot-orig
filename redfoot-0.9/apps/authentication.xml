@@ -1,0 +1,423 @@
+<r:module xmlns:r="http://redfoot.sourceforge.net/2001/01/"
+          name="authentication">
+          
+from md5 import md5
+
+from rdf.const import *
+from rdf.literal import *
+
+from util import *
+
+USERNAME = "http://eikeon.com/2000/11/2001/03/24/T04/55/02Z"
+MD5_HEX_DIGEST = "http://eikeon.com/2000/11/2001/03/24/T04/56/06Z"
+PERSON = "http://redfoot.sourceforge.net/2000/10/#Person"
+
+FULLNAME = "http://www.w3.org/2000/01/rdf-schema#label"
+EMAIL = "http://redfoot.sourceforge.net/2000/10/#emailAddress"
+CREATED = "http://eikeon.com/2000/11/2001/03/25/T00/34/45Z"
+PAGE_VISITS = "http://eikeon.com/2000/11/2001/03/25/T00/56/05Z"
+
+SESSION = "http://eikeon.com/2001/03/27/T17/18/48Z" 
+IDENTITY = "http://eikeon.com/2001/03/27/T17/20/03Z"
+STATUS = "http://eikeon.com/2001/03/27/T17/22/10Z"
+
+USER_AGENT = "http://eikeon.com/2001/03/28/T03/32/22Z"
+REFERER = "http://eikeon.com/2001/03/28/T03/34/20Z"
+HOST = "http://eikeon.com/2001/03/28/T04/49/29Z"
+VIA = "http://eikeon.com/2001/03/28/T04/50/05Z"
+
+# TODO: these move somewhere
+JTAUBER = "http://eikeon.com/2001/03/25/T22/14/10Z"
+EIKEON = "http://eikeon.com/2001/03/25/T22/11/11Z"
+
+
+class Session:
+
+    def handle_request(self, request, response):
+        rednode = self.rednode
+        session_uri = request.get_session_uri()
+        if not session_uri or not rednode.local.getFirst(session_uri, TYPE, SESSION):
+            session_uri = rednode.local.URI + generateURI()
+            response.set_session_uri(session_uri)
+
+            headers = request.getHeaders()
+            rednode.local.add(session_uri, TYPE, SESSION)
+            rednode.local.add(session_uri, CREATED, literal(date_time()))
+            rednode.local.add(session_uri, USER_AGENT, literal(headers['user-agent']))
+            rednode.local.add(session_uri, REFERER, headers['referer'])
+            rednode.local.add(session_uri, HOST, literal(headers['host']))
+            rednode.local.add(session_uri, VIA, literal(headers['via']))
+
+        
+        self.session_uri = session_uri
+
+
+    def log_request(self):
+        uri = self.get_uri()
+        if uri:
+            s = self.rednode.local.getFirst(uri, PAGE_VISITS, None)
+            if s:
+                count = int(un_literal(s[2])) + 1
+            else:
+                count = 0
+            self.rednode.local.remove(uri, PAGE_VISITS, None)
+            self.rednode.local.add(uri, PAGE_VISITS, literal(str(count)))
+
+
+    def set_identity(self, identity):
+	self.rednode.local.remove(self.session_uri, IDENTITY, None)
+        self.rednode.local.add(self.session_uri, IDENTITY, identity)
+
+    def set_status(self, status):
+        self.rednode.local.remove(self.session_uri, STATUS, None)
+	if status:	
+            self.rednode.local.add(self.session_uri, STATUS, literal(status))
+		
+    def get_uri(self):
+        s = self.rednode.local.getFirst(self.session_uri, IDENTITY, None)
+        if s:	
+            return s[2]
+        else:
+            return None
+
+    def get_status(self):
+        s = self.rednode.local.getFirst(self.session_uri, STATUS, None)
+        if s:	
+            return un_literal(s[2])
+        else:
+            return None
+
+    def get_username(self):
+        s = self.rednode.getFirst(self.get_uri(), USERNAME, None)
+        if s:
+            return un_literal(s[2])
+        else:
+            return ''
+
+    def get_full_name(self):
+        s = self.rednode.getFirst(self.get_uri(), FULLNAME, None)
+        if s:
+            return un_literal(s[2])
+        else:
+            return ''
+
+    def get_email(self):
+        s = self.rednode.getFirst(self.get_uri(), EMAIL, None)
+        if s:
+            return un_literal(s[2])
+        else:
+            return ''
+
+    def set_username(self, username):
+        uri = self.get_uri()
+        if uri:
+            # TODO: only remove and add if changed.
+            self.rednode.local.remove(uri, USERNAME, None)
+            self.rednode.local.add(uri, USERNAME, literal(username))
+        
+    def set_full_name(self, fullname):
+        uri = self.get_uri()
+        if uri:
+            self.rednode.local.remove(uri, FULLNAME, None)
+            self.rednode.local.add(uri, FULLNAME, literal(fullname))
+
+    def set_email(self, email):
+        uri = self.get_uri()
+        if uri:
+            self.rednode.local.remove(uri, EMAIL, None)
+            self.rednode.local.add(uri, EMAIL, literal(email))
+
+    def login(self, request, response):
+        parameters = request.getParameters()
+        username = parameters['username']
+        s = self.rednode.getFirst(None, USERNAME, literal(username))
+        if s:
+            md5_hex_digest = self.rednode.getFirst(s[0], MD5_HEX_DIGEST, None)
+            if md5_hex_digest and md5(parameters['password']).hexdigest()==un_literal(md5_hex_digest[2]):
+                self.set_identity(s[0])      
+
+    def logout(self, request, response):
+	self.rednode.local.remove(self.session_uri, IDENTITY, None)
+
+    def authenticated(self):
+	if self.rednode.local.getFirst(self.session_uri, IDENTITY, None):
+            return 1	
+        else:
+            return 0
+
+    def change_password(self, request, response):
+        parameters = request.getParameters()
+        username = self.get_username()
+        s = self.rednode.getFirst(None, USERNAME, literal(username))
+        if s:
+            md5_hex_digest = self.rednode.getFirst(s[0], MD5_HEX_DIGEST, None)
+            if md5_hex_digest and md5(parameters['current']).hexdigest()==un_literal(md5_hex_digest[2]):
+                if parameters['new']==parameters['verify']:
+                    self.rednode.local.remove(s[0], MD5_HEX_DIGEST, None)
+                    self.rednode.local.add(s[0], MD5_HEX_DIGEST, literal(md5(parameters['new']).hexdigest()))
+                    self.change_password_status = "Password changed"
+                else:
+                    self.change_password_status = "Passwords did not match"
+
+    def update_user(self, request, response):
+        parameters = request.getParameters()
+        #self.set_username(parameters['username'])
+        self.set_full_name(parameters['fullname'])
+        self.set_email(parameters['email'])        
+
+
+    def create_user(self, request, response):
+        parameters = request.getParameters()
+        username = parameters['username']
+        s = self.rednode.getFirst(None, USERNAME, literal(username))
+        if not s:
+            if parameters['password']==parameters['verify']:
+                md5_hex_digest = md5(parameters['password']).hexdigest()
+                uri = self.rednode.local.URI + generateURI()
+                self.set_identity(uri)
+
+                self.rednode.local.add(uri, TYPE, PERSON)
+                self.set_username(username)
+                self.rednode.local.add(uri, MD5_HEX_DIGEST, literal(md5_hex_digest))
+                time = date_time()
+                self.rednode.local.add(uri, CREATED, literal(time))
+                self.set_status(None)
+            else:
+                self.set_status("password and verify did not match")
+        else:
+            self.set_status("Already user with username '%s'" % username)
+
+
+    def authorized(self):
+        if self.authenticated() and self.get_uri() in [EIKEON, JTAUBER]:
+            return 1
+        else:
+            return 0
+        
+<r:class name="Authentication" bases="(Session, )">
+
+def __init__(self, rednode):
+    self.logger = Logger()
+
+def handle_request_init(self, request, response):
+    # TODO: why does this need to be first?
+    parameters = request.getParameters()
+
+    Session.handle_request(self, request, response)
+    self.logger.log(self) 
+
+
+
+def get_content_function_name(self, path_info):
+    if path_info=="/sessions/":
+        return "sessions"
+    elif path_info=="/personal/":
+        return "personal"
+    elif path_info=="/people/":
+        return "people"
+    else:
+        return None
+
+
+
+def people(self, request, response):
+    if self.authorized():
+        self.subclass(request, response, PERSON, self.personRow)
+
+
+<r:response name="sessions">
+  <DL class="content_area">
+<r:exec>
+triples = self.rednode.get(None, TYPE, SESSION)
+self.list(request, response, triples, self.session_row, sort=self.reverse_chron)
+</r:exec>
+  </DL>
+</r:response>
+
+
+<r:response name="session_row" args="triple, row">
+  <r:exec>subject = triple[0]</r:exec>
+    <DT style="margin-top: 5px;">
+      <A href="/edit?uri={encodeURI(subject)}">
+        <r:eval>self.get_property_value(subject, IDENTITY, '---', resource=1)</r:eval>
+      </A>
+    </DT>
+    <DD>
+      <b>Referer:</b>
+      <r:exec>href = self.get_property_value(subject, REFERER, '', resource=1)</r:exec>
+      <a href="{href}"><r:eval>href</r:eval></a>
+    </DD>
+    <DD>
+      <b>User Agent:</b>
+      <r:eval>self.get_property_value(subject, USER_AGENT, '')</r:eval>
+    </DD>            
+    <DD>
+      <b>Created:</b>
+      <r:eval>self.get_property_value(subject, CREATED, '')</r:eval>
+    </DD>            
+</r:response>
+
+<r:response name="personRow" args="triple, row">
+<r:exec>subject = triple[0]</r:exec>
+    <DL>
+      <DT>
+        <A href="/edit?uri={encodeURI(subject)}">
+          <r:eval>self.rednode.label(subject, "")</r:eval>
+        </A>
+      </DT>
+      <DD>
+        <b>Page Visits:</b>
+        <r:eval>self.get_property_value(subject, PAGE_VISITS, '')</r:eval>
+        <r:eval>self.rednode.comment(subject, "")</r:eval>
+      </DD>
+      <DD>
+        <b>Email:</b>
+        <r:eval>self.get_property_value(subject, EMAIL, '')</r:eval>
+      </DD>            
+    </DL>
+</r:response>
+
+
+<r:response name="login_page">
+  <DIV class="content_area">
+    <SPAN class="content_header">Login</SPAN>
+    <FORM name="main" method="POST" style="margin: 0">
+      <TABLE>
+        <TR>
+          <TD>Username:</TD>
+          <TD><INPUT name="username" type="text"/></TD>
+        </TR>
+        <TR>
+          <TD>Password:</TD>
+          <TD><INPUT name="password" type="password"/></TD>
+        </TR>
+        <TR>
+          <TD align="right">
+            <INPUT value="Login" type="submit"/>
+          </TD>
+          <TD align="left">
+            <INPUT value="Cancel" type="button" onclick="javascript: history.back()"/>
+            <INPUT name="processor" value="login" type="hidden"/>      
+          </TD>
+        </TR>
+      </TABLE>
+    </FORM>
+  </DIV>
+</r:response>
+
+
+<r:response name="personal">
+  <r:if test="self.authenticated()">
+
+  <DIV class="content_area">
+
+    <FORM name="main" action="/" method="POST" style="margin: 0">
+      <TABLE>
+        <TR>
+          <TD>Username:</TD>
+          <TD><r:eval>self.get_username()</r:eval></TD>
+        </TR>
+        <TR>
+          <TD>Full name:</TD>
+          <TD><INPUT name="fullname" value="{self.get_full_name()}" type="text"/></TD>
+        </TR>
+        <TR>
+          <TD>Email Address:</TD>
+          <TD><INPUT name="email" value="{self.get_email()}" type="text"/></TD>
+        </TR>
+        <TR>
+          <TD align="right"><INPUT value="Update" type="submit"/></TD>
+          <TD align="left"><INPUT value="Cancel" type="button" onclick="javascript: history.back()"/></TD>
+        </TR>
+      </TABLE>
+      <INPUT name="processor" value="update_user" type="hidden"/>
+    </FORM>
+  </DIV>
+    
+  <r:else>
+
+  <DIV class="content_area">
+    <SPAN class="content_header">Create User</SPAN>
+
+    <DIV style="color: #990000;">
+      <r:eval>self.get_status()</r:eval>
+    </DIV>
+
+    <FORM name="main" method="POST" style="margin: 0">
+      <TABLE>
+        <TR>
+          <TD>Username:</TD>
+          <TD><INPUT name="username" type="text"/></TD>
+        </TR>
+        <TR>
+          <TD>Password:</TD>
+          <TD><INPUT name="password" type="password"/>
+          </TD>
+        </TR>
+        <TR>
+          <TD>Verify:</TD>
+          <TD><INPUT name="verify" type="password"/>
+          </TD>
+        </TR>
+        <TR>
+          <TD align="right"><INPUT value="Create User" type="submit"/></TD>
+          <TD align="left"><INPUT value="Cancel" type="button" onclick="javascript: history.back()"/></TD>
+        </TR>
+      </TABLE>
+      <INPUT name="processor" value="create_user" type="hidden"/>
+    </FORM>
+  </DIV>
+    </r:else>
+  </r:if>
+</r:response>
+
+
+<r:response name="change_password">
+  <DIV class="content_area">
+    <SPAN class="content_header">Change Password</SPAN>
+    <FORM name="main" action="/change_password_status" method="POST" style="margin: 0">
+      <TABLE>
+        <TR>
+          <TD>Current Password:</TD>
+          <TD><INPUT name="current" type="password"/></TD>
+        </TR>
+        <TR>
+          <TD>New Password:</TD>
+          <TD><INPUT name="new" type="password"/></TD>
+        </TR>
+        <TR>
+          <TD>Verify New Password:</TD>
+          <TD><INPUT name="verify" type="password"/></TD>
+        </TR>
+        <TR>
+          <TD align="right"><INPUT value="Change Password" type="submit"/></TD>
+          <TD align="left"><INPUT value="Cancel" type="button" onclick="javascript: history.back()"/></TD>
+        </TR>
+      </TABLE>
+      <INPUT name="processor" value="change_password" type="hidden"/>
+    </FORM>
+  </DIV>
+</r:response>
+
+</r:class>
+
+
+
+class Logger:
+    def __init__(self):
+        from Queue import Queue
+        self.sessions = Queue()
+        import threading
+        t = threading.Thread(target = self._logger, args = ())
+        t.setDaemon(1)
+        t.start()
+        
+    def log(self, session):
+        self.sessions.put(session)
+
+    def _logger(self):
+        while 1:
+            session = self.sessions.get()
+            session.log_request()
+
+</r:module>
