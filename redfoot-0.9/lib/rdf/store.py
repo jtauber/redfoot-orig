@@ -29,17 +29,14 @@ class TripleStore:
         self.pos[predicate][object][subject] = 1
 
     def get(self, subject=None, predicate=None, object=None):
-        class Visitor:
-            def __init__(self):
-                self.list = []
+        list = []
+        
+        def callback(subject, predicate, object, list=list):
+            list.append((subject, predicate, object))
 
-            def callback(self, subject, predicate, object):
-                self.list.append((subject, predicate, object))
+        self.visit(callback, subject, predicate, object)
 
-        visitor = Visitor()
-        self.visit(visitor.callback, subject, predicate, object)
-
-	return visitor.list
+	return list
 
     def remove(self, subject=None, predicate=None, object=None):
         def callback(subject, predicate, object, self=self):
@@ -110,6 +107,9 @@ class TripleStore:
                     
 
 #~ $Log$
+#~ Revision 4.6  2000/12/04 22:56:55  eikeon
+#~ visit will now stop if None is not returned
+#~
 #~ Revision 4.5  2000/12/03 22:25:14  jtauber
 #~ moved literal stuff to literal.py
 #~
