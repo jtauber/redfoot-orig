@@ -1,3 +1,4 @@
+# $Header$
 
 class RDFParser:
     
@@ -167,3 +168,5 @@ class PropertyHandler:
     def end(self, name):
         self.adder(self.parent.subject, self.predicate, self.object)
         self.parent.resume()
+
+# $Log$
