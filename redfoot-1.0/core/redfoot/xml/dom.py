@@ -62,9 +62,7 @@ class EvalNode(Node):
         result = __builtin__.eval(self.code, globals, locals)
         if result!=None:
             write = locals['_RF_write']
-            if not hasattr(result, 'encode'):
-                result = str(result)
-            write(result)
+            write(str(result))
 
 
 class EncodedEvalNode(EvalNode):
@@ -76,7 +74,6 @@ class EncodedEvalNode(EvalNode):
         result = __builtin__.eval(self.code, globals, locals)
         if result!=None:
             write = locals['_RF_write']
-            if not hasattr(result, 'encode'):
-                result = str(result)
             write(self.encode(result))
-                
+
+
