@@ -1,10 +1,5 @@
-from urlparse import urljoin
 
 class URIRef(str):
-    def __add__(self, val):
-        uri = urljoin(self, val)
-        return URIRef(uri)
-
     def n3(self):
         return "<%s>" % self
 
