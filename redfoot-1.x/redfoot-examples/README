@@ -9,7 +9,7 @@ REDFOOT EXAMPLES README
 
   For example:
 
-    python run.py generic
+    python run.py 10_hello_world
 
   will run the application defined in generic.xml
 
