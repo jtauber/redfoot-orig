@@ -6,17 +6,6 @@ from rdf.const import *
 
 class QueryStore:
 
-    def getFirst(self, subject, predicate, object):
-        statements = []
-        def callback(subject, predicate, object, statements=statements):
-            statements.append((subject, predicate, object))
-            return 1 # tell visitor to stop
-        self.visit(callback, subject, predicate, object)
-        if len(statements)>0:
-            return statements[0]
-        else:
-            return None
-
     def label(self, subject, default=None):
         statement = self.getFirst(subject, LABEL, None)
         if statement!=None:
@@ -237,6 +226,38 @@ class QueryStore:
         self.query(listBuilder, subject, predicate, object)
 	return listBuilder.list
 
+#     def getFirst(self, subject, predicate, object):
+#         statements = []
+#         def callback(subject, predicate, object, statements=statements):
+#             statements.append((subject, predicate, object))
+#             return 1 # tell visitor to stop
+#         self.visit(callback, subject, predicate, object)
+#         if len(statements)>0:
+#             return statements[0]
+#         else:
+#             return None
+
+    def getFirst(self, subject, predicate, object):
+        listBuilder = ListBuilder()
+        first = First(listBuilder)
+        self.query(First(listBuilder), subject, predicate, object)
+        list = listBuilder.list
+        if len(list)>0:
+            return list[0]
+        else:
+            return None
+
+class First:
+    def __init__(self, visitor):
+        self.visitor = visitor
+    
+    def visit(self, s, p, o):
+        self.visitor.visit(s, p, o)
+        return 1 # tell visitor to stop
+
+    def flush(self):
+        pass
+    
 class ListBuilder:
     def __init__(self):
         self.list = []
@@ -249,6 +270,9 @@ class ListBuilder:
 
 
 #~ $Log$
+#~ Revision 5.5  2000/12/10 06:39:52  eikeon
+#~ refactored get to use new query method
+#~
 #~ Revision 5.4  2000/12/10 06:27:32  eikeon
 #~ added adapter method query
 #~
