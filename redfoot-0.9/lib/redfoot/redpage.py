@@ -8,6 +8,7 @@ import __builtin__
 RF_NS = u"http://redfoot.sourceforge.net/2001/01/"
 RF_CLASS = RF_NS+u"class"
 RF_MODULE = RF_NS+u"module"
+RF_LOAD_MODULE = RF_NS+u"load-module"
 RF_EXEC = RF_NS+u"exec"
 RF_EVAL = RF_NS+u"eval"
 RF_RESPONSE = RF_NS+u"response"
@@ -98,8 +99,6 @@ class RF_MODULE_Handler(HandlerBase):
         self.globals = self.module.__dict__
         self.locals = self.globals
         self.codestr = ""
-        
-
     def child(self, name, atts):
         codestr = self.codestr
         if codestr!="":
@@ -107,7 +106,9 @@ class RF_MODULE_Handler(HandlerBase):
             self.codestr = ""
         if name==RF_CLASS:
             if atts.has_key('bases'):
-                base_classes = __builtin__.eval(atts['bases'], self.globals, self.locals)
+                import string
+                bases = "(" + string.join(string.split(atts['bases']),",") + ",)"
+                base_classes = __builtin__.eval(bases, self.globals, self.locals)
             else:
                 base_classes = ()
             eh = RF_CLASS_Handler(self.parser, self, atts['name'], base_classes)
@@ -115,6 +116,8 @@ class RF_MODULE_Handler(HandlerBase):
             module = self.module
             classobj.__module__ = module.__name__
             module.__dict__[classobj.__name__] = classobj
+        elif name==RF_LOAD_MODULE:
+            RF_LOAD_MODULE_Handler(self.parser, self, atts, self.globals, self.locals)
         else:
             sys.stderr.write("Ignoring '%s'\n" % name)
             sys.stderr.flush()
@@ -126,6 +129,27 @@ class RF_MODULE_Handler(HandlerBase):
         HandlerBase.end(self, name)
         exec self.codestr+"\n" in self.globals, self.locals
 
+class RF_LOAD_MODULE_Handler(HandlerBase):
+    def __init__(self, parser, parent, atts, globals, locals):
+        self.globals = globals
+        self.locals = locals
+        HandlerBase.__init__(self, parser, parent)
+        if atts.has_key('class'):
+            self.klass = atts['class']
+        else:
+            sys.stderr.write("load-module had no class attribute")
+            sys.stderr.flush()
+            return # ignore
+        if atts.has_key('location'):
+            self.location = atts['location']
+        else:
+            sys.stderr.write("load-module had no location attribute")
+            sys.stderr.flush()
+            return # ignore
+
+    def end(self, name):
+        HandlerBase.end(self, name)
+        exec "from redfoot import redpage; %s = redpage.parse_red_page('%s').%s\n" % (self.klass, self.location, self.klass) in self.globals, self.locals
 
 class RF_CLASS_Handler(HandlerBase):
     def __init__(self, parser, parent, name, base_classes):
@@ -376,6 +400,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.3  2001/04/09 22:29:26  eikeon
+#~ change <string>'s to the actual string... TODO: may want to change this back?
+#~
 #~ Revision 7.2  2001/04/09 17:25:02  eikeon
 #~ storeNode -> rednode
 #~
