@@ -150,11 +150,12 @@ class Viewer:
 
     def menuBar(self):
         self.writer.write("""
-            <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF=".">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
+            <P CLASS="MENUBAR"><B>VIEW</B>
+             : <A HREF="classList">Resources by Class</A>
+             | <A HREF="subclass">Full Subclass Tree</A>
+             | <A HREF="subclassNR">Partial Subclass Tree</A>
+             | <A HREF=".">RDF</A>
+             | <A HREF="Triples">Triples</A>
             </P>
         """)
 
@@ -376,6 +377,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 2.3  2000/10/16 04:10:07  jtauber
+# refactored editor-specific http handling code from viewer to editor
+#
 # Revision 2.2  2000/10/16 01:56:10  eikeon
 # removed 1.x log history
 #

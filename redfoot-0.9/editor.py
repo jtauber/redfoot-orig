@@ -41,8 +41,8 @@ class Editor(Viewer):
     def menuBar(self):
         Viewer.menuBar(self)
         self.writer.write("""
-            <P CLASS="MENUBAR">
-               <A HREF="add">Add a Resource</A>
+            <P CLASS="MENUBAR"><B>EDIT</B>
+             : <A HREF="add">Add a Resource</A>
              | <A HREF="?processor=save">Save Node to Disk</A>
             </P>
         """)
@@ -331,19 +331,20 @@ class Editor(Viewer):
 
 #TODO: could be a separate module
 class PeerEditor(Editor):
+
     def menuBar(self):
         Editor.menuBar(self)
         self.writer.write("""
-            <P CLASS="MENUBAR">
-             <A HREF="connect">Connect Neighbour</A>
+            <P CLASS="MENUBAR"><B>PEER</B>
+             : <A HREF="connect">Connect Neighbour</A>
              |""")
 
         if self.showNeighbours==1:
             self.writer.write("""
-            <A HREF="?processor=hideNeighbours">Hide Neighbours</A>""")
+            <A HREF="?processor=hideNeighbours">Hide Neighbour Resources</A>""")
         else:
             self.writer.write("""
-            <A HREF="?processor=showNeighbours">Show Neighbours</A>""")
+            <A HREF="?processor=showNeighbours">Show Neighbour Resources</A>""")
 
         self.writer.write("""
             </P>
@@ -377,6 +378,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 2.4  2000/10/16 05:02:28  jtauber
+# refactored menu bar to remove duplication between different UIs
+#
 # Revision 2.3  2000/10/16 04:49:57  jtauber
 # fixed bug where Editor's handler was incorrectly calling the handler on its superclass Viewer
 #
