@@ -25,14 +25,12 @@
     def set_rednode(self, rednode):
         self.rednode = rednode
         self.editor.set_rednode(rednode)
+        self.neighbours.set_rednode(rednode)        
 
     <red:facet name="/">
       <red:exec>
-        parts = split(self.app.request.get_path_info(), '/')
-        depth = len(parts)-2
-        parts = parts[1:-1]
-        self.depth = depth
-        relative_path = '../' * (depth - 1)
+        depth = self.app.remaining_path_info.count("/")
+        relative_path = '../' * depth
       </red:exec>
     
       <HTML>
