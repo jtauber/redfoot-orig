@@ -26,6 +26,8 @@ class RedCmd(object, Cmd):
         # Create a RedNode        
         self.context.rednode = RedNode()
 
+        self.context.server = None
+
 
     def __exec(self, code):
         locals = globals = self.context.__dict__
@@ -71,6 +73,10 @@ class RedCmd(object, Cmd):
             if value == -1:
                 return None # error
         return (subject, property, value)
+
+    def default(self, line):
+        if line and line[0]!="#":
+            super(RedCmd, self).default(line)
 
     def do_quit(self, arg):
         """Quit the Redfoot Command Line"""
@@ -144,6 +150,7 @@ class RedCmd(object, Cmd):
         # file if one does not already exist.
         # @@@ do we need to make sure we only do this once?
         location, uri = arg.split()
+            
         self.context.rednode.load(location, uri, 1)
 
     def do_server(self, arg):
@@ -157,3 +164,35 @@ class RedCmd(object, Cmd):
         # Create a RedServer listening on address, port
         self.context.server = RedServer(address, int(port))
         self.context.server.run(background=1)
+
+    def do_redcode(self, arg):
+        """redcode on/off"""
+
+        # TODO: check arg and uninstall... for now install reguardless
+        
+        from redfootlib.redcode import importer
+        importer.install()
+
+    def do_add_app(self, arg):
+        """add_app package_name.app_name"""
+        parts = arg.split(" ")
+        if not len(parts)==1:
+            print "usage: add_app package_name.app_name"
+            return
+        names = parts[0].split(".")
+        if len(names)==2:
+            package, name = ".".join(names[:-1]), names[-1]
+            locals = globals = self.context.__dict__            
+            module = __import__(package, globals, locals)
+            AppClass = eval(name, module.__dict__)            
+        else:
+            print "usage: add_app package_name.app_name"
+
+        app = AppClass(self.context.rednode)
+
+        if not self.context.server:
+            self.context.server = RedServer('', 9090)
+
+        self.context.server.add_app(app)
+        self.context.server.run(background=1)        
+    
