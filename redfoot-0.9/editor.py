@@ -314,11 +314,11 @@ class PeerEditor(Editor):
               <LINK REL="STYLESHEET" HREF="css"/>
             </HEAD>
             <BODY>
-              <H1>ReDFoot</H1>
-              <H2>Connect Neighbour</H2>""")
+              <H1>ReDFoot</H1>""")
         self.menuBar()
-        
         self.writer.write("""
+              <H2>Connect Neighbour</H2>
+        
               <FORM NAME="form" ACTION="." METHOD="GET">
                 <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri"></P>
                 <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
