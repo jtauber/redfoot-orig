@@ -54,16 +54,16 @@ class QueryBase:
                 callback(s)
         self.visitSubjects(adaptor)
 
-    # TODO: do you really need me?
-    def visitTypes(self, callback, subject=None):
-        self.visit(callback, subject, TYPE, None)
-
     # TODO: need a visitor version
     def getByType(self, type, predicate, object):
         listBuilder = ListBuilder()
         query = Query(self.query, (listBuilder,), lambda s, p, o: (s,), (predicate, object))
         self.query(query, None, TYPE, type)
         return listBuilder.list
+
+    def visitByType(self, visitor, type, predicate, object):
+        query = Query(self.query, (visitor,), lambda s, p, o: (s,), (predicate, object))
+        self.query(query, None, TYPE, type)
 
     def visitResourcesByType(self, type_callback, resource_callback):
         resourceVisitor = Query(resource_callback, (), lambda s, p, o: (s,))
@@ -83,8 +83,11 @@ class QueryBase:
     # REIFICATION STUFF
 
     def visitReifiedStatementsAboutSubject(self, callback, subject):
-        for statement in self.getByType(STATEMENT, SUBJECT, subject):
-            callback(statement[0], self.get(statement[0], PREDICATE, None)[0][2], self.get(statement[0], OBJECT, None)[0][2])
+        def adapter(callback, subject, getFirst):
+            callback(subject, getFirst(subject, PREDICATE, None)[2], getFirst(subject, OBJECT, None)[2])
+
+        visitor = Query(adapter, (callback,), lambda s, p, o: (s,), (self.getFirst,))
+        self.visitByType(visitor, STATEMENT, SUBJECT, subject)
 
     # should perhaps just autogenerate statement_uri
     def reify(self, statement_uri, subject, predicate, object):
@@ -146,7 +149,6 @@ class SubjectSetBuilder:
         self.set = {}
 
     def visit(self, s, p, o):
-        print s
         self.set[s] = 1
 
     def flush(self):
@@ -317,9 +319,9 @@ class QueryStore(QueryBase):
 
     # TODO rename "type" function
     def visitPossiblePropertiesForSubject(self, callback, subject):
-        def type(s, p, o, self=self, callback=callback):
+        def adapter(s, p, o, self=self, callback=callback):
             self.visitPossibleProperties(callback, o)
-        self.visitTypes(type, subject)
+        self.visit(adapter, subject, TYPE, None)
         # all subjects can take the properties that resource can
         # note: this will definitely lead to duplicates, but they are
         # possible anyway
@@ -334,6 +336,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 5.10  2000/12/14 00:22:37  eikeon
+#~ fixed up *Transitive* methods
+#~
 #~ Revision 5.9  2000/12/13 02:54:11  jtauber
 #~ moved functions in query around and renamed a lot
 #~
