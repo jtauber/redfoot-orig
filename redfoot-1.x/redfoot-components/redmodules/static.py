@@ -23,3 +23,5 @@ class Static(Module):
         shutil.copyfileobj(source, destination)
         source.close()
 
+from redfootlib.server import register_module
+register_module("Static", Static)
