@@ -1,6 +1,6 @@
 # $Header$
 
-from redfoot.query import QueryStore
+from rdf.query import QueryStore
 from redfoot.baseUI import BaseUI
 
 class SampleUI(BaseUI):
@@ -55,6 +55,9 @@ if __name__ == '__main__':
     runServer(sys.argv[1:], SampleUI)
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 1.4  2000/10/19 00:47:36  jtauber
 # refactored common code in SampleUI into BaseUI
 #

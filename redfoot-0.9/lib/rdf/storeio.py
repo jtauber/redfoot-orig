@@ -28,7 +28,7 @@ class StoreIO:
         else:
             self.URI = URI
 
-        from redfoot.parser import RDFParser
+        from rdf.parser import RDFParser
         rdfParser = RDFParser()
         rdfParser.setAdder(self.store.add)
 
@@ -47,11 +47,11 @@ class StoreIO:
         if URI==None:
             URI = self.URI
 
-        from redfoot.query import QueryStore
+        from rdf.query import QueryStore
         queryStore = QueryStore()
         queryStore.setStore(self.getStore())
         
-        from redfoot.serializer import Serializer
+        from rdf.serializer import Serializer
         s = Serializer()
 
         s.setStream(stream)
@@ -86,6 +86,9 @@ class StoreIO:
 
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 2.1  2000/10/16 17:19:02  eikeon
 # visit method now takes a callback function instead of a visitor object
 #

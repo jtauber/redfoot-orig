@@ -1,6 +1,6 @@
 # $Header$
 
-from redfoot.store import TripleStore
+from rdf.store import TripleStore
 
 class MultiStore:
     ""
@@ -77,7 +77,7 @@ class StoreNode:
         if URI==None:
             URI=location
 
-        from redfoot.storeio import StoreIO
+        from rdf.storeio import StoreIO
 
         storeIO = StoreIO()
         storeIO.setStore(TripleStore())
@@ -114,7 +114,7 @@ class StoreNode:
     # TODO: move rednode specific queries to a rednode wrapper class
 
     def resourcesByClassV(self, processClass, processResource):
-        from redfoot.query import QueryStore
+        from rdf.query import QueryStore
         for klass in self.get(None, QueryStore.TYPE, QueryStore.CLASS):
             first = 1
             for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
@@ -146,17 +146,17 @@ class StoreNode:
 
                 visitor = Visitor(self.processResource)
 
-                from redfoot.query import QueryStore
+                from rdf.query import QueryStore
                 self.store.visit(visitor.callback, None, QueryStore.TYPE, subject)
 
         visitor = Visitor(self.store, processClass, processResource)
 
-        from redfoot.query import QueryStore
+        from rdf.query import QueryStore
         self.visit(visitor.callback, None, QueryStore.TYPE, QueryStore.CLASS)
 
 
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
-        from redfoot.query import QueryStore
+        from rdf.query import QueryStore
         processClass(type, currentDepth, recurse)
         for subclassStatement in self.get(None, QueryStore.SUBCLASSOF, type):
             if recurse:
@@ -167,6 +167,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 2.2  2000/10/16 17:19:02  eikeon
 # visit method now takes a callback function instead of a visitor object
 #

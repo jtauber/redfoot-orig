@@ -1,6 +1,6 @@
 # $Header$
 
-from redfoot.query import QueryStore
+from rdf.query import QueryStore
 
 class Viewer:
 
@@ -349,7 +349,6 @@ class Viewer:
             return string.join(string.split(s,'#'),'%23')
 
     def RDF(self):
-        #from storeio import StoreIO
         self.storeNode.getStore().output(self.writer)
 
     def Triples(self):
@@ -378,6 +377,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 2.6  2000/10/17 01:50:43  jtauber
 # server now takes -P option to pass in path which gets passed to the viewer
 #

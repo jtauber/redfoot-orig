@@ -159,7 +159,8 @@ class QueryStore:
                               processClass=processClass, \
                               processInstance=processInstance, \
                               currentDepth=currentDepth,
-                              recurse=recurse):
+                              recurse=recurse,
+                              self=self):
             if recurse:
                 self.subClassV(s, processClass, processInstance, currentDepth+1)
             else:
@@ -207,6 +208,9 @@ class QueryStore:
         return resultset.keys()
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 2.7  2000/10/17 04:32:44  eikeon
 # fixed typo
 #
