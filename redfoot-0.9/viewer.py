@@ -33,6 +33,28 @@ class Viewer:
           margin:      -10px -10px 10px -10px;
         }
 
+        p.MENUBAR {
+          margin: -10px -10px 10px -10px;
+          padding: 3px 20px;
+          background:  #000000;
+          color:       #CCCCCC;
+        }
+
+        p.MENUBAR a {
+          color:       #CCCCCC;
+          text-decoration: none;
+        }
+
+        p.MENUBAR a:visited {
+          color:       #CCCCCC;
+          text-decoration: none;
+        }
+
+        p.MENUBAR a:hover {
+          color:       #FFFFFF;
+          text-decoration: none;
+        }
+
         h2 {
           color:       #990000;
           margin:      0px;
@@ -74,6 +96,16 @@ class Viewer:
         }
         """)
 
+    def menuBar(self):
+        self.writer.write("""
+            <P CLASS="MENUBAR"><A HREF=".">Class List</A>
+             | <A HREF="subclass">Full Subclass View</A>
+             | <A HREF="subclassNR">Collapsed Subclass View</A>
+             | <A HREF="RDF">Download RDF</A>
+             | <A HREF="Triples">Show Triples</A>
+            </P>
+        """)
+
     def mainPage(self):
         self.writer.write("""
         <HTML>
@@ -83,12 +115,9 @@ class Viewer:
           </HEAD>
           <BODY>
             <H1>ReDFoot</H1>
-            <P><A HREF=".">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
-            </P>
+        """)
+        self.menuBar()
+        self.writer.write("""
             <DIV CLASS="box">
               <DL>
         """)
@@ -110,13 +139,9 @@ class Viewer:
             <LINK REL="STYLESHEET" HREF="css"/>
           </HEAD>
           <BODY>
-            <H1>ReDFoot</H1>
-            <P><A HREF=".">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
-            </P>
+            <H1>ReDFoot</H1>""")
+        self.menuBar()
+        self.writer.write("""
             <DIV CLASS="box">
               <DL>
         """)
@@ -137,13 +162,9 @@ class Viewer:
             <LINK REL="STYLESHEET" HREF="css"/>
           </HEAD>
           <BODY>
-            <H1>ReDFoot</H1>
-            <P><A HREF=".">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
-            </P>
+            <H1>ReDFoot</H1>""")
+        self.menuBar()
+        self.writer.write("""
             <DIV CLASS="box">
               <DL>
         """)
@@ -164,13 +185,9 @@ class Viewer:
             <LINK REL="STYLESHEET" HREF="css"/>
           </HEAD>
           <BODY>
-            <H1>ReDFoot</H1>
-            <P><A HREF=".">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
-            </P>
+            <H1>ReDFoot</H1>""")
+        self.menuBar()
+        self.writer.write("""
             <H2>%s</H2>
             <P>%s</P>
             <TABLE>
@@ -278,13 +295,9 @@ class Viewer:
             <LINK REL="STYLESHEET" HREF="css"/>
           </HEAD>
           <BODY>
-            <H1>ReDFoot</H1>
-            <P><A HREF=".">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
-            </P>
+            <H1>ReDFoot</H1>""")
+        self.menuBar()
+        self.writer.write("""
             <H2>Triples</H2>
             <TABLE>
         """)
