@@ -4,7 +4,14 @@
 try:
     import redfootlib
 except:
-    # redfoot must not be installed, try adding
-    import sys
-    sys.path.extend(("./redfoot-core", "./redfoot-components", "./redfoot-examples"))
-    sys.path.extend(("./redfoot-examples/example_core",))    
+    # redfoot must not be installed, try adding    
+    import sys, os
+
+    # use directory of script importing us as base for relative names
+    RFHOME = os.path.dirname(sys.argv[0])
+
+    paths = ["redfoot-core", "redfoot-components", "redfoot-examples",
+             "redfoot-examples/example_core"]
+    
+    for path in paths:
+        sys.path.append(os.path.join(RFHOME, path))
