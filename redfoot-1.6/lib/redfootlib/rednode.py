@@ -160,13 +160,10 @@ class RedNode(Visit, NeighbourManager, AutoSave, TripleStore):
             m = module("foo%s" % sn)
             try:
                 code = compile(value, filename, "exec")
-                import sys
-                g = globals()
-                g = sys.modules['__main__'].__dict__
                 g = m.__dict__
                 l = m.__dict__
-                #for key, value in self.context.__dict__.iteritems():
-                #    l[key] = value
+                for key, value in self.context.__dict__.iteritems():
+                    l[key] = value
                 exec code in g, l
             except:
                 import sys
