@@ -1,4 +1,6 @@
 from redfoot.rdf.store.urigen import generate_uri
+from string import join, split
+
 ANON = "http://redfoot.sourceforge.net/2001/08/ANON/"
 
 #TODO flag for where RDF can be assumed
@@ -120,8 +122,7 @@ class DescriptionHandler(HandlerBase):
                att == ABOUT_ATTRIBUTE or att == ID_ATTRIBUTE:
                 pass
             else:
-                import string
-                new_att = string.join(string.split(att, "^"), "")
+                new_att = join(split(att, "^"), "")
                 self.adder(self.subject, new_att, atts[att],
                            anonymous_subject=self.anonymous, literal_object=1)
 
@@ -132,8 +133,7 @@ class DescriptionHandler(HandlerBase):
 class TypedNodeHandler(DescriptionHandler):
     def __init__(self, parser, adder, parent, name, atts):
         DescriptionHandler.__init__(self, parser, adder, parent, atts)
-        import string
-        type = string.join(string.split(name, "^"), "")
+        type = join(split(name, "^"), "")
         self.adder(self.subject, str(TYPE), type, anonymous_subject=self.anonymous)
 
 
@@ -205,8 +205,7 @@ class LIHandler(HandlerBase):
 class PropertyHandler(HandlerBase):
     def __init__(self, parser, adder, parent, name, atts):
         HandlerBase.__init__(self, parser, adder, parent)
-        import string
-        self.predicate = string.join(string.split(name, "^"), "")
+        self.predicate = join(split(name, "^"), "")
         self.literal = 0
         self.anonymous_object = 0
         if atts.has_key(u"resource"):
@@ -217,8 +216,7 @@ class PropertyHandler(HandlerBase):
                 if att == u"resource":
                     pass
                 else:
-                    import string
-                    new_att = string.join(string.split(att, "^"), "")
+                    new_att = join(split(att, "^"), "")
                     self.adder(self.object, new_att, atts[att],
                                literal_object=1)
         elif atts.has_key(RESOURCE_ATTRIBUTE):
@@ -229,8 +227,7 @@ class PropertyHandler(HandlerBase):
                 if att == RESOURCE_ATTRIBUTE:
                     pass
                 else:
-                    import string
-                    new_att = string.join(string.split(att, "^"), "")
+                    new_att = join(split(att, "^"), "")
                     self.adder(self.object, new_att,atts[att],
                                literal_object=1)
         else:
