@@ -2,3 +2,23 @@
 The medusa sdist is expected to be a subdirectory of this one. At the moment, the version from project oedipus' CVS is required since it contains a needed bug fix to medusa-0.5.2. See:
   http://oedipus.sourceforge.net/
 
+
+
+Building Release from CVS
+
+  - update CHANGELOG 
+  - tag the release 
+    - cvs tag RELEASE_X_XX_XX 
+  - up CVS major revision (so 2.0 = first release, 3.0 = second release, etc) 
+    - cvs commit -m "NEW RELEASE" -r y.0 
+    - cvs update -A 
+  - export to a new directory 
+    - cd ..; cvs export -r HEAD -d foo-X.X.X foo 
+  - tar 
+    - tar cvzf foo-X.X.X.tgz foo-X.X.X 
+
+  - release on sourceforge (or whereever hosted) 
+  - send freshmeat announcement 
+  - announce elsewhere (relevant mailing lists, news groups, etc) 
+
+
