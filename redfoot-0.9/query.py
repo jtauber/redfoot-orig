@@ -26,6 +26,7 @@ class QueryStore:
     def getStore(self):
         return self.store
 
+    # TODO: need to have visitor version of this
     def get(self, subject, predicate, object):
         return self.store.get(subject, predicate, object)
 
@@ -39,7 +40,7 @@ class QueryStore:
     def comment(self, subject):
         c = self.get(subject, QueryStore.COMMENT, None)
         if len(c) > 0:
-            return c[0][2]     # TODO: currently only returns first comment
+            return c[0][2][1:]     # TODO: currently only returns first comment
         else:
             return self.label(subject)
 
