@@ -147,9 +147,13 @@ class RedCmd(object, Cmd):
         self.context.rednode.load(location, uri, 1)
 
     def do_server(self, arg):
-        """server <address> <port>"""
-    
-        address, port = arg.split()
+        """server <address>:<port>"""
+
+        if arg.find(":")==-1:
+            print "usage: server <address>:<port>"
+            return
+        
+        address, port = arg.split(":", 1)
         # Create a RedServer listening on address, port
         self.context.server = RedServer(address, int(port))
         self.context.server.run(background=1)
