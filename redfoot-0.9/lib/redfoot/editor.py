@@ -5,6 +5,16 @@ from rdf.literal import literal, un_literal, is_literal
 
 from rdf.const import *
 
+def date_time_path(t=None):
+    """."""
+    import time
+    if t==None:
+        t = time.time()
+
+    year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
+    s = "%0004d/%02d/%02d/T%02d/%02d/%02dZ" % ( year, month, day, hh, mm, ss)        
+    return s
+
 class Editor(Viewer):
 
     def handle_request(self, request, response):
@@ -159,10 +169,16 @@ class Editor(Viewer):
                 self.response.write("""
                 <TEXTAREA NAME="prop%s_value" ROWS="5" COLS="60">%s</TEXTAREA>
                 """ % (self.property_num, un_literal(value)))
+                self.response.write("""
+                    <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
+            """ % (self.property_num, un_literal(value)))                
             else:
                 self.response.write("""
                 <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
                 """ % (self.property_num, self.encodeAttributeValue(un_literal(value))))
+                self.response.write("""
+                    <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
+            """ % (self.property_num, self.encodeAttributeValue(un_literal(value))))
             self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
@@ -208,6 +224,10 @@ class Editor(Viewer):
                 self.response.write("""
                     <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">***
                 """ % (self.property_num, self.encodeAttributeValue(value)))
+                self.response.write("""
+                    <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
+            """ % (self.property_num, self.encodeAttributeValue(value)))
+                
         self.response.write("""
                 </TD>""")
         if exists:
@@ -250,15 +270,18 @@ class Editor(Viewer):
 	    subject = parameters['uri']
         count = parameters['prop_count']
         i = 0
-	self.storeNode.local.remove(subject)
         while i < int(count):
             i = i + 1
             property = parameters['prop%s_name' % i]
             value = parameters['prop%s_value' % i]
+            orig = parameters['prop%s_orig' % i]            
             isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
                 value = literal(value)
-            self.storeNode.local.add(subject, property, value)
+                orig = literal(orig)
+            if value!=orig:
+                self.storeNode.local.remove(subject, property, orig)
+                self.storeNode.local.add(subject, property, value)
         newProperty = parameters['newProperty']
         newPropertyValue = ""
         if self.storeNode.getRange(newProperty)==LITERAL:
@@ -292,8 +315,9 @@ class Editor(Viewer):
         self.storeNode.reify(self.storeNode.local.URI+self.generateURI(), subject, property, value)
 
     def generateURI(self):
-	import time
-        return "#T%s" % time.time()
+	#import time
+        #return "#T%s" % time.time()
+        return date_time_path()
 
     def save(self):
         self.storeNode.local.save()
@@ -344,6 +368,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 6.2  2001/02/26 22:41:03  eikeon
+#~ removed old log messages
+#~
 #~ Revision 6.1  2001/02/20 19:10:47  eikeon
 #~ added missing 'self.'
 #~
