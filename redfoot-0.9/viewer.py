@@ -120,7 +120,7 @@ class Viewer:
             <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
              | <A HREF="subclass">Full Subclass View</A>
              | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
+             | <A HREF=".">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
             </P>
         """)
@@ -326,6 +326,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.21  2000/10/09 06:37:24  jtauber
+# view and edit now clearly say which they are on screen
+#
 # Revision 1.20  2000/10/08 23:29:06  jtauber
 # collapsed subclass view now includes link(s) to parent(s)
 #

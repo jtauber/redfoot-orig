@@ -7,10 +7,10 @@ class Editor(Viewer):
             <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
              | <A HREF="subclass">Full Subclass View</A>
              | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
+             | <A HREF=".">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
              | <A HREF="add">Add a Resource</A>
-             | <A HREF=".?processor=save">Save Node to Disk</A>
+             | <A HREF="?processor=save">Save Node to Disk</A>
             </P>
         """)
 
@@ -299,10 +299,10 @@ class PeerEditor(Editor):
             <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
              | <A HREF="subclass">Full Subclass View</A>
              | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF="RDF">Download RDF</A>
+             | <A HREF=".">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
              | <A HREF="add">Add a Resource</A>
-             | <A HREF=".?processor=save">Save Node to Disk</A>
+             | <A HREF="?processor=save">Save Node to Disk</A>
              | <A HREF="connect">Connect Neighbour</A>
             </P>
         """)

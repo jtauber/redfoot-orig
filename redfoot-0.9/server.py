@@ -69,7 +69,7 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 viewer.connect(args)
 	                
         if path_info == "/":
-            viewer.mainPage()
+            viewer.RDF()
         elif path_info == "/subclass":
             if args.has_key("uri"):
                 root = args["uri"][0] # TODO: check why values of args are lists
@@ -84,9 +84,6 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             viewer.subclass(root, 0)
         elif path_info == "/classList":
             viewer.classList()
-            
-        elif path_info == "/RDF":
-            viewer.RDF()
         elif path_info == "/Triples":
             viewer.Triples()
         elif path_info == "/css":
@@ -179,6 +176,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.21  2000/10/09 19:51:00  jtauber
+# default location is now local.rdf
+#
 # Revision 1.20  2000/10/09 19:40:27  jtauber
 # server now defaults URI using the actual hostname and port
 #
