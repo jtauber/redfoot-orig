@@ -1,5 +1,7 @@
 REDFOOT README
 
+    This version: 0.9.99-pre2
+
     Redfoot is a framework for distributed RDF-based applications,
     written in Python by James Tauber and Daniel Krech.
 
@@ -36,6 +38,10 @@ TO RUN SOMETHING STRAIGHT AWAY
     and go to http://localhost:8000/ with your browser
 
     See apps/README for more details
+
+KNOWN ISSUES
+
+    See doc/issues.html
 
 DOCUMENTATION
 
