@@ -279,10 +279,8 @@ A:hover {
       
       <red:if test="html">
         <red:eval encode="None">html</red:eval>
-        <red:else>
-          <red:exec>self.app.apply()</red:exec>
-        </red:else>
-      </red:if>  
+      </red:if>
+      <red:exec>self.app.apply()</red:exec>      
     </red:facet>    
     
     <red:facet name="/robots.txt" content_type="text/plain">
