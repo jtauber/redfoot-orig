@@ -240,7 +240,24 @@ getPossibleValues(property)
 
 CLASS STOREIO (storeio.py)
 
-TODO
+setStore(store)/getStore()
+    sets/gets the underlying triple store
+
+visit/get/remove/add
+    calls the corresponding methods on the underlying triple store
+
+load(location, URI)
+    TODO
+
+save()
+    TODO
+
+saveAs(location, URI)
+    TODO
+
+output(stream, URI)
+    TODO
+
 
 SERVER MODULES AND THEIR MEMBERS
 
@@ -278,6 +295,9 @@ TODO
 
 
 $Log$
+Revision 1.3  2000/10/08 03:46:26  jtauber
+filled out rest of query method descriptions except for subClassV
+
 Revision 1.2  2000/10/07 02:12:40  jtauber
 filled out a few more descriptions of classes and methods and fixed the odd typo
 
