@@ -9,17 +9,18 @@
 
 <p>
 
-<B>Redfoot</B> is an extensible RDF server for building {peer|distributed}
-networks of data sharing nodes upon which applications may be built.
+<b>Redfoot</b> is an extensible RDF server written in python for
+building networks of distributed data sharing nodes and upon which
+applications may be built.
 
 </p>
 <p>
 
-At the highest level Redfoot consists of two pieces, namely, an {RDF
-Container|RDF Application Server} for running the nodes that form the
-network and a library from which nodes may be extended with
-specialized application specific functionality. The Container is simply
-called Redfoot and the library redfootlib.
+At the highest level Redfoot consists of two pieces, namely, an RDF
+Server for running the nodes that form the network and a library from
+which nodes may be extended with specialized application specific
+functionality. The RDF Server is simply called redfoot.py and the
+library redfootlib.
 
 </p>
 
@@ -34,13 +35,13 @@ called Redfoot and the library redfootlib.
     <p>Three key pieces make up Redfoot </p>
 
     <dl>
-      <dt>Redfoot Container</dt>
-      <dd>A container for running RedNodes, namely, redfoot.py</dd>
+      <dt>Redfoot Server</dt>
+      <dd>A server for running RedNodes, namely, redfoot.py</dd>
       <dt>Redfoot Library</dt>
       <dd>A library for extending Redfoot with new node types, HTTP
 interfaces, connectors, store mixins, triple store implementations,
-etc. Also, it is the library from with the Redfoot Container is build
-and includes RDF parsing and serialization, an in memory triple store,
+etc. Also, it is the library from with the Redfoot Server is built and
+includes RDF parsing and serialization, an in memory triple store,
 query functions, web server, etc. The redfoot library is contained
 within a top level python package called redfootlib.
       </dd>
@@ -52,8 +53,9 @@ top level python packages called redmodules and redconnectors.
       </dd> 
     </dl>
 
-    <p>At the very core of Redfoot is the notion of a <a href="tripleStore.html">TripleStore</a>
+    <p>At the very core of Redfoot is the notion of a <a href="tripleStore.html">TripleStore</a> and the <a href="tripleStore.html">RedNode</a>
     </p>
+
     <P CLASS="cvs_id">$Id$</P>
 
   </BODY>
