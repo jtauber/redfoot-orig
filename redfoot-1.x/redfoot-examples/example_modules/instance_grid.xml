@@ -1,10 +1,10 @@
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.util import *
-  from redfoot.rdf.query.functors import *
-  from redfoot.rdf.objects import resource, literal
-  from redfoot.rdf.const import *
-  from redfoot.rdf.query.builders import *
+  from redfootlib.util import *
+  from redfootlib.rdf.query.functors import *
+  from redfootlib.rdf.objects import resource, literal
+  from redfootlib.rdf.const import *
+  from redfootlib.rdf.query.builders import *
 
   <red:module name="InstanceGrid">
 

@@ -1,10 +1,10 @@
 <red:code name="pop" xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.rdf.const import LABEL, TYPE
-  from redfoot.rdf.objects import resource, literal
+  from redfootlib.rdf.const import LABEL, TYPE
+  from redfootlib.rdf.objects import resource, literal
   from redconnectors.pop_connector import *
-  from redfoot.rdf.query.functors import s
-  from redfoot.util import encode_URI
+  from redfootlib.rdf.query.functors import s
+  from redfootlib.util import encode_URI
 
   <red:module name="POP">
 

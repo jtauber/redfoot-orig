@@ -1,11 +1,11 @@
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  from redfoot.rdf.const import LABEL, TYPE, COMMENT
-  from redfoot.rdf.objects import resource, literal
-  from redfoot.rdf.store.urigen import generate_uri
-  from redfoot.util import encode_URI
+  from redfootlib.rdf.const import LABEL, TYPE, COMMENT
+  from redfootlib.rdf.objects import resource, literal
+  from redfootlib.rdf.store.urigen import generate_uri
+  from redfootlib.util import encode_URI
 
-  from redfoot.rdf.query.functors import sort
+  from redfootlib.rdf.query.functors import sort
 
   RSS_ITEM = resource("http://purl.org/rss/1.0/item")
   RSS_TITLE = resource("http://purl.org/rss/1.0/title")
