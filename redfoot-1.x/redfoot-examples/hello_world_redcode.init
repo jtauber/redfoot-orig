@@ -1,14 +1,2 @@
-!from redfootlib.redcode import importer
-!importer.install()
-
-!from hello_world_redcode import HelloWorld
-
-!hello_world = HelloWorld(rednode)
-!print hello_world
-!#server :9090
-!from redfootlib.server import RedServer
-!server = RedServer('', 9090)
-!server.add_app(hello_world)
-!server.run(1)
-
-
+redcode on
+add_app hello_world_redcode.HelloWorld
