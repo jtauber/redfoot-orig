@@ -46,10 +46,6 @@ class StoreIO:
         if URI==None:
             URI = self.URI
 
-        from rdf.query import QueryStore
-        queryStore = QueryStore()
-        queryStore.setStore(self.store)
-        
         from rdf.serializer import Serializer
         s = Serializer()
 
@@ -57,32 +53,10 @@ class StoreIO:
         s.setBase(URI)
 
 
-        queryStore.visit(lambda s, p, o, ser=s: ser.registerProperty(p), subject, predicate, object)
-
-        class State:
-            def __init__(self, ser):
-                self.ser = ser
-                self.subject = None
-                self.predicate = None
-                self.object = None
-
-            def write(self, s, p, o):
-                if self.subject!=s:
-                    if self.subject!=None:
-                        self.ser.subjectEnd()
-                    self.ser.subjectStart(s)
-                    self.subject = s
-                self.ser.property(p, o)
-
-            def flush(self):
-                if self.subject!=None:
-                    self.ser.subjectEnd()                    
-
-        state = State(s)
+        self.visit(lambda s, p, o, ser=s: ser.registerProperty(p), subject, predicate, object)
 
         s.start()
-        queryStore.visit(state.write, None, None, None)
-        state.flush()
+        self.visit(s.triple, None, None, None)
         s.end()
 
 
@@ -165,6 +139,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.8  2000/12/04 01:31:07  eikeon
+#~ changed property/value to predicate/object
+#~
 #~ Revision 4.7  2000/12/04 01:26:44  eikeon
 #~ no more getStore() on StoreIO
 #~
