@@ -74,7 +74,7 @@ def run():
 
     b.filter(my_filter)
     
-    if b.list == [literal("37")]:
+    if b.set == [literal("37")]:
         print "passed 5"
         passed = passed + 1
     else:
