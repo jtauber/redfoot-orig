@@ -129,6 +129,8 @@ class PropertyHandler:
         self.predicate = name
         if atts.has_key("resource"):
             self.object = atts["resource"]
+            if self.object[0]=="#":
+                self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
                 if att == "resource":
                     pass
@@ -136,6 +138,8 @@ class PropertyHandler:
                     self.adder(self.object, att, "^"+atts[att])
         elif atts.has_key(rdfns+"resource"):
             self.object = atts[rdfns+"resource"]
+            if self.object[0]=="#":
+                self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
                 if att == rdfns+"resource":
                     pass
