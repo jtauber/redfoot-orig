@@ -83,27 +83,8 @@ else:
 </r:exec>
 <dl style="margin: 0px; padding: 2px 5px; background: #{color};">
   <dt style="padding: 0px; margin: 0px;">
-  <r:if test="self.authorized()">
-    <a href="/edit?uri={encodeURI(triple[0])}">
       <r:eval>self.get_property_value(triple[0], RSS_TITLE, '')</r:eval>
-    </a>
-    <r:else>
-      <r:eval>self.get_property_value(triple[0], RSS_TITLE, '')</r:eval>
-    </r:else>
-  </r:if>
   </dt>
-<!--
-  <dd style="margin-bottom: 5px;font-size: 8pt;">
-    by
-<r:exec>
-who = self.rednode.getFirst(triple[0], BY, None)[2]
-username = self.get_property_value(who, RSS_CREATOR, '')
-</r:exec>
-    <r:eval>username</r:eval>
-      on
-    <r:eval>self.get_property_value(triple[0], CREATED, '')</r:eval>
-  </dd>
--->
   <dd style="padding-bottom: 10px">
     <r:eval>self.get_property_value(triple[0], RSS_DESCRIPTION, '')</r:eval>
   </dd>
@@ -143,14 +124,7 @@ color = 'FFFFFF'
 </r:exec>
 <dl class="news" style="margin: 0px; padding: 2px 5px; background: #{color};">
 <dt style="padding: 0px; margin: 0px;">
-  <r:if test="self.authorized()">
-    <a href="/edit?uri={encodeURI(triple[0])}">
       <r:eval>self.get_property_value(triple[0], LABEL, '')</r:eval>
-    </a>
-    <r:else>
-      <r:eval>self.get_property_value(triple[0], LABEL, '')</r:eval>
-    </r:else>
-  </r:if>
 </dt>
 <dd style="xmargin-bottom: 5px;font-size: 8pt;">
   by
@@ -189,16 +163,7 @@ username = self.get_property_value(who, LABEL, '')
           <TD>Intended Audience:</TD>
           <TD>
             <SELECT name="intended_audience">
-        <r:if test="self.authorized()">
-          <r:exec>callback = Query(self.option, (lambda s, p, o, request=request, response=response: [request, response, s],))</r:exec>
-          <r:for item="type" 
-                 list="self.rednode.getTransitiveSubTypes(AUDIENCE)">
-             <r:exec>self.rednode.query(callback, None, TYPE, type)</r:exec>
-          </r:for>
-          <r:else>
             <r:exec>self.option(request, response, EIKEON)</r:exec> 
-          </r:else>
-        </r:if>
             </SELECT>
           </TD>
         </TR>
@@ -217,8 +182,15 @@ username = self.get_property_value(who, LABEL, '')
 </r:response>
 
 
+<r:response name="option" args="subject=None">
+    <option value="{subject}">
+      <r:eval>self.rednode.label(subject)</r:eval>
+    </option>
+</r:response>
+
 def create_news_item(self, request, response):
-    session = authentication.EikeonSession(request, response, self.rednode)
+    # TODO:
+    #session_uri = 
     parameters = request.getParameters()
 
     uri = self.rednode.local.URI + generateURI()
@@ -231,7 +203,7 @@ def create_news_item(self, request, response):
     time = date_time()
     self.rednode.local.add(uri, CREATED, literal(time))
 
-    self.rednode.local.add(uri, BY, session.get_uri())    
+    self.rednode.local.add(uri, BY, session_uri())    
 
 </r:class>
 
