@@ -172,8 +172,9 @@ class Viewer:
              | <A HREF="Triples">Show Triples</A>
             </P>
             <H2>%s</H2>
+            <P>%s</P>
             <TABLE>
-        """ % self.qstore.label(subject))
+        """ % (self.qstore.label(subject), subject))
 
         self.qstore.propertyValuesV(subject, self.displayPropertyValue)
         self.qstore.reifiedV(subject, self.displayReifiedStatements)
