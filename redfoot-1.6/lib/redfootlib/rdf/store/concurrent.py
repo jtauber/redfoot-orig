@@ -78,7 +78,7 @@ class Concurrent(object):
             pending_removes = self.__pending_removes
             while pending_removes:
                 (s, p, o) = pending_removes.pop()
-                self.remove(s, p, o)
+                super(Concurrent, self).remove(s, p, o)
             pending_adds = self.__pending_adds                
             while pending_adds:
                 (s, p, o) = pending_adds.pop()
