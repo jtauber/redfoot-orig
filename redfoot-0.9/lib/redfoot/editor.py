@@ -122,8 +122,9 @@ class Editor(Viewer):
 
     UITYPE = "http://redfoot.sourceforge.net/2000/10/06/builtin#uiType"
     TEXTAREA = "http://redfoot.sourceforge.net/2000/10/06/builtin#TEXTAREA"
+    REQUIREDPROPERTY = "http://redfoot.sourceforge.net/2000/10/06/builtin#requiredProperty"    
 
-    def editProperty(self, property, value):
+    def editProperty(self, property, value, exists=1):
         self.property_num = self.property_num + 1
         self.writer.write("""
                 <TR>
@@ -179,15 +180,18 @@ class Editor(Viewer):
                     <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">***
                 """ % (self.property_num, value))
         self.writer.write("""
-                </TD>
+                </TD>""")
+        if exists:
+            self.writer.write("""
                 <TD VALIGN="TOP">
                   <INPUT TYPE="SUBMIT" NAME="processor" VALUE="del_%s">
                 </TD>
 		<TD VALIG="TOP">
                   <INPUT TYPE="SUBMIT" NAME="processor" VALUE="reify_%s">
-                </TD>
+                </TD>"""  % (self.property_num, self.property_num))
+        self.writer.write("""
               </TR>
-        """ % (self.property_num, self.property_num))
+        """)
 
     def add(self, type):
         self.writer.write("""
@@ -238,15 +242,25 @@ class Editor(Viewer):
                   <INPUT TYPE="HIDDEN" NAME="type" VALUE="%s"/>
                   %s
             """ % (type, self.link(type)))
+
+            self.property_num = 0
+            # TODO: make this a func... getProperties for subject?
+            for superType in self.qstore.transitiveSuperTypes(type):
+                for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
+                    property = domain[0]
+                    if len(self.qstore.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
+                        self.editProperty(property, "", 0)
+            
         self.writer.write("""
                 </TD>
               </TR>
         """)
         self.writer.write("""
           </TABLE>
-          <INPUT TYPE="HIDDEN" NAME="processor"  VALUE="create"/>
+            <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s"/>
+            <INPUT TYPE="HIDDEN" NAME="processor"  VALUE="create"/>
           <INPUT TYPE="SUBMIT"                   VALUE="create"/>
-        """)
+        """ % self.property_num)
         self.writer.write("""
         </FORM>
 
@@ -325,7 +339,14 @@ class Editor(Viewer):
             while i < int(count):
                 i = i + 1
                 property = params["prop%s_name" % i][0]
-                value = params["prop%s_value" % i][0]
+                valueName = "prop%s_value" % i
+                if params.has_key(valueName):
+                    value = params[valueName][0]
+                else:
+                    value = ""
+                isLiteral = params["prop%s_isLiteral" % i][0]
+                if isLiteral == "yes":
+                    value = "^" + value
                 self.qstore.getStore().add(subject, property, value)
 
     def save(self):
@@ -381,6 +402,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 2.6  2000/10/16 18:49:05  eikeon
 # converted a number of store.get()s to store.visit()s
 #
