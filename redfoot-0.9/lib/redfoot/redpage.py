@@ -34,8 +34,7 @@ def parse_red_page(location):
     rfch = Root_Handler(parser, None)
 
     parser.returns_unicode = 1
-    from urllib import urlopen
-    f = urlopen(location)
+    f = open(location, 'r')
 
     parser.ParseFile(f)
     errno = parser.ErrorCode
@@ -461,6 +460,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.7  2001/04/14 23:10:28  eikeon
+#~ removed old log messages
+#~
 #~ Revision 7.6  2001/04/14 16:43:43  eikeon
 #~ the args attribute of the response tag now takes space separated args
 #~
