@@ -271,10 +271,10 @@ class QueryStore(QueryBase):
         self.query(trans, type, SUBCLASSOF, None)
 
     def getTransitiveSubTypes(self, type):
-        objectSetBuilder = ObjectSetBuilder()
-        objectSetBuilder.set[type] = 1
-        self.visitTransitiveSubTypes(objectSetBuilder, type)
-        return objectSetBuilder.set.keys()
+        subjectSetBuilder = SubjectSetBuilder()
+        subjectSetBuilder.set[type] = 1
+        self.visitTransitiveSubTypes(subjectSetBuilder, type)
+        return subjectSetBuilder.set.keys()
 
     def visitTransitiveSubTypes(self, callback, type):
         trans = And(callback, Query(self.visitTransitiveSubTypes, (callback,), lambda s, p, o: (s,)))
@@ -319,13 +319,11 @@ class QueryStore(QueryBase):
     # callback may be called more than once for the same possibleValue... user
     # of this method will have to remove duplicates
     def visitPossibleValues(self, callback, property):        
-        def rangeitem(s, p, o, self=self, qstore=self, callback=callback):
-            for type in qstore.getTransitiveSubTypes(o):
-                qstore.visit(callback, None, TYPE, type)
-
-        query = Query(rangeitem, (), lambda s, p, o: (s, p, o), (self, self, callback))
-
-        self.query(query, property, RANGE, None)
+        ranges = self.get(property, RANGE, None)
+        for range in ranges:
+            for type in self.getTransitiveSubTypes(range[2]):
+                self.visit(callback, None, TYPE, type)
+            
 
     def visitPossibleProperties(self, callback, type):
         for superType in self.getTransitiveSuperTypes(type):
@@ -350,6 +348,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 5.14  2000/12/20 04:20:28  jtauber
+#~ added TODO
+#~
 #~ Revision 5.13  2000/12/20 03:59:53  jtauber
 #~ visitResourcesByType will now visit resources whose type is an unknown class
 #~
