@@ -303,10 +303,8 @@ class Editor(Viewer):
         property_num = parameters['processor'][4:]
         subject = parameters['uri']
         property = parameters['prop%s_name' % property_num]
-        vName = "prop%s_value" % property_num
+        vName = "prop%s_orig" % property_num
         value = parameters[vName]
-        if self.storeNode.getRange(property)==LITERAL:
-            value = literal(value)
         self.storeNode.local.remove(subject, property, value)
 
     def reifyProperty(self, parameters):
@@ -372,6 +370,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 6.5  2001/03/15 16:47:51  eikeon
+#~ The recent change to update broke copy... it is now fixed.
+#~
 #~ Revision 6.4  2001/03/13 19:55:44  eikeon
 #~ orig was not getting set for things of type resource... now it is
 #~
