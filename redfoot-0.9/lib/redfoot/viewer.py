@@ -1,6 +1,7 @@
 # $Header$
 
 from rdf.query import QueryStore
+from rdf.literal import literal, un_literal, is_literal
 
 class Viewer:
 
@@ -306,8 +307,8 @@ class Viewer:
         propertyDisplay = self.link(property)
         if len(value)<1:
             valueDisplay = ""
-        elif value[0]=="^":
-            valueDisplay = value[1:]
+        elif is_literal(value):
+            valueDisplay = un_literal(value)
         else:
             valueDisplay = self.link(value)
         self.response.write("""
@@ -318,8 +319,8 @@ class Viewer:
         propertyDisplay = self.link(predicate)
         if len(object)<1:
             valueDisplay = ""
-        elif object[0]=="^":
-            valueDisplay = object[1:]
+        elif is_literal(object):
+            valueDisplay = un_literal(object)
         else:
             valueDisplay = self.link(object)
         self.response.write("""
@@ -341,8 +342,8 @@ class Viewer:
         propertyDisplay = self.link(property)
         if len(value)<1:
             valueDisplay = ""
-        if value[0]=="^":
-            valueDisplay = value[1:]
+        if is_literal(value):
+            valueDisplay = un_literal(value)
         else:
             valueDisplay = self.link(value)
         self.response.write("""
@@ -434,6 +435,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.5  2000/12/04 22:07:35  eikeon
+#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
+#~
 #~ Revision 4.4  2000/12/04 22:00:59  eikeon
 #~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #~

@@ -18,23 +18,31 @@ class QueryStore:
     PREDICATE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"
     OBJECT = "http://www.w3.org/1999/02/22-rdf-syntax-ns#object"
 
-    
     def label(self, subject, default=None):
-        l = self.get(subject, QueryStore.LABEL, None)
-        if len(l) > 0:
-            return literal(l[0][2])     # TODO: currently only returns first label
-        else:
-            if default==None:
-                return subject
-            else:
-                return default
+        list = []
+        def callback(subject, property, value, list=list):
+            list.append((subject, property, value))
+            return 0 # tell the visitor to stop
+        
+        self.visit(callback, subject, QueryStore.LABEL, None)
 
-    def comment(self, subject):
-        c = self.get(subject, QueryStore.COMMENT, None)
-        if len(c) > 0:
-            return c[0][2][1:]     # TODO: currently only returns first comment
+        if len(list) > 0:
+            return un_literal(list[0][2])     # TODO: currently only returns first label
         else:
-            return self.label(subject)
+            return subject
+
+    def comment(self, subject, default=None):
+        list = []
+        def callback(subject, property, value, list=list):
+            list.append((subject, property, value))
+            return 0 # tell the visitor to stop
+        
+        self.visit(callback, subject, QueryStore.COMMENT, None)
+
+        if len(list) > 0:
+            return un_literal(list[0][2])     # TODO: currently only returns first label
+        else:
+            return subject
 
     def getByType(self, type, predicate, object):
         l = []
@@ -195,6 +203,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.4  2000/12/05 00:02:25  eikeon
+#~ fixing some of the local / neighbourhood stuff
+#~
 #~ Revision 4.3  2000/12/04 22:00:57  eikeon
 #~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #~

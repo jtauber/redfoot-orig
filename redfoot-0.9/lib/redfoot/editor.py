@@ -1,6 +1,7 @@
 # $Header$
 
 from redfoot.viewer import Viewer
+from rdf.literal import literal, un_literal, is_literal
 
 class Editor(Viewer):
 
@@ -157,11 +158,11 @@ class Editor(Viewer):
             if len(uitype) > 0 and uitype[0][2]==self.TEXTAREA:
                 self.response.write("""
                 <TEXTAREA NAME="prop%s_value" ROWS="5" COLS="60">%s</TEXTAREA>
-                """ % (self.property_num, value[1:]))
+                """ % (self.property_num, un_literal(value)))
             else:
                 self.response.write("""
                 <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
-                """ % (self.property_num, value[1:]))
+                """ % (self.property_num, un_literal(value)))
             self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
@@ -427,6 +428,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.5  2000/12/05 00:02:25  eikeon
+# fixing some of the local / neighbourhood stuff
+#
 # Revision 4.4  2000/12/04 22:07:35  eikeon
 # got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #

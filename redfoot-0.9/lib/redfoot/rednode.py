@@ -30,7 +30,7 @@ class RedNode(QueryStore, StoreIO, TripleStore):
 	    locationlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#location", None)
             if len(locationlist) == 0:
                 continue
-            location = locationlist[0][2][1:]
+            location = un_literal(locationlist[0][2])
             systemIDlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#systemID", None)
             if len(systemIDlist) == 0:
                 systemID = None
@@ -184,6 +184,9 @@ class MultiStore:
         
 
 #~ $Log$
+#~ Revision 4.6  2000/12/05 03:36:56  eikeon
+#~ reordered classes; renamed StoreNode to RedNode
+#~
 #~ Revision 4.5  2000/12/05 00:02:25  eikeon
 #~ fixing some of the local / neighbourhood stuff
 #~
