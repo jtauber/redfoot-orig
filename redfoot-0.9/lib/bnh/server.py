@@ -18,6 +18,7 @@ class Server:
         ""
         self.server_address = server_address
         self.handlerCubby = HandlerCubby(5)
+        self.context = ServerContext()        
 
     def _acceptRequests(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,9 +43,8 @@ class Server:
 
     def addHandler(self, handler):
         class Handler:
-            def __init__(self, server, handler):
+            def __init__(self, server, handler, context):
                 self.server = server
-                context = ServerContext()
                 self.handler = ServerConnection(handler, context)
                 self.running = 1
         
@@ -60,7 +60,7 @@ class Server:
             def stop(self):
                 self.server.handlerCubby.stop(self)
 
-        handler = Handler(self, handler)
+        handler = Handler(self, handler, self.context)
         import threading
         t = threading.Thread(target = handler.start, args = ())
         t.setDaemon(1)
@@ -371,6 +371,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 4.1  2000/11/09 21:14:21  eikeon
+#~ made cookies persist for 24 hours
+#~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
 #~
