@@ -42,7 +42,9 @@ class Serializer:
         if not self.rdfns in self.namespaces.keys():
             self.namespaces[self.rdfns] = 'rdf'
 
-        self.stream.write( "<?xml version=\"1.0\"?>\n" )
+        # TODO: workaround for browsers using iso-8859-1 character encoding
+        self.stream.write( """<?xml version="1.0" encoding="iso-8859-1"?>\n""" )
+        
         self.stream.write( "<%s:RDF\n" % self.namespaces[self.rdfns])
         for uri in self.namespaces.keys():
             self.stream.write( "   xmlns:%s=\"%s\"\n" % (self.namespaces[uri],uri) )
@@ -66,7 +68,8 @@ class Serializer:
             import string
             s = string.join(string.split(s, '&'), '&amp;')
             s = string.join(string.split(s, '<'), '&lt;')
-            s = string.join(string.split(s, "'"), '&quot;')
+            s = string.join(string.split(s, '>'), '&gt;')
+            s = string.join(string.split(s, '"'), '&quot;')
             return s
 
         (namespace, localName) = splitProperty(predicate)
@@ -79,6 +82,9 @@ class Serializer:
 
 
 # $Log$
+# Revision 1.8  2000/10/06 03:06:32  eikeon
+# added missing return statement that was causing None for literal values
+#
 # Revision 1.7  2000/10/01 07:19:22  eikeon
 # fixed output to encode &'s, <'s and ''s
 #
