@@ -10,7 +10,8 @@
        uses RDF as the underlying model for all data because of the extensibility and the ability
        to express relationships between any objects.</P>
 
-    <P>This documentation will be fleshed out before 1.0.</P>
+    <P>This documentation is available at <A HREF="http://redfoot.sourceforge.net/doc/">http://redfoot.sourceforge.net/doc/</A>.
+       Please check back regularly for updates.</P>
 
     <UL>
       <LI><A HREF="issues.html">Known Issues</A></LI>
@@ -22,55 +23,9 @@
       <LI><A HREF="queries.html">Writing queries</A></LI>
       <LI><A HREF="modules.html">Writing modules</A></LI>
       <LI><A HREF="tutorialExtendingGeneric.html">Tutorial: Extending the Generic App</A> Contributed by David H. Jones</LI>
-      <LI><A HREF="#writing_connectors">Writing connectors</A></LI>
-      <LI><A HREF="#writing_apps">Writing apps</A></LI>
+      <LI><A HREF="connectors.html">Writing connectors</A></LI>
+      <LI><A HREF="apps.html">Writing apps</A></LI>
     </UL>
-
-    <H2><A NAME="writing_connectors">Writing Connectors</A></H2>
-
-    <P>A <B>connector</B> is a component that takes a non-RDF datasource and makes it look like
-       RDF by implementing the <CODE>visit(callback, triple)</CODE> method. The connector can
-       then be treated as a triple store and a module can add it to the neighbourhood with:</P>
-    <PRE CLASS="code_sample">
-self.app.rednode.neighbours.add_store(<VAR>some_connector</VAR>)</PRE>
-
-    <H2><A NAME="writing_apps">Writing Apps</A></H2>
-
-    <H3>Example App</H3>
-
-    <P>An <B>app</B> brings together modules to form a website.</P>
-    <P>Apps are generally written in <I>redcode</I>. Within the <CODE>red:code</CODE> element
-       is a <CODE>red:app</CODE> element with a name. This in turn contains a
-       <CODE>red:sub-module</CODE> element for each module that makes up the app. The remainder
-       of the app is usually a set of <CODE>red:facet</CODE> elements indicating how the facets
-       of the modules are to appear in overall app.</P>
-    <PRE CLASS="code_sample">
-&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
-
-  &lt;red:app name="POPTest">
-
-    &lt;red:sub-module instance="pop" class="POP" from="redmodules.pop"/>
-
-    &lt;red:facet name="/">
-      &lt;HTML>
-        &lt;HEAD>
-          &lt;TITLE>POP Test&lt;/TITLE>
-        &lt;/HEAD>
-        &lt;BODY>
-          &lt;red:apply/>
-        &lt;/BODY>
-      &lt;/HTML>
-    &lt;/red:facet>
-
-    &lt;red:facet name="">
-      &lt;red:exec>
-        self.pop.pop_connect()
-      &lt;/red:exec>
-    &lt;/red:facet>
-
-  &lt;/red:app>
-
-&lt;/red:code></PRE>
 
   <P CLASS="cvs_id">$Id$</P>
 
