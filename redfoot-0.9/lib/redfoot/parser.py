@@ -170,3 +170,6 @@ class PropertyHandler:
         self.parent.resume()
 
 # $Log$
+# Revision 2.1  2000/10/16 19:35:26  eikeon
+# added header and log
+#

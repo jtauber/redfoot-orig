@@ -95,6 +95,9 @@ class TripleStore:
                     
 
 # $Log$
+# Revision 2.1  2000/10/16 17:19:02  eikeon
+# visit method now takes a callback function instead of a visitor object
+#
 # Revision 2.0  2000/10/14 01:14:04  jtauber
 # next version
 #

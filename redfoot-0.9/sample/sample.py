@@ -48,7 +48,16 @@ class SampleUI(BaseUI):
         </HTML>
         """)
 
+
+if __name__ == '__main__':
+    import sys
+    from redfoot.server import runServer
+    runServer(sys.argv[1:], SampleUI)
+
 # $Log$
+# Revision 1.4  2000/10/19 00:47:36  jtauber
+# refactored common code in SampleUI into BaseUI
+#
 # Revision 1.3  2000/10/19 00:33:07  jtauber
 # sample ui now links to peer editor
 #

@@ -381,6 +381,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 2.6  2000/10/16 18:49:05  eikeon
+# converted a number of store.get()s to store.visit()s
+#
 # Revision 2.5  2000/10/16 05:27:17  jtauber
 # gave menu bars labels and clarified some of the items
 #

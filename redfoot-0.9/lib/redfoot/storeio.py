@@ -38,13 +38,10 @@ class StoreIO:
         self.saveAs(self.location, self.URI)
 
     def saveAs(self, location, URI):
-        try:
-            stream = open(location, 'w')
-            self.output(stream, URI)
-            stream.close()
-        except IOError:
-            print IOError
-
+        stream = open(location, 'w')
+        self.output(stream, URI)
+        stream.close()
+        
     def output(self, stream, URI=None):
 
         if URI==None:
@@ -89,6 +86,9 @@ class StoreIO:
 
 
 # $Log$
+# Revision 2.1  2000/10/16 17:19:02  eikeon
+# visit method now takes a callback function instead of a visitor object
+#
 # Revision 2.0  2000/10/14 01:14:04  jtauber
 # next version
 #

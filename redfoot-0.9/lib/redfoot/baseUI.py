@@ -24,4 +24,7 @@ class BaseUI:
         self.editor.handler(path_info[len(self.path):], args)
 
 # $Log$
+# Revision 2.1  2000/10/19 00:51:57  jtauber
+# first version of base custom UI
+#
 

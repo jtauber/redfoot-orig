@@ -61,11 +61,12 @@ RUNNING THE REDFOOT SERVER
 
     Hitting the URI that Redfoot is running as will return the RDF. Try hitting
 
-	http://hostname.domain:port/classList
+	http://hostname.domain:port/
 
     to get the UI
 
-    See sample.sh for an example of invoking with a custom UI for viewing.
+    See sample/sample.{sh,bat} for an example of invoking with a custom UI 
+    for viewing.
 
 
 INFORMATION FOR DEVELOPERS
@@ -86,6 +87,9 @@ HOW TO CONTACT THE DEVELOPERS
 
 
 $Log$
+Revision 2.2  2000/10/19 01:56:16  jtauber
+made README a little easier to read (I hope); added info about -P and SampleUI
+
 Revision 2.1  2000/10/19 01:19:24  jtauber
 added email addresses
 

@@ -37,11 +37,18 @@ class StoreNode:
     ""
 
     def __init__(self):
+        def toRelativeURL(path):
+            import sys
+            from os.path import join, dirname
+            from urllib import pathname2url
+            libDir = dirname(sys.modules["redfoot.rednode"].__file__)
+            return pathname2url(join(libDir, path))
+
         self.stores = MultiStore()
 
-        self.connectTo("rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
-        self.connectTo("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-        self.connectTo("builtin.rdf", "http://redfoot.sourceforge.net/2000/10/06/builtin")
+        self.connectTo(toRelativeURL("rdfSchema.rdf"), "http://www.w3.org/2000/01/rdf-schema")
+        self.connectTo(toRelativeURL("rdfSyntax.rdf"), "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+        self.connectTo(toRelativeURL("builtin.rdf"), "http://redfoot.sourceforge.net/2000/10/06/builtin")
 
     def _preCacheRemoteStores(self, baseDirectory=None):
         rstores = self.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://xteam.hq.bowstreet.com/redfoot-builtin#RemoteStore")
@@ -160,6 +167,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 # $Log$
+# Revision 2.2  2000/10/16 17:19:02  eikeon
+# visit method now takes a callback function instead of a visitor object
+#
 # Revision 2.1  2000/10/16 04:45:48  jtauber
 # resourcesByClassV on query and rednode now only call processClass if the class has instances
 #

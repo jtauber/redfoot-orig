@@ -17,56 +17,34 @@ class RedfootHandler:
         self.lock = threading.Lock()
         self.viewer = None
 
-    def getViewer(self):
-        if self.viewer==None:
-            from redfoot.rednode import StoreNode
-            from redfoot.storeio import StoreIO
-            from redfoot.store import TripleStore
-            # TODO: the following shouldn't be hardcoded
-            from redfoot.viewer import *
-            from redfoot.editor import *
-            from redfoot.sampleUI import *
-            
-            storeNode = StoreNode()
-
-            storeIO = StoreIO()
-            storeIO.setStore(TripleStore())
-            storeIO.load(location, uri)
-
-            storeNode.setStore(storeIO)
-            self.viewer = eval("%s(None, storeNode, path)" % interface)
-
-        return self.viewer
-
     def handleRequest(self, request, response):
         args = request.parameters
         path_info = request.path_info
 
         self.lock.acquire()
         try:
-            viewer = self.getViewer()
+            viewer = self.viewer
             viewer.setWriter(response)
             viewer.handler(path_info, args)
         finally:
             self.lock.release()            
 
 
-class RedfootServerConnection(ServerConnection):
+redfootHandler = RedfootHandler()
 
-    handler = RedfootHandler()
+class RedfootServerConnection(ServerConnection):
 
     def __init__(self):
         ServerConnection.__init__(self, None)
-        self.handler = RedfootServerConnection.handler
+        self.handler = redfootHandler
         
 
-if __name__ == '__main__':
-
+def runServer(args, interface):
     # set default values
     port = 8000
     location = "local.rdf"
     uri = None
-    interface = "PeerEditor"
+
     path = "/"
         
     import sys
@@ -80,8 +58,6 @@ if __name__ == '__main__':
             uri = value
         elif opt=="-p":
             port = string.atoi(value)
-        elif opt=="-i":
-            interface = value
         elif opt=="-P":
             path = value
             
@@ -92,8 +68,21 @@ if __name__ == '__main__':
         hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
         uri = "http://%s:%s%s" % (hostname,port,path)
 
-    server = Server(('', port), lambda : RedfootServerConnection())
+    from redfoot.rednode import StoreNode
+    from redfoot.storeio import StoreIO
+    from redfoot.store import TripleStore
+            
+    storeNode = StoreNode()
+
+    storeIO = StoreIO()
+    storeIO.setStore(TripleStore())
+    storeIO.load(location, uri)
+
+    storeNode.setStore(storeIO)
+    redfootHandler.viewer = interface(None, storeNode, path)
     
+    server = Server(('', port), lambda : RedfootServerConnection())
+
     import threading
     t = threading.Thread(target = server.start, args = ())
     t.setDaemon(1)
@@ -109,8 +98,15 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             sys.exit()
 
+if __name__ == '__main__':
+    import sys
+    runServer(sys.argv[1:])
+
 
 # $Log$
+# Revision 2.7  2000/10/17 02:29:43  jtauber
+# set up server to be able to use SampleUI; fixed slash problem with path
+#
 # Revision 2.6  2000/10/17 01:50:43  jtauber
 # server now takes -P option to pass in path which gets passed to the viewer
 #

@@ -378,6 +378,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 2.6  2000/10/17 01:50:43  jtauber
+# server now takes -P option to pass in path which gets passed to the viewer
+#
 # Revision 2.5  2000/10/16 15:37:07  eikeon
 # fixed bug... unknown response is now self.writer
 #

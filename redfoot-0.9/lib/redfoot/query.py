@@ -207,6 +207,9 @@ class QueryStore:
         return resultset.keys()
 
 # $Log$
+# Revision 2.7  2000/10/17 04:32:44  eikeon
+# fixed typo
+#
 # Revision 2.6  2000/10/17 00:14:05  eikeon
 # changed one more get to visit
 #
