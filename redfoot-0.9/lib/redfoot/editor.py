@@ -186,6 +186,9 @@ class Editor(Viewer):
             rangelist = self.storeNode.get(property, RANGE, None) # already did this above
             if len(rangelist) > 0:
                 self.response.write("""
+                    <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
+            """ % (self.property_num, value))                
+                self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="no">
                     <SELECT NAME="prop%s_value">
                       <OPTION value="">Select a value for this property</OPTION>
@@ -368,6 +371,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 6.3  2001/02/27 20:55:07  eikeon
+#~ update no longer removes and re-adds properties who's values are unchanged; generateURI changed
+#~
 #~ Revision 6.2  2001/02/26 22:41:03  eikeon
 #~ removed old log messages
 #~
