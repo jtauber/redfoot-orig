@@ -284,16 +284,29 @@ Adds app defined in package_name.app_name to previously running server. If a ser
         self.context.redstore.node.call(address, int(port))
 
     def do_chump_bot(self, arg):
-        (channel, nickname, addr) = arg.split(" ", 2)
-        from redfootlib.redchumpbot import RedChumpBot
-        redstore = self.context.redstore        
-        if ":" in addr:
-            server, port = addr.split(":", 1)
-            bot = RedChumpBot(redstore, channel, nickname, server, port)
-        else:
-            server = addr
-            bot = RedChumpBot(redstore, channel, nickname, server)
+        try:
+            (channel, nickname, addr, context) = arg.split(" ", 3)
+            from redfootlib.redchumpbot import RedChumpBot
+            redstore = self.context.redstore
+
+            store = redstore.neighbourhood
+            make_statement = redstore.make_statement(context)
+            retract_statement = redstore.retract_statement(context)
+
+            if ":" in addr:
+                server, port = addr.split(":", 1)
+                bot = RedChumpBot(store, make_statement, retract_statement,
+                              channel, nickname, server, int(port))
+            else:
+                server = addr
+                bot = RedChumpBot(store, make_statement, retract_statement,
+                              channel, nickname, server)
+
             import threading
-        t = threading.Thread(target = bot.start, args = ())
-        t.setDaemon(1)
-        t.start()
+            t = threading.Thread(target = bot.start, args = ())
+            t.setDaemon(1)
+            t.start()
+        except:
+            from traceback import print_exc
+            print_exc()
+            print "Usage: chump_bot channel nickname addr context"

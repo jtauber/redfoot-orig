@@ -18,6 +18,7 @@ CHUMP_TIME = resource("http://redfoot.net/2002/05/13/chump/time")
 CHUMP_WHO = resource("http://redfoot.net/2002/05/13/chump/who")
 CHUMP_COMMENT = resource("http://redfoot.net/2002/05/13/chump/comment")
 CHUMP_KEYWORDS = resource("http://redfoot.net/2002/05/13/chump/keywords")
+CHUMP_CHANNEL = resource("http://redfoot.net/2002/05/13/chump/channel")
 
 
 class RedChump(DailyChump):
@@ -27,10 +28,12 @@ class RedChump(DailyChump):
 
 
 class RedChurn(Churn):        
-    def __init__(self, store, make_statement, retract_statement):
+    def __init__(self, store, make_statement, retract_statement,
+                 channel):
         self.store = store
         self.make_statement = make_statement
         self.retract_statement = retract_statement
+        self.channel = channel
         self.database = {}
         self.labelcount = 0
         self.set_update_time(time.time())
@@ -44,7 +47,8 @@ class RedChurn(Churn):
                 return label
         
         entry = RedChurnEntry(item, self)            
-        self.make_statement(resource(item), TYPE, CHUMP_ITEM)
+        self.make_statement(entry.uri, TYPE, CHUMP_ITEM)
+        self.make_statement(entry.uri, CHUMP_CHANNEL, literal(self.channel))
         entry.set_time(time.time())            
         entry.set_nick(nick)
         label = self.get_next_label()
@@ -223,30 +227,30 @@ class RedChurnEntry(ChurnEntry, object):
         return comment_html
 
 class RedArchiver:
-    def __init__(self, store, make_statement, retract_statement):
+    def __init__(self, store, make_statement, retract_statement, channel):
         self.store = store
         self.make_statement = make_statement
         self.retract_statement = retract_statement
+        self.channel = channel
 
     def archive_if_necessary(self, churn):
         return churn
 
     def retrieve_churn(self):
-        churn = RedChurn(self.store, self.make_statement, self.retract_statement)
+        churn = RedChurn(self.store, self.make_statement, self.retract_statement, self.channel)
         return churn
 
 
 from ircbot import SingleServerIRCBot
 class RedChumpBot(DailyChumpBot):
-    def __init__(self, redstore, channel, nickname, server, port=6667):
+    def __init__(self, store, make_statement, retract_statement,
+                 channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.nickname = nickname
         self.channel = channel
         self.foocount = 0
 
-        store = redstore.neighbourhood
-        make_statement = redstore.make_statement("http://redfoot.net/")
-        retract_statement = redstore.retract_statement("http://redfoot.net/")
-
-        archiver = RedArchiver(store, make_statement, retract_statement)
+        channel = "irc://%s:%s/%s" %(server, port, channel)
+        archiver = RedArchiver(store, make_statement, retract_statement,
+                               channel)
         self.chump = RedChump(archiver)
