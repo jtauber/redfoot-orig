@@ -132,8 +132,11 @@ class Editor(Viewer):
                   </TD>
                   <TD VALIGN="TOP">
         """ % (self.qstore.label(property), self.property_num, property))
-        for range in self.qstore.get(property, self.qstore.RANGE, None): # TODO: redo as visitor
-            self.writer.write("%s<BR>" % self.qstore.label(range[2]))
+
+        def callback(s, p, o, self=self):
+            self.writer.write("%s<BR>" % self.qstore.label(o))
+        self.qstore.visit(callback, property, self.qstore.RANGE, None)
+
         self.writer.write("""
                   </TD>
                   <TD COLSPAN="2">
@@ -378,6 +381,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 2.5  2000/10/16 05:27:17  jtauber
+# gave menu bars labels and clarified some of the items
+#
 # Revision 2.4  2000/10/16 05:02:28  jtauber
 # refactored menu bar to remove duplication between different UIs
 #

@@ -134,33 +134,36 @@ class QueryStore:
         self.visit(lambda s, p, o: processType(o), type, QueryStore.SUBCLASSOF, None)
 
     def propertyValuesV(self, subject, processPropertyValue):
-        for statement in self.store.get(subject, None, None):
-            property = statement[1]
-            value = statement[2]
-            processPropertyValue(property,value)
-
+        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
+            processPropertyValue(p, o)            
+        self.store.visit(callbackAdaptor, subject, None, None)
+            
     def propertyValuesLocalV(self, subject, processPropertyValue):
-        for statement in self.store.store.get(subject, None, None):
-            property = statement[1]
-            value = statement[2]
-            processPropertyValue(property,value)
+        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
+            processPropertyValue(p, o)
+        self.store.store.visit(callbackAdaptor, subject, None, None)
 
     def propertyValuesNeighbourhoodV(self, subject, processPropertyValue):
-        for statement in self.store.stores.get(subject, None, None):
-            property = statement[1]
-            value = statement[2]
-            processPropertyValue(property,value)
+        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
+            processPropertyValue(p, o)
+        self.store.stores.visit(callbackAdaptor, subject, None, None)
         
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
-        for subclassStatement in self.store.get(None, QueryStore.SUBCLASSOF, type):
+        def subclassStatement(s, p, o, \
+                              processClass=processClass, \
+                              processInstance=processIstance, \
+                              currentDepth=currentDepth,
+                              recurse=recurse):
             if recurse:
-                self.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
+                self.subClassV(s, processClass, processInstance, currentDepth+1)
             else:
-                processClass(subclassStatement[0], currentDepth+1, recurse)
-        for instanceStatement in self.store.get(None, QueryStore.TYPE, type):
-            processInstance(instanceStatement[0], currentDepth, recurse)
-
+                processClass(s, currentDepth+1, recurse)                
+        self.store.visit(subclassStatement, None, QueryStore.SUBCLASSOF, type)
+        def instanceStatement(s, p, o, currentDepth=currentDepth, recurse=recurse):
+            processInstance(s, currentDepth, recurse)            
+        self.store.visit(instanceStatement, None, QueryStore.TYPE, type)
+    
     # REIFICATION STUFF
 
     def reifiedV(self, subject, processStatement):
@@ -183,16 +186,25 @@ class QueryStore:
         #self.store.removeAll(statement)
 
     # TODO: NEED TO MAKE A VISITOR VERSION
+    # If we want to remove duplicates the non visitor version is the best we can do? -eik
     def getPossibleValues(self, property):
         resultset = {}
-        for rangeitem in self.store.get(property, QueryStore.RANGE, None):
-            for type in self.transitiveSubTypes(rangeitem[2]):
-                for a in self.store.get(None, QueryStore.TYPE, type):
-                    resultset[a[0]] = 1
+
+        def possibleSubject(subject, property, value, resultset=resultset):
+            resultset[subject] = 1
+
+        def rangeitem(s, p, o, self=self, qstore=self, callback=callback):
+            for type in qstore.transitiveSubTypes(o):
+                qstore.visit(possibleSubject, None, QueryStore.TYPE, type)
+
+        self.store.visit(rangeitem, property, QueryStore.RANGE, None)
+        
         return resultset.keys()
 
-
 # $Log$
+# Revision 2.3  2000/10/16 17:23:35  eikeon
+# reimplemented parentTypesV to use visit instead of get
+#
 # Revision 2.2  2000/10/16 15:39:13  eikeon
 # added visit method
 #
