@@ -1,0 +1,139 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.rdf.const import LABEL, TYPE, COMMENT
+  from redfoot.rdf.objects import resource, literal
+  from redfoot.rdf.store.urigen import generate_uri
+  from redfoot.util import encode_URI
+
+  from redfoot.rdf.query.functors import sort
+
+  RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+  RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+  RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+  RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+  DC_DATE = resource("http://purl.org/dc/elements/1.1/date")
+
+  from time import mktime, strftime  
+
+  class slice:
+      def __init__(self, callback, start=None, end=None):
+          self.callback = callback
+          self.start = start
+          self.end = end
+          self.i = 0
+
+      def __call__(self, *args):
+          if not (self.start and self.i&lt;self.start):
+              if not (self.end and self.i&gt;self.end):
+                  apply(self.callback, args)
+          self.i = self.i + 1
+
+
+
+  <red:module name="News">
+
+    def reverse_chron(self, (s1, p1, o1), (s2, p2, o2)):
+        date_a = self.app.rednode.get_first_value(s1, DC_DATE, '')
+        date_b = self.app.rednode.get_first_value(s2, DC_DATE, '')
+        return 0-cmp(str(date_a), str(date_b))
+
+    <red:facet name="">    
+      <red:exec>self.news()</red:exec>
+    </red:facet>
+
+    <red:facet name="news" args="start=None, end=None">    
+      <dl>
+       
+       <red:exec>
+         sort(self.reverse_chron, self.app.rednode.visit)(slice(self._news_row, start, end), (None, TYPE, RSS_ITEM))
+       </red:exec>
+
+      </dl>
+
+    </red:facet>
+
+
+    <red:facet name="_news_row" args="subject, property, object">
+        <dt>
+          <red:eval>
+            self.app.rednode.get_first_value(subject, RSS_TITLE, '')
+          </red:eval>
+        </dt>
+        <dt style="font-size: 8pt">
+          <red:exec>
+            o = self.app.rednode.get_first_value(subject, DC_DATE, '')
+
+            try:
+                parts = o.value.split('-')
+                year, month, day, hh, mm, ss, wd, y, z = (int(parts[0]), int(parts[1]), int(parts[2]), 0, 0, 0, 0, 0, 0)
+                t = ( year, month, day, hh, mm, ss, wd, y, z)
+                date = strftime(" %B %d, %Y", t)                
+            except:
+                date = "parse error: expecting YYYY-MM-DD but found '%s'" % o
+          </red:exec>
+          <red:eval>date</red:eval>
+        </dt>
+        <dd>
+          <red:eval encode="None">
+            self.app.rednode.get_first_value(subject, RSS_DESCRIPTION, '')
+          </red:eval>
+	</dd>
+<!--        
+        <dd>
+          <a HREF="{self.app.rednode.get_first_value(subject, RSS_LINK, '')}">Read Story</a>
+        </dd>
+-->        
+    </red:facet>
+
+
+    <red:facet name="add">
+     <H1>Add News Item</H1>
+     <form name="news" method="post" action="">
+       <input type="hidden" name="processor" value="do_add_news"/>        
+     <table>
+      <tr>
+        <td>Title</td>
+        <td>
+            <input size="30" type="text" name="title"/>
+        </td>
+      </tr>  
+      <tr>
+        <td>Date</td>
+        <td>
+            <input size="30" type="text" name="date"/>
+        </td>
+      </tr>  
+      <tr>
+        <td>Description</td>
+        <td>
+            <textarea rows="5" cols="40" type="text" name="description"/>
+        </td>
+      </tr>
+      <tr>
+        <td>&amp;nbsp;
+        </td>
+        <td>
+          <input type="submit" value="Submit News"/>
+        </td>
+      </tr>  
+     </table>
+     </form>     
+    </red:facet>
+
+
+    # TODO: create processor tag for these to use
+    def do_add_news(self):
+        title = self.app.request.get_parameter('title')    
+        description = self.app.request.get_parameter('description')    
+        date = self.app.request.get_parameter('date')    
+        uri = resource(self.app.rednode.uri + generate_uri())
+        self.app.rednode.add(uri, TYPE, RSS_ITEM)
+        self.app.rednode.add(uri, RSS_TITLE, literal(title))
+        self.app.rednode.add(uri, RSS_DESCRIPTION, literal(description))
+        self.app.rednode.add(uri, DC_DATE, literal(date))
+
+  </red:module>
+
+</red:code>
+
