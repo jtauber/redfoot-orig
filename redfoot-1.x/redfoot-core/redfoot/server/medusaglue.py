@@ -7,6 +7,28 @@ from medusa import http_server
 from medusa import resolver, logger
 #from medusa import filesys, default_handler
 
+import re
+# <path>;<params>?<query>#<fragment>
+path_regex = re.compile (
+#      path      params    query   fragment
+#    r'([^;?#]*)(;[^?#]*)?(\?[^#]*)?(#.*)?'
+# We are losing everything after %23's in the query string. Probably
+# due to the fact that the URI has already been run through unquote? I
+# think we are safe assuming it was part of the query string... do #'s
+# ever make it to the server... or do the clients always deal with it?
+#
+#      path      params    query   
+    r'([^;?#]*)(;[^?#]*)?(\?.*)?'
+    )
+
+def split_uri (uri):
+    m = path_regex.match (uri)
+    if m.end() != len(uri):
+        raise ValueError, "Broken URI"
+    else:
+        _split_uri = m.groups()
+    return _split_uri
+
 class RedServer:
     def __init__(self, address, port):
         rs = None # resolver.caching_resolver ('127.0.0.1')
@@ -55,7 +77,8 @@ def become_nobody():
             os.seteuid (uid)
 
 
-            path, params, query, fragment = request.split_uri()
+            #path, params, query, fragment = request.split_uri()
+            path, params, query = split_uri(self.request.uri)            
 
             self.path = path
             self.params = (params or ';')[1:]
@@ -101,8 +124,9 @@ class RequestResponseAdapter:
             request['Expires'] = '-1'
             self._parameters = None
         
-            path, params, query, fragment = request.split_uri()
-
+            #path, params, query, fragment = request.split_uri()
+            path, params, query = split_uri(self.request.uri)            
+            
             self.path = path
             self.params = (params or ';')[1:]
             self.query = (query or '?')[1:]
