@@ -375,7 +375,7 @@ class Editor(Viewer):
             value = parameters[valueName]
             isLiteral = parameters['prop%s_isLiteral' % i]
             if isLiteral == "yes":
-                value = literanl(value)
+                value = literal(value)
             self.storeNode.local.add(subject, property, value)
 
     def save(self):
@@ -438,6 +438,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 5.3  2000/12/13 02:54:11  jtauber
+# moved functions in query around and renamed a lot
+#
 # Revision 5.2  2000/12/09 23:02:12  jtauber
 # fixed font-weight and size
 #
