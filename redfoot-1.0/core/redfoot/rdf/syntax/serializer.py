@@ -15,11 +15,13 @@ def split_property(property):
     length = len(property)
     for i in xrange(1, length):
         if not property[-i-1] in namechars:
-            j = -i
-            return (property[:j], property[j:])
-    raise "Could not split property"
+            for j in xrange(-1-i,length):
+                if property[j] in namestart:
+                    return (property[:j], property[j:])
+    return ("", property)
 
 
+    
 class Serializer:
     """RDF serializer.
     
