@@ -17,8 +17,6 @@ class Editor(Viewer):
         processor = parameters['processor']
         if processor == "update":
             self.update(parameters)
-        elif processor == "create":
-            self.create(parameters)
         elif processor == "save":
             self.save()
         elif processor == "delete":
@@ -35,7 +33,7 @@ class Editor(Viewer):
             self.showNeighbours=0
     
         if path_info == "/edit":
-            self.edit(parameters['uri'], parameters['type']) 
+            self.edit(parameters)
 	elif path_info == "/add":
             self.add(parameters['type'])
         elif path_info == "/connect":
@@ -60,7 +58,15 @@ class Editor(Viewer):
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
         """ % (self.encodeCharacterData(self.storeNode.label(subject)), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
-    def edit(self, subject, type):
+    def edit(self, parameters):
+	subject = parameters['uri']
+	type = parameters['type']
+	copy = parameters['copy']
+
+	if copy!=None and copy=="copy":
+   	    print "copying"
+            subject = self.storeNode.local.URI + self.generateURI()
+	    self.update(parameters, subject)
         if subject==None or subject=="":
             subject = self.storeNode.local.URI + self.generateURI()
         if type!=None and type!="":
@@ -107,9 +113,10 @@ class Editor(Viewer):
 
         </TABLE>
 
-        <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s"/>
-        <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="update"/>
-        <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="delete"/>
+        <INPUT TYPE="HIDDEN" NAME="prop_count" VALUE="%s">
+        <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="update">
+        <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="delete">
+        <INPUT TYPE="SUBMIT" NAME="copy"  VALUE="copy" ONCLICK="form.action='edit'; form.submit()">
       </FORM>
           """ % self.property_num)
 
@@ -229,8 +236,9 @@ class Editor(Viewer):
         """ % type)
         self.footer()
 
-    def update(self, parameters):
-        subject = parameters['uri']
+    def update(self, parameters, subject=None):
+	if subject==None:
+	    subject = parameters['uri']
         count = parameters['prop_count']
         i = 0
 	self.storeNode.local.remove(subject)
@@ -327,6 +335,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.16  2000/12/21 01:58:38  jtauber
+#~ edit doesn't absolutize any more
+#~
 #~ Revision 5.15  2000/12/21 01:50:12  jtauber
 #~ edit can now take type; add just asks for URI; new menu names
 #~
