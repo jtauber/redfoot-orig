@@ -49,7 +49,7 @@ class Receiver:
 
 
     def stop(self):
-        #self.socket.close()
+        self.socket.close()
         del self.socket
 
 from threading import RLock
@@ -96,6 +96,9 @@ class HandlerCubby:
     
 
 #~ $Log$
+#~ Revision 5.1  2000/12/12 22:20:50  eikeon
+#~ added shutdown code... to shutdown cleanly
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
 #~

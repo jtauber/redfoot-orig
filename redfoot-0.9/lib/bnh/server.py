@@ -14,6 +14,7 @@ class Server:
         self.context = ServerContext()        
         self.receiver = Receiver(serverAddress)
         self.receiver.start()
+        self.running = 0
         
     def setHandler(self, handler):
         self.handler = handler
@@ -23,7 +24,6 @@ class Server:
         import threading
         t = threading.Thread(target = self._handleRequest, args = (serverConnection,))
         t.setDaemon(1)
-        self.running = 1
         t.start()
 
     def stop(self):
@@ -31,6 +31,7 @@ class Server:
         self.running = 0
 
     def _handleRequest(self, serverConnection):
+        self.running = 1            
         handlerCubby = self.receiver.handlerCubby
         while self.running==1:
             clientSocket = handlerCubby.get()
@@ -40,6 +41,9 @@ class Server:
                 handlerCubby.wait(0.05) # TODO: can we make this wait()?
 
 #~ $Log$
+#~ Revision 5.1  2000/12/12 22:20:50  eikeon
+#~ added shutdown code... to shutdown cleanly
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
 #~

@@ -60,9 +60,9 @@ class ServerConnection:
                 self.request._setClientSocket(clientSocket)
                 self.response._setClientSocket(clientSocket)
                 self.handler.handleRequest(self.request, self.response)
-                self.response.close()
+                self.request.close()
+                self.response.close()                
                 clientSocket.shutdown(1)
-                clientSocket.close()
             finally:
                 clientSocket.close()
         except socket.error:
@@ -277,6 +277,12 @@ class Request:
 
         return sessions[session]
 
+    def close(self):
+        try:
+            self._rfile.close()
+        except IOError:
+            raise BadRequestError("close failed")            
+
 
 class Response:
 
@@ -329,7 +335,7 @@ class Response:
                 
             self._wfile.write(str)
         except IOError:
-            raise BadRequestError("write failed")            
+            raise BadRequestError("write failed")                            
 
     def flush(self):
         try:
