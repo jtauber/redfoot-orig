@@ -2,7 +2,7 @@
 # us. This is useful for developing or experimenting with the core
 # code.
 try:
-    import redfoot
+    import redfootlib
 except:
     # redfoot must not be installed, try adding
     import sys
