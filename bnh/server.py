@@ -30,8 +30,7 @@ class Server:
             try:
                 clientSocket, client_address = self.socket.accept()
             except socket.error:
-                import traceback
-                traceback.print_exc()
+                #TODO: log
                 break
 
             try:
@@ -41,8 +40,8 @@ class Server:
                                      args = (self, clientSocket))
                 t.start()
             except:
-                import traceback
-                traceback.print_exc()
+                #TODO: log
+                break
                 
 
         
@@ -56,22 +55,36 @@ class ServerConnection:
     def handleRequest(self, server, clientSocket):
 
         try:
-            self.request.setClientSocket(clientSocket)
-            self.response.setClientSocket(clientSocket)
-            self.handler.handleRequest(self.request, self.response)
-            self.response.close()
-        except:
-            import traceback
-            traceback.print_exc()
-            
-        try:
-            clientSocket.shutdown(1)
+            try:
+                self.request.setClientSocket(clientSocket)
+                self.response.setClientSocket(clientSocket)
+                self.handler.handleRequest(self.request, self.response)
+                self.response.close()
+                clientSocket.shutdown(1)
+            finally:
+                clientSocket.close()
+        except socket.error:
+            #TODO: log
+            pass
+        except BadRequestError:
+            #TODO: log
+            pass
         except:
             import traceback
             traceback.print_exc()
 
-        clientSocket.close()
 
+
+class Error:
+    def __init__(self, msg=''):
+        self._msg = msg
+    def __repr__(self):
+        return self._msg
+
+class BadRequestError(Error):
+    def __init__(self, msg):
+        Error.__init__(self, "%s" % msg)
+        self.message = msg
 
 class Request:
     
@@ -84,8 +97,7 @@ class Request:
         if len(words) == 3:
             [self.method, self.path, self.version] = words
         else:
-            sys.stderr.write("Warning: ignoring the request '%s'" % firstline)
-            sys.stderr.flush()
+            raise BadRequestError("Empty Request '%s'" % firstline)
 
         i = string.find(self.path, "?")
         if i==-1:
@@ -168,6 +180,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 2.0  2000/10/14 01:13:34  jtauber
+# next version
+#
 # Revision 1.5  2000/10/13 22:19:47  eikeon
 # catching all exceptions so that server does not hang
 #
