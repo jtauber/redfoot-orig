@@ -1,3 +1,5 @@
+# $Header$
+
 from redfoot.store import *
 from redfoot.storeio import *
 from redfoot.viewer import *
@@ -31,15 +33,28 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     server_version = "RedfootHTTP/" + __version__
 
-    tripleStore = TripleStore()
+    storeNode = StoreNode()
 
     storeIO = StoreIO()
-    storeIO.setStore(tripleStore)
+    storeIO.setStore(TripleStore())
     storeIO.load("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
+
+    storeNode.connectTo(storeIO.getStore())
+        
+    storeIO = StoreIO()
+    storeIO.setStore(TripleStore())
     storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+
+    storeNode.connectTo(storeIO.getStore())
+
+    storeIO = StoreIO()
+    storeIO.setStore(TripleStore())
     storeIO.load("tests/example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
 
-    viewer = Editor(None, QueryStore(tripleStore))
+    storeNode.setStore(storeIO.getStore())
+
+    viewer = Editor(None, QueryStore(storeNode))
+
 
     def do_GET(self):
         """Serve a GET request."""
@@ -125,3 +140,6 @@ def runServer():
 
 if __name__ == '__main__':
     runServer()
+
+
+# $Log$
