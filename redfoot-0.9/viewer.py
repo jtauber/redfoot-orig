@@ -163,6 +163,12 @@ class Viewer:
         </HTML>
         """)
 
+    def resourceHeader(self, subject):
+        self.writer.write("""
+            <H2>%s</H2>
+            <P>%s</P>
+        """ % (self.qstore.label(subject), subject))
+
     def view(self, subject):
         self.writer.write("""
         <HTML>
@@ -173,11 +179,10 @@ class Viewer:
           <BODY>
             <H1>ReDFoot</H1>""")
         self.menuBar()
+        self.resourceHeader(subject)
         self.writer.write("""
-            <H2>%s</H2>
-            <P>%s</P>
             <TABLE>
-        """ % (self.qstore.label(subject), subject))
+        """)
 
         self.qstore.propertyValuesV(subject, self.displayPropertyValue)
         self.qstore.reifiedV(subject, self.displayReifiedStatements)
@@ -297,6 +302,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.15  2000/10/01 03:58:10  eikeon
+# fixed up all the places where I put CVS keywords as keywords in omments... duh
+#
 # Revision 1.14  2000/10/01 03:07:23  eikeon
 # changed viewer to now take a StoreNode; RDF now only outputs the RDF for the StoreNode's store; added Header and Log CVS keywords
 #
