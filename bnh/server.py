@@ -23,7 +23,7 @@ class Server:
         self.serverConnectionFactory = serverConnectionFactory
 
     def start(self):
-        sys.stderr.write("Started eikeon's Bare Bones HTTP Server.\n")
+        sys.stderr.write("Started eikeon's Bare Naked HTTP Server.\n")
         sys.stderr.flush()
         
         while 1:
@@ -166,3 +166,6 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.1.1.1  2000/10/13 03:59:06  eikeon
+# initial import
+#
