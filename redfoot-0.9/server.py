@@ -37,7 +37,6 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         length = int(self.headers.getheader('content-length'))
         data = self.rfile.read(length)
-        self.send_head()
 
         i = string.find(self.path, "?")
         if i==-1:
@@ -197,6 +196,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.24  2000/10/10 05:20:54  eikeon
+# added show/hide neighbour logic
+#
 # Revision 1.23  2000/10/10 04:10:33  jtauber
 # POST is now used for form submission (finally)
 #
