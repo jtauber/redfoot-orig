@@ -56,14 +56,14 @@ def process_args():
         try:
             __import__(arg)
         except ImportError:
-            # TODO: print out info regaurding the exception... else it
-            # is a bit hard to know what is going on ;)
+            from traceback import print_exc
             print """
-Error: Could not import '%s'
+The following exception happened while trying to import '%s'
 
-  %s %s --help for command line options
+  %s %s --help for command line options            
 
 """ % (arg, sys.executable, sys.argv[0])
+            print_exc()            
             sys.exit(-1)
     return (uri, rdf, address, port)
 
