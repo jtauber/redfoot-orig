@@ -85,3 +85,8 @@ div.NAV A:hover {
   font-size: 14pt;
   font-style: italic;
 }
+
+var {
+  font-style: italic;
+  color: #900;
+}
