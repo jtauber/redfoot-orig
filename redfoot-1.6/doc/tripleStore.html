@@ -34,51 +34,120 @@ redfootlib/rdf/objects.py. These objects are created via <CODE>Resource(<VAR>uri
 
     <h2>Interface</h2>
     <p>
-      The use of <CODE>None</CODE> in the following methods indicates that any value will match.
+      Many of the methods in the following interfaces are <a href="http://www.amk.ca/python/2.2/index.html#SECTION000500000000000000000">Python Generators</a>
     </p>
 
-    <p>The methods <CODE>triples, subjects, predicate, etc</CODE> are python generators.
-    </p>
-
-    <h3>Layer 0</h3>
+    <h3>Layer 0</h3>    
     <p>
-      The core layer a triple store backend must implement. Currently
-Redfoot has an <a href="../lib/redfootlib/rdf/store/memory.py">in memory triple store backend</a> and a Berkeley DB backed
-triple store in the works. 
+      The core layer contains the methods a triple store backend must
+implement. Currently Redfoot has an <a
+href="../lib/redfootlib/rdf/store/memory.py">in memory triple store
+backend</a> and a Berkeley DB backed triple store in the works.
     </p>
 
-    <ul>
-      <li><code>add(<var>subject</var>, <var>predicate</var>, <var>object</var>)</code></li>
-      <li><code>remove(<var>subject</var>, <var>predicate</var>, <var>object</var>)</code></li>
-      <li><code>triples(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></li>
-    </ul>
-
-    <ul>
-      <li><code>subjects(<var>predicate</var>=None, <var>object</var>=None)</code></li>
-      <li><code>predicates(<var>subject</var>=None, <var>object</var>=None)</code></li>
-      <li><code>objects(<var>subject</var>=None, <var>predicate</var>=None)</code></li>
-    </ul>
-
-    <ul>
-      <li><code>subject_predicates(<var>object</var>=None)</code></li>
-      <li><code>subject_objects(<var>predicate</var>=None)</code></li>
-      <li><code>predicate_objects(<var>subject</var>=None)</code></li>
-    </ul>
+    <dl>
+      <dt><code>add(<var>subject</var>, <var>predicate</var>, <var>object</var>)</code></dt>
+      <dd>Add the triple subject, predicate, object to the store.</dd>
+      <dt><code>remove(<var>subject</var>, <var>predicate</var>, <var>object</var>)</code></dt>
+      <dd>Removes the triple subject, predicate, object from the store.</dd>
+      <dt><code>triples(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></dt>
+      <dd>A generator over the triples matching the pattern subject, predicate, object where None matches everthing.</dd>
+    </dl>
 
     <h3>Layer 1</h3>
-    <ul>
-      <li><code>generate_uri()</code></li>
-      <li><code>remove(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></li>
-      <li><code>__iter__()</code></li>
-    </ul>
+    <p>
+	The methods in this layer can be thought of as variations of
+the triple method or convience methods. Note to triple store backend
+developers: These methods can either be implemented by calling the
+triple method of layer 0 or implemented directly on the store backend.
+    </p>
+    <dl>
+      <dt><code>subjects(<var>predicate</var>=None, <var>object</var>=None)</code></dt>
+      <dd>A generator over subjects of triples matching the pattern predicate, object.</dd>
+      <dt><code>predicates(<var>subject</var>=None, <var>object</var>=None)</code></dt>
+      <dd>A generator over predicates of triples matching the pattern subjects, objects.</dd>
+      <dt><code>objects(<var>subject</var>=None, <var>predicate</var>=None)</code></dt>
+      <dd>A generator over objects of triples matching the pattern subject, predicate.</dd>
+    </dl>
+
+    <dl>
+      <dt><code>subject_predicates(<var>object</var>=None)</code></dt>
+      <dd>A generator over subject, predicate pairs of triples matching the pattern object.</dd>
+      <dt><code>subject_objects(<var>predicate</var>=None)</code></dt>
+      <dd>A generator over subject, object pairs of triples matching the pattern predicate.</dd>
+      <dt><code>predicate_objects(<var>subject</var>=None)</code></dt>
+      <dd>A generator over the predicate, object pairs of triples matching the pattern subject.</dd>
+
+      <dt><code>__iter__()</code></dt>
+      <dd>A generator over all triples in the store.</dd>
+
+    </dl>
+
 
     <h3>Layer 2</h3>
-    <ul>
-      <li><code>exists(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></li>
-      <li><code>first_object(<var>subject</var>=None, <var>predicate</var>=None)</code></li>
-      <li><code>transitive_objects(<var>subject</var>=None, <var>property</var>=None)</code></li>
-      <li><code>transitive_subjects(<var>predicate</var>=None, <var>object</var>=None)</code></li>
-    </ul>
+
+    <p>
+      This layer contains the Core Query methods.
+    </p>
+    <dl>
+      <dt><code>generate_uri()</code></dt>
+      <dd>returns a new uri based on the stores uri. 
+      </dd>
+      <dt><code>remove(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></dt>
+      <dd>Removes all triples matching the pattern subject, predicate, object.</dd>
+    </dl>
+
+    <dl>
+      <dt><code>exists(<var>subject</var>=None, <var>predicate</var>=None, <var>object</var>=None)</code></dt>
+      <dd>Return 1 if there is at least one triple in the store matching pattern subject, predicate, object.</dd>
+      <dt><code>first_object(<var>subject</var>=None, <var>predicate</var>=None)</code></dt>
+      <dd>Returns the object of the first triple matching subject, predicate.</dd>
+      <dt><code>transitive_objects(<var>subject</var>=None, <var>predicate</var>=None)</code></dt>
+      <dd>A generator over all objects of triples matching the pattern subject, predicate and of objects generated by calling transitive_objects with object, predicate for each of these objects.</dd>
+      <dt><code>transitive_subjects(<var>predicate</var>=None, <var>object</var>=None)</code></dt>
+      <dd>A generator over all subjects of triples matching the pattern predicate, object and of subjects generated by calling transitive_subjects with predicate, subject for each of these subjects.</dd>
+    </dl>
+
+    <h3>Layer 3</h3>
+    <p>
+      This layer contains the Schema Query methods.
+    </p>
+    <dl>
+      <dt><code>label(self, subject, default=None)</code></dt>
+      <dd>Returns the first label found for subject or default if no label is found for subject.</dd>
+
+      <dt><code>comment(self, subject, default=None)</code></dt>
+      <dd>Returns the first comment found for subject or default if no comment is found for subject.</dd>
+        
+      <dt><code>is_of_type(self, subject, type)</code></dt>
+      <dd>Returns 1 if subject is of type</dd>
+
+      <dt><code>typeless_resources(self)</code>
+          <span class="ednote">typeless_subjects?</span>
+      </dt>
+      <dd>A generator over all resources that have no type specified.</dd>
+
+      <dt><code>subjects_by_type(self, type, predicate, object)</code></dt>
+      <dd>A generator over all subjects of type and that match predicate, object.</dd>
+
+      <dt><code>get_statement_uri(self, subject, predicate, object)</code>
+          <span class="ednote">statement_uri?</span>
+      </dt>
+      <dd>returns the (first) statement uri for the reified statement of subject, predicate, object.</dd>
+
+      <dt><code>possible_properties(self, type)</code></dt>
+      <dd>A generator for all possible properties for type.</dd>
+        
+      <dt><code>possible_properties_for_subject(self, subject)</code></dt>
+      <dd>A generator for all possible properties for subject.</dd>
+
+      <dt><code>root_classes(self)</code></dt>
+      <dt><code>parent_types(self, type)</code></dt>
+      <dt><code>ranges(self, property)</code></dt>               
+      <dt><code>possible_values(self, property)</code></dt>
+
+    </dl>  
+
     
     <H4>Code Example</H4>
     
