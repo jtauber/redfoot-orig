@@ -10,9 +10,15 @@ def parseRDF(adder, location, baseURI=None):
     parser.SetBase(baseURI)
     RootHandler(parser, adder, None)
 
+    #parser.returns_unicode = 0
     from urllib import urlopen
     f = urlopen(location)
-    parser.ParseFile(f)
+    try:
+        parser.ParseFile(f)
+    except: # pyexpat.error:
+        import sys
+        sys.stderr.write("Error parsing file at line '%s' and column '%s'\n" % (parser.ErrorLineNumber, parser.ErrorColumnNumber) )
+        sys.stderr.flush()
     f.close()
 
 from rdf.const import *
@@ -81,6 +87,10 @@ class DescriptionHandler(HandlerBase):
             self.subject = atts[RDFNS+"about"]
         elif atts.has_key(RDFNS+"ID"):
             self.subject = self.parser.GetBase() + "#" + atts[RDFNS+"ID"]
+        else:
+            import sys
+            sys.stderr.write("Descriptions must have either an about or an ID\n")
+            
         for att in atts.keys():
             if att=="about" or att=="ID" or att==RDFNS+"about" or att==RDFNS+"ID":
                 pass
@@ -147,29 +157,5 @@ class PropertyHandler(HandlerBase):
         self.parent.setHandlers()
 
 #~ $Log$
-#~ Revision 4.6  2000/12/05 22:09:36  jtauber
-#~ moved constants to new file
-#~
-#~ Revision 4.5  2000/12/03 23:05:51  eikeon
-#~ refactored common handler code into HandlerBase class
-#~
-#~ Revision 4.4  2000/12/03 22:24:10  jtauber
-#~ no longer checks for baseURI=None; uses rdf.literal
-#~
-#~ Revision 4.3  2000/12/03 22:12:12  jtauber
-#~ changed class RDFParser to function parseRDF
-#~
-#~ Revision 4.2  2000/12/03 22:07:14  jtauber
-#~ put literal handling code in store.py
-#~
-#~ Revision 4.1  2000/12/03 19:36:45  jtauber
-#~ moved ^ trick to functions
-#~
-#~ Revision 4.0  2000/11/06 15:57:33  eikeon
-#~ VERSION 4.0
-#~
-#~ Revision 3.1  2000/11/02 21:48:27  eikeon
-#~ removed old log messages
-#~
-# Revision 3.0  2000/10/27 01:23:10  eikeon
-# bump-ing version to 3.0
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
