@@ -1,0 +1,23 @@
+<HTML>
+  <HEAD>
+    <TITLE>Writing Redfoot Connectors</TITLE>
+    <LINK REL="STYLESHEET" HREF="redfoot.css"/>
+  </HEAD>
+  <BODY>
+    <DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./">Documentation</A></DIV>
+    <H1>Writing Connectors</H1>
+
+    <P>A <B>connector</B> is a component that takes a non-RDF datasource and makes it look like
+       RDF by implementing the <CODE>visit(callback, triple)</CODE> method. The connector can
+       then be treated as a triple store and a module can add it to the neighbourhood with:</P>
+    <PRE CLASS="code_sample">
+self.app.rednode.neighbours.add_store(<VAR>some_connector</VAR>)</PRE>
+
+    <P CLASS="ednote">EDNOTE: TODO</P>
+
+    <P CLASS="cvs_id">$Id$</P>
+  </BODY>
+</HTML>
+
+
+

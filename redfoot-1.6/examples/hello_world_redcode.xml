@@ -1,0 +1,18 @@
+<!-- -*- mode: python-*- We need a redcode mode! -->
+
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/"
+          xmlns="http://www.w3.org/1999/xhtml">
+
+  <red:app name="HelloWorld">
+
+    <red:facet name="/">
+<html>
+  <title>Hello World</title>
+  <h1>Hello World</h1>
+  <h2>Redcode</h2>
+</html>    
+    </red:facet>
+
+
+  </red:app>
+</red:code>

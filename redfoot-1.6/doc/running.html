@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Running Redfoot</title>
+    <link REL="STYLESHEET" HREF="redfoot.css"/>
+  </head>
+  <body>
+    <div CLASS="NAV"><a href="../index.html">Redfoot</A> &gt; <a href="./index.html">Documentation</a></div>
+    <h1>Running Redfoot</h1>
+
+    <h2>Run</h2>
+      <pre class="code_sample">python <var>relative_path</var>/redfoot.py [<var>init_script</var>]</pre>
+    <h3>Where</h3>
+
+    <dl>
+      <dt>relative_path</dt>
+      <dd>the relative path to redfoot.py</dd>
+      <dt>init_script</dt>
+      <dd>a relative or absolute pathname of a Redfoot init script file, optional</dd>
+    </dl>
+
+    <h3>Example</h3>
+    <p>
+      From the examples directory:
+      <pre class="code_sample">python ../redfoot.py hello_world.init</pre>
+    </p>
+    
+    <p>You should see something along the lines of:
+      <pre class="code_sample">
+Redfoot 1.5.1 Console
+warning: Computing default hostname
+info: Medusa (V1.5) started at Tue Apr 23 06:38:27 2002
+        Hostname: eikco-1
+        Port:9090
+
+Started server at: http://localhost:9090/
+RF>
+      </pre>
+
+    <p>You should now be able to see the Hello World app running by going to http://localhost:9090/ or type in help at the RF> prompt for a list of commands.
+
+    <p>See <a href="../examples/index.html">Redfoot Examples</a> or <a href="http://redfoot.sourceforge.net/examples/">Redfoot Examples (Online Version)</a> for the list of init scripts.</p>
+
+  </body>
+</html>

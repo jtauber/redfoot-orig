@@ -1,0 +1,14 @@
+
+Things to do
+============
+
+Bring remaining code up to current standards
+Write README, INSTALL, docs
+What should __init__ import?  Anything?  Every single class?
+Use syslog module in m_syslog for the constants?
+Use Python's MIME support instead of mime_type_table
+Add abo's support for blocking producers
+Get all the producers into the producers module and write tests for them
+
+Test suites for protocols: how could that be implemented?
+

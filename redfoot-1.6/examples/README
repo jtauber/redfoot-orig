@@ -1,0 +1,24 @@
+REDFOOT EXAMPLES README
+
+  To start a Redfoot application, type:
+
+      python ../redfoot.py <init_script> 
+
+  where <init_script> is the name of one of the *.init scripts
+
+
+  For example:
+
+      python ../redfoot.py hello_world.init
+
+  will run the application initialized in hello_world.init
+
+
+  Documentation for the examples can either be found:
+
+      locally in index.html
+
+    or 
+
+      online at http://redfoot.sourceforge.net/examples/
+

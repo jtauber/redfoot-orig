@@ -1,0 +1,65 @@
+<HTML>
+  <HEAD>
+    <TITLE>Redfoot Architectural Overview</TITLE>
+    <LINK REL="STYLESHEET" HREF="redfoot.css"/>
+  </HEAD>
+  <BODY>
+    <DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./index.html">Documentation</A></DIV>
+    <H1>Redfoot Architectural Overview</H1>
+
+<p>
+
+<b>Redfoot</b> is an extensible RDF server written in python for
+building networks of distributed data sharing nodes and upon which
+applications may be built.
+
+</p>
+<p>
+
+At the highest level Redfoot consists of two pieces, namely, an RDF
+Server for running the nodes that form the network and a library from
+which nodes may be extended with specialized application specific
+functionality. The RDF Server is simply called redfoot.py and the
+library redfootlib.
+
+</p>
+
+<p>
+    Redfoot uses RDF as the underlying model for all data because of the extensibility and the ability to express relationships between any objects.
+</p>
+
+    <P>This document is designed to provide an architectural overview of Redfoot. It (currently) assumes a knowledge of <a href="http://python.org/">Python</a> and <a href="http://www.w3.org/RDF/">RDF</a>.</P>
+
+    <H2>Top-level</H2>
+
+    <p>Three key pieces make up Redfoot </p>
+
+    <dl>
+      <dt>Redfoot Server</dt>
+      <dd>A server for running RedNodes, namely, redfoot.py</dd>
+      <dt>Redfoot Library</dt>
+      <dd>A library for extending Redfoot with new node types, HTTP
+interfaces, connectors, store mixins, triple store implementations,
+etc. Also, it is the library from with the Redfoot Server is built and
+includes RDF parsing and serialization, an in memory triple store,
+query functions, web server, etc. The redfoot library is contained
+within a top level python package called redfootlib.
+      </dd>
+      <dt>Redfoot Component Library</dt>
+      <dd>Some standard extensions to the Redfoot Library for building
+RedNodes. These include modules, connectors and redcode tag libraries,
+etc. Currently, the Redfoot Component Library is composed of two
+top level python packages called redmodules and redconnectors.
+      </dd> 
+    </dl>
+
+    <p>At the very core of Redfoot is the notion of a <a href="tripleStore.html">TripleStore</a> and the <a href="tripleStore.html">RedNode</a>
+    </p>
+
+    <P CLASS="cvs_id">$Id$</P>
+
+  </BODY>
+</HTML>
+
+
+

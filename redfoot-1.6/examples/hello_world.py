@@ -1,0 +1,18 @@
+#
+
+from redfootlib.server.module import App
+from redfootlib.server import register_app
+
+
+class HelloWorld(App):
+
+    def handle_request(self, request, response):
+        response.write("""\
+<html>
+  <title>Hello World!</title>
+  <h1>Hello World!</h1>
+  <h2>Pure Python</h2>
+</html>
+""");
+        response.close()
+

@@ -1,0 +1,15 @@
+prefix sniff:<http://redfoot.net/2002/04/17/sniff/>
+prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+!from sniffer import SnifferNode
+!rednode = SnifferNode()
+!rednode.run()
+
+load links.rdf "http://redfoot.net://2002/04/21/"
+
+server :9090
+add_app link_app.LinkApp
+
+!print "try typing: add <http://redfoot.sourceforge.net/> rdf:type sniff:able to monitor for links"
+

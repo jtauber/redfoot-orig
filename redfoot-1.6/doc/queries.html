@@ -1,0 +1,151 @@
+<HTML>
+  <HEAD>
+    <TITLE>Writing Redfoot Queries</TITLE>
+    <LINK REL="STYLESHEET" HREF="redfoot.css"/>
+  </HEAD>
+  <BODY>
+    <DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./">Documentation</A></DIV>
+    <H1>Writing Redfoot Queries</H1>
+
+    <P>We saw above that the most general type of query on a triple store is performed via the
+       <CODE>visit</CODE> method of the form: <CODE>visit(<VAR>callback</VAR>, (<VAR>subject</VAR>,
+       <VAR>predicate</VAR>, <VAR>object</VAR>))</CODE></P>
+
+    <P><CODE>visit</CODE> causes <VAR>callback</VAR> to be called for each matching triple.
+       <VAR>callback</VAR> must have the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>,
+       <VAR>object</VAR>)</CODE>.</P>
+
+    <P>There are two techniques available to build up more complex queries: functors and builders. Functors
+       enable the developer to change the way the callback is called. Builders enable results to be built up
+       for purposes like sorting and removal of duplicates.</P>
+
+    <H2>Functors</H2>
+
+    <P>A functor is just a function that returns a function. Let's look at a simple example in the context of
+       Redfoot queries. Imagine we have the following query and function:</P>
+
+    <PRE CLASS="code_sample">
+rednode.visit(<VAR>callback</VAR>, (JTAUBER, KNOWS, None))
+
+def list_friend(friend):
+    print friend</PRE>
+
+    <P>We can't use <CODE>list_friend</CODE> as the callback because the first argument has to take a
+       function with the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>,
+       <VAR>object</VAR>)</CODE> and <CODE>list_friend</CODE> only takes a single argument.</P>
+
+    <P>What we need is a function that takes three arguments (so it can be used as the callback) but then
+       calls <CODE>list_friend</CODE> with just one of those three. We could write the function like
+       this:</P> 
+
+    <PRE CLASS="code_sample">
+rednode.visit(my_callback, (JTAUBER, KNOWS, None))
+
+def my_callback(subject, predicate, object):
+    list_friend(object)
+
+def list_friend(friend):
+    print friend</PRE>
+
+    <P>but there is an easier way with functors that saves us having to write another function.</P>
+    <P>In core/redfootlib/rdf/query/functors.py there is a functor <CODE>o()</CODE> that takes a function of
+       only one argument and makes it into one that takes three. The "o" is short for "object" because
+       the original function will be called using the third argument (the object) passed to the newly created
+       function.</P>
+
+    <P>So using the o() functor, the previous example could be written:</P>
+
+    <PRE CLASS="code_sample">
+from redfootlib.rdf.query.functors import o
+
+rednode.visit(o(list_friend), (JTAUBER, KNOWS, None))
+
+def list_friend(friend):
+    print friend</PRE>
+
+    <P>Another functor so(), takes a two-argument function and makes it into a function that can be used as
+       a visit call back. The "so" is short for "subject-object" because the original function will be called
+       using the first and third (subject and object) arguments passed to the newly created function.</P>
+
+    <PRE CLASS="code_sample">
+from redfootlib.rdf.query.functors import so
+
+rednode.visit(so(list_friend_pair), (None, KNOWS, None))
+
+def list_friend_pair(friend1, friend2):
+    print friend1, "knows", friend2</PRE>
+
+    <P>There is also a <CODE>po()</CODE> functor, for when you want to call a function with the predicate
+       and object pairs that match the triple.</P>
+
+    <P><CODE>both(<VAR>callback1</VAR>, <VAR>callback2</VAR>)</CODE> will create a function that calls both
+       the given callbacks.
+
+    <P><CODE>first(<VAR>callback</VAR>)</CODE> will create a function that calls the given callback only for
+       the first triple that matches.</P>
+
+    <P><CODE>filter(<VAR>callback</VAR>, <VAR>condition</VAR>)</CODE> allows a query to be filtered. This functor
+       creates a function that will only call the callback if <CODE><VAR>condition</VAR></CODE> (which takes
+       three arguments) returns true. Note that functors like <CODE>s()</CODE> and <CODE>o()</CODE> can be
+       used to create conditions as well.<P>
+
+    <P>For example, imagine we have a function <CODE>is_a_geek(<VAR>geek</VAR>)</CODE>. Then the following
+       code would visit <CODE>my_callback</CODE> with statements about the geeks that JTAUBER KNOWS:</P>
+
+    <PRE CLASS="code_sample">
+from redfootlib.rdf.query.functors import o, filter
+
+rednode.visit(filter(my_callback, o(is_a_geek)), (JTAUBER, KNOWS, None))</PRE>
+
+    <P CLASS="ednote">EDNOTE: still have a few, more obscure functors to describe but they might need refactoring first</P>
+
+    <P>It is entirely possible to create your own functors. See code/redfootlib/rdf/query/functors.py for how
+       those described above were written.</P>
+
+    <H2>Builders</H2>
+
+    <P CLASS="ednote">EDNOTE: still to do</P>
+
+    <H2>Built-in Queries</H2>
+
+    <P CLASS="ednote">EDNOTE: need to write descriptions</P>
+
+    <P>The following queries are included on rednodes:</P>
+
+    <H3>Core Queries</H3>
+
+    <DL>
+      <DT><CODE>exists(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></DT>
+      <DT><CODE>get_first(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></DT>
+      <DT><CODE>get_first_value(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>default</VAR>?)</CODE></DT>
+      <DT><CODE>get_transitive(<VAR>callback</VAR>, <VAR>root</VAR>, <VAR>property</VAR>)</CODE></DT>
+      <DT><CODE>get_transitive_reverse(<VAR>callback</VAR>, <VAR>root</VAR>, <VAR>property</VAR>)</CODE></DT>
+    </DL>
+
+    <H3>Schema Queries</H3>
+
+    <DL>
+      <DT><CODE>is_of_type(<VAR>resource</VAR>, <VAR>type</VAR>)</CODE></DT>
+      <DT><CODE>visit_typeless_resources(<VAR>callback</VAR>)</CODE></DT>
+      <DT><CODE>visit_by_type(<VAR>callback</VAR>, <VAR>type</VAR>, <VAR>predicate</VAR>,
+          <VAR>object</VAR>)</CODE></DT>
+      <DT><CODE>label(<VAR>resource</VAR>, <VAR>default</VAR>?)</CODE></DT>
+      <DT><CODE>comment(<VAR>resource</VAR>, <VAR>default</VAR>?)</CODE></DT>
+      <DT><CODE>visit_root_classes(<VAR>callback</VAR>)</CODE></DT>
+      <DT><CODE>visit_parent_types(<VAR>callback</VAR>, <VAR>type</VAR>)</CODE></DT>
+      <DT><CODE>visit_possible_properties(<VAR>callback</VAR>, <VAR>type</VAR>)</CODE></DT>
+      <DT><CODE>visit_possible_properties_for_subject(<VAR>callback</VAR>, <VAR>resource</VAR>)</CODE></DT>
+      <DT><CODE>visit_ranges(<VAR>callback</VAR>, <VAR>property</VAR>)</CODE></DT>
+      <DT><CODE>visit_possible_values(<VAR>callback</VAR>, <VAR>property</VAR>)</CODE></DT>
+      <DT><CODE>visit_resources_by_type(<VAR>class_callback</VAR>, <VAR>instace_callback</VAR>)</CODE></DT>
+      <DT><CODE>visit_subclasses(<VAR>class_start_callback</VAR>, <VAR>class_end_callback</VAR>,
+          <VAR>instace_callback</VAR>, <VAR>root</VAR>, <VAR>recurse</VAR>?, <VAR>depth</VAR>?)</CODE></DT>
+      <DT><CODE>visit_reified_statements_about_subject(<VAR>callback</VAR>, <VAR>subject</VAR>)</CODE></DT>
+    </DL>
+
+    <P CLASS="cvs_id">$Id$</P>
+  </BODY>
+</HTML>
+
+
+

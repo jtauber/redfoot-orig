@@ -1,0 +1,26 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  <red:app name="POPTest">
+
+    <red:sub-module instance="pop" class="POP" from="redmodules.pop"/>
+
+    <red:facet name="/">
+      <HTML>
+        <HEAD>
+          <TITLE>POP Test</TITLE>
+        </HEAD>
+        <BODY>
+          <red:apply/>
+        </BODY>
+      </HTML>
+    </red:facet>
+
+    <red:facet name="">
+      <red:exec>
+        self.pop.pop_connect()
+      </red:exec>
+    </red:facet>
+
+  </red:app>
+
+</red:code>

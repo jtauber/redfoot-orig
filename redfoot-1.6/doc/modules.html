@@ -1,0 +1,323 @@
+<HTML>
+  <HEAD>
+    <TITLE>Writing Redfoot Modules</TITLE>
+    <LINK REL="STYLESHEET" HREF="redfoot.css"/>
+  </HEAD>
+  <BODY>
+    <DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./">Documentation</A></DIV>
+    <H1>Writing Redfoot Modules</H1>
+
+    <P><B>NOTE</B>: This tutorial makes use of a feature introduced in 0.9.99-pre2, the 
+       <CODE>visit</CODE> element. Appendix A shows the module without the use of <CODE>visit</CODE>.</P>
+
+    <P>This is a brief tutorial on writing Redfoot modules in Redcode. Modules are the 
+       reusable building blocks of a Redfoot application. They can be written in straight Python
+       but Redcode makes it easier to combine HTML and Python and so that's what we'll
+       use here. Appendix B will show an equivalent of the final module written entirely
+       in Python.</P>
+
+    <P>In this tutorial we'll be writing a module that displays the RSS items known to a 
+       Rednode. Typically, this module would be mixed with something like the Neighbour
+       module to allow for remote RSS feeds to be connected to as neighbours. A followup
+       tutorial on writing apps will show just how to do this.</P>
+
+    <H2>Top-Level Element and Namespace</H2>
+
+    <P>A Redcode file in an XML file, whose top-level element is <CODE>code</CODE> in the
+       namespace designated by the URI <CODE>http://redfoot.sourceforge.net/2001/06/</CODE>.
+       In this tutorial we'll assume that this namespace URI has been bound to the prefix
+       <CODE>red</CODE>.</P>
+
+    <P>So the beginnings of our RSS modules will look like the following:
+
+    <PRE CLASS="code_sample">
+&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  ...
+
+&lt;/red:code></PRE>
+    
+    <H2>Python Code Under <CODE>red:code</CODE></H2>
+
+    <P>Python code can be placed immediately under a <CODE>red:code</CODE> tag. This is
+       useful for imports, constants and any function definitions.</P>
+
+    <P>In this case, we'll do some standard imports and define constants for some RSS
+       resources:</P>
+
+    <PRE CLASS="code_sample">
+&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
+
+  RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+  RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+  RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+  RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+  ...
+&lt;/red:code></PRE>
+
+    <P>The <CODE>resource</CODE> function that we import and then use, takes a URI string
+       and returns an object representing that resource.</P>
+
+    <P><CODE>TYPE</CODE> (imported from <CODE>redfootlib.rdf.const</CODE>) is a property defined in the RDF specification that we will
+       use in a query a little later on.</P>
+
+    <H2>The <CODE>red:module</CODE> Element</H2>
+
+    <P>As well as Python code, <CODE>red:code</CODE> can contain a <CODE>red:app</CODE> element (if 
+       an app is being defined) or a <CODE>red:module</CODE> element (if a module is being defined).
+       Seeing as we are doing the latter, we will use a <CODE>red:module</CODE> element.</P>
+
+    <P>This element takes a mandatory <CODE>name</CODE> attribute which is the name of the 
+       Redfoot module being defined.</P>
+
+    <P>In this case, we'll call our module "RSS":</P>
+
+    <PRE CLASS="code_sample">
+&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
+
+  RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+  RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+  RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+  RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+  &lt;red:module name="RSS">
+
+    ...
+
+  &lt;/red:module>
+
+&lt;/red:code></PRE>
+    
+    <P>Internally, a <CODE>red:module</CODE> element gets mapped to a Python class of the
+       same name.</P>
+
+    <H2>Facets</H2>
+
+    <P>A <B>facet</B> is a named fragment of XML, HTML or text that a module outputs. This
+       fragment may have code that gets evaluated, queries that are executes and calls to
+       other facets.</P>
+
+    <P>For this tutorial, we want to create a single facet "display_rss" which will
+       output RSS items as an HTML <CODE>DL</CODE>. To enable control over the look and feel
+       by apps that which to use this module, we'll put a CSS class on the <CODE>DL</CODE>:
+
+    <PRE CLASS="code_sample">
+  &lt;red:module name="RSS">
+
+    &lt;red:facet name="display_rss">
+      &lt;DL CLASS="RSS_ITEM">
+
+        ...
+
+      &lt;/DL>
+    &lt;/red:facet>
+
+  &lt;/red:module></PRE>
+
+    <P>Internally, a <CODE>red:facet</CODE> element gets mapped to a Python method of the same name.</P>
+
+    <H2>The <CODE>red:visit</CODE> Element</H2>
+
+    <P>The <CODE>red:visit</CODE> element visits its content for every triple that matches that given by the
+       <CODE>match</CODE> attribute.</P>
+
+    <P><CODE>&lt;red:visit match="(None, TYPE, RSS_ITEM)">...&lt;/red:visit></CODE> will visit its contents
+       for every statement that a particular resource has a TYPE of RSS_ITEM.</P>
+
+    <P>Within the contents of the <CODE>red:visit</CODE> element, the variables <CODE>subject</CODE>,
+       <CODE>predicate</CODE> and <CODE>object</CODE> will be bound accordingly.</P>
+
+    <H2>The <CODE>red:eval</CODE> Element and <CODE>get_first_value</CODE> Query</H2>
+
+    <P>Within a facet, <CODE>red:eval</CODE> may be used to evaluate Python expressions. For example,
+       <CODE>&lt;red:eval>subject&lt;/red:eval></CODE> will evaluate the Python variable <CODE>subject</CODE>.</P>
+
+    <P>In our RSS, module, we'd like to display the value of the RSS_TITLE property of each RSS_ITEM. The
+       visit element will visit each RSS_ITEM, putting the URI in <CODE>subject</CODE>. <CODE>RedNode</CODE> has
+       a method <CODE>get_first_value(<VAR>resource</VAR>, <VAR>property</VAR>, <VAR>default_value</VAR>)</CODE>
+       that will return the first found value for the given <VAR>property</VAR> of the given <VAR>resource</VAR>,
+       returning <VAR>default_value</VAR> if a value cannot be found.</P>
+
+    <P>Within a <CODE>red:module</CODE>, the RedNode object can be accessed as <CODE>self.app.rednode</CODE>.
+       Hence to retrieve the first RSS_TITLE of the current subject, defaulting to the empty string if it has none,
+       we simply evaluate <CODE>self.app.rednode.get_first_value(subject, RSS_TITLE, '')</CODE>.</P>
+
+    <P>Hence, we can make the initial contents of our <CODE>red:visit</CODE> element as follows:</P>
+
+    <PRE CLASS="code_sample">
+    &lt;red:facet name="display_rss">
+      &lt;DL CLASS="RSS_ITEM">
+        &lt;red:visit match="(None, TYPE, RSS_ITEM)">
+          &lt;DT>
+            &lt;red:eval>
+              self.app.rednode.get_first_value(subject, RSS_TITLE, '')
+            &lt;/red:eval>
+          &lt;/DT>
+        &lt;/red:visit>
+      &lt;/DL>
+    &lt;/red:facet></PRE>
+
+    <H2>Evaluating Inside an Attribute with {...}</H2>
+
+    <P>Often it is necessary to evaluate a Python expression inside an attribute, where a <CODE>red:eval</CODE>
+       could not go. To overcome this, we take a leaf out of XSLT's book and use <CODE>{...}</CODE> inside
+       an attribute to indicate an expression that is to be evaluated.<P>
+
+    <P>For example, if we wanted to link to a URL given by the RSS_LINK property of the current <CODE>subject</CODE>, we
+       could use</P>
+
+    <PRE CLASS="code_sample">&lt;A HREF="{self.app.rednode.get_first_value(subject, RSS_LINK, '')}">Read Story&lt;/A></PRE>
+
+    <H2>Completed Module</H2>
+
+    <P>We've covered everything that makes up the RSS module. Here it is in entirely.</P>
+
+    <PRE CLASS="code_sample">
+&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
+
+  RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+  RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+  RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+  RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+  &lt;red:module name="RSS">
+
+    &lt;red:facet name="display_rss">
+      &lt;DL CLASS="RSS_ITEM">
+        &lt;red:visit match="(None, TYPE, RSS_ITEM)">
+          &lt;DT>
+            &lt;red:eval>
+              self.app.rednode.get_first_value(subject, RSS_TITLE, '')
+            &lt;/red:eval>
+          &lt;/DT>
+          &lt;DD>
+            &lt;DIV>
+              &lt;red:eval>
+                self.app.rednode.get_first_value(subject, RSS_DESCRIPTION, '')
+              &lt;/red:eval>
+            &lt;/DIV>
+            &lt;DIV>
+              &lt;A HREF="{self.app.rednode.get_first_value(subject, RSS_LINK, '')}">Read Story&lt;/A>
+            &lt;/DIV>
+          &lt;/DD>
+        &lt;/red:visit>
+      &lt;/DL>
+    &lt;/red:facet>
+
+  &lt;/red:module>
+
+&lt;/red:code></PRE>
+
+    <H2>APPENDIX A: Module Without <CODE>red:visit</CODE> Element</H2>
+
+    <P>This is the same module but without the use of the <CODE>red:visit</CODE> element. This version
+       will run on 0.9.9 and 0.9.99-pre1 (as well as 0.9.99-pre2)</P>
+
+    <P>This version makes use of the <CODE>red:exec</CODE> element which works like <CODE>red:eval</CODE>
+       but is for executing Python statements rather than evalutating Python expressions.</P>
+
+    <P>Note also the use of a second facet as the callback to the visit. Because facets are internally
+       methods, they can be referred to as <CODE>self.<VAR>name_of_facet</VAR></CODE> within the same
+       Redcode module.</P>
+
+    <P>The <CODE>s()</CODE> functor is used so the callback needs only take a single argument - the
+       subject of the triples that match.</P>
+
+    <PRE CLASS="code_sample">
+&lt;red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfootlib.rdf.objects import resource
+  from redfootlib.rdf.const import TYPE
+  from redfootlib.rdf.query.functors import s
+
+  RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+  RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+  RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+  RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+  &lt;red:module name="RSS">
+
+    &lt;red:facet name="display_rss">
+      &lt;DL CLASS="RSS_ITEM">
+        &lt;red:exec>
+          self.app.rednode.visit(s(self.display_row), (None, TYPE, RSS_ITEM))
+        &lt;/red:exec>
+      &lt;/DL>
+    &lt;/red:facet>
+
+    &lt;red:facet name="display_row" args="item">
+      &lt;DT>
+        &lt;red:eval>
+          self.app.rednode.get_first_value(item, RSS_TITLE, '')
+        &lt;/red:eval>
+      &lt;/DT>
+      &lt;DD>
+        &lt;DIV>
+          &lt;red:eval>
+            self.app.rednode.get_first_value(item, RSS_DESCRIPTION, '')
+          &lt;/red:eval>
+        &lt;/DIV>
+        &lt;DIV>
+          &lt;A HREF="{self.app.rednode.get_first_value(item, RSS_LINK, '')}">Read Story&lt;/A>
+        &lt;/DIV>
+      &lt;/DD>
+    &lt;/red:facet>
+
+  &lt;/red:module>
+
+&lt;/red:code></PRE>
+
+    <H2>APPENDIX B: Python Version</H2>
+
+    <P>It is entirely possible to write modules in straight Python rather than Redcode and
+       a Python version of the RSS module has been included below. A comparison between
+       this and our completed Redcode example will demonstrate the advantages and disadvantages
+       of a Redcode approach.</P>
+
+    <PRE CLASS="code_sample">
+from redfootlib.rdf.objects import resource
+from redfootlib.rdf.const import TYPE
+from redfootlib.rdf.query.functors import s
+
+from redfootlib.util import encode_character_data
+
+from redfootlib.module import Module
+
+RSS_ITEM = resource("http://purl.org/rss/1.0/item")
+RSS_TITLE = resource("http://purl.org/rss/1.0/title")
+RSS_DESCRIPTION = resource("http://purl.org/dc/elements/1.1/description")
+RSS_LINK = resource("http://purl.org/rss/1.0/link")
+
+class RSS(Module):
+    
+    def display_rss(self):
+        self.app.response.write("&lt;DL CLASS='RSS_ITEM'>")
+        self.app.rednode.visit(s(self.display_row), (None, TYPE, RSS_ITEM))
+        self.app.response.write("&lt;/DL>")
+
+    def display_row(self, item):
+        self.app.response.write("&lt;DT>%s&lt;/DT>" %
+            encode_character_data(self.app.rednode.get_first_value(item, RSS_TITLE, '')))
+        self.app.response.write("&lt;DD>&lt;DIV>%s&lt;/DIV>" %
+            encode_character_data(self.app.rednode.get_first_value(item, RSS_DESCRIPTION, '')))
+        self.app.response.write("&lt;DIV>")
+        self.app.response.write("&lt;A HREF='%s'>Read Story&lt;/A>" %
+            self.app.rednode.get_first_value(item, RSS_LINK, ''))
+        self.app.response.write("&lt;/DIV>&lt;/DD>")</PRE>
+
+    <P CLASS="cvs_id">$Id$</P>
+  </BODY>
+</HTML>
+
+
+

@@ -1,0 +1,45 @@
+<!-- -*- mode: python-*- -->
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  <red:app name="Grid">
+
+    <red:sub-module instance="instance_grid" class="InstanceGrid" from="instance_grid"/>
+
+    <red:facet name="/">
+      <HTML>
+        <HEAD>
+          <TITLE>Instance Grid Test</TITLE>
+          <STYLE>
+              body {
+                  color: #000;
+                  background: #FFF;
+                  font-size: 9pt;
+                  font-family: Verdana, sans-serif;
+              }
+              td {
+                  background: #DDD;
+                  font-size: 9pt;
+                  padding: 5px;
+              }
+              th {
+                  background: #CCF;
+                  font-size: 11pt;
+                  padding: 5px;
+              }
+          </STYLE>
+        </HEAD>
+        <BODY>
+
+          <H1>Instance Grid Test</H1>
+          <P><A HREF="/">Class List</A></P>
+          <red:apply/>
+
+        </BODY>
+
+      </HTML>
+    </red:facet>
+
+  </red:app>
+
+</red:code>
+

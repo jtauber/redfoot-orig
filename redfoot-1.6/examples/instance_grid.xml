@@ -1,0 +1,73 @@
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfootlib.util import *
+  from redfootlib.rdf.query.functors import *
+  from redfootlib.rdf.objects import resource, literal
+  from redfootlib.rdf.const import *
+  from redfootlib.rdf.query.builders import *
+
+  <red:module name="InstanceGrid">
+
+    def visit_instances(self, callback, root, column_list):
+        def recursive_callback(type, self=self, callback=callback, column_list=column_list):
+            self.visit_instances(callback, type, column_list)
+
+        def instance_callback(instance, callback=callback, column_list=column_list):
+            callback(instance, column_list)
+
+        self.app.rednode.neighbourhood.visit(s(recursive_callback), (None, SUBCLASSOF, root))
+        self.app.rednode.neighbourhood.visit(s(instance_callback), (None, TYPE, root))
+
+    <red:facet name="">
+      <red:exec>self.class_list()</red:exec>
+    </red:facet>
+
+    <red:facet name="class_list">
+      <UL>
+        <red:visit match="(None, TYPE, CLASS)">
+          <LI>
+            <A HREF="grid_view?class={encode_URI(subject)}"
+               TITLE="{self.app.rednode.comment(subject)}">
+              <red:eval>self.app.rednode.label(subject)</red:eval>
+            </A>
+          </LI>
+        </red:visit>
+      </UL>
+    </red:facet>
+
+    <red:facet name="grid_view">
+      <red:exec>
+        klass = resource(self.app.request.get_parameter('class')) 
+      </red:exec>
+      <H2><red:eval>self.app.rednode.label(klass)</red:eval></H2>
+      <TABLE>
+        <TR>
+          <TH></TH>
+          <red:exec>
+            b = SetBuilder()
+            self.app.rednode.neighbourhood.visit_possible_properties(b.accept, klass)
+            b.visit(self.heading)
+            column_list = b.set
+          </red:exec>
+        </TR>
+        <red:exec>
+          self.visit_instances(self.row, klass, column_list)
+        </red:exec>
+      </TABLE>
+    </red:facet>
+
+    <red:facet name="heading" args="property">
+      <TH><red:eval>self.app.rednode.label(property)</red:eval></TH>
+    </red:facet>
+
+    <red:facet name="row" args="instance, column_list">
+      <TR>
+        <TD VALIGN="TOP"><red:eval>instance</red:eval></TD>
+        <red:for item="property" list="column_list">
+          <TD VALIGN="TOP"><red:eval>self.app.rednode.label(self.app.rednode.get_first_value(instance, property, "-"))</red:eval></TD>
+        </red:for>
+      </TR>
+    </red:facet>
+
+  </red:module>
+</red:code>  

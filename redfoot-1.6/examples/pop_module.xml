@@ -1,0 +1,66 @@
+<red:code name="pop" xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfootlib.rdf.const import LABEL, TYPE
+  from redfootlib.rdf.objects import resource, literal
+  from redconnectors.pop_connector import *
+  from redfootlib.rdf.query.functors import s
+  from redfootlib.util import encode_URI
+
+  <red:module name="POP">
+
+    <red:facet name="messages">
+      <H1>Messages</H1>
+      <TABLE>
+        <red:exec>
+          self.app.rednode.visit(s(self.message_list_item), (None, TYPE, MESSAGE))
+        </red:exec>
+      </TABLE>
+    </red:facet>
+
+    <red:facet name="message_list_item" args="message">
+      <TR>
+        <TD>
+          <A HREF="message?uri={encode_URI(message)}">
+            <red:eval>self.app.rednode.get_first_value(message, SUBJECT, "unknown")</red:eval>
+          </A>
+        </TD>
+        <TD><red:eval>self.app.rednode.get_first_value(message, FROM, "unknown")</red:eval></TD>
+        <TD><red:eval>self.app.rednode.get_first_value(message, DATE, "unknown")</red:eval></TD>
+      </TR>
+    </red:facet>
+
+    <red:facet name="pop_connect">
+      <H2>Connect to POP</H2>
+      <FORM name="main" method="POST" ACTION="messages">
+        <P>host <INPUT NAME="host" VALUE="pop.example.com" TYPE="TEXT"/></P>
+        <P>username <INPUT NAME="username" TYPE="TEXT"/></P>
+        <P>password <INPUT NAME="password" TYPE="PASSWORD"/></P>
+        <INPUT VALUE="Retrieve" TYPE="SUBMIT"/>
+        <input name='module_instance' 
+               type='HIDDEN' 
+               value="{self.module_instance}"/>
+        <INPUT NAME="processor" VALUE="connect_pop" TYPE="hidden"/>
+      </FORM>
+    </red:facet>
+
+    <red:facet name="message">
+      <red:exec>
+        msg = resource(self.app.request.get_parameter('uri'))
+      </red:exec>
+      <H1>Message</H1>
+      <H2>
+        <red:eval>self.app.rednode.get_first_value(msg, SUBJECT, "unknown subject")</red:eval>
+      </H2>
+      <PRE>
+        <red:eval>self.app.rednode.get_first_value(msg, BODY, "unknown")</red:eval></PRE>
+      <P><A HREF="messages">Back to Message List</A></P>
+    </red:facet>
+
+    def do_connect_pop(self, request, response):
+        host = self.app.request.get_parameter('host')
+        username = self.app.request.get_parameter('username')
+        password = self.app.request.get_parameter('password')
+        self.app.rednode.neighbours.add_store(POP_Connector(host, username, password))
+
+  </red:module>
+</red:code>

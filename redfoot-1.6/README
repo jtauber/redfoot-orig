@@ -1,0 +1,35 @@
+REDFOOT 1.5.1 README  (see index.html for html version of README)
+
+    Redfoot is an extensible RDF server written in python for building
+    networks of distributed data sharing nodes and upon which applications
+    may be built. It is being developed by Daniel Krech and James Tauber.
+
+
+DOCUMENTATION
+
+    Please see either doc/index.html or 
+    http://redfoot.sourceforge.net/doc/ for getting started and other
+    documentation.
+
+
+WHERE TO GET THE LATEST REDFOOT
+
+    See http://redfoot.sourceforge.net/
+
+
+VERY BRIEF EXCERPT FROM DOCUMENTATION
+  TO INSTALL
+
+    NOTE: Redfoot requires Python 2.2
+
+    python install.py 
+
+  TO RUN
+
+    python redfoot.py [<init_script>]
+
+
+HOW TO CONTACT THE DEVELOPERS
+
+    Daniel Krech - eikeon@eikeon.com 
+    James Tauber - jtauber@jtauber.com
