@@ -7,6 +7,8 @@
   from redfoot.rdf.objects import *
   from redfoot.util import *
 
+  from redfoot.module import ParentModule
+
   REQUIRED_PROPERTY = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#requiredProperty")
   YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
   UI_TYPE = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#uiType")
@@ -30,6 +32,10 @@
         label_b = self.rednode.label(b)
         return cmp(str(label_a), str(label_b))
 
+    def handle_request(self, request, response):
+        ParentModule.handle_request(self, request, response)
+        self.possible_values_cache = {}
+      
     <red:sub-module instance="viewer" class="Viewer" from="redmodules.viewer"/>
     
     <red:facet name="">
@@ -70,7 +76,7 @@
         <INPUT NAME='update_subject' TYPE='HIDDEN' VALUE='{subject}'/>
         <INPUT NAME='processor' TYPE='HIDDEN' VALUE=""/>
         <INPUT NAME='module_instance' TYPE='HIDDEN' VALUE="{self.module_instance}"/>
-        <H2><red:eval>subject</red:eval></H2>
+        <a href="{subject}"><H2><red:eval>subject</red:eval></H2></a>        
         <TABLE>
           <red:exec>
             self.property_num = 0
@@ -181,17 +187,16 @@
                   <OPTION VALUE="">Select a value for this property</OPTION>
 
                   <red:exec>
-                    b = SetBuilder()
-                    self.rednode.visit_possible_values(b.accept, property)
-                    b.sort(self.alpha_by_label)
+                    possible_values = self.possible_values_cache.get(property, None)
+                    if not possible_values:
+                        possible_values = SetBuilder()
+                        self.rednode.visit_possible_values(possible_values.accept, property)
+                        self.possible_values_cache[property] = possible_values
+                    possible_values.accept(value)
+                    possible_values.sort(self.alpha_by_label)
                   </red:exec>  
 
-                  <red:if test="not value in b.set">
-                    <OPTION SELECTED='TRUE' VALUE='{value}'>
-                      <red:eval>self.rednode.label(value)</red:eval>
-                    </OPTION>
-                  </red:if>
-                  <red:for item="v" list="b.set">
+                  <red:for item="v" list="possible_values.set">
                     <red:if test="v == value">
                       <OPTION SELECTED='TRUE' VALUE='{v}'>
                         <red:eval>self.rednode.label(v)</red:eval>
