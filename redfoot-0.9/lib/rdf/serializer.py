@@ -1,5 +1,7 @@
 # $Header$
 
+import string
+
 # TODO: really needs to be fully unicode
 namestart = ['A','B','C','D','E','F','G','H','I','J','K','L','M',
              'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -10,14 +12,17 @@ namestart = ['A','B','C','D','E','F','G','H','I','J','K','L','M',
 namechars = namestart + ['0','1','2','3','4','5','6','7','8','9','-','.']
 
 def encode(s):
-    import string
     s = string.join(string.split(s, '&'), '&amp;')
     s = string.join(string.split(s, '<'), '&lt;')
     s = string.join(string.split(s, '>'), '&gt;')
     s = string.join(string.split(s, '"'), '&quot;')
     return s
 
-def split_property(property):
+def split_property(property, namespaces):
+    keys = namespaces.keys()
+    for namespace in keys:
+        if string.find(property, namespace)==0:
+            return (namespace, property[len(namespace):])
     length = len(property)
     for i in range(length):
         if not property[-1-i] in namechars:
@@ -31,9 +36,13 @@ from rdf.literal import *
 
 class Serializer:
     rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    rdfsns = "http://www.w3.org/2000/01/rdf-schema#"    
 
     def __init__(self):
         self.namespaces = {}
+        self.namespaces[self.rdfns] = 'rdf'
+        self.namespaces[self.rdfsns] = 'rdfs'        
+        
         self.namespaceCount = 0
         self.current_subject = None
         self.baseURI = None
@@ -45,20 +54,17 @@ class Serializer:
         self.baseURI = baseURI
 
     def register_property(self, property):
-        uri = split_property(property)[0]
+        uri = split_property(property, self.namespaces)[0]
         if not self.namespaces.has_key(uri):
             self.namespaceCount = self.namespaceCount + 1
             prefix = "n%s" % self.namespaceCount
             self.namespaces[uri] = prefix
 
     def start(self):
-        if not self.rdfns in self.namespaces.keys():
-            self.namespaces[self.rdfns] = 'rdf'
-
         # TODO: workaround for browsers using iso-8859-1 character encoding
         self.stream.write( """<?xml version="1.0" encoding="iso-8859-1"?>\n""" )
         
-        self.stream.write( "<%s:RDF\n" % self.namespaces[self.rdfns])
+        self.stream.write( "<rdf:RDF\n" )
         for uri in self.namespaces.keys():
             self.stream.write( "   xmlns:%s=\"%s\"\n" % (self.namespaces[uri],uri) )
         self.stream.write( ">\n" )
@@ -66,32 +72,34 @@ class Serializer:
     def end(self):
         if self.current_subject != None:
             self.subject_end()
-        self.stream.write( "</%s:RDF>\n" % self.namespaces[self.rdfns] )
+        self.stream.write( "</rdf:RDF>\n" )
 
     def subject_start(self, subject):
-        self.stream.write( "  <%s:Description" % self.namespaces[self.rdfns] )
-        if self.baseURI and subject[0:len(self.baseURI)+1]==self.baseURI+"#":
-            self.stream.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.baseURI)+1:]) )
+        self.stream.write( "  <rdf:Description" )
+#        if self.baseURI and subject[0:len(self.baseURI)+1]==self.baseURI+"#":
+        if self.baseURI and string.find(subject, self.baseURI)==0:
+            self.stream.write( " rdf:ID=\"%s\">\n" % subject[len(self.baseURI)+1:])       
         else:
-            self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], encode(subject)) )
+            self.stream.write( " rdf:about=\"%s\">\n" % encode(subject) )            
 
     def subject_end(self):
         self.current_subject = None
-        self.stream.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
+        self.stream.write( "  </rdf:Description>\n" )
 
     def property(self, predicate, object):
-        (namespace, localName) = split_property(predicate)
+        (namespace, localName) = split_property(predicate, self.namespaces)
+        prefix = self.namespaces[namespace]
 
         # TODO: Is this what we want to do if object is None?
         if object==None or object=="":
             object = literal("")
             
         if is_literal(object):
-            self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(un_literal(object)), self.namespaces[namespace], localName) )
+            self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (prefix, localName, encode(un_literal(object)), prefix, localName) )
         else:
             if self.baseURI and object[0:len(self.baseURI)+1]==self.baseURI+"#":
                 object = object[len(self.baseURI):]
-            self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], encode(object)) )
+            self.stream.write( "    <%s:%s rdf:resource=\"%s\"/>\n" % (prefix, localName, encode(object)) )            
 
     def triple(self, subject, predicate, object):
         if self.current_subject != subject:
@@ -102,6 +110,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ new release
+#~
 #~ Revision 5.6  2000/12/20 20:37:17  eikeon
 #~ changed mixed case to _ style... all except for query
 #~
