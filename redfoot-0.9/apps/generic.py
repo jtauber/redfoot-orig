@@ -16,7 +16,6 @@ def get_args():
     port = 8000
     location = "generic.rdf"
     uri = None
-    path = ""
 
     optlist, args = getopt.getopt(sys.argv[1:], 'l:p:u:P:')
     for optpair in optlist:
@@ -27,16 +26,15 @@ def get_args():
             uri = value
         elif opt=="-p":
             port = string.atoi(value)
-        elif opt=="-P":
-            if value[-1:]=='/':
-                value = value[0:-1]
-            path = value
 
     # uri defaults to url when no uri is specified
     if uri==None:
         import socket
         hostname = socket.getfqdn('localhost')
-        uri = "http://%s:%s%s" % (hostname,port,path)
+        if port==80:
+            uri = "http://%s/" % hostname
+        else:
+            uri = "http://%s:%s/" % (hostname,port)
 
     return (port, location, uri)
 
