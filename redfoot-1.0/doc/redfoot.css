@@ -28,7 +28,7 @@ h2 {
   border: 1px solid #990000;
   padding: 5px;
 }
- 
+
 pre.code_sample {
   background: #EEE;
   padding: 5px;
@@ -68,3 +68,10 @@ div.NAV A:hover {
   color: #999;
   font-style: italic;
 }
+
+.cvs_id {
+  color: #999;
+  font-size: 8pt;
+  border-top: solid 1px #999;
+}
+
