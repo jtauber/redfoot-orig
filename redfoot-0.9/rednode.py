@@ -80,6 +80,12 @@ class StoreNode:
     def _connectTo(self, store):
         self.stores.addStore(store)
 
+    def visit(self, visitor, subject=None, property=None, value=None):
+        # TODO: have get call this
+        self.store.visit(visitor, subject, property, value);
+        self.stores.visit(visitor, subject, property, value)
+        
+
     def get(self, subject=None, property=None, value=None):
         class Visitor:
             def __init__(self):
@@ -89,10 +95,7 @@ class StoreNode:
                 self.list.append((subject, property, value))
 
         visitor = Visitor()
-
-        self.store.visit(visitor, subject, property, value);
-        self.stores.visit(visitor, subject, property, value)
-
+        self.visit(visitor, subject, property, value);
 	return visitor.list
 
     def remove(self, subject=None, property=None, value=None):
@@ -101,7 +104,61 @@ class StoreNode:
     def add(self, subject, property, value):
         self.store.add(subject, property, value)
 
+
+    # TODO: move rednode specific queries to a rednode wrapper class
+
+    def resourcesByClassV(self, processClass, processResource):
+        from redfoot.query import QueryStore
+        for klass in self.get(None, QueryStore.TYPE, QueryStore.CLASS):
+            processClass(klass[0])
+            for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
+                processResource(resource[0])
+
+
+    # Or for the adventurous :)
+    def resourcesByClassVV(self, processClass, processResource):
+        class Visitor:
+            def __init__(self, store, processClass, processResource):
+                self.store = store
+                self.processClass = processClass
+                self.processResource = processResource
+            
+            def callback(self, subject, property, value):
+                self.processClass(subject)
+
+                class Visitor:
+                    def __init__(self, processResource):
+                        self.processResource = processResource
+
+                    def callback(self, subject, property, value):
+                        self.processResource(subject)
+
+                visitor = Visitor(self.processResource)
+
+                from redfoot.query import QueryStore
+                self.store.visit(visitor, None, QueryStore.TYPE, subject)
+
+        visitor = Visitor(self.store, processClass, processResource)
+
+        from redfoot.query import QueryStore
+        self.visit(visitor, None, QueryStore.TYPE, QueryStore.CLASS)
+
+
+    def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
+        from redfoot.query import QueryStore
+        processClass(type, currentDepth, recurse)
+        for subclassStatement in self.get(None, QueryStore.SUBCLASSOF, type):
+            if recurse:
+                self.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
+            else:
+                processClass(subclassStatement[0], currentDepth+1, recurse)
+        for instanceStatement in self.store.get(None, QueryStore.TYPE, type):
+            processInstance(instanceStatement[0], currentDepth, recurse)
+
 # $Log$
+# Revision 1.6  2000/10/08 07:27:40  jtauber
+# fixed bug where visitor wasn't being instantiated
+#
 # Revision 1.5  2000/10/08 05:46:32  jtauber
 # refactored creation and use of storeIO for connectTo into own method
 #
