@@ -21,6 +21,25 @@ def parse_RDF(adder, location, baseURI=None):
         sys.stderr.flush()
     f.close()
 
+def parse_RDF_stream(adder, stream, baseURI=None):
+    if baseURI==None:
+        baseURI = location
+
+    import pyexpat
+    parser = pyexpat.ParserCreate(namespace_separator="")
+
+    parser.SetBase(baseURI)
+    RootHandler(parser, adder, None)
+
+    parser.returns_unicode = 1
+    try:
+        parser.ParseFile(stream)
+    except: # pyexpat.error:
+        import sys
+        sys.stderr.write(u"Error parsing file at line '%s' and column '%s'\n" % (parser.ErrorLineNumber, parser.ErrorColumnNumber) )
+        sys.stderr.flush()
+    stream.close()
+
 from rdf.const import RDFNS
 from rdf.const import TYPE
 
@@ -176,6 +195,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.10  2000/12/23 04:50:04  eikeon
+#~ removed at most one rdf:RDF element constraint
+#~
 #~ Revision 5.9  2000/12/23 04:01:19  eikeon
 #~ Why did this get in there?!?! -- still have no clue how these got checked in!
 #~
