@@ -37,22 +37,9 @@ class StoreNode:
     def __init__(self):
         self.stores = MultiStore()
 
-        from redfoot.storeio import StoreIO
-
-        storeIO = StoreIO()
-        storeIO.setStore(TripleStore())
-        storeIO.load("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
-        self.connectTo(storeIO.getStore())
-        
-        storeIO = StoreIO()
-        storeIO.setStore(TripleStore())
-        storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-        self.connectTo(storeIO.getStore())
-
-        storeIO = StoreIO()
-        storeIO.setStore(TripleStore())
-        storeIO.load("builtin.rdf", "http://redfoot.sourceforge.net/2000/10/06/builtin")
-        self.connectTo(storeIO.getStore())
+        self.connectTo("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
+        self.connectTo("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+        self.connectTo("builtin.rdf", "http://redfoot.sourceforge.net/2000/10/06/builtin")
 
     def _preCacheRemoteStores(self, baseDirectory=None):
         rstores = self.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://xteam.hq.bowstreet.com/redfoot-builtin#RemoteStore")
@@ -66,16 +53,9 @@ class StoreNode:
                 systemID = None
             else:
                 systemID = systemIDlist[0][2][1:]
-            
-            from redfoot.storeio import StoreIO
-
-            storeIO = StoreIO()
-            storeIO.setStore(TripleStore())
 
             from urllib import basejoin
-            storeIO.load(basejoin(self.store.location, location), systemID)
-            self.connectTo(storeIO.getStore())
-
+            self.connectTo(basejoin(self.store.location, location), systemID)
 
     def setStore(self, store):
         self.store = store
@@ -83,8 +63,19 @@ class StoreNode:
 
     def getStore(self):
         return self.store
- 
-    def connectTo(self, store):
+
+    def connectTo(self, location, URI=None):
+        if URI==None:
+            URI=location
+
+        from redfoot.storeio import StoreIO
+
+        storeIO = StoreIO()
+        storeIO.setStore(TripleStore())
+        storeIO.load(location, URI)
+        self._connectTo(storeIO.getStore())
+
+    def _connectTo(self, store):
         self.stores.addStore(store)
 
     def get(self, subject=None, property=None, value=None):
@@ -109,6 +100,9 @@ class StoreNode:
         self.store.add(subject, property, value)
 
 # $Log$
+# Revision 1.4  2000/10/07 02:19:03  jtauber
+# rednode now loads in builtin.rdf
+#
 # Revision 1.3  2000/10/05 00:58:50  jtauber
 # added remove and add methods which just call the corresponding methods on the store
 #
