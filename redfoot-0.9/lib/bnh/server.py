@@ -37,6 +37,7 @@ class Server:
             except:
                 #TODO: log
                 break
+
     def start(self):
         sys.stderr.write("Started eikeon's Bare Naked HTTP Server.\n")
         sys.stderr.flush()
@@ -212,6 +213,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.3  2000/10/26 01:18:36  eikeon
+# changed interface to server and dependant code
+#
 # Revision 1.2  2000/10/25 21:59:47  eikeon
 # catching more exceptions caused by connection reset by peer etc and re throwing them as BadRequestError
 #

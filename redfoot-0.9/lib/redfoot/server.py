@@ -40,7 +40,7 @@ def runServer(args, interface):
         
     import sys
     import getopt
-    optlist, args = getopt.getopt(sys.argv[1:], 'i:l:p:u:P:')
+    optlist, args = getopt.getopt(sys.argv[1:], 'l:p:u:P:')
     for optpair in optlist:
         opt, value = optpair
         if opt=="-l":
@@ -60,8 +60,8 @@ def runServer(args, interface):
         uri = "http://%s:%s%s" % (hostname,port,path)
 
     from redfoot.rednode import StoreNode
-    from redfoot.storeio import StoreIO
-    from redfoot.store import TripleStore
+    from rdf.storeio import StoreIO
+    from rdf.store import TripleStore
             
     storeNode = StoreNode()
 
@@ -96,6 +96,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.3  2000/10/26 02:34:52  eikeon
+# got redfoot.{bat,sh} working
+#
 # Revision 1.2  2000/10/26 01:18:36  eikeon
 # changed interface to server and dependant code
 #
