@@ -15,13 +15,7 @@ def parse(adder, file, baseURI):
     
     LookForRDFHandler(parser, adder, None)
 
-    try:
-        parser.ParseFile(file)
-    except:
-        import traceback
-        traceback.print_exc()
-        import sys
-        sys.stderr.write("filename: '%s'" % file)
+    parser.ParseFile(file)
         
     file.close()
 

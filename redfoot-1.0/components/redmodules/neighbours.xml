@@ -9,6 +9,9 @@
 
   <red:module name="Neighbours">
 
+    def __init__(self):
+       self.status = {}
+       
     <red:facet name="neighbours">
       <H2>Neighbours</H2>
       <red:exec>
@@ -56,6 +59,8 @@
               <TD align="right">
                 <INPUT value="Remove" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
               </TD>
+
+              <TD><red:eval>self.status.get(neighbour.uri, '')</red:eval></TD>
             </TR>
            </red:for>
           </TABLE>
@@ -94,11 +99,16 @@
 
     def connect_neighbour(self):
        uri = self.app.request.get_parameter('uri')
-       self.app.rednode.connect_to(uri)
+       try:
+          self.app.rednode.connect_to(uri)
+          self.status[uri] = None
+       except Exception, msg:
+          self.status[uri] = "%s: %s" % (msg.__class__.__name__, msg)
 
     def remove_neighbour(self):
        uri = self.app.request.get_parameter('uri')
        self.app.rednode.remove(resource(uri), TYPE, NEIGHBOUR)
+       self.status[uri] = None
 
     def add_neighbour(self):
        uri = self.app.request.get_parameter('uri')
