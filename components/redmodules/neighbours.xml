@@ -12,6 +12,9 @@
        ParentModule.__init__(self, app)
        self.status = {}
 
+       self.rednode = self.create_rednode()
+       self.app.rednode.neighbours.add_store(self.rednode.local)
+
     def __getattr__(self, name):
         if name=="rednode": # default rednode to self.app.rednode
             self.set_rednode(self.app.rednode)
