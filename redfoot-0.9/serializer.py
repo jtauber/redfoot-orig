@@ -57,8 +57,7 @@ class Serializer:
     def property(self, predicate, value):
             (namespace, localName) = splitProperty(predicate)
             if value[0] == "^":
-                print "    <%s:%s>%s</%s:%s>" % (self.namespaces[namespace], localName,
-                 value[1:], self.namespaces[namespace], localName)
+                print "    <%s:%s>%s</%s:%s>" % (self.namespaces[namespace], localName, value[1:], self.namespaces[namespace], localName)
             else:
                 if value[0:len(self.base)+1]==self.base+"#":
                     value = value[len(self.base):]
