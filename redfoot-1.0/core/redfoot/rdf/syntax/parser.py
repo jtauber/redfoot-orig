@@ -1,3 +1,5 @@
+from redfoot.rdf.store.urigen import generate_uri
+ANON = "http://redfoot.sourceforge.net/2001/08/ANON/"
 
 #TODO flag for where RDF can be assumed
 #TODO proper handling of relative URIs
@@ -113,7 +115,7 @@ class DescriptionHandler(HandlerBase):
         elif atts.has_key(ID_ATTRIBUTE):
             self.subject = u"#" + atts[ID_ATTRIBUTE]
         else:
-            self.subject = "SOMETHING MADE UP" # TODO
+            self.subject = ANON + generate_uri()
             self.anonymous = 1
 
         if self.subject[0] == u"#": # TODO do this elsewhere too
