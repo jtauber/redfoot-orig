@@ -24,14 +24,14 @@ def handle_request(self, request, response):
             # if completely handled then return now
             return
 
+    if path_info in ['/css', '/classList', '/fullsubclass', '/subclass', '/triples', '/add',  '/view', '/edit']:
+        Editor.handle_request(self, request, response)
+	return
+
     # invoke the processor
     processor = request.getParameters()['processor']
     if hasattr(self, processor):
         apply(getattr(self, processor), (request, response))
-
-    if path_info in ['/css', '/classList', '/fullsubclass', '/subclass', '/triples', '/add',  '/view', '/edit']:
-        Editor.handle_request(self, request, response)
-	return
 
     if hasattr(self, path_info):
         apply(getattr(self, path_info), (request, response))
