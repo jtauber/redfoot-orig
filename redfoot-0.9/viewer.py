@@ -66,7 +66,7 @@ class Viewer:
         }
 
         tr.REIFIED td {
-          background: #FF0;
+          border: solid 1pt #990000;
         }
 
         p.WARNING {
@@ -233,7 +233,28 @@ class Viewer:
         else:
             valueDisplay = self.link(object)
         self.writer.write("""
-        <TR CLASS="REIFIED"><TD>%s</TD><TD>%s</TD></TR>
+        <TR CLASS="REIFIED"><TD>%s</TD><TD>%s</TD>
+        <TD>""" % (propertyDisplay, valueDisplay))
+        self.qstore.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
+        self.writer.write("""
+        </TD></TR>""")
+
+    def displayReifiedStatementPropertyValue(self, property, value):
+        if property==self.qstore.TYPE:
+            return
+        if property==self.qstore.SUBJECT:
+            return
+        if property==self.qstore.PREDICATE:
+            return
+        if property==self.qstore.OBJECT:
+            return
+        propertyDisplay = self.link(property)
+        if value[0]=="^":
+            valueDisplay = value[1:]
+        else:
+            valueDisplay = self.link(value)
+        self.writer.write("""
+        %s: %s<BR>
         """ % (propertyDisplay, valueDisplay))
 
     def encodeURI(self, s):
