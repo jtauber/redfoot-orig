@@ -24,6 +24,16 @@ def get_triple(text):
         value = resource(text[value_start:value_end])
     return (subject, property, value)
 
+def get_triple(text):
+    parts = text.split(" ", 2)
+    subject = resource(parts[0][1:-1])
+    property = resource(parts[1][1:-1])
+    if parts[2][1]=='"':
+        value = literal(parts[2][1:-1])
+    else:
+        value = resource(parts[2][1:-1])
+    return (subject, property, value)
+
 class RedCmd(object, Cmd):
     """
     Console for manipulating a Rednode
