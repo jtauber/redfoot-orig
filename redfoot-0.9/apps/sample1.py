@@ -25,11 +25,14 @@ class UI:
         self.editor = Editor(self.rednode)
         
     def handle_request(self, request, response):
-        path_info = request.get_path_info()
-        if path_info == "/":
-            self.main(response)
-        else:
-            self.editor.handle_request(request, response)
+        response.setHeader('Content-Type', 'application/zip')
+        import shutil
+        source = open("."+"/ebxmllib.zip", 'rb')
+        destination = response
+        shutil.copyfileobj(source, destination)
+        source.close()
+        return 
+        
 
 
     def main(self, response):
@@ -53,6 +56,9 @@ class UI:
         """)
 
 ## $Log$
+## Revision 8.1  2001/04/29 02:58:14  eikeon
+## pathinfo -> path_info
+##
 ## Revision 8.0  2001/04/27 00:52:12  eikeon
 ## new release
 ##
