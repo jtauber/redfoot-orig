@@ -108,11 +108,15 @@ class QueryStore:
                 result[klass[0]].append(resource[0])
         return result
                 
-    # vistor pattern
+    # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
         for klass in self.store.get(None, QueryStore.TYPE, QueryStore.CLASS):
             processClass(klass[0])
             for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
                 processResource(resource[0])
 
-        
+    def propertyValuesV(self, subject, processPropertyValue):
+        for statement in self.store.get(subject, None, None):
+            property = statement[1]
+            value = statement[2]
+            processPropertyValue(property,value)
