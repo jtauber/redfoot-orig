@@ -26,17 +26,16 @@ REDFOOT README
         - connectors for mapping non-RDF data into RDF triples
         - sample applications built on top of Redfoot
 
-    Redfoot is written in pure Python and is being tested on Python
-    1.6 and 2.0
+    Redfoot is written in pure Python (Python 2.0 required) and is 
+    being tested on both windows and linux (requires PyExpat).
 
     Redfoot currently uses eikeon's Bare Naked HTTP server which is
     included in the standard distribution.
 
 RUNNING THE REDFOOT SERVER
 
-    1. Make sure the parent directory of redfoot is on the python
-       path. The easiest way to do that is to set the PYTHONPATH
-       environment variable to include ../ 
+    1. Make sure the ./lib/ directory of redfoot is on the python
+       path.
 
     2. Run
 
@@ -71,12 +70,14 @@ WHERE TO GET THE LATEST REDFOOT
 
 HOW TO CONTACT THE DEVELOPERS
 
-    James Tauber - jtauber@bowstreet.com
-    Daniel Krech - dkrech@mediaone.net (A.K.A eikeon)
-
+    James Tauber - jtauber@jtauber.com
+    Daniel Krech - eikeon@eikeon.com 
 
 
 $Log$
+Revision 3.1  2000/11/02 21:48:23  eikeon
+removed old log messages
+
 Revision 3.0  2000/10/27 01:23:10  eikeon
 bump-ing version to 3.0
 
