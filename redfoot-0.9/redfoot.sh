@@ -2,4 +2,5 @@
 
 PYTHONPATH=./lib/:$PYTHONPATH; export PYTHONPATH
 
-python ./redfoot.py
+python ./lib/redfoot/server.py $*
+

@@ -91,10 +91,14 @@ def runServer(args, interface):
 
 if __name__ == '__main__':
     import sys
-    runServer(sys.argv[1:])
+    from redfoot.editor import PeerEditor
+    runServer(sys.argv[1:], PeerEditor)
 
 
 # $Log$
+# Revision 1.2  2000/10/26 01:18:36  eikeon
+# changed interface to server and dependant code
+#
 # Revision 1.1  2000/10/25 20:40:31  eikeon
 # changes relating to new directory structure
 #

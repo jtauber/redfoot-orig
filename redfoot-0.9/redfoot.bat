@@ -4,7 +4,7 @@ setlocal
 set PYTHONPATH=./lib/
 @echo on
 
-python ./redfoot.py
+python ./lib/redfoot/server.py %*
 
 @echo off
 endlocal
