@@ -74,7 +74,7 @@ class Editor(Viewer):
 
         if self.storeNode.isKnownResource(subject):
             self.storeNode.local.visitPredicateObjectPairsForSubject(self.editProperty, subject)
-            self.storeNode.neighbourhood.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
+            self.storeNode.neighbours.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
         
 	    self.storeNode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
 
@@ -406,6 +406,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.7  2000/12/17 23:58:44  eikeon
+#~ recatored to use header and footer methods
+#~
 #~ Revision 5.6  2000/12/17 23:41:58  eikeon
 #~ removed of log messages
 #~
