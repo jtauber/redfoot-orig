@@ -1,0 +1,97 @@
+$Header$
+
+REDFOOT APPS README
+
+    There are a growing number of sample Redfoot applications in the
+    apps directory:
+
+	* generic viewer / editor
+	* sample1 - simple app written in Python
+	* sample2 - simple todo app written in RedCode
+	* sample3 - RedCode app combining neighbour connection module
+	            and experimental RSS module
+
+WHAT IS REDCODE?
+
+    RedCode is a combination of Python and XML that makes it easier to
+    combine Python code with XHTML. Anything in RedCode could be
+    written as straight Python but RedCode makes things a little
+    easier when writing Redfoot applications. See apps/sample2.xml or
+    apps/sample3.xml for examples.
+
+    apps/run.bat or apps/run.sh can be used to run RedCode.
+
+GENERIC VIEWER / EDITOR
+
+    To start, go to the apps directory and run one of
+	* generic.bat (Windows)
+	* generic.sh (Unix)
+	* python generic.py (if Redfoot library is on PYTHONPATH)
+
+    To learn more about the Generic UI and how to use it, see
+        docs/usermanual.txt 
+
+SAMPLE1
+
+    To start, go to the apps directory and run one of
+	* sample1.bat (Windows)
+	* sample1.sh (Unix)
+	* python sample1.sh (if Redfoot library is on PYTHONPATH)
+
+    Then go to your web browser and go to http://localhost:8000/
+    At the moment Redfoot doesn't know anyone, so go to the editor.
+    You will see that the class "Person" is defined. We want to create
+    a new resource that is of type "Person", so click on "Create an
+    Abstract Resource".
+    Select "type" as a new property to add and click on update.
+    Now select a value of "Person" for this property and click on
+    update.
+    Select "label" as a new property to add and click on update.
+    Now type a value for the label such as "John Smith" and press
+    update.
+    You've now added a new Person. Click on HOME at the top to go to
+    the main page. You should see John Smith listed as a known
+    person.
+
+SAMPLE2
+
+    To start, go to the apps directory and run one of
+	* run.bat sample2.xml (Windows)
+	* run.sh sample2.xml (Unix)
+
+    Then go to your web browser and go to http://localhost/
+    This is a very simple task list.
+    To add a task enter it in the text input and press enter.
+    To delete a task when done, click on done.
+    Clicking on a task's label will take you to the generic viewer for
+    that task.
+    Clicking on "Go to editor" will take you to the generic class
+    list.
+    NOTE: you can create as many properties as you like for Tasks and
+    use the generic editor to add them to a task.
+
+SAMPLE3
+
+    To start, go to the apps directory and run one of
+	* run.bat sample3.xml (Windows)
+	* run.sh sample3.xml (Unix)
+
+    Then go to your web browser and go to http://localhost/
+    This application displays RSS 1.0 items. It also demonstrates the
+    ability to connect and disconnect to RDF sources.
+    NOTE: The two modules used to build this app are orthogonal: the
+    RSS items can be local and the neighbour page can be used to
+    connect to any RDF source whether RSS or not.
+    To begin, click on Neighbours.
+    You'll see a list of the current neighbourhood as well as a list
+    of other known RDF sources.
+    To add a new RDF source to the neighbourhood, enter its URI in the
+    text input box and click Add.
+    To connect to a known RDF source, press the Connect button next to
+    its URI.
+    If you are connected to an RSS feed, you can now go back to the
+    home page and see the RSS displayed.
+
+
+
+
