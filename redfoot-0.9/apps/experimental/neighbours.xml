@@ -1,16 +1,15 @@
 <r:module name="neighbours" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
 
 import sys
+
 from rdf.const import *
 from rdf.literal import *
 
-from redfoot.editor import Editor
-
 NEIGHBOUR = "http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"
 
+from redfoot.editor import Editor
 
 <r:class name="UI" bases="(Editor,)">
-
 
 def __init__(self, rednode):
     self.rednode = rednode
@@ -21,10 +20,8 @@ def _load_neighbours(self):
     neighbours = self.rednode.get(None, TYPE, NEIGHBOUR)
     for neighbour in neighbours:
         location = neighbour[0]
-        print location
-        #self.rednode.connectTo(location)
-        self.rednode.connectTo("http://xmlhack.com/rss10.php")
-
+        location = location.encode('ascii') # TODO: ?
+        self.rednode.connectTo(location)
 
 def handle_request(self, request, response):
     # For now, write log to stderr.
@@ -34,9 +31,6 @@ def handle_request(self, request, response):
 
     Editor.handle_request(self, request, response)
 
-
 </r:class>
-
-
 
 </r:module>
