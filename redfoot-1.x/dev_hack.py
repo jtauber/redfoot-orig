@@ -6,4 +6,4 @@ try:
 except:
     # redfoot must not be installed, try adding
     import sys
-    sys.path.extend(("../redfoot-core", "../redfoot-components"))
+    sys.path.extend(("./redfoot-core", "./redfoot-components", "./redfoot-examples"))
