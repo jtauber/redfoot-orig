@@ -39,13 +39,10 @@ class Editor(Viewer):
             Viewer.handler(self,path_info,args)
 
     def menuBar(self):
+        Viewer.menuBar(self)
         self.writer.write("""
-            <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF=".">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
-             | <A HREF="add">Add a Resource</A>
+            <P CLASS="MENUBAR">
+               <A HREF="add">Add a Resource</A>
              | <A HREF="?processor=save">Save Node to Disk</A>
             </P>
         """)
@@ -335,16 +332,10 @@ class Editor(Viewer):
 #TODO: could be a separate module
 class PeerEditor(Editor):
     def menuBar(self):
+        Editor.menuBar(self)
         self.writer.write("""
             <P CLASS="MENUBAR">
-             <A HREF="classList">Class List</A>
-             | <A HREF="subclass">Full Subclass View</A>
-             | <A HREF="subclassNR">Collapsed Subclass View</A>
-             | <A HREF=".">Download RDF</A>
-             | <A HREF="Triples">Show Triples</A>
-             | <A HREF="add">Add a Resource</A>
-             | <A HREF="?processor=save">Save Node to Disk</A>
-             | <A HREF="connect">Connect Neighbour</A>
+             <A HREF="connect">Connect Neighbour</A>
              |""")
 
         if self.showNeighbours==1:
@@ -386,6 +377,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 2.3  2000/10/16 04:49:57  jtauber
+# fixed bug where Editor's handler was incorrectly calling the handler on its superclass Viewer
+#
 # Revision 2.2  2000/10/16 04:10:07  jtauber
 # refactored editor-specific http handling code from viewer to editor
 #
