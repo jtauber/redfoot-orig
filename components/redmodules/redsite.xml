@@ -37,6 +37,7 @@
         self.link_hover = "#66C"
 
     def stop(self):
+        self.authentication.stop()
         print "saving %s" % self.rednode.local.location
         self.rednode.local.save()
 

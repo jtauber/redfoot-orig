@@ -25,6 +25,10 @@ VIA = resource(SESSION_URI+"via")
 
   <red:module name="Session">
 
+    def stop(self):
+        print "saving %s" % self.rednode.local.location
+        self.rednode.local.save()
+
     <red:facet name="summary">
         <DL>
           <DT>Current Session URI:</DT>

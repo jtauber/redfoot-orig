@@ -12,7 +12,7 @@
   from redfoot.rdf.query.functors import first, o
   from redfoot.rdf.store.urigen import generate_uri   
 
-  from redmodules.session import Session
+  from redmodules.session import Session, SESSION
 
   from md5 import md5  
 
@@ -36,6 +36,9 @@
        ParentModule.__init__(self, app)
        self.rednode = self.create_rednode(None, 0)
        self.app.rednode.neighbours.add_store(self.rednode.local)
+
+    def stop(self):
+        self.session.stop()
 
     def handle_request(self, request, response):
         # TODO: This is on behalf of Authentication module
@@ -115,6 +118,12 @@
         else:
             self.status = "Already user with username '%s'" % username
                 
+    def do_clear_sessions(self):
+        self.session.sessions.visit(self.remove_if_no_identity, (None, TYPE, SESSION))
+
+    def remove_if_no_identity(self, subject, property, object):
+        if not self.session.sessions.local.get_first_value(subject, IDENTITY, None):
+            self.session.sessions.remove(subject, None, None)
     
 
     <red:facet name="summary">
@@ -125,7 +134,19 @@
           <red:eval>self.get_username("Unknown")</red:eval>
         </DD>
       </DL>
-      <red:exec>self.session.summary()</red:exec>
+      <p>
+        <red:exec>self.session.summary()</red:exec>
+      </p>
+      <p>
+      <form action="" method="post">
+
+        <input name='module_instance' 
+               type='HIDDEN' 
+               value="{self.module_instance}"/>
+        <input name="processor" type="hidden" value="do_clear_sessions"/>
+        <input type="submit" value="Clear Sessions"/>
+      </form>
+      </p>      
     </red:facet>
 
     <red:facet name="people">
