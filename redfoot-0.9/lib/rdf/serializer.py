@@ -18,9 +18,10 @@ def encode(s):
     return s
 
 def splitProperty(property):
-    for i in range(len(property)):
+    length = len(property)
+    for i in range(length):
         if not property[-1-i] in namechars:
-            for j in range(-1-i,len(property)):
+            for j in range(-1-i,length):
                 if property[j] in namestart:
                     return (property[:j],property[j:])
     return ("",property)
@@ -100,6 +101,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 5.3  2000/12/17 20:41:22  eikeon
+#~ removed log message prior to currently worked on release
+#~
 #~ Revision 5.2  2000/12/09 21:01:44  eikeon
 #~ abouts were not getting encoded
 #~
