@@ -20,64 +20,8 @@ class RedfootHandler:
         path_info = request.path_info
 
         self.lock.acquire()
-        viewer = self.viewer
-        viewer.setWriter(response)
-
-        if args.has_key("processor"):
-            if args["processor"][0] == "update":
-                viewer.update(args)
-            elif args["processor"][0] == "create":
-                viewer.create(args)
-            elif args["processor"][0] == "save":
-                viewer.save()
-            elif args["processor"][0] == "delete":
-                viewer.delete(args)
-            elif args["processor"][0][0:4] == "del_":
-                viewer.deleteProperty(args)
-            elif args["processor"][0][0:6] == "reify_":
-                viewer.reifyProperty(args)
-            elif args["processor"][0] == "connect":
-                viewer.connect(args)
-            elif args["processor"][0] == "showNeighbours":
-                viewer.showNeighbours=1
-            elif args["processor"][0] == "hideNeighbours":
-                viewer.showNeighbours=0
-	                
-        if path_info == "/":
-            viewer.RDF()
-        elif path_info == "/subclass":
-            if args.has_key("uri"):
-                root = args["uri"][0] # TODO: check why values of args are lists
-            else:
-                root = QueryStore.RESOURCE
-            viewer.subclass(root)
-        elif path_info == "/subclassNR":
-            if args.has_key("uri"):
-                root = args["uri"][0] # TODO: check why values of args are lists
-            else:
-                root = QueryStore.RESOURCE
-            viewer.subclass(root, 0)
-        elif path_info == "/classList":
-            viewer.classList()
-        elif path_info == "/Triples":
-            viewer.Triples()
-        elif path_info == "/css":
-            viewer.css()
-        elif path_info == "/view":
-            viewer.view(args['uri'][0]) # TODO: check why values of args are lists
-        elif path_info == "/edit":
-            viewer.edit(args['uri'][0]) # TODO: check why values of args are lists
-	elif path_info == "/add":
-            if args.has_key("type"):
-                type = args["type"][0]
-            else:
-                type = None
-            viewer.add(type)
-        elif path_info == "/connect":
-            viewer.connectPage()
-        else:
-            # make a proper 404
-            response.write("unknown PATH of '%s'" % path_info)
+        self.viewer.setWriter(response)
+        self.viewer.handler(path_info, args)
         self.lock.release()            
 
 
@@ -159,6 +103,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 2.0  2000/10/14 01:14:04  jtauber
+# next version
+#
 # Revision 1.29  2000/10/13 14:00:28  eikeon
 # added newline to end of startup message
 #
