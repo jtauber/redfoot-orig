@@ -42,26 +42,22 @@ RUNNING THE REDFOOT SERVER
 
            python server.py <options>
 
-	   -l location of RDF file to use as local
-		(eg myrdf.rdf. defaults to local.rdf)
+           -l location of RDF file to use as local
+                (eg myrdf.rdf. defaults to local.rdf)
 
-	   -u uri to treat that file as
-		(eg http://redfoot.sourceforge.net/2000/10/.
-		 defaults to http://hostname.domain:port/path)
+           -u uri to treat that file as
+                (eg http://redfoot.sourceforge.net/2000/10/.
+                 defaults to http://hostname.domain:port/path)
 
-	    -p port number to run on
-		(defaults to 8000)
+           -p port number to run on
+                (defaults to 8000)
 
-	    -i web interface class to use
-	       (Viewer, Editor, PeerEditor, SampleUI)
-		(defaults to PeerEditor)
-
-	    -P path from server root to actual RDF
-		(eg /2000/10. defaults to /)
+           -P path from server root to actual RDF
+                (eg /2000/10. defaults to /)
 
     Hitting the URI that Redfoot is running as will return the RDF. Try hitting
 
-	http://hostname.domain:port/
+        http://hostname.domain:port/
 
     to get the UI
 
@@ -82,11 +78,14 @@ WHERE TO GET THE LATEST REDFOOT
 HOW TO CONTACT THE DEVELOPERS
 
     James Tauber - jtauber@bowstreet.com
-    Daniel Krech - dkrech@bowstreet.com
+    Daniel Krech - dkrech@bowstreet.com - eikeon
 
 
 
 $Log$
+Revision 2.3  2000/10/25 20:40:31  eikeon
+changes relating to new directory structure
+
 Revision 2.2  2000/10/19 01:56:16  jtauber
 made README a little easier to read (I hope); added info about -P and SampleUI
 
