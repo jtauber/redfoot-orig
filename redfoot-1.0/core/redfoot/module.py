@@ -32,8 +32,9 @@ class Module:
 
         if path[-1] == "/":
             first = path[:-1]
-            #print "/ first: '%s'  path: '%s'" % (first, path)
-            self.apply(first)
+            if first:
+                #print "/ first: '%s'  path: '%s'" % (first, path)
+                self.apply(first)
         else:
             pos = rfind(path, "/")
             if pos == -1:
