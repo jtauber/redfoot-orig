@@ -139,3 +139,20 @@ class QueryStore:
                 processClass(subclassStatement[0], currentDepth+1)
         for instanceStatement in self.store.get(None, QueryStore.TYPE, type):
             processInstance(instanceStatement[0], currentDepth)
+
+    # REIFICATION STUFF
+
+    # should perhaps just autogenerate statement_uri
+    def reify(self, statement_uri, subject, predicate, object):
+        self.store.add(statement_uri, QueryStore.TYPE, QueryStore.STATEMENT)
+        self.store.add(statement_uri, QueryStore.SUBJECT, subject)
+        self.store.add(statement_uri, QueryStore.PREDICATE, predicate)
+        self.store.add(statement_uri, QueryStore.OBJECT, object)
+        self.store.remove(subject, predicate, object)
+
+    def dereify(self, statement_uri):
+        subject = self.store.get(statement, QueryStore.SUBJECT, None)[0][2]
+        predicate = self.store.get(statement, QueryStore.PREDICATE, None)[0][2]
+        object = self.store.get(statement, QueryStore.OBJECT, None)[0][2]
+        self.store.add(subject, predicate, object)
+        #self.store.removeAll(statement)
