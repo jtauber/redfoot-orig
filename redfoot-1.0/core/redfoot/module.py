@@ -6,6 +6,7 @@ from redfoot.util import to_URL
 class Module:
     def __init__(self, app):
         self.app = app
+        self.module_instance = str(id(self))
 
     def apply_exact(self, path):        
         #print "Module.apply_exact (%s) looking for '%s'" % (self.__class__, path)        
@@ -64,7 +65,7 @@ class Module:
 
 class ParentModule(Module):
     def __init__(self, app):
-        self.app = app        
+        Module.__init__(self, app)
         self.modules = []
 
         instance_vars = self.__dict__
@@ -96,7 +97,9 @@ class ParentModule(Module):
     def handle_request(self, request, response):
         processor = request.get_parameter('processor', None)
         if processor:
-            apply(getattr(self, processor, lambda :None), ())
+            module_instance = request.get_parameter('module_instance', None)
+            if not module_instance or module_instance==getattr(self, 'module_instance', None):
+                apply(getattr(self, processor, lambda :None), ())
 
         for module in self.modules:
             if hasattr(module, 'handle_request'):
