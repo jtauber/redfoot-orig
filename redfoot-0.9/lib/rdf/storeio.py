@@ -82,14 +82,14 @@ class AutoSaveStoreIO(TripleStoreIO):
         self.dirtyBit.clear() # we just loaded... therefore we are clean
         self._start_thread() 
 
-    def _start_thread(self, notMoreOftenThan=10):
+    def _start_thread(self, notMoreOftenThan=5*60):
         """Not more often then is in seconds"""
         import threading
         t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
         t.setDaemon(1)
         t.start()
         
-    def _autosave(self, interval=5*60):
+    def _autosave(self, interval):
         while 1:
             if self.dirtyBit.value()==1:
                 self.dirtyBit.clear()
@@ -122,13 +122,35 @@ class JournalingStoreIO(StoreIO, JournalingStore):
 
     def __init__(self):
         StoreIO.__init__(self)
-        a = AutoSaveStoreIO()
-        a.location = "testing"
-        a.URI = "ASDF"
-        a.dirtyBit.clear() # we just loaded... therefore we are clean
-        a._start_thread() 
-        
-        JournalingStore.__init__(self, a)
+        JournalingStore.__init__(self)
+
+    def load(self, location, URI=None):
+        from redfoot.rednode import Local
+        journal = Local()
+        journal.location = "%s-J.rdf" % location[:-4]
+        journal.URI = URI
+        journal.dirtyBit.clear() # we just loaded... therefore we are clean
+        journal._start_thread()
+        self.journal = journal
+        StoreIO.load(self, location, URI)
+
+    def load_journal(self, location, URI=None):
+        from redfoot.rednode import Local
+        journal = Local()
+        journal.load(location, URI)
+        journal.dirtyBit.clear() # we just loaded... therefore we are clean
+        journal._start_thread()
+        self.location = "%s.rdf" % location[:-6]
+        self.URI = URI
+        self.set_journal(journal)
+
+    def update_journal(self, stream, URI):
+        self.journal.input(stream, URI)
+        self.set_journal(self.journal)
+
+    def save(self, location=None, URI=None):
+        self.journal.save(location, URI)
+        StoreIO.save(self, location, URI)
 
 
 class DirtyBit:
@@ -159,6 +181,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
+#~ new release
+#~
 #~ Revision 5.6  2001/02/09 21:50:46  eikeon
 #~ Added JournalingStoreIO and an input method
 #~

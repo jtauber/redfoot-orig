@@ -134,9 +134,8 @@ TIMESTAMP = "http://redfoot.sourceforge.net/2001/01/30/#timestamp"
 #class JournalingStore(TripleStore, QueryStore):
 class JournalingStore(TripleStore):
 
-    def __init__(self, journal):
+    def __init__(self):
         TripleStore.__init__(self)
-        self.journal = journal
         self.sn = 0
 
     def chron(self, a, b):
@@ -154,17 +153,28 @@ class JournalingStore(TripleStore):
 
         return cmp(date_a, date_b)
 
+    def _tmp(self, subject, predicate, object):
+        del self.spo[subject][predicate][object]
+        del self.pos[predicate][object][subject]
 
     def set_journal(self, journal):
+        self.visit(self._tmp, None, None, None)
         self.journal = journal
         statements = self.journal.get(None, TYPE, STATEMENT)
         statements.sort(self.chron)
         for statement in statements:
             subject = statement[0]
-            print "s: %s -- ts: %s" % (subject, self.journal.getFirst(subject, TIMESTAMP, None)[2])
-            s = self.journal.getFirst(subject, SUBJECT, None)[2]
-            p = self.journal.getFirst(subject, PREDICATE, None)[2]
-            o = self.journal.getFirst(subject, OBJECT, None)[2]
+            #print "s: %s -- ts: %s" % (subject, self.journal.getFirst(subject, TIMESTAMP, None)[2])
+            s = self.journal.getFirst(subject, SUBJECT, None)
+            p = self.journal.getFirst(subject, PREDICATE, None)
+            o = self.journal.getFirst(subject, OBJECT, None)
+            if s!=None and p!=None and o!=None:
+                s = s[2]
+                p = p[2]
+                o = o[2]
+            else:
+                print (s, p, o)
+                 
             operation = self.journal.getFirst(subject, OPERATION, None)
             if operation!=None:
                 operation = operation[2]
@@ -222,17 +232,5 @@ def date_time_filename(t=None, sn_generator=SN()):
     return s
 
 #~ $Log$
-#~ Revision 5.5  2001/02/09 22:38:27  eikeon
-#~ checked in what I meant to check in prior version
-#~
-#~ Revision 5.3  2000/12/17 20:56:09  eikeon
-#~ renamed visitSubjects to visit_subjects
-#~
-#~ Revision 5.2  2000/12/17 20:41:22  eikeon
-#~ removed log message prior to currently worked on release
-#~
-#~ Revision 5.1  2000/12/11 06:30:14  eikeon
-#~ made some reasonably straight forward optimizations
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
