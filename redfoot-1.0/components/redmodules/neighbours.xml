@@ -105,6 +105,7 @@
 
     def add_neighbour(self):
        uri = self.app.request.get_parameter('uri')
+       uri = uri.replace("\\", "/") # be forgiving if user used backslashes
        self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)
        self.app.rednode.add(resource(uri), CONNECTED, NO)
 
