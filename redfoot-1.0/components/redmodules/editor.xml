@@ -16,6 +16,11 @@
 
   <red:module name="Editor">
 
+    def alpha_by_label(self, a, b):
+        label_a = self.app.rednode.label(a)
+        label_b = self.app.rednode.label(b)
+        return cmp(str(label_a), str(label_b))
+
     <red:sub-module instance="viewer" class="Viewer" from="redmodules.viewer"/>
     
     <red:facet name="">
@@ -152,7 +157,7 @@
                   <red:exec>
                     b = SetBuilder()
                     self.app.rednode.visit_possible_values(b.accept, property)
-                    b.sort(self.app.rednode.label)
+                    b.sort(self.alpha_by_label)
                   </red:exec>  
 
                   <red:for item="v" list="b.set">
