@@ -8,7 +8,7 @@ def generateURI():
     import time
     t = time.time()
     year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
-    s = "%0004d/%02d/%02d/T%02d-%02d-%02dZ%0004d" % ( year, month, day, hh, mm, ss, serial_number())
+    s = "%0004d/%02d/%02d/T%02d-%02d-%02dZ%0004d" % ( year, month, day, hh, mm, ss, serial_number() % 1000)
     return s
 
 _serial_number = 0
