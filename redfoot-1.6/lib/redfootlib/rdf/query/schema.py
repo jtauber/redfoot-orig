@@ -29,7 +29,7 @@ class SchemaQuery(Query):
     def is_of_type(self, subject, type):
         return self.exists(subject, TYPE, type)
 
-    def subjects_by_type(self, callback, type, predicate, object):
+    def subjects_by_type(self, type, predicate, object):
         for subject in self.subjects(predicate, object):
             if self.is_of_type(subject, type):
                 yield subject
