@@ -115,7 +115,7 @@ class App(ParentModule):
             from redfoot.rednode import RedNode
             rednode = RedNode()
             rdf, uri = ("%s.rdf" % self.__module__, self.URI)
-            rednode.load(rdf, uri)
+            rednode.load(rdf, uri, 1)
             self.rednode = rednode
             return self.rednode
         elif name=='app':

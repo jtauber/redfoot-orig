@@ -10,7 +10,7 @@ class StoreIO:
     def __init__(self):
         self.URI = None
 
-    def load(self, location, URI=None):
+    def load(self, location, URI=None, create=0):
         self.location = location
         if URI==None:
             # default to location
@@ -18,7 +18,7 @@ class StoreIO:
         else:
             self.URI = URI
 
-        if find(location, '://')<0: # is relative
+        if create and find(location, '://')<0: # is relative
             from urllib import url2pathname
             path = url2pathname(location) 
             import os

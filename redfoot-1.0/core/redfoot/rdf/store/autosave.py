@@ -16,8 +16,8 @@ class AutoSaveStoreIO(TripleStoreIO):
         self.dirtyBit.set()
         TripleStoreIO.add(self, subject, predicate, object)
 
-    def load(self, location, URI=None):
-        TripleStoreIO.load(self, location, URI)
+    def load(self, location, URI=None, create=0):
+        TripleStoreIO.load(self, location, URI, create)
         self.dirtyBit.clear() # we just loaded... therefore we are clean
         self._start_thread() 
 

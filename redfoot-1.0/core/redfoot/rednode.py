@@ -90,8 +90,8 @@ class RedNode(SchemaQuery):
         self.neighbours.add_store(builtin)
 
 
-    def load(self, location, uri):
-        self.local.load(location, uri)
+    def load(self, location, uri, create=0):
+        self.local.load(location, uri, create)
         # load neighbours that are marked as connected
         self.local.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
 
@@ -102,7 +102,7 @@ class RedNode(SchemaQuery):
         URI = URI or location
 
         storeIO = TripleStoreIO()        
-        storeIO.load(location, URI)
+        storeIO.load(location, URI, 0)
         self.neighbours.add_store(storeIO)
         self.remove(resource(location), TYPE, NEIGHBOUR)
         self.add(resource(location), TYPE, NEIGHBOUR)        
