@@ -69,18 +69,6 @@ class Neighbourhood(QueryStore):
     def add(self, subject, predicate, object):
         raise "Can not write to Neighbourhood store!"
 
-    def get(self, subject=None, property=None, value=None):
-        class Visitor:
-            def __init__(self):
-                self.list = []
-
-            def callback(self, subject, property, value):
-                self.list.append((subject, property, value))
-
-        visitor = Visitor()
-        self.visit(visitor.callback, subject, property, value);
-        return visitor.list
-
     def visit(self, callback, subject=None, property=None, value=None):
         self.rednode.visit(callback, subject, property, value);
         self.stores.visit(callback, subject, property, value)
@@ -131,6 +119,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.10  2000/12/05 22:43:30  eikeon
+#~ moved constants to rdf.const
+#~
 #~ Revision 4.9  2000/12/05 07:11:27  eikeon
 #~ finished refactoring rednode refactor of the local / neighbourhood split
 #~
