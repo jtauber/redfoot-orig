@@ -111,9 +111,8 @@ class App(ParentModule):
         if name=='rednode':
             from redfoot.rednode import RedNode
             rednode = RedNode()
-            # TODO shouldn't assume port 8000
             rdf, uri = ("%s.rdf" % self.__module__, self.URI)
-            rednode.local.load(rdf, uri)
+            rednode.load(rdf, uri)
             self.rednode = rednode
             return self.rednode
         elif name=='app':

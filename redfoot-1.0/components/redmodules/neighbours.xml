@@ -3,43 +3,21 @@
   from redfoot.rdf.const import LABEL, TYPE
   from redfoot.rdf.objects import resource, literal
 
-  from redfoot.rdf.query.builders import ListBuilder, triple2statement
-
-  NEIGHBOUR = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")  
+  from redfoot.rednode import NEIGHBOUR, CONNECTED, YES, NO
 
   <red:module name="Neighbours">
-
     def __init__(self):
        self.status = {}
-       
+
     <red:facet name="neighbours">
       <H2>Neighbours</H2>
-      <red:exec>
-        connected_neighbours = [resource(neighbour.URI) for neighbour 
-                                in self.app.rednode.neighbours.stores]
-        lb = ListBuilder()
-        self.app.rednode.visit(triple2statement(lb.accept), (None, TYPE, NEIGHBOUR))
-        l = lb.list
-        other_known_neighbours = [neighbour.subject for neighbour in 
-                                  l if not neighbour.subject in connected_neighbours]
-      </red:exec>
 
       <DIV class="content_area">
         <H3 CLASS="content_header">Connected</H3>
         <TABLE>
-         <red:for item="neighbour" list="connected_neighbours">
-          <FORM name="main" method="POST" style="margin: 0">
-            <TR>
-              <TD><red:eval>neighbour</red:eval>
-                <INPUT name="uri" value="{neighbour}" type="hidden"/>
-              </TD>
-              <TD align="right">
-                <INPUT value="Disconnect" type="submit"/>
-                <INPUT name="processor" value="disconnect_neighbour" type="hidden"/>
-              </TD>
-            </TR>
-          </FORM>
-         </red:for>
+
+        <red:exec>self.app.rednode.visit_by_type(self._connected_row, NEIGHBOUR, CONNECTED, YES)</red:exec>        
+        
         </TABLE>
       </DIV>
 
@@ -50,19 +28,8 @@
           <INPUT name="uri" value="" type="hidden"/>
           <INPUT name="processor" value="" type="hidden"/>          
           <TABLE>
-           <red:for item="neighbour" list="other_known_neighbours">
-            <TR>
-              <TD><red:eval>neighbour</red:eval></TD>
-              <TD>
-                <INPUT value="Connect" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='connect_neighbour';other.submit()"/>
-              </TD>
-              <TD align="right">
-                <INPUT value="Remove" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
-              </TD>
 
-              <TD><red:eval>self.status.get(neighbour.uri, '')</red:eval></TD>
-            </TR>
-           </red:for>
+           <red:exec>self.app.rednode.visit_by_type(self._other_row, NEIGHBOUR, CONNECTED, NO)</red:exec>          
           </TABLE>
         </FORM>
       </DIV>
@@ -89,13 +56,38 @@
       </DIV>
     </red:facet>
 
+    <red:facet name="_connected_row" args="neighbour, p, o">
+          <FORM name="main" method="POST" style="margin: 0">
+            <TR>
+              <TD><red:eval>neighbour</red:eval>
+                <INPUT name="uri" value="{neighbour}" type="hidden"/>
+              </TD>
+              <TD align="right">
+                <INPUT value="Disconnect" type="submit"/>
+                <INPUT name="processor" value="disconnect_neighbour" type="hidden"/>
+              </TD>
+            </TR>
+          </FORM>
+    </red:facet>
+
+
+    <red:facet name="_other_row" args="neighbour, p, o">
+            <TR>
+              <TD><red:eval>neighbour</red:eval></TD>
+              <TD>
+                <INPUT value="Connect" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='connect_neighbour';other.submit()"/>
+              </TD>
+              <TD align="right">
+                <INPUT value="Remove" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
+              </TD>
+
+              <TD><red:eval>self.status.get(neighbour.uri, '')</red:eval></TD>
+            </TR>
+    </red:facet>
+
     def disconnect_neighbour(self):
        uri = self.app.request.get_parameter('uri')
-       for store in [store for store in self.app.rednode.neighbours.stores if store.URI==uri]:
-           self.app.rednode.neighbours.remove_store(store)
-           # Do we want to remember our neighbour?
-           if not self.app.rednode.local.exists(resource(uri), TYPE, NEIGHBOUR):
-              self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)           
+       self.app.rednode.disconnect_from(uri)
 
     def connect_neighbour(self):
        uri = self.app.request.get_parameter('uri')
@@ -108,11 +100,15 @@
     def remove_neighbour(self):
        uri = self.app.request.get_parameter('uri')
        self.app.rednode.remove(resource(uri), TYPE, NEIGHBOUR)
+       self.app.rednode.remove(resource(uri), CONNECTED, None)
        self.status[uri] = None
 
     def add_neighbour(self):
        uri = self.app.request.get_parameter('uri')
        self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)
+       self.app.rednode.add(resource(uri), CONNECTED, NO)
 
   </red:module>
 </red:code>
+
+

@@ -8,6 +8,13 @@ from redfoot.rdf.store.autosave import AutoSaveStoreIO
 from redfoot.rdf.query.functors import *
 from redfoot.rdf.const import *
 
+from redfoot.rdf.objects import resource, literal
+
+NEIGHBOUR = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")
+CONNECTED = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Connected")
+YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
+NO = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#NO")
+              
 class Local(SchemaQuery, TripleStoreIO):
     """A read/write store of RDF statements - a mixin of Query and TripleStoreIO."""
     pass
@@ -16,6 +23,7 @@ class Local(SchemaQuery, TripleStoreIO):
 class AutoSaveLocal(SchemaQuery, AutoSaveStoreIO):
     """Like Local but for auto-saving stores."""
     pass
+
 
 
 class MultiStore(SchemaQuery, StoreIO):
@@ -81,13 +89,34 @@ class RedNode(SchemaQuery):
         self.neighbours.add_store(syntax)
         self.neighbours.add_store(builtin)
 
+
+    def load(self, location, uri):
+        self.local.load(location, uri)
+        # load neighbours that are marked as connected
+        self.local.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
+
+    def _connect(self, neighbour, p, o):
+        self.connect_to(neighbour.uri)
+
     def connect_to(self, location, URI=None):
         URI = URI or location
 
         storeIO = TripleStoreIO()        
         storeIO.load(location, URI)
         self.neighbours.add_store(storeIO)
+        self.remove(resource(location), TYPE, NEIGHBOUR)
+        self.add(resource(location), TYPE, NEIGHBOUR)        
+        self.remove(resource(location), CONNECTED, None)
+        self.add(resource(location), CONNECTED, YES)        
 
+    def disconnect_from(self, uri):
+        for store in [store for store in self.neighbours.stores if store.URI==uri]:
+            self.neighbours.remove_store(store)
+            self.remove(resource(uri), CONNECTED, None)
+            self.add(resource(uri), CONNECTED, NO)
+            # Do we want to remember our neighbour?
+            if not self.local.exists(resource(uri), TYPE, NEIGHBOUR):
+                self.add(resource(uri), TYPE, NEIGHBOUR)
     ###
 
     def add(self, s, p, o):
