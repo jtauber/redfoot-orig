@@ -7,15 +7,10 @@ from redfoot.query import *
 store = TripleStore()
 
 rdfParser = RDFParser()
-rdfParser.setBaseURI("http://www.w3.org/1999/02/22-rdf-syntax-ns")
-rdfParser.setURL("rdfSyntax.rdf")
 rdfParser.setAdder(store.add)
-rdfParser.parse()
 
-rdfParser.setBaseURI("http://www.w3.org/2000/01/rdf-schema")
-rdfParser.setURL("rdfSchema.rdf")
-rdfParser.setAdder(store.add)
-rdfParser.parse()
+rdfParser.parse("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+rdfParser.parse("rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
 
 qstore = QueryStore()
 qstore.setStore(store)
