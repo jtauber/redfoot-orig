@@ -195,6 +195,7 @@ def _import(name, globals=None, locals=None, fromlist=[]):
             abs_fullname = "%s/%s" % (path,location)            
             if os.access(abs_fullname, os.F_OK):
                 result = redpage.parse_red_page(abs_fullname)
+                sys.modules[name] = result
                 return result
         raise e
         
@@ -223,6 +224,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.3  2001/04/15 03:42:07  eikeon
+#~ can now import redpages ending in .xml
+#~
 #~ Revision 7.2  2001/04/14 23:10:28  eikeon
 #~ removed old log messages
 #~
