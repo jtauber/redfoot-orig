@@ -64,3 +64,19 @@ class AbstractStore(object):
 
     def __iter__(self):
         return self.triples(None, None, None)
+
+    def __len__(self):
+        return len(list(self.triples(None, None, None)))
+    
+    def __eq__(self, other):
+        # Note: this is not a test of isomorphism, but rather exact
+        # equality.
+        if len(self)!=len(other):
+            return 0
+        for s, p, o in self:
+            if not other.exists(s, p, o):
+                return 0
+        for s, p, o in other:
+            if not self.exists(s, p, o):
+                return 0
+        return 1
