@@ -457,6 +457,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 7.2  2001/04/14 23:10:28  eikeon
+#~ removed old log messages
+#~
 #~ Revision 7.1  2001/04/09 17:25:02  eikeon
 #~ storeNode -> rednode
 #~

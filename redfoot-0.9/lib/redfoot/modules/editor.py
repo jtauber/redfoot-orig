@@ -1,6 +1,6 @@
 # $Header$
 
-from redfoot.viewer import Viewer
+from redfoot.modules.viewer import Viewer
 from rdf.literal import literal, un_literal, is_literal
 
 from rdf.const import *
@@ -369,6 +369,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 7.4  2001/04/14 23:10:28  eikeon
+#~ removed old log messages
+#~
 #~ Revision 7.3  2001/04/12 09:06:48  jtauber
 #~ added TODO
 #~

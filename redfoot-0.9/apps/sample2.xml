@@ -24,7 +24,7 @@ class Local(QueryStore, TripleStoreIO):
     def __init__(self):
         TripleStoreIO.__init__(self)
 
-from redfoot.editor import Editor
+from redfoot.modules.editor import Editor
 
 Authentication = authentication.Authentication
 Common = common.Common

@@ -47,7 +47,6 @@ rednode
 server
 viewer
 editor
-baseUI
 
 MODULE REDNODE
 
@@ -68,11 +67,11 @@ MODULE EDITOR
 CLASS EDITOR
 CLASS PEEREDITOR
 
-MODULE BASEUI
-
-CLASS BASEUI
 
 $Log$
+Revision 7.0  2001/03/26 23:41:05  eikeon
+NEW RELEASE
+
 Revision 6.0  2001/02/19 05:01:23  jtauber
 new release
 

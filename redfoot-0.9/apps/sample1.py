@@ -2,7 +2,7 @@
 
 from redfoot.server import RedServer
 from redfoot.rednode import RedNode
-from redfoot.editor import Editor
+from redfoot.modules.editor import Editor
 from rdf.query import QueryStore
 from rdf.const import *
 
@@ -48,6 +48,9 @@ class UI:
         """)
 
 ## $Log$
+## Revision 7.2  2001/04/12 09:05:31  jtauber
+## removed authentication as no longer worked
+##
 ## Revision 7.1  2001/04/09 17:16:23  eikeon
 ## storeNode -> rednode
 ##

@@ -14,7 +14,7 @@ from redfoot import redpage
 
 Neighbours = redpage.parse_red_page("neighbours.xml").Neighbours
 
-from redfoot.editor import Editor
+from redfoot.modules.editor import Editor
 
 from rdf.query import QueryStore
 from rdf.storeio import TripleStoreIO

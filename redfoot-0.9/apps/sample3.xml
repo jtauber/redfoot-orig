@@ -1,7 +1,30 @@
 <r:module name="sample3" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
 
+import redpage
+import os
+
+<!--
+import __builtin__
+real_import = __builtin__.__import__
+
+def _import(name, globals=None, locals=None, fromlist=[]):
+    print "NAME: '%s'" % name
+
+    location = name + ".xml"
+    if os.access(location, os.F_OK):
+        result = redpage.parse_red_page(location)
+    else:
+        result = apply(real_import, (name, globals, locals, fromlist))
+    return result
+
+__builtin__.__import__ = _import
+
+from base import Base
+-->
+
 <r:load-module class="Base" location="base.xml"/>
 <r:load-module class="Common" location="common.xml"/>
+
 
 from rdf.const import *
 from rdf.literal import *

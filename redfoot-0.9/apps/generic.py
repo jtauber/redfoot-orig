@@ -1,7 +1,7 @@
 # $Header$
 
 from redfoot.rednode import RedNode
-from redfoot.editor import Editor
+from redfoot.modules.editor import Editor
 from redfoot.server import RedServer
 from rdf.query import QueryStore
 from rdf.const import *
