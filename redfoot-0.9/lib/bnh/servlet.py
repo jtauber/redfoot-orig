@@ -160,7 +160,7 @@ class Response:
         self._wfile = client_socket.makefile('wb', 0)
         self.head_sent = 0
         self._header = {'Server': "eikeon's Bare Naked HTTP Server",
-                       'Date': date_time_string(),
+                       'Date': _date_time_string(),
                        'Expires': "-1",
                        'Content-Type': "text/html",
                        'Connection': "close" }
@@ -238,21 +238,25 @@ class Headers(UserDict):
             return ""
 
 
-def date_time_string(t=None):
-    """Return the current date and time formatted for a message header."""
-    weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
-    monthname = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+_last_time = -1
+_weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+_monthname = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+def _date_time_string():
+    """Returns date / time for the 'Date' HTTP header accurate to about a second."""
     
-    if t==None:
-        t = time.time()
-
-    year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
-    s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % ( weekdayname[wd], day, monthname[month], year, hh, mm, ss)
-    return s
+    t = time.time()
+    global _last_time, _last_time_string
+    if (t - _last_time)>1:
+        _last_time = t
+        year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
+        _last_time_string = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % ( _weekdayname[wd], day, _monthname[month], year, hh, mm, ss)
+    return _last_time_string
 
 
 #~ $Log$
+#~ Revision 7.2  2001/04/12 22:52:18  eikeon
+#~ removed management of session objects; BNH now only deals with the setting/getting of the EBNH_session cookie
+#~
 #~ Revision 7.1  2001/04/03 03:15:43  eikeon
 #~ added get_session_uri method
 #~
