@@ -26,6 +26,8 @@ class MultiStore:
             def callback(self, subject, property, value):
                 self.list.append((subject, property, value))
 
+        visitor = Visitor()
+
         self.visit(visitor, subject, property, value)
         
 	return visitor.list
@@ -100,6 +102,9 @@ class StoreNode:
         self.store.add(subject, property, value)
 
 # $Log$
+# Revision 1.5  2000/10/08 05:46:32  jtauber
+# refactored creation and use of storeIO for connectTo into own method
+#
 # Revision 1.4  2000/10/07 02:19:03  jtauber
 # rednode now loads in builtin.rdf
 #
