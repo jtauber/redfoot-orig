@@ -98,9 +98,6 @@ pos[p][o][s] = 1.
     def subjects(self):
         for s in self.__spo.keys():
             yield s
-
-    def __iter__(self):
-        return self.triples(ANY, ANY, ANY)
  
 
 
