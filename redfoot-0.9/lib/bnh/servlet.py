@@ -92,7 +92,19 @@ class Request:
             parameters = cgi.parse_qs(self._queryString)
 
             length = self.getHeaders()['content-length']
-            if length!='':
+
+            ctype, pdict = cgi.parse_header(self.getHeaders()['content-type'])
+            sys.stderr.write("ctype: %s\n" % ctype)
+            sys.stderr.flush()
+            
+            if ctype == 'multipart/form-data':
+                sys.stderr.write("MULTI\n")
+                sys.stderr.flush()
+
+                params = cgi.parse_multipart(self._rfile, pdict)
+                for param in params.keys():
+                    parameters[param] = params[param]
+            elif length!='':
                 len = int(length)
                 body = self._rfile.read(len)
                 self._rfile.close()
@@ -252,6 +264,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 5.4  2000/12/17 23:35:53  eikeon
+#~ split off ServerConnection and company into their own module
+#~
 #~ Revision 5.3  2000/12/17 21:19:10  eikeon
 #~ removed old log messages
 #~
