@@ -33,7 +33,7 @@ class StoreIO:
             location = self.location
         if uri==None:
             uri = self.uri
-        stream = open(location, 'w')
+        stream = open(location, 'wb')
         self.output(stream, uri)
         stream.close()
         

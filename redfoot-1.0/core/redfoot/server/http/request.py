@@ -1,4 +1,4 @@
-from string import split, find, lower, strip
+from string import split, find, lower, strip, join
 from cgi import parse_qs, parse_header, parse_multipart
 from redfoot.server.error import BadRequestError
 
@@ -67,6 +67,12 @@ class Request:
                 for param in params.keys():
                     parameters[param] = params[param]
 
+            for parameter in parameters:
+                list = parameters[parameter]
+                new_list = []
+                for param in list:
+                    new_list.append(join(split(param, "\r\n"), "\n"))
+                parameters[parameter] = new_list
             #self._parameters = Parameters(parameters)
             self._parameters = parameters
 

@@ -65,7 +65,7 @@ class Serializer:
 
     def start(self):
         # TODO: workaround for browsers using iso-8859-1 character encoding
-        self.stream.write( """<?xml version="1.0" encoding="iso-8859-1"?>\n""" )
+        self.stream.write( """<?xml version="1.0" encoding="UTF-8"?>\n""" )
         
         self.stream.write( "<rdf:RDF\n" )
         for uri in self.namespaces.keys():

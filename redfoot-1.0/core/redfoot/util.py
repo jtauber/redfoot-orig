@@ -33,6 +33,14 @@ def encode_character_data(s):
     s = join(split(s, '<'), '&lt;')
     return s
 
+def escape_newlines(s, other="'"):
+    """Used to escape newlines and by default 's"""
+    s = str(s)
+    for c in other:
+        s = join(split(s, c), "\\"+c)
+    s = join(split(s, "\n"), "\\n")
+    return s
+
 from time import time, gmtime
 
 
