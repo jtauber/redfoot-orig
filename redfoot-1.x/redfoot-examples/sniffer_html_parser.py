@@ -53,6 +53,9 @@ class SnifferHTMLParser(HTMLParser):
                     label = self.anchorText.decode().encode("utf-8")
                 except ValueError:
                     label = 'TODO: was not able to encode as utf-8'
+            except LookupError:
+                print "No codecs registered yet... will wait a sec"
+                label = "No Codecs registered... yet"
 
             self.adder(href, label)
             self.anchor = None

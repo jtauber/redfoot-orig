@@ -7,7 +7,7 @@ from redfootlib.rdf.objects import resource, literal
 from redfootlib.rdf.const import TYPE, LABEL, COMMENT
 from redfootlib.rdf.query.functors import s
 
-from link_sniffer_parser import SnifferHTMLParser
+from sniffer_html_parser import SnifferHTMLParser
 
 SNIFFED = resource("http://redfoot.net/2002/04/17/sniff/ed")
 SNIFFABLE = resource("http://redfoot.net/2002/04/17/sniff/able")
