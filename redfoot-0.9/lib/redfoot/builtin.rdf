@@ -32,6 +32,29 @@
   </rdf:Description>
 
 
+  <rdf:Description rdf:ID="YesNo">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"></rdf:type>
+    <rdfs:label>YesNo</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"></rdfs:subClassOf>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="YES">
+    <rdf:type rdf:resource="#YesNo"></rdf:type>
+    <rdfs:label>YES</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="NO">
+    <rdf:type rdf:resource="#YesNo"></rdf:type>
+    <rdfs:label>NO</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:ID="requiredProperty">
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"></rdf:type>
+    <rdfs:domain rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"></rdfs:domain>
+    <rdfs:label>requiredProperty</rdfs:label>
+    <rdfs:range rdf:resource="#YesNo"></rdfs:range>
+  </rdf:Description>
+
 <!-- bug fixes -->
 
   <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#domain">
