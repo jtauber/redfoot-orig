@@ -161,17 +161,17 @@
 
 <div style="float: left; border: solid 0px black;">
 
-<div class="nav" style="background: white; color: black; float: right; clear: right;width: 8em; border: solid 1px black; padding: 0px 10px; margin-top: 5px; font-size: 8pt;">
-  <dl>
-  <dt>Actions</dt>
+<div class="nav" style="background: white; color: black; float: right; clear: right;width: 10em; border: solid 1px black; padding: 0px 10px; margin-top: 5px; font-size: 8pt;">
+     <red:if test="self.authentication.authenticated()">
+       Welcome, <red:eval>self.authentication.get_username()</red:eval>
+     </red:if>
 
   <form id="login" action="" method="post"
-        style="margin: 0px; padding: 0px 0px 1px 0px;">
+        style="margin: 0px; padding: 0px;">
                       
+  <dl>
+  <dt>Actions</dt>
                     <red:if test="self.authentication.authenticated()">
-
-                      Welcome,
-                      <red:eval>self.authentication.get_username()</red:eval>
             <!--
               TODO: remove editor location assumption;
                     Related: Maybe change the uri's to editor resource
@@ -202,10 +202,8 @@
                       </red:else>
 
                     </red:if>
-
-          </form>
         </dl>            
-
+          </form>
       <red:exec>
         lb = ListBuilder()
         self.app.rednode.visit(o(filter(lb.accept, self.visible)), (uri, LINKS_TO, None))        
