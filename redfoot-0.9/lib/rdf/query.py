@@ -169,6 +169,12 @@ class ObjectSetBuilder:
     def flush(self):
         pass
 
+
+# TODO: is there a better way to refer to the type of a function?
+def _FUNC():
+    pass
+FUNC_TYPE = type(_FUNC)
+
 class Query:
     def __init__(self, query, args):
         self.query = query
@@ -176,7 +182,7 @@ class Query:
         self.post = []
         self.adapter = None
         for arg in args:
-            if hasattr(arg, 'func_name'): # is arg a function
+            if type(arg)==FUNC_TYPE:
                 self.adapter = arg
             else:
                 if self.adapter == None:
@@ -356,5 +362,8 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 8.1  2001/04/29 03:08:02  eikeon
+#~ removed old log messages
+#~
 #~ Revision 8.0  2001/04/27 00:52:13  eikeon
 #~ new release
