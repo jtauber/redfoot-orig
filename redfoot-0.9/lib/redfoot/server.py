@@ -137,7 +137,7 @@ class RedServer(Server):
                 threading.Event().wait(1)
 
     def stop(self):
-        sys.stderr.write("Shutting down Sample1\n")
+        sys.stderr.write("Shutting down Redfoot\n")
         sys.stderr.flush()
         Server.stop(self)
 
@@ -224,6 +224,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.4  2001/04/17 03:55:41  jtauber
+#~ fixed bug where redmodules weren't being added to sys.modules
+#~
 #~ Revision 7.3  2001/04/15 03:42:07  eikeon
 #~ can now import redpages ending in .xml
 #~
