@@ -74,21 +74,16 @@ class Concurrent(object):
         lock = self.__lock                
         lock.acquire()                        
         self.__visit_count = self.__visit_count - 1
-        lock.release()        
-
         if self.__visit_count==0:
-            if self.__pending_removes or self.__pending_adds:
-                # Acquire lock for indices while we update them.
-                lock.acquire()
-                pending_removes = self.__pending_removes
-                while pending_removes:
-                    (s, p, o) = pending_removes.pop()
-                    self.remove(s, p, o)
-                pending_adds = self.__pending_adds                
-                while pending_adds:
-                    (s, p, o) = pending_adds.pop()
-                    self.add(s, p, o)
-                lock.release()
+            pending_removes = self.__pending_removes
+            while pending_removes:
+                (s, p, o) = pending_removes.pop()
+                self.remove(s, p, o)
+            pending_adds = self.__pending_adds                
+            while pending_adds:
+                (s, p, o) = pending_adds.pop()
+                self.add(s, p, o)
+        lock.release()                        
 
 
     
