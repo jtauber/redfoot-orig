@@ -96,7 +96,7 @@ class Sniffer(object):
     def __mark(self, subject):
         self.add(subject, RUN, literal("1"))
 
-    def __mark(self, subject):
+    def __unmark(self, subject):
         self.remove(subject, RUN, None)
         
     def __timer(self):
