@@ -1,7 +1,7 @@
 <!-- -*- mode: python-*- -->
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
-  <red:app name="GridTest">
+  <red:app name="Grid">
 
     <red:sub-module instance="instance_grid" class="InstanceGrid" from="example_modules.instance_grid"/>
 

@@ -1,0 +1,52 @@
+<html>
+<title>Link Sniffer Readme</title>
+<link rel="STYLESHEET" href="../../redfoot-doc/redfoot.css">
+
+<h1>Link Sniffer Readme</h1>
+
+<h2>To Run</h2>
+ (from this directory)
+    <pre class="code_sample">python ../../redfoot.py init_script</pre>
+
+  or (from redfoot-1.5.1)
+  
+    <pre class="code_sample">python redfoot.py redfoot-examples/link_sniffer/init_script</pre>
+
+
+<h2>FILES</h2>
+
+<dl>
+    <dt>init_script</dt>
+
+	<dd>An script that initializes Redfoot so that it is running the
+        link sniffer.</dd>
+
+
+    <dt>__init__.py</dt>
+
+        <dd>This package's __init__, as link_sniffer is a top level python
+	package.</dd>
+
+
+    <dt>node.py</dt>
+
+	<dd>A node that knows how to parse html pages via a parser (see
+	below) which adds triples to the node for new links that it
+	finds.</dd>
+
+
+    <dt>parser.py</dt>
+
+	<dd>A parser which knows how to parse HTML looking for links.</dd>
+
+
+    <dt>http_app.py</dt>
+
+	<dd>An http interface for displaying the link data that is
+	accumulated in the node.</dd>
+
+
+    <dt>links.rdf</dt>
+	<dd>The data file to which the RDF is persisted.</dd>
+</dl>  
+</html>

@@ -1,0 +1,14 @@
+!from redfootlib.redcode import importer
+!importer.install()
+
+!from generic import GenericApp
+
+!generic = GenericApp(rednode)
+!print generic
+!#server :9090
+!from redfootlib.server import RedServer
+!server = RedServer('', 9090)
+!server.add_app(generic)
+!server.run(1)
+
+
