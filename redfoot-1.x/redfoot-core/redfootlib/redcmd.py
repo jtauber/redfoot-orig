@@ -5,6 +5,7 @@ from sys import exit
 from redfootlib.rdf.objects import resource, literal
 from redfootlib.rednode import RedNode
 from redfootlib.server import RedServer
+from redfootlib.version import VERSION
 from new import module
 
 class RedCmd(object, Cmd):
@@ -12,7 +13,7 @@ class RedCmd(object, Cmd):
     Console for manipulating a Rednode
     """
 
-    intro = "Redfoot Command Line"
+    intro = "Redfoot %s Console" % VERSION
     prompt = "RF>"
 
     def __init__(self):
