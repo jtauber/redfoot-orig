@@ -48,7 +48,7 @@ class RedCmd(object, Cmd):
         property = self.process_resource(parts[1])
         if property == -1:
             return None # error
-        if parts[2][1] == '"' and parts[2][-1] == '"':
+        if parts[2][0] == '"' and parts[2][-1] == '"':
             value = literal(parts[2][1:-1])
         else:
             value = self.process_resource(parts[2])
