@@ -2,7 +2,8 @@ import pyexpat
 
 rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
-class rootHandler:
+
+class RootHandler:
     def __init__(self, parser, adder, parent):
         self.parser = parser
         self.adder = adder

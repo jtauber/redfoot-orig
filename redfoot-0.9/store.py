@@ -65,3 +65,4 @@ class TripleStore:
         for item in list:
             self.remove(item[0], item[1], item[2])
 
+
