@@ -39,10 +39,13 @@ class QueryStore:
             return self.label(subject)
 
     def getByType(self, type, predicate, object):
-        l = []
-        for s in self.get(None, TYPE, type):
-            l.extend(self.get(s[0], predicate, object))
-        return l
+        statements = []
+        def add(subject, predicate, object, statements=statements):
+            statements.extend((subject, predicate, object))
+        def subjects(s, p, o, predicate=predicate, object=object, add=add):
+            self.visit(add, s, predicate, object)
+        self.visit(subjects, None, TYPE, type)
+        return statements
 
     def isKnownResource(self, resource):
         # TODO: can be made more efficient if can access hash directly
@@ -197,6 +200,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.7  2000/12/05 23:12:00  eikeon
+#~ factored out common getFirst functionality from label and comment
+#~
 #~ Revision 4.6  2000/12/05 22:09:36  jtauber
 #~ moved constants to new file
 #~
