@@ -1,44 +1,20 @@
 # $Header$
 
-class RDFParser:
-    
-    def __init__(self):
-        self.baseURI = None
-        self.baseURI = None
+def parseRDF(adder, location, baseURI=None):
+    if baseURI==None:
+        baseURI = location
 
-    def setBaseURI(self, baseURI):
-        self.baseURI = baseURI
+    import pyexpat
+    parser = pyexpat.ParserCreate(namespace_separator="")
 
+    if self.baseURI!=None:
+        parser.SetBase(baseURI)
+        RootHandler(parser, adder, None)
 
-    def setURL(self, URL):
-        self.URL = URL
-
-
-    def setAdder(self, adder):
-        self.adder = adder
-
-
-    def parse(self, URL=None, baseURI=None):
-        if URL!=None:
-            self.URL = URL
-        if baseURI!=None:
-            self.baseURI = baseURI
-        if self.baseURI==None:
-            self.baseURI = self.URL
-            
-        import pyexpat
-        parser = pyexpat.ParserCreate(namespace_separator="")
-        
-        if self.baseURI!=None:
-            parser.SetBase(self.baseURI)
-            RootHandler(parser, self.adder, None)
-
-            from urllib import urlopen
-            f = urlopen(self.URL)
-            parser.ParseFile(f)
-            f.close()
-
-
+        from urllib import urlopen
+        f = urlopen(location)
+        parser.ParseFile(f)
+        f.close()
 
 rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
@@ -170,6 +146,9 @@ class PropertyHandler:
         self.parent.resume()
 
 #~ $Log$
+#~ Revision 4.2  2000/12/03 22:07:14  jtauber
+#~ put literal handling code in store.py
+#~
 #~ Revision 4.1  2000/12/03 19:36:45  jtauber
 #~ moved ^ trick to functions
 #~
