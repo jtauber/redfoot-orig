@@ -29,6 +29,7 @@ class RedCmd(object, Cmd):
         self.context.rednode = RedNode()
 
         self.context.server = None
+        self.is_looping = 0
 
     def __exec(self, code):
         locals = globals = self.context.__dict__
@@ -136,7 +137,7 @@ Example:  add <http://redfoot.sourceforge.net/> rdfs:label "Redfoot homepage" wh
 
     def do_visit(self, arg):
         """\
-visit <subject>|ANY <predicate>|ANY (<object>|"object"|ANY)
+visit [callback] <subject>|ANY <predicate>|ANY (<object>|"object"|ANY)
 
 Examples:
   visit ANY ANY ANY  -- will visit all triples
@@ -144,9 +145,19 @@ Examples:
 """
         def print_triple(s, p, o):
             print s, p, o
+
+        parts = arg.split(" ")
+        if len(parts)>3:
+            callback = getattr(self.context, parts[0], None)
+            if not callback:
+                print "callback '%s' not found... using print_triple" % parts[0]
+                callback = print_triple
+            arg = " ".join(parts[1:])
+        else:
+            callback = print_triple
         st = self.get_triple(arg)
         if st:
-            self.context.rednode.visit(print_triple, st)
+            self.context.rednode.visit(callback, st)
         else:
             print "error"
 
@@ -210,6 +221,7 @@ that only one server be run."""
         # Create a RedServer listening on address, port
         self.context.server = RedServer(address, int(port))
         self.context.server.run(background=1)
+        self.is_looping = 1
 
     def do_redcode(self, arg):
         """\
@@ -249,47 +261,71 @@ Adds app defined in package_name.app_name to previously running server. If a ser
             self.context.server.run(background=1)                    
 
         self.context.server.add_app(app)
-
     
     def do_start_node(self, arg):
+        """start_node uid address:port"""
             
         (uid, addr)= arg.split(" ", 1)
-        (address, port) = arg.split(":", 1)
+        (address, port) = addr.split(":", 1)
 
-        from redfootlib.p2p import Node
-        node =  Node("%s-node" % uid, ("", int(port)))
+        from redfootlib.redp2p import CacheNode
+        node =  CacheNode("%s-node" % uid, ("", int(port)))
 
-        import asyncore
-        import threading
-        t = threading.Thread(target = asyncore.loop, args = ())
-        t.setDaemon(1)
-        t.start()
+        if not self.is_looping:
+            import asyncore
+            import threading
+            t = threading.Thread(target = asyncore.loop, args = (1.0,))
+            t.setDaemon(1)
+            t.start()
+
+            import time
+            time.sleep(1)
         
         edge = Edge(self, node, uid)
         node.register(uid, edge)
         self.context.edge = edge
         self.context.node = node
-        
+
     def do_tell(self, arg):
+        """tell uid message"""
         (to, message) = arg.split(" ", 1)
         node = self.context.node
         frm = self.context.edge.uid
         message_id = node.get_message_id()
         node.tell(to, frm, message_id, message)
 
-class Edge(object):
+
+class Edge(Cmd, object):
     def __init__(self, redcmd, node, uid):
+        super(Edge, self).__init__()        
         self.redcmd = redcmd
         self.node = node
         self.uid = uid        
 
+    def do_echo(self, arg):
+        print arg
+
+    def do_add(self, arg):
+        self.redcmd.do_add(arg)
+        
+    def tell(self, arg):
+        (to, message) = arg.split(" ", 1)
+        node = self.node
+        frm = self.uid
+        message_id = node.get_message_id()
+        node.tell(to, frm, message_id, message)
+
     def send_says(self, to, frm, message_id, message):
         print frm, ":", message
+        self.onecmd(message)        
+        #if message and message[0]==".":
+
     def send_connected(self):
         connected_list = self.node.who(avoid=self.uid)
         print "CONNECTED %s\r\n" % " ".join(connected_list)
+
     def send_who(self):
         print "SEND_WHO"
+
     def send_pass_on(self, to, frm, message_id, message):
         print "SEND_PASS_ON"
-
