@@ -7,23 +7,6 @@
   from redfoot.rednode import NEIGHBOUR, CONNECTED, YES, NO
 
   <red:module name="Neighbours">
-    def __init__(self, app):
-       from redfoot.module import ParentModule
-       ParentModule.__init__(self, app)
-       self.status = {}
-
-       self.rednode = self.create_rednode(None, 0)
-       self.app.rednode.neighbours.add_store(self.rednode.local)
-
-    def __getattr__(self, name):
-        if name=="rednode": # default rednode to self.app.rednode
-            self.set_rednode(self.app.rednode)
-            return self.rednode
-        else:
-            raise AttributeError
-
-    def set_rednode(self, rednode):
-        self.rednode = rednode
 
     <red:facet name="neighbours">
       <H2>Neighbours</H2>
@@ -32,7 +15,7 @@
         <H3 CLASS="content_header">Connected</H3>
         <TABLE>
 
-        <red:exec>self.rednode.visit_by_type(self._connected_row, NEIGHBOUR, CONNECTED, YES)</red:exec>        
+        <red:exec>self.app.rednode.visit_by_type(self._connected_row, NEIGHBOUR, CONNECTED, YES)</red:exec>        
         
         </TABLE>
       </DIV>
@@ -50,7 +33,7 @@
 
           <red:exec>
             subjects = lambda (s, p, o): s          
-            self.rednode.visit(remove_duplicates(filter(self._other_row, s(self.rednode.not_exists, CONNECTED, YES)), subjects), (None, TYPE, NEIGHBOUR))
+            self.app.rednode.visit(remove_duplicates(filter(self._other_row, s(self.app.rednode.not_exists, CONNECTED, YES)), subjects), (None, TYPE, NEIGHBOUR))
           </red:exec>
             
           </TABLE>
@@ -109,22 +92,27 @@
             </TR>
     </red:facet>
 
+
+    def __init__(self, app):
+       super(Neighbours, self).__init__(app)
+       self.status = {}
+
     def do_disconnect_neighbour(self, request, response):
        uri = request.get_parameter('uri')
-       self.rednode.disconnect_from(uri)
+       self.app.rednode.disconnect_from(uri)
 
     def do_connect_neighbour(self, request, response):
        uri = request.get_parameter('uri')
        try:
-          self.rednode.connect_to(uri)
+          self.app.rednode.connect_to(uri)
           self.status[uri] = None
        except Exception, msg:
           self.status[uri] = "%s: %s" % (msg.__class__.__name__, msg)
 
     def do_remove_neighbour(self, request, response):
        uri = request.get_parameter('uri')
-       self.rednode.remove(resource(uri), TYPE, NEIGHBOUR)
-       self.rednode.remove(resource(uri), CONNECTED, None)
+       self.app.rednode.remove(resource(uri), TYPE, NEIGHBOUR)
+       self.app.rednode.remove(resource(uri), CONNECTED, None)
        self.status[uri] = None
 
     def do_add_neighbour(self, request, response):
@@ -144,8 +132,8 @@
           self.status[uri] = "URI contained illegal characters. Encoded '%s' as '%s'" % (orig, uri)
 
        
-       self.rednode.add(resource(uri), TYPE, NEIGHBOUR)
-       self.rednode.add(resource(uri), CONNECTED, NO)
+       self.app.rednode.add(resource(uri), TYPE, NEIGHBOUR)
+       self.app.rednode.add(resource(uri), CONNECTED, NO)
 
   </red:module>
 </red:code>

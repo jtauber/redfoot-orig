@@ -57,19 +57,6 @@ class Module(object):
             if not module_instance or module_instance==getattr(self, 'module_instance', None):
                 apply(getattr(self, "do_%s"%processor, lambda request, response:None), (request, response))
 
-    def create_rednode(self, uri=None, autosave=1):
-        mod_class = self.__class__
-        from redfoot.rednode import RedNode
-        if not uri:
-            uri = "http://redfoot.sourceforge.net/2001/09/module/%s/" % mod_class.__module__
-        mod_rednode = RedNode(uri, autosave)
-        rdf = "%s.rdf" % mod_class.__module__.split('.')[-1]
-        rdf = to_URL(mod_class.__module__, rdf)
-
-        mod_rednode.load(rdf, uri, 1)
-
-        return mod_rednode
-
 
 class ParentModule(Module):
     def __init__(self, app):
