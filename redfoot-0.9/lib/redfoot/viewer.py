@@ -383,7 +383,7 @@ class Viewer:
 
     def rdf(self, subject=None, predicate=None, object=None):
         node = self.getNodeInScope()
-        node.output(self.response, subject, predicate, object)
+        node.output(self.response, None, subject, predicate, object)
 
     def triples(self, subject=None, predicate=None, object=None):
         self.header("Triples")
@@ -452,6 +452,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.17  2000/12/20 21:22:08  eikeon
+#~ converted many mixedCase names to _ style names
+#~
 #~ Revision 5.16  2000/12/20 04:04:39  jtauber
 #~ fixed typo in encodeAttributeValue name
 #~
