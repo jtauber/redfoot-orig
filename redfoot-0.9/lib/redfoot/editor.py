@@ -226,6 +226,8 @@ class Editor(Viewer):
                 <TD VALIGN="TOP">type</TD>
                 <TD>Class</TD>
                 <TD>""")
+
+        self.property_num = 0
         if type == None:
             self.writer.write("""
                   <SELECT SIZE="1" NAME="type">
@@ -243,7 +245,6 @@ class Editor(Viewer):
                   %s
             """ % (type, self.link(type)))
 
-            self.property_num = 0
             # TODO: make this a func... getProperties for subject?
             for superType in self.qstore.transitiveSuperTypes(type):
                 for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
@@ -402,6 +403,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 3.0  2000/10/27 01:23:10  eikeon
+# bump-ing version to 3.0
+#
 # Revision 1.2  2000/10/26 19:41:54  eikeon
 # finished suppport for add(type)
 #
