@@ -14,18 +14,17 @@ import string
 class Server:
     ""
 
-    def __init__(self, server_address, serverConnectionFactory):
+    def __init__(self, server_address):
         ""
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
         self.socket.bind(server_address)
         self.socket.listen(5)
-        self.serverConnectionFactory = serverConnectionFactory
 
-    def start(self):
-        sys.stderr.write("Started eikeon's Bare Naked HTTP Server.\n")
-        sys.stderr.flush()
-        
+        from Queue import Queue
+        self.queue = Queue(5)
+
+    def _acceptRequests(self):
         while 1:
             try:
                 clientSocket, client_address = self.socket.accept()
@@ -34,15 +33,40 @@ class Server:
                 break
 
             try:
-                sc = apply(self.serverConnectionFactory, ())
-                import threading
-                t = threading.Thread(target = sc.handleRequest,
-                                     args = (self, clientSocket))
-                t.start()
+                self.queue.put(clientSocket)
             except:
                 #TODO: log
                 break
-                
+    def start(self):
+        sys.stderr.write("Started eikeon's Bare Naked HTTP Server.\n")
+        sys.stderr.flush()
+        import threading
+        t = threading.Thread(target = self._acceptRequests, args = ())
+        t.setDaemon(1)
+        t.start()
+
+
+    def addHandler(self, handler):
+        class Handler:
+            def __init__(self, server, handler):
+                self.server = server
+                self.handler = ServerConnection(handler)
+        
+            def start(self):
+                while 1:
+                    #sys.stderr.write("handling request\n")
+                    #sys.stderr.flush()
+            
+                    clientSocket = self.server.queue.get()
+                    self.handler.handleRequest(self.server, clientSocket)
+    
+        
+        handler = Handler(self, handler)
+        import threading
+        t = threading.Thread(target = handler.start, args = ())
+        t.setDaemon(1)
+        t.start()
+
 
         
 class ServerConnection:
@@ -188,6 +212,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.2  2000/10/25 21:59:47  eikeon
+# catching more exceptions caused by connection reset by peer etc and re throwing them as BadRequestError
+#
 # Revision 1.1  2000/10/25 20:40:31  eikeon
 # changes relating to new directory structure
 #

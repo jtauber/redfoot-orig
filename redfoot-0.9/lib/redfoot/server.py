@@ -30,15 +30,6 @@ class RedfootHandler:
             self.lock.release()            
 
 
-redfootHandler = RedfootHandler()
-
-class RedfootServerConnection(ServerConnection):
-
-    def __init__(self):
-        ServerConnection.__init__(self, None)
-        self.handler = redfootHandler
-        
-
 def runServer(args, interface):
     # set default values
     port = 8000
@@ -74,19 +65,18 @@ def runServer(args, interface):
             
     storeNode = StoreNode()
 
+    # TODO: do this lazily on storeNode.load method?
     storeIO = StoreIO()
-    storeIO.setStore(TripleStore())
+    storeIO.setStore(TripleStore()) # TODO: do this lazily
     storeIO.load(location, uri)
-
     storeNode.setStore(storeIO)
+
+    redfootHandler = RedfootHandler()    
     redfootHandler.viewer = interface(None, storeNode, path)
     
-    server = Server(('', port), lambda : RedfootServerConnection())
-
-    import threading
-    t = threading.Thread(target = server.start, args = ())
-    t.setDaemon(1)
-    t.start()
+    server = Server(('', port))
+    server.addHandler(redfootHandler)
+    server.start()
 
     sys.stderr.write("REDFOOT: serving %s (%s) with %s on port %s...\n" % (location, uri, interface, port))
     sys.stderr.flush()
@@ -94,6 +84,7 @@ def runServer(args, interface):
 
     while 1:
         try:
+            import threading
             threading.Event().wait(100)
         except KeyboardInterrupt:
             sys.exit()
@@ -104,6 +95,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 2.7  2000/10/17 02:29:43  jtauber
 # set up server to be able to use SampleUI; fixed slash problem with path
 #

@@ -15,7 +15,6 @@ class ExampleHandler:
     def __init__(self):
         import threading
         self.lock = threading.Lock()
-        self.viewer = None
 
     def handleRequest(self, request, response):
         args = request.parameters
@@ -45,15 +44,6 @@ class ExampleHandler:
             self.lock.release()            
 
 
-class ExampleServerConnection(ServerConnection):
-
-    handler = ExampleHandler()
-
-    def __init__(self):
-        ServerConnection.__init__(self, None)
-        self.handler = ExampleServerConnection.handler
-        
-
 if __name__ == '__main__':
 
     # set default value
@@ -67,24 +57,25 @@ if __name__ == '__main__':
         if opt=="-p":
             port = string.atoi(value)
             
-    server = Server(('', port), lambda : ExampleServerConnection())
-    
-    import threading
-    t = threading.Thread(target = server.start, args = ())
-    t.setDaemon(1)
-    t.start()
+    server = Server(('', port))
+    server.addHandler(ExampleHandler())
+    server.start()
 
     sys.stderr.write("EXAMPLE: serving requests on port %s...\n" % port)
     sys.stderr.flush()
 
     while 1:
         try:
+            import threading
             threading.Event().wait(100)
         except KeyboardInterrupt:
             sys.exit()
 
 
 # $Log$
+# Revision 1.1  2000/10/25 20:40:31  eikeon
+# changes relating to new directory structure
+#
 # Revision 1.1  2000/10/17 20:53:18  eikeon
 # Example and test case for running server
 #
