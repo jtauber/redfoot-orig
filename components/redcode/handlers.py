@@ -376,7 +376,7 @@ class Facet(ElementHandler):
     def __init__(self, parser, parent, name, atts):
         ElementHandler.__init__(self, parser, parent, name, atts)
         if atts.has_key('args'):
-            args = "self, %s" % join(split(atts['args'], ","),",")
+            args = "self, %s" % atts['args']
         else:
             args = "self"
         args = args + ", _RF_node=_RF_node"
