@@ -144,7 +144,7 @@ class Viewer:
               <DL>
         """)
 
-        self.qstore.resourcesByClassV(self.displayClass, self.displayResource)
+        self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
     
         self.writer.write("""
               </DL>
@@ -171,7 +171,7 @@ class Viewer:
               <DL>
         """)
 
-        self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+        self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
             
         self.writer.write("""
               </DL>
@@ -326,6 +326,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.22  2000/10/09 22:34:31  jtauber
+# RDF is now default view
+#
 # Revision 1.21  2000/10/09 06:37:24  jtauber
 # view and edit now clearly say which they are on screen
 #
