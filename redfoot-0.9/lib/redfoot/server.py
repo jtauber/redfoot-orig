@@ -92,12 +92,15 @@ class RollbackImporter:
                 if sys.modules.has_key(modname):
                     #sys.stderr.write("deleting module %s\n" % modname)
                     del(sys.modules[modname])
-                else:
+                #else:
                     #sys.stderr.write("did not have key for module %s\n" % modname)
                 #sys.stderr.flush()
         __builtin__.__import__ = self.realImport
     
 
 #~ $Log$
+#~ Revision 5.1  2000/12/17 23:41:58  eikeon
+#~ removed of log messages
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
