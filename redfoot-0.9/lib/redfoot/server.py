@@ -72,7 +72,6 @@ class RedServer:
 
     
         server = Server(('', port))
-        server.start()
 
         self.server = server
         self.path = path
@@ -168,6 +167,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.6  2000/12/04 01:26:44  eikeon
+#~ no more getStore() on StoreIO
+#~
 #~ Revision 4.5  2000/11/08 22:46:42  eikeon
 #~ catch and dump exceptions while attempting to load
 #~

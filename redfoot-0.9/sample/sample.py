@@ -94,11 +94,15 @@ if __name__ == '__main__':
     redfoot.runServer(sys.argv[1:])
 
     handler = SampleUI(redfoot.storeNode, redfoot.path)
-    redfoot.server.addHandler(handler)
+    redfoot.server.setHandler(handler)
+    redfoot.server.start()
     
     redfoot.keepRunning()
 
 # $Log$
+# Revision 4.1  2000/11/07 16:55:33  eikeon
+# factored out creation of handler from runServer
+#
 # Revision 4.0  2000/11/06 15:57:34  eikeon
 # VERSION 4.0
 #
