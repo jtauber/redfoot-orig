@@ -3,7 +3,6 @@ import formatter
 
 from urlparse import urlparse, urlunparse, urljoin
 
-
 hostname_cache = {}
 import socket
 def get_hostname(host):
@@ -46,11 +45,14 @@ class SnifferHTMLParser(HTMLParser):
                 href = urlunparse((scheme, netloc, url, params, query, fragment))
 
             try:
-                label = self.anchorText.encode('ascii')
-            except:
-                print "TODO: Am having encoding issues"
-                label = 'TODO: encoding issue'
+                # TODO: remove hardcoded iso-8859-1 assumption
+                label = self.anchorText.decode("iso-8859-1").encode("utf-8")
+            except ValueError:
+                try:
+                    # Try guessing
+                    label = self.anchorText.decode().encode("utf-8")
+                except ValueError:
+                    label = 'TODO: was not able to encode as utf-8'
 
             self.adder(href, label)
-                
             self.anchor = None
