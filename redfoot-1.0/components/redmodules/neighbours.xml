@@ -52,10 +52,10 @@
             <TR>
               <TD><red:eval>neighbour</red:eval></TD>
               <TD>
-                <INPUT value="Connect" type="submit" onclick="other.uri.value='{neighbour}';other.processor.value='connect_neighbour';other.submit()"/>
+                <INPUT value="Connect" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='connect_neighbour';other.submit()"/>
               </TD>
               <TD align="right">
-                <INPUT value="Remove" type="submit" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
+                <INPUT value="Remove" type="button" onclick="other.uri.value='{neighbour}';other.processor.value='remove_neighbour';other.submit()"/>
               </TD>
             </TR>
            </red:for>

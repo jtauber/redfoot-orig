@@ -92,7 +92,7 @@
         <INPUT TYPE='HIDDEN' NAME='del_num' VALUE='0'/>
         <INPUT TYPE='SUBMIT' NAME='processor'  VALUE='update'/>
         <INPUT TYPE='SUBMIT' NAME='processor'  VALUE='delete'/>
-        <INPUT TYPE="SUBMIT" NAME="copy" VALUE="copy"
+        <INPUT TYPE="BUTTON" NAME="copy" VALUE="copy"
                ONCLICK="edit_form.action='edit'; edit_form.submit()"/>
                <!-- The onclick is being used to... --> 
       </FORM>
@@ -183,10 +183,10 @@
 
         <red:if test="exists">
           <TD VALIGN='TOP'>
-            <INPUT TYPE='SUBMIT' NAME='processor' VALUE='delete_property'
+            <INPUT TYPE='BUTTON' NAME='processor' VALUE='delete_property'
                    ONCLICK="edit_form.del_num.value='{self.property_num}'; edit_form.submit()"/>
           </TD>
-            <!-- <TD VALIGN='TOP'><INPUT TYPE='SUBMIT' NAME='processor' VALUE='reify_{self.property_num}'/></TD> -->
+            <!-- <TD VALIGN='TOP'><INPUT TYPE='BUTTON' NAME='processor' VALUE='reify_{self.property_num}'/></TD> -->
         </red:if>  
       </TR>
     </red:facet>
