@@ -33,7 +33,7 @@ class StoreIO:
         serializer = Serializer()
 
         serializer.setStream(stream)
-        serializer.setBase(URI)
+        serializer.setBaseURI(URI)
 
         self.visit(lambda s, p, o, serializer=serializer: serializer.registerProperty(p), subject, predicate, object)
 
@@ -127,6 +127,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 4.17  2000/12/05 22:42:31  eikeon
+#~ fixed reference to _dirty property
+#~
 #~ Revision 4.16  2000/12/05 22:16:32  jtauber
 #~ changed some class/function names and added some doc
 #~
