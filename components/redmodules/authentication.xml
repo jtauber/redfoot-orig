@@ -31,6 +31,12 @@
 
     <red:sub-module instance="session" class="Session"/>
 
+    def __init__(self, app):
+       from redfoot.module import ParentModule
+       ParentModule.__init__(self, app)
+       self.rednode = self.create_rednode(None, 0)
+       self.app.rednode.neighbours.add_store(self.rednode.local)
+
     def handle_request(self, request, response):
         # TODO: This is on behalf of Authentication module
         self.status = ''

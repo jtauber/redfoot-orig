@@ -12,7 +12,7 @@
        ParentModule.__init__(self, app)
        self.status = {}
 
-       self.rednode = self.create_rednode()
+       self.rednode = self.create_rednode(None, 0)
        self.app.rednode.neighbours.add_store(self.rednode.local)
 
     def __getattr__(self, name):

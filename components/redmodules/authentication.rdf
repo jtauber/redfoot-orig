@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<rdf:RDF
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+   xmlns:n1="http://redfoot.sourceforge.net/2001/04/neighbour#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/08/AUTH/username">
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/08/AUTH/person"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>username</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/">
+    <n1:Connected rdf:resource="http://redfoot.sourceforge.net/2000/10/06/builtin#YES"/>
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/08/SESSION/session">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdfs:label>Session</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/08/AUTH/created">
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/08/AUTH/person"/>
+    <rdfs:label>created</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/08/AUTH/person">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdfs:label>Person</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/08/SESSION/created">
+    <rdfs:domain rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label></rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/08/AUTH/lastVisit">
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/08/AUTH/person"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>last visit</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://redfoot.sourceforge.net/2001/08/AUTH/md5_hex_digest">
+    <rdfs:domain rdf:resource="http://redfoot.sourceforge.net/2001/08/AUTH/person"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <rdfs:label>md5 hex digest</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Description>
+</rdf:RDF>
