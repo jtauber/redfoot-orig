@@ -120,7 +120,16 @@ class QueryStore:
                 result.append(s)
         self.visit(klass, None, TYPE, CLASS)
         return result
-        
+
+    def typelessResources(self):
+        """returns those resources that don't have a type"""
+        result = []
+        def callback(s, p, o, result=result, self=self):
+            if self.getFirst(s, TYPE, None)==None:
+                result.append(s)
+        self.visit(callback, None, None, None)
+        return result
+    
     # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
         def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
@@ -218,6 +227,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
+#~
 #~ Revision 4.20  2000/12/08 08:08:52  eikeon
 #~ fixed getByType; fixed references to constants
 #~
