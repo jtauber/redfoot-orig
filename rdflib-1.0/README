@@ -1,1 +1,28 @@
+
 RDFLIB 0.9.0 README  (see index.html for html version of README)
+
+   This Version:
+          http://redfoot.sourceforge.net/rdflib-0.9.0/ 
+
+   Latest Version
+          http://redfoot.sourceforge.net/rdflib/ 
+     _________________________________________________________________
+
+   rdflib  is a python library containing an RDF triple store and RDF/XML
+   parser/serializer.  It  is  being  developed  by  Daniel  Krech and
+   James Tauber.
+
+DOCUMENTATION
+
+   Please  refer to the doc/index.html for information on installing
+   rdflib.
+
+WHERE TO GET THE LATEST RDFLIB
+
+   See http://redfoot.sourceforge.net/
+
+HOW TO CONTACT THE DEVELOPERS
+
+   Daniel Krech - eikeon@eikeon.com
+   James Tauber - jtauber@jtauber.com
+
