@@ -39,8 +39,8 @@ class StoreNode:
     def __init__(self):
         self.stores = MultiStore()
 
-        self.connectTo("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
-        self.connectTo("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+        self.connectTo("rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
+        self.connectTo("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
         self.connectTo("builtin.rdf", "http://redfoot.sourceforge.net/2000/10/06/builtin")
 
     def _preCacheRemoteStores(self, baseDirectory=None):
@@ -156,6 +156,9 @@ class StoreNode:
             processInstance(instanceStatement[0], currentDepth, recurse)
 
 # $Log$
+# Revision 1.7  2000/10/10 04:27:24  eikeon
+# added a resourceByClassV and subClassV methods that query the localStore in the context of the neighbourhood; also added a visit method and a resourcesByClassVV method ;)
+#
 # Revision 1.6  2000/10/08 07:27:40  jtauber
 # fixed bug where visitor wasn't being instantiated
 #
