@@ -214,7 +214,7 @@ class Editor(Viewer):
         self.writer.write("""
         </FORM>
 
-              <P><A HREF="./">Return to List (without adding a Resource)</A></P>
+              <P><A HREF="subclassNR">Return to List (without adding a Resource)</A></P>
             </BODY>
           </HTML>
         """)
@@ -320,7 +320,7 @@ class PeerEditor(Editor):
         self.writer.write("""
               <H2>Connect Neighbour</H2>
         
-              <FORM NAME="form" ACTION="." METHOD="POST">
+              <FORM NAME="form" ACTION="subclassNR" METHOD="POST">
                 <P>URI to Connect: <INPUT TYPE="TEXT" NAME="uri" SIZE="60">
                 <INPUT TYPE="SUBMIT" NAME="processor"  VALUE="connect"/>
                 </P>
