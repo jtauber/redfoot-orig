@@ -360,11 +360,16 @@ class Facet(ElementHandler):
         
         self.locals['_RF_node'] = self.element.children
 
+        content_type = atts.get('content_type', None)
         codestr = """\
-def _RF_facet(%s):
+def _RF_facet(%s):"""  % args
+        if content_type:
+            codestr = codestr + """
+    self.app.response.set_header('Content-Type', '%s')""" % content_type
+        codestr = codestr + """     
     _RF_write = self.app.response.write
     _RF_node.write(globals(), locals())
-""" % args
+"""
 
         self._exec(codestr)
 
