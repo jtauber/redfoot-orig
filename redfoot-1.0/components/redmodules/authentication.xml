@@ -46,7 +46,7 @@
         self.session.sessions.add(resource(self.session.session_uri), IDENTITY, identity)
 
     def authenticated(self):
-        if self.session.sessions.exists(self.session.session_uri, IDENTITY, None):
+        if self.session.sessions.exists(resource(self.session.session_uri), IDENTITY, None):
             return 1	
         else:
             return 0
@@ -116,7 +116,7 @@
     </red:facet>
 
     <red:facet name="create">
-      <red:if test="not self.session.sessions.exists(self.session.session_uri, IDENTITY, None)">
+      <red:if test="not self.session.sessions.exists(resource(self.session.session_uri), IDENTITY, None)">
 
       <DIV class="content_area">
         <SPAN class="content_header">Create User</SPAN>
