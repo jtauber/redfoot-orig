@@ -88,6 +88,7 @@ class Receiver:
                 break
         
     def start(self):
+        # TODO: check to see if already running.
         sys.stderr.write("Started eikeon's Bare Naked HTTP Server.\n")
         sys.stderr.flush()
         self.running = 1
@@ -104,6 +105,9 @@ class Receiver:
     
 
 #~ $Log$
+#~ Revision 7.2  2001/04/14 16:43:43  eikeon
+#~ the args attribute of the response tag now takes space separated args
+#~
 #~ Revision 7.1  2001/04/09 17:25:02  eikeon
 #~ storeNode -> rednode
 #~
