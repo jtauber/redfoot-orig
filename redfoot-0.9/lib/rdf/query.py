@@ -52,7 +52,7 @@ class QueryBase:
         def adaptor(s, callback=callback, self=self):
             if self.getFirst(s, TYPE, None)==None:
                 callback(s)
-        self.visitSubjects(adaptor)
+        self.visit_subjects(adaptor)
 
     # TODO: need a visitor version
     def getByType(self, type, predicate, object):
@@ -336,6 +336,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 5.11  2000/12/14 05:14:39  eikeon
+#~ removed unused gets
+#~
 #~ Revision 5.10  2000/12/14 00:22:37  eikeon
 #~ fixed up *Transitive* methods
 #~

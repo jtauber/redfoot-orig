@@ -109,7 +109,7 @@ class TripleStore:
                             return
 
     # TODO: this method might get refactored back into visit
-    def visitSubjects(self, callback):
+    def visit_subjects(self, callback):
         """
         Experimental -- may change, depend on it at your own risk
 
@@ -121,6 +121,9 @@ class TripleStore:
                     
 
 #~ $Log$
+#~ Revision 5.2  2000/12/17 20:41:22  eikeon
+#~ removed log message prior to currently worked on release
+#~
 #~ Revision 5.1  2000/12/11 06:30:14  eikeon
 #~ made some reasonably straight forward optimizations
 #~
