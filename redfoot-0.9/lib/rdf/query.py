@@ -6,15 +6,6 @@ from rdf.const import *
 
 class QueryStore:
 
-    def label(self, subject, default=None):
-        statement = self.getFirst(subject, LABEL, None)
-        if statement!=None:
-            return un_literal(statement[2])
-        elif default!=None:
-            return default
-        else:
-            return subject
-
      # TODO: method to return all labels
      
     def comment(self, subject, default=None):
@@ -226,20 +217,18 @@ class QueryStore:
         self.query(listBuilder, subject, predicate, object)
 	return listBuilder.list
 
-#     def getFirst(self, subject, predicate, object):
-#         statements = []
-#         def callback(subject, predicate, object, statements=statements):
-#             statements.append((subject, predicate, object))
-#             return 1 # tell visitor to stop
-#         self.visit(callback, subject, predicate, object)
-#         if len(statements)>0:
-#             return statements[0]
-#         else:
-#             return None
+    def label(self, subject, default=None):
+        statement = Statement()
+        self.query(First(statement), subject, LABEL, None)
+        if statement.object():
+            return un_literal(statement.object())
+        elif default!=None:
+            return default
+        else:
+            return subject
 
     def getFirst(self, subject, predicate, object):
         listBuilder = ListBuilder()
-        first = First(listBuilder)
         self.query(First(listBuilder), subject, predicate, object)
         list = listBuilder.list
         if len(list)>0:
@@ -258,6 +247,22 @@ class First:
     def flush(self):
         pass
     
+class Statement:
+    def __init__(self):
+        self.statement = None
+
+    def visit(self, s, p, o):
+        self.statement = (s, p, o)
+
+    def flush(self):
+        pass
+
+    def object(self):
+        if self.statement:
+            return self.statement[2]
+        else:
+            return None
+        
 class ListBuilder:
     def __init__(self):
         self.list = []
@@ -270,6 +275,9 @@ class ListBuilder:
 
 
 #~ $Log$
+#~ Revision 5.6  2000/12/10 06:54:39  eikeon
+#~ refactored getFirst to use new query method
+#~
 #~ Revision 5.5  2000/12/10 06:39:52  eikeon
 #~ refactored get to use new query method
 #~
