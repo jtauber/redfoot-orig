@@ -172,17 +172,29 @@ class Viewer:
     def mainPage(self):
         self.subclass(RESOURCE, 0)
 
-    def classList(self):
+    def header(self, title):
         self.response.write("""
-        <HTML>
-          <HEAD>
-            <TITLE>ReDFoot</TITLE>
-            <LINK REL="STYLESHEET" HREF="css"/>
-          </HEAD>
-          <BODY>
-            <H1>ReDFoot</H1>
-        """)
+            <HTML>
+              <HEAD>
+                <TITLE>ReDFoot: %s</TITLE>
+                <LINK REL="STYLESHEET" HREF="css"/>
+              </HEAD>
+              <BODY>
+                <H1>RedFoot</H1>
+        """ % title)
         self.menuBar()
+        self.response.write("""
+                <H2>%s</H2>
+        """ % title)
+
+    def footer(self):
+        self.response.write("""
+              </BODY>
+            </HTML>
+        """)
+
+    def classList(self):
+        self.header("Resources by Class")
         self.response.write("""
             <DIV CLASS="box">
               <DL>
@@ -208,20 +220,11 @@ class Viewer:
         self.response.write("""
               </DL>
             </DIV>
-          </BODY>
-        </HTML>
         """)
+        self.footer()
 
     def subclass(self, root, recurse=1):
-        self.response.write("""
-        <HTML>
-          <HEAD>
-            <TITLE>ReDFoot Subclass View</TITLE>
-            <LINK REL="STYLESHEET" HREF="css"/>
-          </HEAD>
-          <BODY>
-            <H1>ReDFoot</H1>""")
-        self.menuBar()
+        self.header("Subclass View")
         self.response.write("""
             <DIV CLASS="box">
 	""")
@@ -238,9 +241,8 @@ class Viewer:
         self.response.write("""
               </DL>
             </DIV>
-          </BODY>
-        </HTML>
         """)
+        self.footer()
 
     def resourceHeader(self, subject):
         self.response.write("""
@@ -249,18 +251,10 @@ class Viewer:
         """ % (self.storeNode.label(subject), subject))
 
     def view(self, subject):
-        self.response.write("""
-        <HTML>
-          <HEAD>
-            <TITLE>ReDFoot</TITLE>
-            <LINK REL="STYLESHEET" HREF="css"/>
-          </HEAD>
-          <BODY>
-            <H1>ReDFoot</H1>""")
+        self.header("View")
         self.menuBar()
         self.resourceHeader(subject)
         self.response.write("""
-            <H3>View</H3>
             <TABLE>
         """)
 
@@ -272,9 +266,8 @@ class Viewer:
         
         self.response.write("""
             </TABLE>
-          </BODY>
-        </HTML>
         """)
+        self.footer()
 
     def displayClass(self, klass):
         self.response.write("""
@@ -379,17 +372,8 @@ class Viewer:
         self.storeNode.local.output(self.response, subject, predicate, object)
 
     def triples(self, subject=None, predicate=None, object=None):
+        self.header("Triples")
         self.response.write("""
-        <HTML>
-          <HEAD>
-            <TITLE>Redfoot Triples</TITLE>
-            <LINK REL="STYLESHEET" HREF="css"/>
-          </HEAD>
-          <BODY>
-            <H1>ReDFoot</H1>""")
-        self.menuBar()
-        self.response.write("""
-            <H2>Triples</H2>
             <TABLE>
         """)
 
@@ -404,25 +388,11 @@ class Viewer:
 
         self.response.write("""
             </TABLE>
-          </BODY>
-        </HTML>
         """)
-        
+        self.footer()
 
     def test(self, search):
-        self.response.write("""
-        <HTML>
-          <HEAD>
-            <TITLE>Test</TITLE>
-            <LINK REL="STYLESHEET" HREF="css"/>
-          </HEAD>
-          <BODY>
-            <H1>ReDFoot</H1>""")
-        self.menuBar()
-        self.response.write("""
-            <H2>Test</H2>
-         """)
-        subjects = self.storeNode.getSubjects()
+        self.header("Test")
         self.response.write("""
             <INPUT TYPE="TEXT" SIZE="60" NAME="a" onChange="document.all.b.value=document.all.a.value">
             <SELECT NAME="b" onChange="document.all.a.value=document.all.b.value">
@@ -452,12 +422,12 @@ class Viewer:
                          <LI><A HREF="javascript:document.all.a.value='%s'">%s</A></LI>
                        """ % (s, self.storeNode.label(s)))
         self.response.write("""</UL>""")
-        self.response.write("""
-           </BODY>
-        </HTML>
-        """)
+        self.footer()
 
 #~ $Log$
+#~ Revision 5.6  2000/12/09 22:20:25  jtauber
+#~ fullsubclass method is now subclass :-)
+#~
 #~ Revision 5.5  2000/12/09 22:16:00  jtauber
 #~ RDF -> rdf; Triples -> triple
 #~
