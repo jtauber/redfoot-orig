@@ -3,7 +3,7 @@
 
   <red:app name="GridTest">
 
-    <red:sub-module instance="instance_grid" class="InstanceGrid" from="redmodules.instance_grid"/>
+    <red:sub-module instance="instance_grid" class="InstanceGrid" from="example_modules.instance_grid"/>
 
     <red:facet name="/">
       <HTML>
