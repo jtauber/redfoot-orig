@@ -2,9 +2,12 @@ CHANGELOG
 
 Changes between 0.9.5 and 0.9.6
 
- - Can now run a RedServer by 'running' redfoot.server -- as RedServer now created a RedNode and runs a redpage give a redpage name
+ - rewrote all the sample apps
 
- - can now import redpages ending in .xml
+ - redpages can be loaded just by using "import"
+
+ - can now run a RedServer by 'running' redfoot.server
+	(RedServer now creates a RedNode and runs a redpage given a redpage name
 
  - now opening redpages as files instead of urls
 
@@ -13,10 +16,6 @@ Changes between 0.9.5 and 0.9.6
 
  - created a lib/redfoot/modules directory and moved editor/viewer into it
  - responses can now have names composed of any strings
-
- - change <string>'s to the actual string... TODO: may want to change this back?
-
- - removed unused code and added LICENSE to top of source files
 
  - added get_session_uri method
    - removed management of session objects
@@ -30,11 +29,10 @@ Changes between 0.9.5 and 0.9.6
  - added a message to stderr when auto saving
  - added a try catch around auto save so that thread does not die when there is an error saving (like disk being full:)
 
- - fixed bug where redmodules weren't being added to sys.modules
  - fixed bug where start was being called twice
  - changed shutdown message
 
- - RDF->HOME until we fix it to always return RDF
+ - RDF->HOME in viewer until we fix it to always return RDF
  - added remove_store method
 
 
