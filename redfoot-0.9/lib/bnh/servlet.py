@@ -62,6 +62,7 @@ class ServerConnection:
                 self.handler.handleRequest(self.request, self.response)
                 self.response.close()
                 clientSocket.shutdown(1)
+                clientSocket.close()
             finally:
                 clientSocket.close()
         except socket.error:
