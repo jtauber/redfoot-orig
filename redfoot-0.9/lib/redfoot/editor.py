@@ -282,7 +282,7 @@ class Editor(Viewer):
                 if len(self.storeNode.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
                     self.editProperty(property, "", 0)
 
-            self.storeNode.getPossibleProperties(type, possibleProperty)
+            self.storeNode.visitPossibleProperties(possibleProperty, type )
 
         self.response.write("""
                 </TD>
@@ -438,6 +438,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 5.4  2000/12/14 00:13:36  eikeon
+# fixed typo
+#
 # Revision 5.3  2000/12/13 02:54:11  jtauber
 # moved functions in query around and renamed a lot
 #
