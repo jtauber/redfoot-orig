@@ -15,7 +15,7 @@ def parse(adder, file, baseURI):
     parser.SetBase(baseURI)
     parser.returns_unicode = 0
     
-    LookForRDFHandler(parser, adder, None)
+    LookForRDFHandler(parser, None, adder)
 
     parser.ParseFile(file)
         
@@ -48,7 +48,7 @@ ALT_ELEMENT = RDFNS + ns_separator + "Alt"
 LI_ELEMENT = RDFNS + ns_separator + "li"
 
 class HandlerBase:
-    def __init__(self, parser, adder, parent):
+    def __init__(self, parser, parent, adder):
         self.parser = parser
         self.adder = adder
         self.parent = parent
@@ -70,36 +70,36 @@ class HandlerBase:
 
     
 class LookForRDFHandler(HandlerBase):
-    def __init__(self, parser, adder, parent):
-        HandlerBase.__init__(self, parser, adder, parent)
+    def __init__(self, parser, parent, adder):
+        HandlerBase.__init__(self, parser, parent, adder)
 
     def child(self, name, atts):
         if name == RDF_ELEMENT:
-            RDFHandler(self.parser, self.adder, self)
+            RDFHandler(self.parser, self, self.adder)
         else:
-            LookForRDFHandler(self.parser, self.adder, self)
+            LookForRDFHandler(self.parser, self, self.adder)
 
 
 class RDFHandler(HandlerBase):
-    def __init__(self, parser, adder, parent):
-        HandlerBase.__init__(self, parser, adder, parent)
+    def __init__(self, parser, parent, adder):
+        HandlerBase.__init__(self, parser, parent, adder)
 
     def child(self, name, atts):
         if name == DESCRIPTION_ELEMENT:
-            DescriptionHandler(self.parser, self.adder, self, atts)
+            DescriptionHandler(self.parser, self, self.adder, atts)
         elif name == BAG_ELEMENT:
-            BagHandler(self.parser, self.adder, self, name, atts)
+            BagHandler(self.parser, self, self.adder, name, atts)
         elif name == ALT_ELEMENT:
-            AltHandler(self.parser, self.adder, self, name, atts)
+            AltHandler(self.parser, self, self.adder, name, atts)
         elif name == SEQ_ELEMENT:
-            SeqHandler(self.parser, self.adder, self, name, atts)
+            SeqHandler(self.parser, self, self.adder, name, atts)
         else:
-            TypedNodeHandler(self.parser, self.adder, self, name, atts)
+            TypedNodeHandler(self.parser, self, self.adder, name, atts)
 
 
 class DescriptionHandler(HandlerBase):
-    def __init__(self, parser, adder, parent, atts):
-        HandlerBase.__init__(self, parser, adder, parent)
+    def __init__(self, parser, parent, adder, atts):
+        HandlerBase.__init__(self, parser, parent, adder)
         self.subject = None
         self.anonymous = 0
         if atts.has_key("about"):
@@ -127,12 +127,12 @@ class DescriptionHandler(HandlerBase):
                            anonymous_subject=self.anonymous, literal_object=1)
 
     def child(self, name, atts):
-        PropertyHandler(self.parser, self.adder, self, name, atts)
+        PropertyHandler(self.parser, self, self.adder, name, atts)
                         
 
 class TypedNodeHandler(DescriptionHandler):
-    def __init__(self, parser, adder, parent, name, atts):
-        DescriptionHandler.__init__(self, parser, adder, parent, atts)
+    def __init__(self, parser, parent, adder, name, atts):
+        DescriptionHandler.__init__(self, parser, parent, adder, atts)
         type = join(split(name, "^"), "")
         self.adder(self.subject, str(TYPE), type, anonymous_subject=self.anonymous)
 
@@ -145,17 +145,17 @@ def all_whitespace(data):
 
 
 class ContainerHandler(TypedNodeHandler):
-    def __init__(self, parser, adder, parent, name, atts):
-        TypedNodeHandler.__init__(self, parser, adder, parent, name, atts)
+    def __init__(self, parser, parent, adder, name, atts):
+        TypedNodeHandler.__init__(self, parser, parent, adder, name, atts)
         parent.object = self.subject
         parent.anonymous_object = self.anonymous
         self.li_count = 0
 
     def child(self, name, atts):
         if name == LI_ELEMENT:
-            LIHandler(self.parser, self.adder, self, atts)
+            LIHandler(self.parser, self, self.adder, atts)
         else:
-            PropertyHandler(self.parser, self.adder, self, name, atts)
+            PropertyHandler(self.parser, self, self.adder, name, atts)
 
     def add_li(self, value, literal):
         self.li_count = self.li_count + 1
@@ -176,8 +176,8 @@ class SeqHandler(ContainerHandler):
 
 
 class LIHandler(HandlerBase):
-    def __init__(self, parser, adder, parent, atts):
-        HandlerBase.__init__(self, parser, adder, parent)
+    def __init__(self, parser, parent, adder, atts):
+        HandlerBase.__init__(self, parser, parent, adder)
         self.literal = 0
         if atts.has_key("resource"):
             self.value = atts["resource"]
@@ -203,8 +203,8 @@ class LIHandler(HandlerBase):
 
 
 class PropertyHandler(HandlerBase):
-    def __init__(self, parser, adder, parent, name, atts):
-        HandlerBase.__init__(self, parser, adder, parent)
+    def __init__(self, parser, parent, adder, name, atts):
+        HandlerBase.__init__(self, parser, parent, adder)
         self.predicate = join(split(name, "^"), "")
         self.literal = 0
         self.anonymous_object = 0
@@ -237,11 +237,11 @@ class PropertyHandler(HandlerBase):
     def child(self, name, atts):
         self.literal = 0
         if name==SEQ_ELEMENT:
-            SeqHandler(self.parser, self.adder, self, name, atts)
+            SeqHandler(self.parser, self, self.adder, name, atts)
         elif name==BAG_ELEMENT:
-            BagHandler(self.parser, self.adder, self, name, atts)
+            BagHandler(self.parser, self, self.adder, name, atts)
         elif name==ALT_ELEMENT:
-            AltHandler(self.parser, self.adder, self, name, atts)
+            AltHandler(self.parser, self, self.adder, name, atts)
         else:
             if atts.has_key("about"):
                 self.object = atts["about"]
@@ -254,9 +254,9 @@ class PropertyHandler(HandlerBase):
             else:
                 raise "Descriptions must have either an about or an ID"
             if name==DESCRIPTION_ELEMENT:
-                DescriptionHandler(self.parser, self.adder, self, atts)
+                DescriptionHandler(self.parser, self, self.adder, atts)
             else:
-                TypedNodeHandler(self.parser, self.adder, self, name, atts)
+                TypedNodeHandler(self.parser, self, self.adder, name, atts)
 
     def char(self, data):
         if not all_whitespace(data):
