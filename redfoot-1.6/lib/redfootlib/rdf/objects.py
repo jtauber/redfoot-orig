@@ -14,6 +14,13 @@ def literal(value):
     else:
         return Literal(value)
 
+def n3(value):
+    if value[0] == '"' and value[-1] == '"':
+        return literal(value[1:-1])
+    else:
+        return resource(value[1:-1])
+    
+
 class AnonymousResource(str):
     def is_literal(self):
         return None
@@ -28,7 +35,14 @@ class Resource(str):
     def isAnonymous(self):
         return None
 
+    def n3(self):
+        return "<%s>" % str(self)
+
 
 class Literal(str):
     def is_literal(self):
         return 1
+
+    def n3(self):
+        return '"%s"' % str(self)
+    
