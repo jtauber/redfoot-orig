@@ -22,9 +22,25 @@
 
     <red:facet name="task_list">    
       <TABLE>
-        <red:exec>
-          sort(self.alpha_by_label, self.app.rednode.visit)(self.task_row, (None, TYPE, TASK))
-        </red:exec>
+       <red:visit visit="sort(self.alpha_by_label, self.app.rednode.visit)" 
+                  args="(None, TYPE, TASK)">
+         <red:callback args="subject, property, object">
+        <TR>
+          <TD>
+            <A href="edit?subject={subject}">
+              <red:eval>self.app.rednode.label(subject)</red:eval>
+            </A>
+          </TD>
+          <TD>
+            <FORM METHOD="POST" ACTION="">
+              <INPUT TYPE="SUBMIT" VALUE="done"/>
+              <INPUT TYPE="HIDDEN" NAME="task_uri" VALUE="{subject}"/>
+              <INPUT TYPE="HIDDEN" NAME="processor" VALUE="task_done"/>
+            </FORM>
+          </TD>
+        </TR>
+         </red:callback>
+       </red:visit>
         <TR>
           <TD>
             <FORM NAME="task" METHOD="POST" ACTION="">
@@ -34,24 +50,6 @@
           </TD>
         </TR>
       </TABLE>
-    </red:facet>
-
-    # TODO: rename to component
-    <red:facet name="task_row" args="subject, property, object">
-      <TR>
-        <TD>
-          <A href="edit?subject={subject}">
-            <red:eval>self.app.rednode.label(subject)</red:eval>
-          </A>
-        </TD>
-        <TD>
-          <FORM METHOD="POST" ACTION="">
-            <INPUT TYPE="SUBMIT" VALUE="done"/>
-            <INPUT TYPE="HIDDEN" NAME="task_uri" VALUE="{subject}"/>
-            <INPUT TYPE="HIDDEN" NAME="processor" VALUE="task_done"/>
-          </FORM>
-        </TD>
-      </TR>
     </red:facet>
 
     <red:facet name="edit">

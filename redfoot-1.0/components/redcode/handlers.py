@@ -20,10 +20,11 @@ SUB_MODULE = NS+u"sub-module"
 
 EVAL = NS+u"eval"
 EXEC = NS+u"exec"
+VISIT = NS+u"visit"
+CALLBACK = NS+u"callback"
 APPLY = NS+u"apply"
 IF = NS+u"if"
 FOR = NS+u"for"
-EXEC = NS+u"exec"
 ELSE = NS+u"else"
 ELSEIF = NS+u"elif"
 
@@ -90,6 +91,8 @@ class ElementHandler(HandlerBase):
             h = Eval(self.parser, self)
         elif name==EXEC:
             h = Exec(self.parser, self)
+        elif name==VISIT:
+            h = Visit(self.parser, self, name, atts)
         elif name==APPLY:
             h = Apply(self.parser, self, atts.get('search', None)) 
         elif name==IF:
@@ -176,7 +179,8 @@ class PagesHandler(HandlerBase):
             
     def child(self, name, atts):
         if name==FACET:
-            nh = Page(self.parser, self, atts['name'], atts)
+            nh = Facet(self.parser, self, atts['name'], atts)
+            self.locals[atts['name'].encode('ascii')] = self.locals['__tmp__']
         elif name==SUB_MODULE:
             SubModule(self.parser, self, atts)
         else:
@@ -279,11 +283,9 @@ class ForNodeList(Node):
             self.children.write(globals, locals)
 
 
-class Page(ElementHandler):
+class Facet(ElementHandler):
     def __init__(self, parser, parent, name, atts):
         ElementHandler.__init__(self, parser, parent, name, atts)
-        self.name = name
-
         if atts.has_key('args'):
             args = "self, %s" % join(split(atts['args'], ","),",")
         else:
@@ -299,7 +301,50 @@ def __tmp__(%s):
 """ % args
 
         exec codestr in self.globals, self.locals
-        self.locals[self.name.encode('ascii')] = self.locals['__tmp__']
+
+
+class VisitNode(Node):
+    def write(self, globals, locals):
+        from new import instancemethod
+        locals['__callback__'] = instancemethod(self.callback, locals['self'], Node)
+        __builtin__.eval(self.code, globals, locals)
+
+class Visit(ElementHandler):
+    def __init__(self, parser, parent, name, atts):
+        ElementHandler.__init__(self, parser, parent, name, atts)
+        self.element = VisitNode()        
+        self.first_child = 1
+        if atts.has_key('match'):
+            args = atts['match']
+        elif atts.has_key('args'):
+            args = atts['args']
+        else:
+            args = "(None, None, None)"
+            
+        codestr = "%s(__callback__, %s)" % (atts.get('visit', 'self.app.rednode.visit'), args)
+        code = __builtin__.compile(codestr, codestr, "eval")
+        self.element.code = code
+
+    def child(self, name, atts):
+        if self.first_child:
+            self.first_child = 0
+            
+            if name==CALLBACK:
+                nh = Facet(self.parser, self, "TODO: remove", atts)
+                self.element.callback = self.locals['__tmp__']
+            else:
+                self.locals['__node__'] = self.element.children                
+                codestr = """\
+def __tmp__(self, subject, property, object, __node__=__node__):
+    __write__ = self.app.response.write
+    __node__.write(globals(), locals())
+"""
+                exec codestr in self.globals, self.locals
+                self.element.callback = self.locals['__tmp__']
+                ElementHandler.child(self, name, atts)         
+        else:
+            ElementHandler.child(self, name, atts)
+
 
 
 class Eval(HandlerBase):
