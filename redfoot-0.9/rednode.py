@@ -49,6 +49,10 @@ class StoreNode:
         storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
         self.connectTo(storeIO.getStore())
 
+        storeIO = StoreIO()
+        storeIO.setStore(TripleStore())
+        storeIO.load("builtin.rdf", "http://redfoot.sourceforge.net/2000/10/06/builtin")
+        self.connectTo(storeIO.getStore())
 
     def _preCacheRemoteStores(self, baseDirectory=None):
         rstores = self.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://xteam.hq.bowstreet.com/redfoot-builtin#RemoteStore")
@@ -105,6 +109,9 @@ class StoreNode:
         self.store.add(subject, property, value)
 
 # $Log$
+# Revision 1.3  2000/10/05 00:58:50  jtauber
+# added remove and add methods which just call the corresponding methods on the store
+#
 # Revision 1.2  2000/10/03 22:12:57  eikeon
 # Fixed up ^
 #
