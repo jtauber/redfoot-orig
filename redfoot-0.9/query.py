@@ -45,7 +45,7 @@ class QueryStore:
         return l
 
     def isOfType(self, resource, type):
-        for s in model.store.get(resource, QueryStore.TYPE, None):
+        for s in self.store.get(resource, QueryStore.TYPE, None):
             if s[2] == type:
                 return 1
         return 0
