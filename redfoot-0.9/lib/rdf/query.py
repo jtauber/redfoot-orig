@@ -5,6 +5,10 @@ from rdf.const import *
 
 class QueryStore:
 
+    def query(self, visitor, subject=None, predicate=None, object=None):
+        self.visit(visitor.visit, subject, predicate, object)
+        visitor.flush()
+        
     def get(self, subject=None, predicate=None, object=None):
         list = []
         
@@ -236,8 +240,12 @@ class QueryStore:
             return statement[2]
         else:
             return None
-            
+
+
 #~ $Log$
+#~ Revision 5.3  2000/12/09 23:48:30  eikeon
+#~ Added visitSubjects subject for conv. and efficiency
+#~
 #~ Revision 5.2  2000/12/09 21:32:16  jtauber
 #~ all subjects can take the properties that RESOURCE can
 #~
