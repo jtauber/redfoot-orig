@@ -133,7 +133,7 @@ def runServer():
 
     port = 8000
     location = "tests/example.rdf"
-    uri = "http://redfoot.sourceforge.net/2000/09/24"
+    uri = None
     interface = "PeerEditor"
     
     import sys
@@ -149,6 +149,11 @@ def runServer():
             port = string.atoi(value)
         elif opt=="-i":
             interface = value
+
+    if uri==None:
+        import socket
+        hostname = socket.gethostbyaddr(socket.gethostbyname(socket.gethostname()))[0]
+        uri = "http://%s:%s/" % (hostname,port)
 
     server_address = ('', port)
 
@@ -174,6 +179,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.19  2000/10/09 06:26:32  jtauber
+# location, uri, port and web interface class are now specified using command-line options
+#
 # Revision 1.18  2000/10/09 06:08:30  jtauber
 # the UI to use is now specified in a variable (preempting the ability to set it via a command-line option
 #
