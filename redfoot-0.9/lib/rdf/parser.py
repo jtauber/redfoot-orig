@@ -55,15 +55,33 @@ class HandlerBase:
 class RootHandler(HandlerBase):
     def __init__(self, parser, adder, parent):
         HandlerBase.__init__(self, parser, adder, parent)
+        self.found_root = 0
+        self.depth = 0
 
     def child(self, name, atts):
+        self.depth = self.depth + 1
         if name==RDF:
-            RDFHandler(self.parser, self.adder, self)
+            if self.found_root==0:
+                self.found_root = 1
+                RDFHandler(self.parser, self.adder, self)
+            else:
+                import sys
+                sys.stderr.write("warning: found more than one %s element" % RDF)
+                # TODO: is this a valid situation?
+                RDFHandler(self.parser, self.adder, self)
         else:
             pass
 
+    def end(self, name):
+        self.depth = self.depth - 1
+        if self.depth==0 and self.found_root==0:
+            import sys
+            sys.stderr.write("warning: Did not find a '%s' element\n" % RDF)
+            sys.stderr.flush()
+
     def set_handlers(self):
         self.parser.StartElementHandler = self.child
+        self.parser.EndElementHandler = self.end
 
 
 class RDFHandler(HandlerBase):
@@ -164,6 +182,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.4  2000/12/22 22:25:35  eikeon
+#~ moved definition and calculation of RDF (xml vocab) constants out of 'inner parsing loop'
+#~
 #~ Revision 5.3  2000/12/20 20:37:17  eikeon
 #~ changed mixed case to _ style... all except for query
 #~

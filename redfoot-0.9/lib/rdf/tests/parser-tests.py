@@ -2,7 +2,7 @@ import pyexpat
 
 # TODO shouldn't be hardcoded -jkt
 #execfile(r"D:\home\projects\cvs-work\redfoot\parser\rdfparser.py")
-from redfoot.parser import *
+from rdf.parser import *
 
 def add(subject, predicate, object):
     print "s : %s\np : %s\no : %s\n" % (subject, predicate, object)
@@ -183,4 +183,43 @@ def test_11():
   </rdf:Description>
 </rdf:RDF>""")
 
-test_1()
+def test_no_root():
+    print "\nTEST NO ROOT"
+    test("""<?xml version="1.0"?>
+    <tmp>
+    <rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#WRONG-NAMESPACE"
+      xmlns:s="http://description.org/schema/">
+      <rdf:Description about="http://www.w3.org/Home/Lassila">
+        <s:Creator>Ora Lassila</s:Creator>
+      </rdf:Description>
+    </rdf:RDF>
+    <b/>
+    </tmp>
+    """)
+
+def test_two_roots():
+    print "\nTEST TWO ROOTS"
+    test("""<?xml version="1.0"?>
+    <two>
+    <rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:s="http://description.org/schema/">
+      <rdf:Description about="http://www.w3.org/Home/Lassila">
+        <s:Creator>Ora Lassila</s:Creator>
+      </rdf:Description>
+    </rdf:RDF>
+    <rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:s="http://description.org/schema/">
+      <rdf:Description about="http://www.w3.org/Home/Lassila">
+        <s:Creator>Ora Lassila</s:Creator>
+      </rdf:Description>
+    </rdf:RDF>
+    </two>
+""")
+
+#test_1()
+test_no_root()
+#test_two_roots()
+
