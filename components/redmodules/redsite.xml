@@ -156,7 +156,7 @@
 </div>
 
 
-<h1><red:eval>self.app.rednode.label(uri, '-')</red:eval></h1>
+<h1><red:eval>self.app.rednode.label(uri, '')</red:eval></h1>
 
 
 <div style="float: left; border: solid 0px black;">
@@ -168,7 +168,8 @@
 
   <form id="login" action="" method="post"
         style="margin: 0px; padding: 0px;">
-                      
+    <input name="view" type="hidden" value=""/>
+    
   <dl>
   <dt>Actions</dt>
                     <red:if test="self.authentication.authenticated()">
@@ -193,7 +194,6 @@
 
 
                       <red:else>             
-                        <input name="view" type="hidden" value="login"/>
                         <dd><a href="javascript: form=document.getElementById('login'); form.view.value='login';form.submit()">
                         Login</a> </dd>
                         <dd><a href="javascript: form=document.getElementById('login'); form.view.value='create';form.submit()">
