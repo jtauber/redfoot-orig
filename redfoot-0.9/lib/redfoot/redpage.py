@@ -168,7 +168,8 @@ class RF_EVAL_Handler(HandlerBase):
 
     def end(self, name):
         HandlerBase.end(self, name)
-        code = __builtin__.compile(self.codestr, "<string>", self.kind());
+        #code = __builtin__.compile(self.codestr, "<string>", self.kind())
+        code = __builtin__.compile(self.codestr, self.codestr, self.kind())
         self.element.code = code
 
     def kind(self):
@@ -190,7 +191,8 @@ def parse_attribute(str):
             nl = NodeList()
             nl.add(TextNode(encode_attribute(str[0:open])))
 
-            code = __builtin__.compile(str[open+1:close], "<string>", "eval");
+            #code = __builtin__.compile(str[open+1:close], "<string>", "eval")
+            code = __builtin__.compile(str[open+1:close], str[open+1:close], "eval")
             
             nl.add(URIEncodedEvalNode(code))
             nl.add(parse_attribute(str[close+1:]))
@@ -254,7 +256,8 @@ class RF_For_Handler(RF_Element):
         self.globals = self.parent.globals
         item = atts['item']
         list = atts['list']
-        code = __builtin__.compile(list, "<string>", "eval");        
+        #code = __builtin__.compile(list, "<string>", "eval")
+        code = __builtin__.compile(list, list, "eval")                
         self.element = ForNodeList(item, code)
         
 
@@ -373,6 +376,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.2  2001/04/09 17:25:02  eikeon
+#~ storeNode -> rednode
+#~
 #~ Revision 7.1  2001/04/05 05:11:54  eikeon
 #~ responses can now have names composed of any strings
 #~
