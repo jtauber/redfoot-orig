@@ -66,7 +66,7 @@ class Editor(Viewer):
         self.response.write("""
             <H3>%s</H3>
             <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
-        """ % (self.encodeCharacterData(self.storeNode.label(subject)), subject, self.encodeURI(subject), self.encodeURI(subject)))
+        """ % (self.encodeCharacterData(self.rednode.label(subject)), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
     def edit(self, parameters):
 	subject = parameters['uri']
@@ -77,9 +77,9 @@ class Editor(Viewer):
             subject = self.storeNode.local.URI + self.generateURI()
 	    self.update(parameters, subject, copy=1)
         if subject==None or subject=="":
-            subject = self.storeNode.local.URI + self.generateURI()
+            subject = self.rednode.local.URI + self.generateURI()
         if type!=None and type!="":
-            self.storeNode.local.add(subject, TYPE, type)
+            self.rednode.local.add(subject, TYPE, type)
 
         self.header("Edit")
         self.resourceHeader(subject)
@@ -90,20 +90,20 @@ class Editor(Viewer):
         """ % (subject, subject))
         self.property_num = 0
 
-        if self.storeNode.isKnownResource(subject):
-            self.storeNode.local.visitPredicateObjectPairsForSubject(self.editProperty, subject)
-            self.storeNode.neighbours.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
-	    self.storeNode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
+        if self.rednode.isKnownResource(subject):
+            self.rednode.local.visitPredicateObjectPairsForSubject(self.editProperty, subject)
+            self.rednode.neighbours.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
+	    self.rednode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
         else:
             self.response.write("""<TR><TD>Resource not known of directly</TD></TR>""")
 
         properties = {}
         def possibleProperty(s, p, o, properties=properties):
             properties[s] = 1
-        self.storeNode.visitPossiblePropertiesForSubject(possibleProperty, subject)
+        self.rednode.visitPossiblePropertiesForSubject(possibleProperty, subject)
         
         for property in properties.keys():
-            if len(self.storeNode.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0 and len(self.storeNode.get(subject, property, None))==0:   
+            if len(self.rednode.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0 and len(self.rednode.get(subject, property, None))==0:   
                 self.editProperty(property, "", 0)   
     
         self.response.write("""
@@ -117,8 +117,8 @@ class Editor(Viewer):
         def possibleProperty(s, p, o, self=self):
             self.response.write("""
                 <OPTION value="%s">%s</OPTION>
-                                """ % (s, self.storeNode.label(s)))
-        self.storeNode.visitPossiblePropertiesForSubject(possibleProperty, subject)
+                                """ % (s, self.rednode.label(s)))
+        self.rednode.visitPossiblePropertiesForSubject(possibleProperty, subject)
 
 
         self.response.write("""
@@ -152,18 +152,18 @@ class Editor(Viewer):
                     <INPUT TYPE="HIDDEN" NAME="prop%s_name" VALUE="%s">
                   </TD>
                   <TD VALIGN="TOP">
-        """ % (self.storeNode.label(property), self.property_num, property))
+        """ % (self.rednode.label(property), self.property_num, property))
 
         def callback(s, p, o, self=self):
-            self.response.write("%s<BR>" % self.storeNode.label(o))
-        self.storeNode.visit(callback, property, RANGE, None)
+            self.response.write("%s<BR>" % self.rednode.label(o))
+        self.rednode.visit(callback, property, RANGE, None)
 
         self.response.write("""
                   </TD>
                   <TD COLSPAN="2">
         """)
-        if (len(value) > 0 and is_literal(value[0])) or (len(value)==0 and self.storeNode.getRange(property)==LITERAL):
-            uitype = self.storeNode.getFirst(property, self.UITYPE, None)
+        if (len(value) > 0 and is_literal(value[0])) or (len(value)==0 and self.rednode.getRange(property)==LITERAL):
+            uitype = self.rednode.getFirst(property, self.UITYPE, None)
             if uitype != None and uitype[2]==self.TEXTAREA:
                 self.response.write("""
                 <TEXTAREA NAME="prop%s_value" ROWS="5" COLS="60">%s</TEXTAREA>
@@ -182,7 +182,7 @@ class Editor(Viewer):
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
         else:
-            rangelist = self.storeNode.get(property, RANGE, None) # already did this above
+            rangelist = self.rednode.get(property, RANGE, None) # already did this above
             if len(rangelist) > 0:
                 self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_orig" VALUE="%s">
@@ -195,12 +195,12 @@ class Editor(Viewer):
 
 
                 possibleValues = {}
-                def possibleValue(s, p, o, storeNode=self.storeNode, possibleValues=possibleValues):
-                    label = storeNode.label(s)
+                def possibleValue(s, p, o, rednode=self.rednode, possibleValues=possibleValues):
+                    label = rednode.label(s)
                     # we use a key of 'label + s' to insure uniqness of key
                     possibleValues[label+s] = s 
 
-                self.storeNode.visitPossibleValues(possibleValue, property)
+                self.rednode.visitPossibleValues(possibleValue, property)
 
                 pvs = possibleValues.keys()
                 pvs.sort()
@@ -210,11 +210,11 @@ class Editor(Viewer):
                     if v==value:
                         self.response.write("""
                         <OPTION SELECTED="TRUE" VALUE="%s">%s</OPTION>
-                        """ % (v, self.storeNode.label(v)))
+                        """ % (v, self.rednode.label(v)))
                     else:
                         self.response.write("""
                         <OPTION VALUE="%s">%s</OPTION>
-                        """ % (v, self.storeNode.label(v)))
+                        """ % (v, self.rednode.label(v)))
                     
 
 
@@ -247,7 +247,7 @@ class Editor(Viewer):
     def add(self, type):
         h = "Add"
         if type!=None and type!="":
-            h = "Add a " + self.storeNode.label(type)
+            h = "Add a " + self.rednode.label(type)
         self.header(h)
         self.response.write("""
           <FORM NAME="form" ACTION="edit" METHOD="POST">
@@ -287,16 +287,16 @@ class Editor(Viewer):
                 self.storeNode.local.add(subject, property, value)
         newProperty = parameters['newProperty']
         newPropertyValue = ""
-        if self.storeNode.getRange(newProperty)==LITERAL:
+        if self.rednode.getRange(newProperty)==LITERAL:
             newPropertyValue = literal(newPropertyValue)
         if newProperty!="":
-            self.storeNode.local.add(subject, newProperty, newPropertyValue)
+            self.rednode.local.add(subject, newProperty, newPropertyValue)
 
     def delete(self, parameters):
         subject = parameters['uri']
         if subject=="":
             raise "TODO: invalid subject"
-        self.storeNode.local.remove(subject, None, None)
+        self.rednode.local.remove(subject, None, None)
 
     def deleteProperty(self, parameters):
         property_num = parameters['processor'][4:]
@@ -304,16 +304,16 @@ class Editor(Viewer):
         property = parameters['prop%s_name' % property_num]
         vName = "prop%s_orig" % property_num
         value = parameters[vName]
-        self.storeNode.local.remove(subject, property, value)
+        self.rednode.local.remove(subject, property, value)
 
     def reifyProperty(self, parameters):
         property_num = parameters['processor'][6:]
         subject = parameters['uri']
         property = parameters['prop%s_name' % property_num]
         value = parameters['prop%s_value' % property_num]
-        if self.storeNode.getRange(property)==LITERAL:
+        if self.rednode.getRange(property)==LITERAL:
             value = literal(value)
-        self.storeNode.reify(self.storeNode.local.URI+self.generateURI(), subject, property, value)
+        self.rednode.reify(self.rednode.local.URI+self.generateURI(), subject, property, value)
 
     def generateURI(self):
 	#import time
@@ -321,7 +321,7 @@ class Editor(Viewer):
         return date_time_path()
 
     def save(self):
-        self.storeNode.local.save()
+        self.rednode.local.save()
 
 
 #TODO: could be a separate module
@@ -365,10 +365,13 @@ class PeerEditor(Editor):
     def connect(self, parameters):
         uri = parameters["uri"]
         if uri!="":
-            self.storeNode.connectTo(uri)
+            self.rednode.connectTo(uri)
 
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:05  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.7  2001/03/20 21:49:08  jtauber
 #~ encoding of prop_orig now consistent
 #~

@@ -373,11 +373,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.1  2001/04/05 05:11:54  eikeon
+#~ responses can now have names composed of any strings
+#~
 #~ Revision 7.0  2001/03/26 23:41:05  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.1  2001/03/26 20:20:01  eikeon
-#~ removed ^M's
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
+

@@ -6,8 +6,8 @@ from rdf.const import *
 
 class Viewer:
 
-    def __init__(self, storeNode):
-        self.storeNode = storeNode
+    def __init__(self, rednode):
+        self.rednode = rednode
         self.showNeighbours = 0
         
     def handle_request(self, request, response):
@@ -60,9 +60,9 @@ class Viewer:
 
     def getNodeInScope(self):
         if self.showNeighbours==1:
-            return self.storeNode.neighbourhood
+            return self.rednode.neighbourhood
         else:
-            return self.storeNode
+            return self.rednode
 
     def css(self):
         self.response.write("""
@@ -233,7 +233,7 @@ class Viewer:
         self.response.write("""
             <DIV CLASS="box">
 	""")
-	self.storeNode.visitParentTypes(self.displayParent, root)
+	self.rednode.visitParentTypes(self.displayParent, root)
 	self.response.write("""
               <DL>
         """)
@@ -251,7 +251,7 @@ class Viewer:
         self.response.write("""
             <H3>%s</H3>
             <P>%s</P>
-        """ % (self.encodeCharacterData(self.storeNode.label(subject)), subject))
+        """ % (self.encodeCharacterData(self.rednode.label(subject)), subject))
 
     def view(self, subject):
         self.header("View")
@@ -260,11 +260,11 @@ class Viewer:
             <TABLE>
         """)
 
-        if self.storeNode.isKnownResource(subject):
-            self.storeNode.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
+        if self.rednode.isKnownResource(subject):
+            self.rednode.visitPredicateObjectPairsForSubject(self.displayPropertyValue, subject)
         else:
             self.response.write("<TR><TD>Resource not known of directly</TD></TR>")
-        self.storeNode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
+        self.rednode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
         
         self.response.write("""
             </TABLE>
@@ -274,7 +274,7 @@ class Viewer:
     def displayClass(self, klass):
         self.response.write("""
         <DT>%s</DT>
-        """ % self.encodeCharacterData(self.storeNode.label(klass)))
+        """ % self.encodeCharacterData(self.rednode.label(klass)))
 
     def displayResource(self, resource):
         self.response.write("""
@@ -282,16 +282,16 @@ class Viewer:
         """ % self.link(resource))
 
     def displayParent(self, resource):
-        self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.encodeAttributeValue(self.storeNode.comment(resource)), self.encodeCharacterData(self.storeNode.label(resource))))
+        self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.encodeAttributeValue(self.rednode.comment(resource)), self.encodeCharacterData(self.rednode.label(resource))))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
         self.response.write(3*depth*"&nbsp;")
 
         if recurse==0:
-            self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.encodeAttributeValue(self.storeNode.comment(klass))))
+            self.response.write("""<A HREF="subclass?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.encodeAttributeValue(self.rednode.comment(klass))))
 
-        self.response.write("<B>%s</B>" % self.encodeCharacterData(self.storeNode.label(klass)))
+        self.response.write("<B>%s</B>" % self.encodeCharacterData(self.rednode.label(klass)))
 
         if recurse==0:
             self.response.write("</A>")
@@ -305,8 +305,8 @@ class Viewer:
 
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
-                                                                 self.encodeAttributeValue(self.storeNode.comment(resource)),
-                                                                 self.encodeCharacterData(self.storeNode.label(resource)))
+                                                                 self.encodeAttributeValue(self.rednode.comment(resource)),
+                                                                 self.encodeCharacterData(self.rednode.label(resource)))
 
     def displayPropertyValue(self, property, value):
         propertyDisplay = self.link(property)
@@ -331,7 +331,7 @@ class Viewer:
         self.response.write("""
         <TR CLASS="REIFIED"><TD>%s</TD><TD></TD><TD>%s</TD>
         <TD COLSPAN="3">%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
-        self.storeNode.visitPredicateObjectPairsForSubject(self.displayReifiedStatementPropertyValue, subject)
+        self.rednode.visitPredicateObjectPairsForSubject(self.displayReifiedStatementPropertyValue, subject)
         self.response.write("""
         </TD></TR>""")
 
@@ -387,7 +387,7 @@ class Viewer:
         node.output(self.response, None, subject, predicate, object)
 
     def journal(self, subject=None, predicate=None, object=None):
-        node = self.storeNode.local.journal
+        node = self.rednode.local.journal
         node.output(self.response, None, subject, predicate, object)
 
     def triples(self, subject=None, predicate=None, object=None):
@@ -401,9 +401,9 @@ class Viewer:
               <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
             """ % (s, p, o))
         if self.showNeighbours==1:
-            self.storeNode.neighbourhood.visit(triple, subject, predicate, object)
+            self.rednode.neighbourhood.visit(triple, subject, predicate, object)
         else:
-            self.storeNode.local.visit(triple, subject, predicate, object)
+            self.rednode.local.visit(triple, subject, predicate, object)
 
         self.response.write("""
             </TABLE>
@@ -420,7 +420,7 @@ class Viewer:
         for s in subjects:
             self.response.write("""
               <OPTION VALUE="%s">%s</OPTION>
-            """ % (s, self.storeNode.label(s)))
+            """ % (s, self.rednode.label(s)))
         self.response.write("""
             </SELECT>
             <FORM ACTION="test" METHOD="GET">
@@ -433,13 +433,13 @@ class Viewer:
             self.response.write("""<UL>""")
             for s in subjects:
                 upper_uri = string.upper(s)
-                upper_label = string.upper(self.storeNode.label(s))
-                upper_comment = string.upper(self.storeNode.comment(s))
+                upper_label = string.upper(self.rednode.label(s))
+                upper_comment = string.upper(self.rednode.comment(s))
                 if (string.find(upper_uri,upper_search)!=-1) or \
                    (string.find(upper_label, upper_search)!=-1):
                        self.response.write("""
                          <LI><A HREF="javascript:document.all.a.value='%s'">%s</A></LI>
-                       """ % (s, self.storeNode.label(s)))
+                       """ % (s, self.rednode.label(s)))
         self.response.write("""</UL>""")
         self.footer()
 
@@ -447,7 +447,7 @@ class Viewer:
         self.response.write("""
             digraph G {
         """)
-        def callback(s,p,o,response=self.response, node=self.storeNode):
+        def callback(s,p,o,response=self.response, node=self.rednode):
             response.write("""
 	        "%s" -> "%s" [ label="%s" ];
             """ % (node.label(s), node.label(o), node.label(p)))
@@ -457,6 +457,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:05  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.3  2001/03/22 01:10:27  jtauber
 #~ refactor of apps and the way servers are started by them
 #~
