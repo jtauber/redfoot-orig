@@ -7,11 +7,13 @@
     <DIV CLASS="NAV"><A HREF="../">Redfoot</A> &gt; <A HREF="./">Documentation</A></DIV>
     <H1>Writing Redfoot Queries</H1>
 
-    <P>We saw above that the most general type of query on a triple store is performed via the <CODE>visit</CODE>
-       method of the form: <CODE>visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))</CODE></P>
+    <P>We saw above that the most general type of query on a triple store is performed via the
+       <CODE>visit</CODE> method of the form: <CODE>visit(<VAR>callback</VAR>, (<VAR>subject</VAR>,
+       <VAR>predicate</VAR>, <VAR>object</VAR>))</CODE></P>
 
-    <P><CODE>visit</CODE> causes <VAR>callback</VAR> to be called for each matching triple. <VAR>callback</VAR>
-       must have the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE>.</P>
+    <P><CODE>visit</CODE> causes <VAR>callback</VAR> to be called for each matching triple.
+       <VAR>callback</VAR> must have the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>,
+       <VAR>object</VAR>)</CODE>.</P>
 
     <P>There are two techniques available to build up more complex queries: functors and builders. Functors
        enable the developer to change the way the callback is called. Builders enable results to be built up
@@ -28,12 +30,13 @@ rednode.visit(<VAR>callback</VAR>, (JTAUBER, KNOWS, None))
 def list_friend(friend):
     print friend</PRE>
 
-    <P>We can't use <CODE>list_friend</CODE> as the callback because the first argument has to take a function with
-       the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE> and <CODE>list_friend</CODE>
-       only takes a single argument.</P>
+    <P>We can't use <CODE>list_friend</CODE> as the callback because the first argument has to take a
+       function with the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>,
+       <VAR>object</VAR>)</CODE> and <CODE>list_friend</CODE> only takes a single argument.</P>
 
-    <P>What we need is a function that takes three arguments (so it can be used as the callback) but then calls <CODE>list_friend</CODE>
-       with just one of those three. We could write the function like this:</P> 
+    <P>What we need is a function that takes three arguments (so it can be used as the callback) but then
+       calls <CODE>list_friend</CODE> with just one of those three. We could write the function like
+       this:</P> 
 
     <PRE CLASS="code_sample">
 rednode.visit(my_callback, (JTAUBER, KNOWS, None))
@@ -59,6 +62,29 @@ rednode.visit(o(list_friend), (JTAUBER, KNOWS, None))
 
 def list_friend(friend):
     print friend</PRE>
+
+    <P>Another functor so(), takes a two-argument function and makes it into a function that can be used as
+       a visit call back. The "so" is short for "subject-object" because the original function will be called
+       using the first and third (subject and object) arguments passed to the newly created function.</P>
+
+    <PRE CLASS="code_sample">
+from redfoot.rdf.query.functors import so
+
+rednode.visit(so(list_friend_pair), (None, KNOWS, None))
+
+def list_friend_pair(friend1, friend2):
+    print friend1, "knows", friend2</PRE>
+
+    <P>There is also a <CODE>po()</CODE> functor, for when you want to call a function with the predicate
+       and object pairs that match the triple.</P>
+
+    <P><CODE>both(<VAR>callback1</VAR>, <VAR>callback2</VAR>)</CODE> will create a function that calls both
+       the given callbacks.
+
+    <P><CODE>first(<VAR>callback</VAR>)</CODE> will create a function that calls the given callback only for
+       the first triple that matches.</P>
+
+
 
     <H2>Builders</H2>
 
