@@ -21,6 +21,7 @@ SERVER = resource("http://redfoot.net/2002/05/server")
 APP = resource("http://redfoot.net/2002/05/app")
 APP_CLASS = resource("http://redfoot.net/2002/05/app_class")
 
+sn = 0
 
 class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
     """
@@ -111,6 +112,42 @@ class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
 
         app = AppClass(self)
         return app
+
+    def get_module(self, uri):
+        from module_store import MODULE
+        value = self.neighbourhood.get_first_value(uri, MODULE, None)
+        if value:
+            filename = "<%s MODULE>" % uri
+            from new import module
+
+            #m = module("_".join(uri.split(" ")))
+            global sn
+            sn += 1
+            m = module("foo%s" % sn)
+            try:
+                code = compile(value, filename, "exec")
+                import sys
+                g = globals()
+                g = sys.modules['__main__'].__dict__
+                g = m.__dict__
+                l = m.__dict__                        
+                exec code in g, l
+            except:
+                import sys
+                from traceback import print_exc, tb_lineno, extract_tb
+                print_exc()
+                try:
+                    etype, value, tb = sys.exc_info()
+                    if etype is SyntaxError:                    
+                        msg, (fn, lineno, offset, line) = value
+                        filename = fn or filename
+                        print "Error: %s:%s:" % (filename, lineno)
+                except:
+                    pass
+        else:
+            raise "'%s' Not found" % uri
+        return m
+    
 
 
 class Neighbours(SchemaQuery, MultiStore):

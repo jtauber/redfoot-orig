@@ -258,6 +258,7 @@ class Node(Neighbours, AbstractNode, SchemaQuery, LoadSave, TripleStore,
         self.add_neighbour(proxy)
 
     def listen_on(self, host, port):
+        print "listening on '%s:%s'" % (host, port)
         addr = host, port
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.set_reuse_addr()
