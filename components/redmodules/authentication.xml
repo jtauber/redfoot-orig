@@ -112,12 +112,14 @@
                 self.session.sessions.add(uri, CREATED, literal(time))
                 
                 self.set_identity(uri)
+                # Notify app
+                getattr(self.app, 'new_user_created', lambda :None)()
                 self.status = "Welcome, %s" % username
             else:
                 self.status = "password and verify did not match"
         else:
             self.status = "Already user with username '%s'" % username
-                
+
     def do_clear_sessions(self):
         self.session.sessions.visit(self.remove_if_no_identity, (None, TYPE, SESSION))
 
