@@ -33,6 +33,8 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         """Serve a GET request."""
 
+        self.send_head()
+
         tripleStore = TripleStore()
 
         storeIO = StoreIO()
