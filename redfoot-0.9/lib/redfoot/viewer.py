@@ -55,6 +55,14 @@ class Viewer:
         else:
             self.response.write("unknown PATH of '%s'" % path_info)
 
+
+    def getNodeInScope(self):
+        if self.showNeighbours==1:
+            return self.storeNode
+        else:
+            return self.storeNode.local
+
+
     def css(self):
         self.response.write("""
         body {
@@ -200,23 +208,17 @@ class Viewer:
               <DL>
         """)
 
-        if self.showNeighbours==1:
-            self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
-        else:
-            self.storeNode.local.resourcesByClassV(self.displayClass, self.displayResource)
+        node = self.getNodeInScope()
+        node.resourcesByClassV(self.displayClass, self.displayResource)
+        
         firstTypeless = 1
-        if self.showNeighbours==1:
-            for resource in self.storeNode.typelessResources():
-                if firstTypeless==1:
-                    self.response.write("""<DT>Typeless</DT>""")
-                    firstTypeless=0
-                self.displayResource(resource)
-        else:
-            for resource in self.storeNode.local.typelessResources():
-                if firstTypeless==1:
-                    self.response.write("""<DT>Typeless</DT>""")
-                    firstTypeless=0
-                self.displayResource(resource)
+
+        for resource in node.typelessResources():
+            if firstTypeless==1:
+                self.response.write("""<DT>Typeless</DT>""")
+                firstTypeless=0
+            self.displayResource(resource)
+        
         self.response.write("""
               </DL>
             </DIV>
@@ -233,10 +235,8 @@ class Viewer:
               <DL>
         """)
 
-        if self.showNeighbours==1:
-            self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
-        else:
-            self.storeNode.local.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+        node = self.getNodeInScope()
+        node.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
             
         self.response.write("""
               </DL>
@@ -381,10 +381,8 @@ class Viewer:
             write("""
               <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
             """ % (s, p, o))
-        if self.showNeighbours==1:
-            self.storeNode.visit(triple, subject, predicate, object)
-        else:
-            self.storeNode.local.visit(triple, subject, predicate, object)
+        node = self.getNodeInScope()
+        node.visit(triple, subject, predicate, object)
 
         self.response.write("""
             </TABLE>
@@ -425,6 +423,9 @@ class Viewer:
         self.footer()
 
 #~ $Log$
+#~ Revision 5.7  2000/12/09 22:33:59  jtauber
+#~ factored out header/footer
+#~
 #~ Revision 5.6  2000/12/09 22:20:25  jtauber
 #~ fullsubclass method is now subclass :-)
 #~
