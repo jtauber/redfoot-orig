@@ -18,6 +18,7 @@ class AutoSaveStoreIO(TripleStoreIO):
 
     def load(self, location, uri=None, create=0):
         TripleStoreIO.load(self, location, uri, create)
+        print "Done loading '%s'" % location
         self.dirtyBit.clear() # we just loaded... therefore we are clean
         self._start_thread() 
 
@@ -34,7 +35,7 @@ class AutoSaveStoreIO(TripleStoreIO):
                 if self.dirtyBit.value()==1:
                     self.dirtyBit.clear()
                     import sys
-                    sys.stderr.write("auto saving\n")
+                    sys.stderr.write("auto saving '%s'\n" % self.location)
                     self.save(self.location, self.uri)
                     self.save("%s-%s" % (self.location, self.date_time_string()), self.uri)
                     # Do not save a backup more often than interval
