@@ -5,6 +5,7 @@ from redfootlib.rdf.objects import resource, literal
 
 from exceptions import SyntaxError, Exception
 
+FACET = resource("http://redfoot.net/04/26/rapp/^facet")
 APPLY = resource("http://redfoot.net/04/26/rapp/^apply")
 EXEC = resource("http://redfoot.net/04/26/rapp/^exec")
 
@@ -19,7 +20,9 @@ def _tmp(%s):
 '''  % args
 
     def child(self, name, atts):
-        if name==APPLY:
+        if name==FACET:
+            pass
+        elif name==APPLY:
             if self.data:
                 self.codestr = self.codestr + '''\
         response.write("""%s""")
@@ -54,7 +57,7 @@ def _tmp(%s):
 ''' % line        
 
     def end(self, name):        
-        if name!=APPLY:
+        if name!=APPLY and name!=FACET:
             self.data = self.data + "</%s>" % name
 
     def get_codestr(self):
