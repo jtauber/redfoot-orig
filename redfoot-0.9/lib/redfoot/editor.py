@@ -87,6 +87,22 @@ class Editor(Viewer):
 	    self.storeNode.visitReifiedStatementsAboutSubject(self.displayReifiedStatements, subject)
         else:
             self.response.write("""<TR><TD>Resource not known of directly</TD></TR>""")
+
+        types = {}
+        triples = self.storeNode.get(subject, TYPE, None)
+        for triple in triples:
+            types[type] = 1
+            for t in self.storeNode.getTransitiveSuperTypes(triple[2]):
+                types[t] = 1
+            
+        for type in types.keys():
+            def possibleProperty(s, p, o, self=self, subject=subject):   
+                property = s   
+                if len(self.storeNode.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0 and len(self.storeNode.get(subject, property, None))==0:   
+                    self.editProperty(property, "", 0)   
+    
+            self.storeNode.visitPossibleProperties(possibleProperty, type ) 
+            
     
         self.response.write("""
           <TR>
@@ -335,6 +351,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.17  2000/12/28 03:00:55  jtauber
+#~ added 'copy' button to edit page
+#~
 #~ Revision 5.16  2000/12/21 01:58:38  jtauber
 #~ edit doesn't absolutize any more
 #~
