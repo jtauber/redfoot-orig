@@ -1,6 +1,15 @@
 # $Header$
 
+from threading import RLock
+from threading import Condition
+
+import sys
+
+
 class StoreIO:
+
+    def __init__(self):
+        self.dirty = Dirty()
 
     def setStore(self, store):
         self.store = store
@@ -15,9 +24,11 @@ class StoreIO:
         return self.getStore().get(subject, property, value)
 
     def remove(self, subject=None, property=None, value=None):
+        self.dirty.set()
         self.getStore().remove(subject, property, value)
 
     def add(self, subject, property, value):
+        self.dirty.set()
         self.getStore().add(subject, property, value)
 
     def load(self, location, URI=None):
@@ -34,13 +45,37 @@ class StoreIO:
 
         rdfParser.parse(self.location, self.URI)
 
+        self.dirty.clear() # we just loaded... therefore we are clean
+        self.autosave() # TODO: make autosave optional... for now hardcoded.
+
     def save(self):
         self.saveAs(self.location, self.URI)
 
     def saveAs(self, location, URI):
+        
         stream = open(location, 'w')
         self.output(stream, URI)
         stream.close()
+        
+    
+    def autosave(self, notMoreOftenThan=10):
+        """Not more often then is in seconds"""
+        import threading
+        t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
+        t.setDaemon(1)
+        t.start()
+        
+    def _autosave(self, interval=5*60):
+        while 1:
+            if self.dirty.value()==1:
+                self.dirty.clear()
+                self.saveAs(self.location, self.URI)
+                self.saveAs("%s-%s" % (self.location, self.date_time_string()), self.URI)
+                # Do not save a backup more often than interval
+                import time
+                time.sleep(interval)
+            # do not bother to check if dirty until we get notified
+            self.dirty.wait()
         
     def output(self, stream, URI=None):
 
@@ -146,7 +181,51 @@ class StoreIO:
         
         s.end()
 
+    def date_time_string(self, t=None):
+        """."""
+        import time
+        if t==None:
+            t = time.time()
+
+        year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
+        # http://www.w3.org/TR/NOTE-datetime
+        # 1994-11-05T08:15:30-05:00 corresponds to November 5, 1994, 8:15:30 am, US Eastern Standard Time
+        #s = "%0004d-%02d-%2dT%02d:%02d:%02dZ" % ( year, month, day, hh, mm, ss)
+        s = "%0004d-%02d-%2dT%02d_%02d_%02dZ" % ( year, month, day, hh, mm, ss)        
+        return s
+
+
+class Dirty:
+    def __init__(self):
+        self.mon = RLock()
+        self.rc = Condition(self.mon)
+        self.dirty = 0
+        
+    def clear(self):
+        self.mon.acquire()
+        self.dirty = 0
+        #self.rc.notify() only interested in knowing why we are dirty
+        self.mon.release()
+
+    def set(self):
+        self.mon.acquire()
+        self.dirty = 1
+        self.rc.notify()
+        self.mon.release()
+
+    def value(self):
+        return self.dirty
+
+    def wait(self):
+        self.mon.acquire()
+        self.rc.wait()
+        self.mon.release()
+
+
 #~ $Log$
+#~ Revision 4.2  2000/11/21 03:16:46  eikeon
+#~ rewrote slow inefficient output method
+#~
 #~ Revision 4.1  2000/11/20 21:31:58  jtauber
 #~ added a method that outputs to a given stream the serialized results of a query
 #~
