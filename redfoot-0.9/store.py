@@ -1,3 +1,5 @@
+# $Id$
+
 class TripleStore:
 
     def __init__(self):
@@ -88,6 +90,38 @@ class MultiStore:
     def getStores(self):
         return self.stores.keys()
 
+    def visit(self, visitor, subject=None, property=None, value=None):
+        for store in self.getStores():
+            store.visit(visitor, subject, property, value)
+
+    def get(self, subject=None, property=None, value=None):
+        class Visitor:
+            def __init__(self):
+                self.list = []
+
+            def callback(self, subject, property, value):
+                self.list.append((subject, property, value))
+
+        self.visit(visitor, subject, property, value)
+        
+	return visitor.list
+        
+        
+class StoreNode:
+    ""
+
+    def __init__(self):
+        self.stores = MultiStore()
+
+    def setStore(self, store):
+        self.store = store
+
+    def getStore(self):
+        return self.store
+ 
+    def connectTo(self, store):
+        self.stores.addStore(store)
+
     def get(self, subject=None, property=None, value=None):
         class Visitor:
             def __init__(self):
@@ -97,9 +131,11 @@ class MultiStore:
                 self.list.append((subject, property, value))
 
         visitor = Visitor()
-        for store in self.getStores():
-            store.visit(visitor, subject, property, value)
+
+        self.store.visit(visitor, subject, property, value);
+        self.stores.visit(visitor, subject, property, value)
 
 	return visitor.list
         
-        
+
+# $Log$
