@@ -23,12 +23,16 @@ class Server:
         import threading
         t = threading.Thread(target = self._handleRequest, args = (serverConnection,))
         t.setDaemon(1)
+        self.running = 1
         t.start()
+
+    def stop(self):
+        self.running = 0
+        
 
     def _handleRequest(self, serverConnection):
         handlerCubby = self.receiver.handlerCubby
-        #while self.running==1:
-        while 1:
+        while self.running==1:
             clientSocket = handlerCubby.get()
             if clientSocket!=None:
                 serverConnection.handleRequest(self, clientSocket)
@@ -36,6 +40,9 @@ class Server:
                 handlerCubby.wait(0.05) # TODO: can we make this wait()?
 
 #~ $Log$
+#~ Revision 4.6  2000/12/04 15:00:30  eikeon
+#~ cleaned up imports
+#~
 #~ Revision 4.5  2000/12/04 05:21:24  eikeon
 #~ Split server.py into server.py, servlet.py and receiver.py
 #~

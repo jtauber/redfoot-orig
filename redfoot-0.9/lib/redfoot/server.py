@@ -45,9 +45,8 @@ class RedServer(Server):
                 sys.stderr.write("added '%s' @ '%s' '%s'\n" % (m.__name__, mtime, m.__file__))
 
             if m!=None and getmtime(m.__file__) > mtime+1:
-                handler = m.h
-                if handler!=None:
-                    handler.stop()
+                if self.handler!=None:
+                    self.stop()
                     sys.stderr.write("removed '%s' @ '%s'\n" % (m.__name__, mtime))
                     m = None
                 else:
@@ -86,19 +85,10 @@ class RollbackImporter:
         __builtin__.__import__ = self.realImport
     
 
-if __name__ == '__main__':
-    import sys
-    redserver = RedServer()
-    redserver.runServer(sys.argv[1:])
-    from redfoot.editor import PeerEditor
-
-    handler = PeerEditor(redserver.storeNode, redserver.path)
-    redserver.server.setHandler(handler)
-    redserver.server.start()
-    
-    redserver.keepRunning()
-
 #~ $Log$
+#~ Revision 4.13  2000/12/07 19:00:23  eikeon
+#~ no longer deals with command line args
+#~
 #~ Revision 4.12  2000/12/07 15:58:23  eikeon
 #~ removed unused code
 #~
