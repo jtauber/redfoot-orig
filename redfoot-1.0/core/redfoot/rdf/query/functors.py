@@ -17,6 +17,8 @@ def both(func1, func2):
 def first(func):
     return lambda s, p, o, func=func: func(s, p, o) or 1
 
+# TODO: generalize me:
+#   convert to class with __call__ and change s, p, o to *args
 def filter(callback, condition):
     return lambda s, p, o, callback=callback, condition=condition: condition(s, p, o) and callback(s, p, o)
 
