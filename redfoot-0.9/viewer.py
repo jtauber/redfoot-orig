@@ -70,6 +70,10 @@ class Viewer:
           margin:      0px;
         }
 
+        h3 {
+          font-family: Verdana;
+        }
+
         a {
           color:       #000000;
         }
@@ -194,6 +198,7 @@ class Viewer:
         self.menuBar()
         self.resourceHeader(subject)
         self.writer.write("""
+            <H3>View</H3>
             <TABLE>
         """)
 
@@ -321,6 +326,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.20  2000/10/08 23:29:06  jtauber
+# collapsed subclass view now includes link(s) to parent(s)
+#
 # Revision 1.19  2000/10/08 22:40:25  jtauber
 # edit/view/reified displays line up better now
 #

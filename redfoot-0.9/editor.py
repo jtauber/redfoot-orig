@@ -35,6 +35,7 @@ class Editor(Viewer):
         self.menuBar()
         self.resourceHeader(subject)
         self.writer.write("""
+            <H3>Edit</H3>
             <FORM NAME="form" ACTION="edit?uri=%s" METHOD="GET">
               <INPUT NAME="uri" TYPE="HIDDEN" VALUE="%s">
               <TABLE>
