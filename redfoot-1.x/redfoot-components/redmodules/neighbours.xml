@@ -4,7 +4,7 @@
   from redfoot.rdf.objects import resource, literal
   from redfoot.rdf.query.functors import filter, s, remove_duplicates
 
-  from redfoot.rednode import NEIGHBOUR, CONNECTED, YES, NO
+  from redfoot.neighbour_manager import NEIGHBOUR, CONNECTED, YES, NO
 
   <red:module name="Neighbours">
 

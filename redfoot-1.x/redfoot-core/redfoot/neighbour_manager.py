@@ -6,7 +6,11 @@ CONNECTED = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Connected
 YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
 NO = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#NO")
 
-from redfoot.rednode import Neighbour
+from redfoot.rdf.store.triple import TripleStore
+from redfoot.rdf.store.storeio import LoadSave
+
+# TODO: neighbours are readonly and so they should only need Load
+class Neighbour(LoadSave, TripleStore): pass
 
 class NeighbourManager(object):
 

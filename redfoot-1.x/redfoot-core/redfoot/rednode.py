@@ -1,40 +1,24 @@
-from redfoot.rdf.store.triple import TripleStore
-from redfoot.rdf.query.schema import SchemaQuery
 
+from redfoot.rdf.store.triple import TripleStore
+from redfoot.rdf.store.neighbourhood import Neighbourhood
 from redfoot.rdf.store.multi import MultiStore
 from redfoot.rdf.store.storeio import LoadSave
 from redfoot.rdf.store.autosave import AutoSave
-
+from redfoot.neighbour_manager import NeighbourManager
+from redfoot.rdf.query.schema import SchemaQuery
 from redfoot import rdf_files
 
-class Local(SchemaQuery, LoadSave, TripleStore): pass
-class Neighbour(LoadSave, TripleStore): pass
-class Neighbours(SchemaQuery, MultiStore): pass
 
-
-class Neighbourhood(SchemaQuery, object):
-    def __init__(self, local, neighbours):
-        super(Neighbourhood, self).__init__()
-        self.local = local
-        self.neighbours = neighbours
-
-    def visit(self, callback, triple):
-        stop = self.local.visit(callback, triple)
-        if stop:
-            return stop
-        stop = self.neighbours.visit(callback, triple)
-        if stop:
-            return stop
-
-from redfoot.neighbour_manager import NeighbourManager, NEIGHBOUR, CONNECTED, YES, NO
-
-
-import redfoot
-from redfoot.command_line import process_args
-from redfoot.server import RedServer
-
-    
 class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
+    """
+    A RedNode is a store that is queryable via high level queries, can
+    manage its neighbour connections, [automatically] save to RDF, and
+    load from RDF.
+
+    A RedNode contains a neighbourhood store for querying the nodes'
+    entire neighbourhood, which includes itself and its neighbours in
+    that order.
+    """
 
     def __init__(self):
         super(RedNode, self).__init__()
@@ -43,35 +27,28 @@ class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
         neighbours.add_store(rdf_files.schema)
         neighbours.add_store(rdf_files.syntax)
         neighbours.add_store(rdf_files.builtin)
-        self.neighbourhood = Neighbourhood(self, neighbours)
+        self.neighbourhood = RedNeighbourhood(self, neighbours)
         self.neighbours = neighbours        
 
-    def run(self, **args):
-        "This method blocks until the server is shutdown"
-        if len(args)==0:
-            (rdf_uri, rdf, address, port) =  process_args()
-            apps = redfoot.get_apps()
-            Boot = None
-        else:
-            # TODO: get defaults from common source instead of keeping
-            # them in sync with process_args defaults
-            rdf_uri = args.get('uri', 'TODO: compute')
-            rdf = args.get('rdf', 'rednode.rdf')
-            self.load(rdf, rdf_uri, 1)
-            address = args.get('address', '')
-            port = args.get('port', 8080)
-            Boot = args.get('Boot', None)
 
-        if not Boot:
-            if len(apps)==0:
-                raise "No Apps Found"
-            else:
-                # TODO: add way to specify Boot
-                app_uri, app_class = apps[0]
-                Boot = app_class
-            self.load(rdf, rdf_uri, 1)
+class Neighbours(SchemaQuery, MultiStore):
+    """
+    A store of the multiple stores, the neighbours, that is queryable
+    via high level queries.
 
-        self.server = server = RedServer(address, port)
-        server.add_app(Boot(self))        
-        server.run()
+    MultiStore is a store that makes multiple stores look like a
+    single store.
+    """
+
+
+class RedNeighbourhood(SchemaQuery, Neighbourhood):
+    """
+    A store of the neighbourhood that is queryable via high level
+    queries.
+    
+    A Neighbourhood is a store that contains a local store and a store
+    of neighbours in which the local store gets visited first and then
+    the neighbours in order that they where added.
+    """
+
 

@@ -3,9 +3,17 @@
 
 	Cleaned up mixin classes to be more cooperative; 
 	Cleaned up Rednode's use of mixins 
+
+	redfoot.xml.handler.HandlerBase is now subclassed to take care of
+	the different needs of RDF and Redcode parsing
+
+	split off neighbour management code
+
+
+	Refactored Run / RedNode yet again and... Documented them!
 	
 
-	RELEASE 1.5.0	
+	RELEASE 1.5.0
 
 	Replaced Redfoot's own HTTP server code with Medusa.
 
