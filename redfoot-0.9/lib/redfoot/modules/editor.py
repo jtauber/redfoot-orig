@@ -49,7 +49,6 @@ class Editor(Viewer):
         elif path_info == "/connect":
             self.connectPage()
         else:
-            request.setPathInfo(path_info) #TODO what is this for??
             Viewer.handle_request(self, request, response)
 
     def menuBar(self):
@@ -369,6 +368,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 1.1  2001/04/14 23:40:28  eikeon
+#~ created a lib/redfoot/modules directory and moved editor/viewer into it
+#~
 #~ Revision 7.4  2001/04/14 23:10:28  eikeon
 #~ removed old log messages
 #~
