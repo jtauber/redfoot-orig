@@ -9,7 +9,7 @@ __version__ = "$Revision$"
 import socket
 import sys
 import string
-from Queue import Queue
+
 
 class Server:
     ""
@@ -17,7 +17,7 @@ class Server:
     def __init__(self, server_address):
         ""
         self.server_address = server_address
-        self.queue = Queue(5)
+        self.handlerCubby = HandlerCubby(5)
 
     def _acceptRequests(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,7 +27,7 @@ class Server:
         while 1:
             try:
                 clientSocket, client_address = self.socket.accept()
-                self.queue.put(clientSocket)
+                self.handlerCubby.put(clientSocket)
             except socket.error:
                 #TODO: log
                 break
@@ -46,18 +46,70 @@ class Server:
                 self.server = server
                 context = ServerContext()
                 self.handler = ServerConnection(handler, context)
+                self.running = 1
         
             def start(self):
-                while 1:
-                    clientSocket = self.server.queue.get()
-                    self.handler.handleRequest(self.server, clientSocket)
-        
+                handlerCubby = self.server.handlerCubby
+                while self.running==1:
+                    clientSocket = handlerCubby.get()
+                    if clientSocket!=None:
+                        self.handler.handleRequest(self.server, clientSocket)
+                    else:
+                        handlerCubby.wait()
+
+            def stop(self):
+                self.server.handlerCubby.stop(self)
+
         handler = Handler(self, handler)
         import threading
         t = threading.Thread(target = handler.start, args = ())
         t.setDaemon(1)
         t.start()
+        return handler
 
+
+from threading import RLock
+from threading import Condition
+
+class HandlerCubby:
+
+    def __init__(self, limit):
+        self.mon = RLock()
+        self.rc = Condition(self.mon)
+        self.wc = Condition(self.mon)
+        self.limit = limit
+        self.queue = []
+
+    def put(self, item):
+        self.mon.acquire()
+        while len(self.queue) >= self.limit:
+            self.wc.wait()
+        self.queue.append(item)
+        self.rc.notify()
+        self.mon.release()
+
+    def get(self):
+        self.mon.acquire()
+        if not self.queue:
+            item = None
+        else:
+            item = self.queue[0]
+            del self.queue[0]
+            self.wc.notify()
+        self.mon.release()
+        return item
+
+    def wait(self):
+        self.mon.acquire()
+        self.rc.wait()
+        self.mon.release()
+
+    def stop(self, handler):
+        self.mon.acquire()
+        handler.running = 0
+        self.rc.notifyAll()
+        self.mon.release()
+    
 
 class ServerConnection:
 
@@ -317,6 +369,9 @@ def date_time_string():
 
 
 #~ $Log$
+#~ Revision 3.5  2000/11/03 23:04:08  eikeon
+#~ Added support for cookies and sessions; prefixed a number of methods and variables with _ to indicate they are private; changed a number of methods to mixed case for consistency; added a setHeader method on response -- headers where hardcoded before; replaced writer with response as writer predates and is redundant with repsonse; Added authentication to editor
+#~
 #~ Revision 3.4  2000/11/03 19:52:00  eikeon
 #~ first pass at sessions... needs cleanup
 #~
