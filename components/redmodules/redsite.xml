@@ -156,8 +156,10 @@
 
 <form id="login" action="" method="post"
       style="margin: 0px; padding: 0px;">
-  <input name="view" type="hidden" value=""/>
-  <input name="processor" type="hidden" value=""/>  
+  <div style="margin: 0px; padding: 0px;"
+    <input name="view" type="hidden" value=""/>
+    <input name="processor" type="hidden" value=""/>
+  </div>    
 </form>    
 
 <div style="float: left;">
