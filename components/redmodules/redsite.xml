@@ -1,0 +1,242 @@
+<!-- -*- mode: python-*- -->
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from string import split
+  from redfoot.version import VERSION
+
+  from redfoot.rdf.objects import resource, literal
+
+  SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
+
+  <red:module name="RedSite">
+
+    <red:sub-module instance="authentication" 
+                    class="Authentication" 
+                    from="redmodules.authentication"/>
+
+    def __init__(self, app):
+        from redfoot.module import ParentModule
+        ParentModule.__init__(self, app)
+
+        # TODO: move defaults into redsite.rdf
+        self.background = "#900"
+        self.link_color = "#006"
+        self.link_hover = "#66C"        
+
+    <red:facet name="/">
+      <red:exec>
+        parts = split(self.app.request.get_path_info(), '/')
+        depth = len(parts)-2
+        parts = parts[1:-1]
+        self.depth = depth
+      </red:exec>
+    
+&lt;!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "DTD/xhtml1-strict.dtd"&gt;
+
+<!-- TODO: we should not have to do this -->
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"&gt;
+        <head>
+          <title><red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_NAME, 'Home')</red:eval></title>
+          <meta name="description"
+                content="{getattr(self, 'site_description', '')}"/>
+          <meta name="keywords"
+                content="{getattr(self, 'site_keywords', '')}"/>
+          <link rel="STYLESHEET" 
+                type="text/css" 
+                href="{'../' * depth}css"/>
+        </head>
+        <body>
+
+          <form id="login" action="" method="post"
+                style="margin: 0px; padding: 0px 0px 1px 0px;">
+
+            <table class="NAV" width="100%">
+              <tr>
+                <td>
+                  <a href="{self.app.rednode.uri}" style="padding: 0px 10px;">
+                    <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_NAME, 'Home')</red:eval>
+                  </a>
+
+                  <red:for item="p" list="parts">
+                    <red:if test="p!=''">
+                     <red:exec>
+                       depth = depth - 1
+                       path = '../' * depth
+                     </red:exec>
+                     |
+                     <a href="{path}">
+                       <red:eval>p</red:eval>
+                     </a>
+                    </red:if>
+                  </red:for>
+                
+                </td>
+                <td align="right">
+
+                  <div style="margin: 0px 10px;">
+                    <red:if test="self.authentication.authenticated()">
+                      Welcome,
+                      <red:eval>self.authentication.get_username()</red:eval> |
+                      <input name="processor" type="hidden" value=""/>
+                      <a href="javascript: form=document.getElementById('login'); form.processor.value='do_logout'; form.submit()">Logout
+                      </a>
+
+                      <red:else>             
+                        <input name="view" type="hidden" value="login"/>
+                        <a href="javascript: form=document.getElementById('login'); form.view.value='login';form.submit()">
+                        Login</a> |
+                        <a href="javascript: form=document.getElementById('login'); form.view.value='create';form.submit()">
+                          Create User
+                        </a>
+                      </red:else>             
+                    </red:if>
+                  </div>
+                </td>
+              </tr>
+            </table>  
+          </form>
+          <red:exec>self._menu()</red:exec>
+          
+          <hr/>
+            <div style="font-size: 8pt; text-align: center;">
+              This site is running on <a href="http://redfoot.sourceforge.net/">Redfoot <red:eval>VERSION</red:eval></a> |
+              <a href="http://redfoot.sourceforge.net/doc/versions.html">Redfoot Version Conventions</a> |
+
+    <a href="http://validator.w3.org/check/referer"><img
+        src="http://www.w3.org/Icons/valid-xhtml10" style="border: 0; vertical-align: middle;"
+        alt="Valid XHTML 1.0!" height="31" width="88" /></a>
+
+            </div>  
+            
+        </body>
+&lt;/html&gt;
+    </red:facet>
+
+    <red:facet name="/css">
+
+body {
+  color: #000;
+  background: #FFF;
+  margin:      0px;
+  font-family: "Trebuchet MS", sans-serif;
+  font-size:   10pt;
+}
+
+h1 {
+  font-family: "Trebuchet MS", sans-serif;
+  background:  <red:eval>self.background</red:eval>;
+  font-weight: normal;
+  color:       #FFF;
+  padding:     0px 10px;
+  margin:      0px;
+}
+
+h2 {
+  font-family: "Trebuchet MS", sans-serif;
+  color: <red:eval>self.background</red:eval>;
+  margin: 5px 10px;
+  xpadding:     0px 10px;
+}
+
+p {
+  margin: 5px 40px;
+}
+
+dl {
+  margin: 0px 40px;
+}
+
+body table {
+  margin: 0px 40px;
+}
+
+body div {
+  margin: 0px 40px;
+}
+
+body ul {
+  margin-top: 0px;    
+}    
+
+dd {
+  margin-bottom: 0.5em;
+}
+
+dt {
+  font-weight: bold;
+}
+
+table.NAV {    
+  background: #000;
+  margin: 0px;
+  color: #FFF;
+  font-size: 10pt;
+  font-weight: bold;
+}
+
+table.NAV A {
+  color: #FFF;
+  text-decoration: none;
+}
+
+table.NAV A:hover {
+  color: #CCC;
+}
+
+A {
+  color: <red:eval>self.link_color</red:eval>;
+}
+
+A:hover {
+  color: <red:eval>self.link_hover</red:eval>;
+}
+
+    </red:facet>
+
+
+    <red:facet name="_menu">
+      <red:if test="self.authentication.authenticated()">
+          <red:exec>self.app.apply()</red:exec>                                
+        <red:else>
+          <red:exec>view = self.app.request.get_parameter('view', None)</red:exec>
+          <red:if test="view=='login'">
+            <h1>User</h1>
+            <red:eval>self.login()</red:eval>
+
+           <red:elif test="view=='create'">
+              <h1>User</h1>           
+              <red:eval>self.create()</red:eval>
+           </red:elif>
+           
+           <red:else>           
+             <red:exec>self.app.apply()</red:exec>                        
+           </red:else>          
+          </red:if>
+
+        </red:else>
+      </red:if>
+    </red:facet>
+    
+    <red:facet name="/robots.txt" content_type="text/plain">
+User-agent: *
+    </red:facet>    
+
+    <red:facet name="login">
+      <h2>Login</h2>
+      <red:exec>self.authentication.login()</red:exec>
+    </red:facet>  
+
+    <red:facet name="create">
+      <h2>Create User</h2>
+      <red:exec>self.authentication.create()</red:exec>
+    </red:facet>  
+
+    <red:facet name="auth/">
+      <h1>Authentication</h1>
+      <red:exec>self.authentication.apply()</red:exec>
+    </red:facet>    
+
+  </red:module>
+</red:code>
