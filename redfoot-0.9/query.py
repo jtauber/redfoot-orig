@@ -77,6 +77,7 @@ class QueryStore:
 
         return set.keys()
 
+    # big data structure
     def resourcesByClass(self):
         result = {}
         for klass in self.store.get(None, QueryStore.TYPE, QueryStore.CLASS):
@@ -85,3 +86,11 @@ class QueryStore:
                 result[klass[0]].append(resource[0])
         return result
                 
+    # vistor pattern
+    def resourcesByClassV(processClass, processResource):
+        for klass in self.store.get(None, QueryStore.TYPE, QueryStore.CLASS):
+            processClass(klass[0])
+            for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
+                processResource(resource[0])
+
+        
