@@ -9,6 +9,7 @@ class Editor(Viewer):
 
     def handleRequest(self, request, response):
         self.response = response
+        self.request = request
         
         parameters = request.getParameters()
         path_info = request.getPathInfo()
@@ -392,12 +393,18 @@ class PeerEditor(Editor):
              : <A HREF="connect">Connect Neighbour</A>
              |""")
 
+        uri = self.request.getParameters()['uri']
+        if uri!="":
+            uriqs = "&uri=%s" % self.encodeURI(uri)
+        else:
+            uriqs = ""
+
         if self.showNeighbours==1:
             self.response.write("""
-            <A HREF="?processor=hideNeighbours">Hide Neighbour Resources</A>""")
+            <A HREF="?processor=hideNeighbours%s">Hide Neighbour Resources</A>""" % uriqs)
         else:
             self.response.write("""
-            <A HREF="?processor=showNeighbours">Show Neighbour Resources</A>""")
+            <A HREF="?processor=showNeighbours%s">Show Neighbour Resources</A>""" % uriqs)
 
         self.response.write("""
             </P>
@@ -432,6 +439,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.12  2000/12/07 17:54:04  eikeon
+# Viewer (and Editor, PeerEditor) no longer have both a qstore and a storeNode
+#
 # Revision 4.11  2000/12/06 23:26:55  eikeon
 # Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
 #
