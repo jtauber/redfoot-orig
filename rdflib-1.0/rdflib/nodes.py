@@ -18,5 +18,5 @@ def n3(value):
     if value[0] == '"' and value[-1] == '"':
         return Literal(value[1:-1])
     else:
-        return URI(value[1:-1])
+        return URIRef(value[1:-1])
 
