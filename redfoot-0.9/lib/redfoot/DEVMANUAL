@@ -3,9 +3,10 @@ $Header$
 
 REDFOOT DEVELOPER MANUAL
 
-Redfoot is a framework for distributed RDF-based applications. The purpose
-of this document is to outline the current design and future plans for the
-benefit of those wishing to assist in the development of Redfoot.
+Redfoot is a framework for distributed RDF-based applications. The
+purpose of this document is to outline the current design and future
+plans for the benefit of those wishing to assist in the development of
+Redfoot.
 
 At present, Redfoot includes:
 
@@ -25,275 +26,56 @@ In the future, Redfoot will hopefully include:
     - connectors for mapping non-RDF data into RDF triples
     - sample applications built on top of Redfoot
 
-Redfoot is written in pure Python and required Python 2.0 + PyExpat.
+Redfoot is written in pure Python and requires Python 2.0 + PyExpat.
 
-This document assumes a knowledge of RDF.
+The RDF-handling parts of Redfoot are to be found in lib/rdf. See
+lib/rdf/RDFLIB_MANUAL.txt for details.
 
-NOTE: Redfoot makes extensive use of callbacks as a means of processing RDF
-structures rather than building large temporary data structures in memory.
+This document assumes familarity with the RDF library in lib/rdf.
 
-NOTE: To distinguish values of properties that are URIs of resources from
-literals, Redfoot internally prepends all literals with "^".
+[REST TODO]
 
+RDF FILES
 
-CORE MODULES AND THEIR MEMBERS
+builtin.rdf   - new classes/properties/resources needed by Redfoot
+rdfSchema.rdf - the W3C RDF Schema 
+rdfSyntax.rdf - the W3C RDF Syntax
 
-There are a small number of additional members not listed here but they are
-not typically called by code outside the module they are in.
+MODULES
 
-store.py
-    class TripleStore         a database of RDF triples
+rednode
+server
+viewer
+editor
+baseUI
 
-parser.py
-    class RDFParser           top-level class for parsing RDF
+MODULE REDNODE
 
-serializer.py
-    class Serializer          class with callbacks for serializing RDF to
-                              a stream
+CLASS REDNODE
+CLASS NEIGHBOURHOOD
+CLASS MULTISTORE
 
-query.py
-    class QueryStore          a wrapper around a store providing an extensive
-                              collection of higher-level query functions
+MODULE SERVER
 
-storeio.py
-    class StoreIO             class providing I/O for a store by aggregating
-                              a store, a filename, a URI, a parser and a
-                              serializer
+CLASS REDSERVER
 
+MODULE VIEWER
 
-CLASS TRIPLESTORE (store.py)
+CLASS VIEWER
 
-add(subject,property,value)
-    add the given statement to the store
+MODULE EDITOR
 
-put(subject,property,value)
-    same as above but do a remove first
-    TODO: IS THIS EVEN NECESSARY?
+CLASS EDITOR
+CLASS PEEREDITOR
 
-remove(subject,property,value)
-    removes any statements matching the given subject, property and value
-    where a value of None for an argument means a wildcard.
-    eg remove("foo", None, None) means remove all statements about "foo"
+MODULE BASEUI
 
-get(subject,property,value)
-    return a list of triples matching the given subject, property and value
-    where a value of None for an argument means a wildcard.
-    eg get(None, "foo", "bar") means all statements where the property is
-       "foo" and the value "bar" regardless of subject
-
-visit(visitor,subject,property,value)
-    similar to get except that instead of return the result, visit takes
-    a class that must have a method callback(subject,property,value) that
-    then gets called for every statement matching the subject, property
-    and value given to this visit method.
-    TODO: why does this take a class as visitor when QueryStore takes
-          functions?
-    TODO: should this be subject,property,value or subject,predicate,object
-
-
-CLASS RDFPARSER (parser.py)
-
-setBaseURI(baseURI)
-    treat the document being parsed as if its URI was baseURI
-
-setURL(URL)
-    actual URL to parse
-
-setAdder(adder)
-    set the function (of signature adder(subject,property,value)) that will
-    be called for each statement as it is parsed from the RDF document
-
-parse(URL, baseURI)
-    parse the file at URL as if its URI was baseURI calling the previously
-    set adder for each statement. URL and/or baseURI may be None which means
-    to use the values previously set using the setters above
-
-    TODO: remind me why we need the separate setters for URL and baseURI
-
-
-CLASS SERIALIZER (serializer.py)
-
-setStream(stream)
-    set the stream to which the serialization is to take place
-
-setBase(base)
-    set the baseURI to assume
-    TODO: should this be baseURI?
-
-registerProperty(property)
-    this has to be done for each property before start() is run. This is
-    necessary to set up the namespace declarations which depend on the
-    properties in the RDF
-
-start()
-    start the serialization
-
-end()
-    end the serialization
-
-subjectStart(subject)
-    called to start the serialization of the given subject
-
-subjectEnd()
-    called to end the serialization of the current subject
-
-property(predicate,value)
-    called between subjectStart and subjectEnd for each statement made about
-    that subject
-
-
-CLASS QUERYSTORE (query.py)
-
-Either pass the underlying store in the constructor or using setStore(store)
-
-QueryStore provides constants for the URIs of common resources defined in the
-RDF syntax & model and RDF schema specifications. These include:
-
-Syntax
-    type
-    Property
-    Statement
-    subject
-    predicate
-    object
-Schema
-    Class
-    Resource
-    subClassOf
-    label
-    comment
-    range
-    domain
-    Literal
-
-get(subject,predicate,object)
-    see get in TripleStore
-
-label(subject)
-    return the first label of the given subject or the subject URI if there
-    is no label
-
-comment(subject)
-    return the first comment of the given subject or label(subject) if there
-    is no comment
-
-getByType(type,predicate,object)
-    return a list of the relevant statements where a resource of the given
-    type has a predicate of value object
-    eg getByType("car","colour","red") will return statements about any car
-       being of colour red.
-
-isKnownResource(resource)
-    returns a 1 or 0 depending on whether the store contains any statements
-    about the given resource
-
-isOfType(resource,type)
-    returns a 1 or 0 depending on whether the given resource is of the given
-    type
-
-getSubjects()
-    return a list of all the subjects of the statements in the store
-
-getProperties(subject)
-    return a list of all the properties specified for the given subject
-    (or overall if subject is None)
-
-getValues(subject,property)
-    get a list of the values for the given property of the given subject
-
-transitiveSuperTypes(type)
-    returns a list of the give type plus the type's superclasses, plus their
-    superclass, and so on
-
-transitiveSubTypes(type)
-    returns a list of the given type plus the type's subclasses, plus their
-    subclasses, and so on
-
-rootClasses()
-    returns a list of those classes that aren't a subclass of anything
-
-resourcesByClassV(classProcessor,resourceProcessor)
-    for each class, calls classProcessor(uri) and then for each
-    instance of that class, calls resourceProcessor(uri)
-
-propertyValuesV(subject,propertyValueProcessor)
-    calls propertyValueProcessor(property,value) for each of the
-    property-value pairs the given subject has
-
-subClassV(type,classProcessor,instanceProcessor,currentDepth,recurse)
-    TODO
-
-reifiedV(subject,statementProcessor)
-    calls processStatement(statement_uri,predicate,object) for every
-    reified statement made about the given subject
-
-reify(statement_uri,subject,predicate,object)
-    reified the given subject,predicate,object triple into a Statement
-    with the given uri and removes the original statement
-
-dereify(statement_uri)
-    turns the given Statement into a statement
-
-getPossibleValues(property)
-    returns a list of the possible values the given property can take
-
-CLASS STOREIO (storeio.py)
-
-setStore(store)/getStore()
-    sets/gets the underlying triple store
-
-visit/get/remove/add
-    calls the corresponding methods on the underlying triple store
-
-load(location, URI)
-    TODO
-
-save()
-    TODO
-
-saveAs(location, URI)
-    TODO
-
-output(stream, URI)
-    TODO
-
-
-SERVER MODULES AND THEIR MEMBERS
-
-rednode.py
-    class MultiStore
-    class StoreNode
-
-server.py (not really a module - this is what gets run)
-    class RedfootHTTPRequestHandler
-    function runServer
-
-viewer.py
-    class Viewer
-
-editor.py
-    class Editor
-
-CLASS MULTISTORE (rednode.py)
-TODO
-
-CLASS STORENODE (rednode.py)
-TODO
-
-CLASS REDFOOTHTTPREQUESTHANDLER (server.py)
-TODO
-
-FUNCTION RUNSERVER (server.py)
-TODO
-
-CLASS VIEWER (viewer.py)
-TODO
-
-CLASS EDITOR (editor.py)
-TODO
-
+CLASS BASEUI
 
 $Log$
+Revision 4.1  2000/12/03 19:42:58  jtauber
+upgraded feature list and python version requirement
+
 Revision 4.0  2000/11/06 15:57:34  eikeon
 VERSION 4.0
 
