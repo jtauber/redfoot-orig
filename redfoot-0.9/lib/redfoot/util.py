@@ -1,3 +1,5 @@
+from rdf.literal import *
+
 def encodeURI(s):
     import string
     return string.join(string.split(s,'#'),u'%23')
@@ -39,3 +41,40 @@ def filter_triples(triples, filter):
 
 def sort_triples(triples, sort):
     return triples
+
+
+def get_property_value(rednode, subject, predicate, default="", resource=0):
+    t = rednode.getFirst(subject, predicate, None)
+    if t!=None:
+        if resource:
+            result = t[2]
+        else:
+            result = un_literal(t[2])
+    else:
+        result = default
+
+    return result
+
+
+def is_instance_of(rednode, resource, type):
+    if resource==None:
+        return 0
+    for type in rednode.getTransitiveSubTypes(type):
+        if rednode.isOfType(resource, type):
+            return 1
+    return 0
+
+def get_instances_of(rednode, type):
+    class StatementSetBuilder:
+        def __init__(self):
+            self.set = {}
+        def visit(self, s, p, o):
+            self.set[(s, p, o)] = 1
+        def flush(self):
+            pass
+
+    visitor = StatementSetBuilder()
+    ofTypeVisitor = Query(rednode.query, (visitor, lambda type, p, o: [None, TYPE, type]))
+    rednode.visitTransitiveSubTypes(ofTypeVisitor, type)
+    rednode.query(visitor, None, TYPE, type) # trans sub types must not include itself.
+    return visitor.set.keys()

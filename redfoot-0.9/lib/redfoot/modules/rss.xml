@@ -50,13 +50,13 @@ else:
 </r:exec>
 <dl style="margin: 0px; padding: 2px 5px; background: #{color};">
   <dt style="padding: 0px; margin: 0px;">
-      <r:eval>self.get_property_value(triple[0], RSS_TITLE, '')</r:eval>
+      <r:eval>get_property_value(self.rednode, triple[0], RSS_TITLE, '')</r:eval>
   </dt>
   <dd style="padding-bottom: 10px">
-    <r:eval>self.get_property_value(triple[0], RSS_DESCRIPTION, '')</r:eval>
+    <r:eval>get_property_value(self.rednode, triple[0], RSS_DESCRIPTION, '')</r:eval>
   </dd>
   <dd style="padding-bottom: 10px">
-    <a href="{self.get_property_value(triple[0], RSS_LINK, '')}">Read Story</a>
+    <a href="{get_property_value(self.rednode, triple[0], RSS_LINK, '')}">Read Story</a>
   </dd>
 </dl>
 </r:response>
