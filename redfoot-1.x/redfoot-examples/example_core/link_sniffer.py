@@ -94,6 +94,11 @@ class Sniffer(object):
             self.visit(s(self.sniff), (None, TYPE, SNIFFABLE))
             print "Done sniffing for new links"
             sys.stdout.flush()
+            print "Saving..."
+            sys.stdout.flush()            
+            sniffer.save()
+            print "Done saving"
+            sys.stdout.flush()            
             sleep(60*15)
 
     def sniff(self, url):
@@ -147,19 +152,13 @@ sniffer = SnifferNode()
 sniffer.load("link_sniffer.rdf", "http://eikeon.com", 1)
 
 #sniffer.add(resource("http://rdfig.xmlhack.com/index.html"), TYPE, SNIFFABLE)
-sites = [] # ["http://freshmeat.net/"]
-for site in sites:
-    sniffer.add(resource(site), TYPE, SNIFFABLE)    
-#sniffer.add(resource("http://www.timberland.com/cgi-bin/timberland/timberland/corporate_life_jobs.jsp"), LABEL, literal("Timberland job page"))
-
-sniffer.run()
-
-from redfoot.rdf.query.functors import sort
-
+#sites = [] # ["http://freshmeat.net/"]
+#for site in sites:
+#    sniffer.add(resource(site), TYPE, SNIFFABLE)    
+#from redfoot.rdf.query.functors import sort
 #sort(sniffer.reverse_chron, sniffer.visit)(slice(sniffer.print_link, 0, 30), (None, TYPE, SNIFFED))
 
-sniffer.save()
-
+sniffer.run()
 
 
 
