@@ -69,7 +69,7 @@ class Serializer:
         self.currentSubject = None
         self.stream.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
 
-    def property(self, predicate, value):
+    def property(self, predicate, object):
         def encode(s):
             import string
             s = string.join(string.split(s, '&'), '&amp;')
@@ -80,16 +80,16 @@ class Serializer:
 
         (namespace, localName) = splitProperty(predicate)
 
-        # TODO: Is this what we want to do if value is None?
-        if value==None or value=="":
-            value = literal("")
+        # TODO: Is this what we want to do if object is None?
+        if object==None or object=="":
+            object = literal("")
             
-        if is_literal(value):
-            self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(un_literal(value)), self.namespaces[namespace], localName) )
+        if is_literal(object):
+            self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (self.namespaces[namespace], localName, encode(un_literal(object)), self.namespaces[namespace], localName) )
         else:
-            if value[0:len(self.base)+1]==self.base+"#":
-                value = value[len(self.base):]
-            self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], value) )
+            if object[0:len(self.base)+1]==self.base+"#":
+                object = object[len(self.base):]
+            self.stream.write( "    <%s:%s %s:resource=\"%s\"/>\n" % (self.namespaces[namespace], localName, self.namespaces[self.rdfns], object) )
 
     def triple(self, subject, predicate, object):
         if self.currentSubject != subject:
@@ -100,6 +100,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 4.3  2000/12/04 02:40:00  jtauber
+#~ now uses literal module
+#~
 #~ Revision 4.2  2000/12/04 02:25:18  jtauber
 #~ serializer has new method for serializing statements that keeps track of subject start/end for you
 #~
