@@ -61,7 +61,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         elif path_info == "/css":
             viewer.css()
         elif path_info == "/view":
-            viewer.view(args['uri'])
+            viewer.view(args['uri'][0]) # TODO: check why values of args are lists
         else:
             # make a proper 404
             self.wfile.write("unknown PATH")
