@@ -116,6 +116,9 @@ class Sample1UI:
              
 
 # $Log$
+# Revision 1.5  2000/12/08 05:05:10  jtauber
+# fixed HTML errors in sample login
+#
 # Revision 1.4  2000/12/08 02:47:38  eikeon
 # added autoload functionality to sample1
 #

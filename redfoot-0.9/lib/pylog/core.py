@@ -218,6 +218,9 @@ if test4: add(("_X","num-legs","4"),("_X","type","turtle"))
 if test4: print goal(("fred","num-legs","_X"))
 
 # $Log$
+# Revision 4.0  2000/11/06 15:57:33  eikeon
+# VERSION 4.0
+#
 # Revision 1.4  2000/11/04 06:13:47  jtauber
 # greatly improve capabilities of inference engine. in particular, goals can have variables
 #

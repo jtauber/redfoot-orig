@@ -26,6 +26,9 @@ class BaseUI:
         self.getEditor().handleRequest(request, response)
 
 #~ $Log$
+#~ Revision 4.2  2000/12/04 22:00:59  eikeon
+#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
+#~
 #~ Revision 4.1  2000/11/07 16:55:33  eikeon
 #~ factored out creation of handler from runServer
 #~

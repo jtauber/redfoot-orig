@@ -95,6 +95,9 @@ class RollbackImporter:
     
 
 #~ $Log$
+#~ Revision 4.16  2000/12/08 02:46:02  eikeon
+#~ improved keep reloading so that it does not look at the timestamp of the cache file and does not attempt to delete a module that does not exist
+#~
 #~ Revision 4.15  2000/12/07 22:39:36  eikeon
 #~ added missing else
 #~

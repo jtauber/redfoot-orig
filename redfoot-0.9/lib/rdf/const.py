@@ -21,6 +21,9 @@ DOMAIN = RDFSNS+"domain"
 LITERAL = RDFSNS+"Literal"
 
 # $Log$
+# Revision 4.2  2000/12/07 19:45:46  jtauber
+# organized constants by syntax versus schema
+#
 # Revision 4.1  2000/12/05 22:09:35  jtauber
 # moved constants to new file
 #

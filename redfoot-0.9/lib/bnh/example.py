@@ -99,6 +99,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 4.1  2000/12/07 21:36:42  eikeon
+#~ addHandler is not setHandler
+#~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
 #~

@@ -40,6 +40,9 @@ class Server:
                 handlerCubby.wait(0.05) # TODO: can we make this wait()?
 
 #~ $Log$
+#~ Revision 4.7  2000/12/07 20:19:07  eikeon
+#~ fixing up autoreload after server refactors
+#~
 #~ Revision 4.6  2000/12/04 15:00:30  eikeon
 #~ cleaned up imports
 #~

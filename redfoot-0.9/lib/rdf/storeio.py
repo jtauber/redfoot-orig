@@ -127,6 +127,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 4.18  2000/12/07 21:36:24  eikeon
+#~ setBase is not setBaseURI
+#~
 #~ Revision 4.17  2000/12/05 22:42:31  eikeon
 #~ fixed reference to _dirty property
 #~

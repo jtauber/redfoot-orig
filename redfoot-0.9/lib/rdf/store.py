@@ -97,6 +97,9 @@ class TripleStore:
                     
 
 #~ $Log$
+#~ Revision 4.8  2000/12/06 19:40:30  eikeon
+#~ moved get method to query as it can be layered on top of a TripleStore like all the other queries
+#~
 #~ Revision 4.7  2000/12/05 22:14:12  jtauber
 #~ changed visitor class to function
 #~

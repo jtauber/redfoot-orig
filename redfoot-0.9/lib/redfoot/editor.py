@@ -439,6 +439,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.13  2000/12/08 07:39:12  eikeon
+# show / hide does not lose current value for uri paramter
+#
 # Revision 4.12  2000/12/07 17:54:04  eikeon
 # Viewer (and Editor, PeerEditor) no longer have both a qstore and a storeNode
 #

@@ -100,6 +100,9 @@ PROVIDING HTTP TO THE UNDERLYING REDFOOT
 TODO
 
 $Log$
+Revision 1.2  2000/12/08 06:31:43  jtauber
+updated with more of how things now work
+
 Revision 1.1  2000/12/04 03:27:01  jtauber
 first pass at documentation on creating custom UI
 

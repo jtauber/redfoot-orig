@@ -151,6 +151,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.16  2000/12/08 02:50:11  eikeon
+#~ refactored unused method :(
+#~
 #~ Revision 4.15  2000/12/07 00:21:52  eikeon
 #~ fixed show/hide again after I broke it again when I refactored rednode
 #~

@@ -73,6 +73,9 @@ MODULE BASEUI
 CLASS BASEUI
 
 $Log$
+Revision 4.2  2000/12/07 20:35:51  jtauber
+updated DEVMANUAL to reflect move of rdf library stuff to lib/rdf/RDFLIB_MANUAL.TXT
+
 Revision 4.1  2000/12/03 19:42:58  jtauber
 upgraded feature list and python version requirement
 

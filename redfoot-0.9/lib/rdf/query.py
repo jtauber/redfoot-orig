@@ -218,6 +218,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 4.20  2000/12/08 08:08:52  eikeon
+#~ fixed getByType; fixed references to constants
+#~
 #~ Revision 4.19  2000/12/08 07:46:01  jtauber
 #~ fixed bug in reification (part 1)
 #~

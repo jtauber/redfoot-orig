@@ -100,6 +100,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 4.5  2000/12/07 19:52:02  jtauber
+#~ changed base to baseURI
+#~
 #~ Revision 4.4  2000/12/04 02:44:34  jtauber
 #~ changed value to object
 #~

@@ -440,6 +440,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.11  2000/12/08 08:05:58  eikeon
+#~ fixed getByType; fixed references to constants
+#~
 #~ Revision 4.10  2000/12/08 07:02:43  eikeon
 #~ show triple now pays attention to showNeighbours
 #~

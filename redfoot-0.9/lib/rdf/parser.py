@@ -147,6 +147,9 @@ class PropertyHandler(HandlerBase):
         self.parent.setHandlers()
 
 #~ $Log$
+#~ Revision 4.6  2000/12/05 22:09:36  jtauber
+#~ moved constants to new file
+#~
 #~ Revision 4.5  2000/12/03 23:05:51  eikeon
 #~ refactored common handler code into HandlerBase class
 #~
