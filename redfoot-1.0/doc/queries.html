@@ -84,13 +84,66 @@ def list_friend_pair(friend1, friend2):
     <P><CODE>first(<VAR>callback</VAR>)</CODE> will create a function that calls the given callback only for
        the first triple that matches.</P>
 
+    <P><CODE>filter(<VAR>callback</VAR>, <VAR>condition</VAR>)</CODE> allows a query to be filtered. This functor
+       creates a function that will only call the callback if <CODE><VAR>condition</VAR></CODE> (which takes
+       three arguments) returns true. Note that functors like <CODE>s()</CODE> and <CODE>o()</CODE> can be
+       used to create conditions as well.<P>
 
+    <P>For example, imagine we have a function <CODE>is_a_geek(<VAR>geek</VAR>)</CODE>. Then the following
+       code would visit <CODE>my_callback</CODE> with statements about the geeks that JTAUBER KNOWS:</P>
+
+    <PRE CLASS="code_sample">
+from redfoot.rdf.query.functors import o, filter
+
+rednode.visit(filter(my_callback, o(is_a_geek)), (JTAUBER, KNOWS, None))</PRE>
+
+    <P CLASS="ednote">EDNOTE: still have a few, more obscure functors to describe but they might need refactoring first</P>
+
+    <P>It is entirely possible to create your own functors. See code/redfoot/rdf/query/functors.py for how
+       those described above were written.</P>
 
     <H2>Builders</H2>
 
+    <P CLASS="ednote">EDNOTE: still to do</P>
+
     <H2>Built-in Queries</H2>
 
-</BODY>
+    <P CLASS="ednote">EDNOTE: need to write descriptions</P>
+
+    <P>The following queries are included on rednodes:</P>
+
+    <H3>Core Queries</H3>
+
+    <DL>
+      <DT><CODE>exists(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></DT>
+      <DT><CODE>get_first(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></DT>
+      <DT><CODE>get_first_value(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>default</VAR>?)</CODE></DT>
+      <DT><CODE>get_transitive(<VAR>callback</VAR>, <VAR>root</VAR>, <VAR>property</VAR>)</CODE></DT>
+      <DT><CODE>get_transitive_reverse(<VAR>callback</VAR>, <VAR>root</VAR>, <VAR>property</VAR>)</CODE></DT>
+    </DL>
+
+    <H3>Schema Queries</H3>
+
+    <DL>
+      <DT><CODE>is_of_type(<VAR>resource</VAR>, <VAR>type</VAR>)</CODE></DT>
+      <DT><CODE>visit_typeless_resources(<VAR>callback</VAR>)</CODE></DT>
+      <DT><CODE>visit_by_type(<VAR>callback</VAR>, <VAR>type</VAR>, <VAR>predicate</VAR>,
+          <VAR>object</VAR>)</CODE></DT>
+      <DT><CODE>label(<VAR>resource</VAR>, <VAR>default</VAR>?)</CODE></DT>
+      <DT><CODE>comment(<VAR>resource</VAR>, <VAR>default</VAR>?)</CODE></DT>
+      <DT><CODE>visit_root_classes(<VAR>callback</VAR>)</CODE></DT>
+      <DT><CODE>visit_parent_types(<VAR>callback</VAR>, <VAR>type</VAR>)</CODE></DT>
+      <DT><CODE>visit_possible_properties(<VAR>callback</VAR>, <VAR>type</VAR>)</CODE></DT>
+      <DT><CODE>visit_possible_properties_for_subject(<VAR>callback</VAR>, <VAR>resource</VAR>)</CODE></DT>
+      <DT><CODE>visit_ranges(<VAR>callback</VAR>, <VAR>property</VAR>)</CODE></DT>
+      <DT><CODE>visit_possible_values(<VAR>callback</VAR>, <VAR>property</VAR>)</CODE></DT>
+      <DT><CODE>visit_resources_by_type(<VAR>class_callback</VAR>, <VAR>instace_callback</VAR>)</CODE></DT>
+      <DT><CODE>visit_subclasses(<VAR>class_start_callback</VAR>, <VAR>class_end_callback</VAR>,
+          <VAR>instace_callback</VAR>, <VAR>root</VAR>, <VAR>recurse</VAR>?, <VAR>depth</VAR>?)</CODE></DT>
+      <DT><CODE>visit_reified_statements_about_subject(<VAR>callback</VAR>, <VAR>subject</VAR>)</CODE></DT>
+    </DL>
+
+  </BODY>
 </HTML>
 
 
