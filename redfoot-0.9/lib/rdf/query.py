@@ -5,6 +5,16 @@ from rdf.const import *
 
 class QueryStore:
 
+    def get(self, subject=None, predicate=None, object=None):
+        list = []
+        
+        def callback(subject, predicate, object, list=list):
+            list.append((subject, predicate, object))
+
+        self.visit(callback, subject, predicate, object)
+
+	return list
+
     def getFirst(self, subject, predicate, object):
         statements = []
         def callback(subject, predicate, object, statements=statements):
@@ -80,14 +90,14 @@ class QueryStore:
         self.visit(object, subject, property, None)
         return result.keys()
 
-    # TODO: are the following two methods transitive as they are currently implemented?
     def transitiveSuperTypes(self, type):
         set = {}
         set[type] = 1
 
-        for subclassStatement in self.get(type, SUBCLASSOF, None):
-            for item in self.transitiveSuperTypes(subclassStatement[2]):
+        def callback(s, p, o, set=set, self=self):
+            for item in self.transitiveSuperTypes(o):
                 set[item] = 1
+        self.visit(callback, type, SUBCLASSOF, None)
 
         return set.keys()
 
@@ -95,9 +105,10 @@ class QueryStore:
         set = {}
         set[type] = 1
 
-        for subclassStatement in self.get(None, SUBCLASSOF, type):
-            for item in self.transitiveSubTypes(subclassStatement[0]):
+        def callback(s, p, o, set=set, self=self):
+            for item in self.transitiveSubTypes(s):
                 set[item] = 1
+        self.visit(callback, None, SUBCLASSOF, type)
 
         return set.keys()
 
@@ -194,6 +205,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.11  2000/12/06 06:00:02  eikeon
+#~ minor fix to unused methods
+#~
 #~ Revision 4.10  2000/12/06 05:51:05  eikeon
 #~ refactored some more gets to visits
 #~
@@ -226,9 +240,3 @@ class QueryStore:
 #~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
-#~
-#~ Revision 3.1  2000/11/02 21:48:27  eikeon
-#~ removed old log messages
-#~
-# Revision 3.0  2000/10/27 01:23:10  eikeon
-# bump-ing version to 3.0
