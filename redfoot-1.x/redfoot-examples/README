@@ -2,28 +2,23 @@ REDFOOT EXAMPLES README
 
   To start a Redfoot application, type:
 
-    python run.py <app-name> 
+      python ../redfoot.py <init_script> 
 
-  where <app-names> is the python module name of an App
+  where <init_script> is the name of one of the *.init scripts
 
 
   For example:
 
-    python run.py 10_hello_world
+      python ../redfoot.py hello_world.init
 
-  will run the application defined in 10_hello_world.py
-
-
-  See:
-
-    python run.py --help
-
-  for more information
+  will run the application initialized in hello_world.init
 
 
-RELEASE NOTES FOR 1.5.0
+  Documentation for the examples can either be found:
 
-  The examples starting in 99 have yet to be tested. Look for more
-examples to be released soon in either a redfoot-examples release or
-in the next full release of redfoot 1.5.1
+      locally in index.html
+
+    or 
+
+      online at http://redfoot.sourceforge.net/examples/
 
