@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>Triple Store</title>
+    <link REL="STYLESHEET" HREF="redfoot.css"/>
+  </head>
+  <body>
+    <div CLASS="NAV"><a href="../index.html">Redfoot</A> &gt; <a href="./index.html">Documentation</a></div>
+    <h1>Triple Store</h1>
+
+    <p>At the very core of Redfoot is the notion of a TripleStore,
+the class of objects with the following interface:
+
+    <UL>
+      <LI><CODE>add(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></LI>
+      <LI><CODE>remove(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE></LI>
+      <LI><CODE>visit(<VAR>callback</VAR>, (<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>))</CODE></LI>
+    </UL>
+
+    <p>Redfoot contains an implementation of an in memory TripleStore (see redfoot-core/redfootlib/rdf/store/triple.py).
+    </p>
+
+    <p>Redfoot uses triple stores as a place to add, remove and query
+for triples.
+    </p>
+    
+    <P>In both <CODE>remove</CODE> and <CODE>visit</CODE>, any of <VAR>subject</VAR>, <VAR>predicate</VAR> and
+       <VAR>object</VAR> can be <CODE>None</CODE> which indicates that any value will match.
+
+    <P><CODE>visit</CODE> causes <VAR>callback</VAR> to be called for each matching triple. <VAR>callback</VAR>
+       must have the signature <CODE>callback(<VAR>subject</VAR>, <VAR>predicate</VAR>, <VAR>object</VAR>)</CODE>
+       but see below on functors.</P>
+
+    <P>What types of Python object are used for each item of a triple? Technically, the triple store doesn't
+       care but in Redfoot, each item in a triple is either a <CODE>Resource</CODE> or <CODE>Literal</CODE>
+       object (see redfoot-core/redfootlib/rdf/objects.py).
+       These classes aren't instantiated directly because then different
+       instantiations of a Resource with the same URI would result in different instances representing the
+       same thing. So instead, these objects are created via the <CODE>resource(<VAR>uri</VAR>)</CODE> and
+       <CODE>literal(<VAR>value</VAR>)</CODE> which return the correct instance.</P>
+
+    <P>There are some handy constants for syntax and schema resource URIs defined in
+       redfoot-core/redfootlib/rdf/const.py</P>
+
+    <H4>Code Example</H4>
+    
+    <PRE CLASS="code_sample">
+from redfootlib.rdf.store.triple import TripleStore
+from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.const import *
+
+store = TripleStore()
+store.add(resource("http://www.jtauber.com/"), LABEL, literal("James Tauber's Website"))
+
+def print_triple(s, p, o):
+    print s, p, o
+
+store.visit(print_triple, (resource("http://www.jtauber.com/"), None, None))</PRE>
+
+    <P>If the triple store is to be loaded from and saved to an XML serialization, <CODE>TripleStore</CODE>
+       is mixed in with the <CODE>StoreIO</CODE> class and a parser and serializer.
+       See redfoot-core/redfootlib/rdf/store/storeio.py for an example of this where the mix-in <CODE>TripleStoreIO</CODE>
+       is defined. Similarly, redfoot-core/redfootlib/rdf/store/autosave.py extends TripleStoreIO to autosave the RDF.</P>
+
+
+    <p class="cvs_id">$Id$</p>
+
+  </body>
+</html>
