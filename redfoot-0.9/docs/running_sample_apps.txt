@@ -38,7 +38,7 @@ SAMPLE1
 	* run.sh sample1 (Unix)
 	* python sample1.py (if Redfoot library is on PYTHONPATH)
 
-    Then go to your web browser and go to http://localhost:8000/
+    Then go to your web browser and go to http://localhost/
     At the moment Redfoot doesn't know anyone, so go to the editor.
     You will see that the class "Person" is defined. We want to create
     a new resource that is of type "Person", so click on "Create an
