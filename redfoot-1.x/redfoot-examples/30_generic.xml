@@ -1,0 +1,11 @@
+<!-- -*- mode: python-*- -->
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  <red:app name="http://eikeon.com/2002/04/08/Generic">
+
+    <red:sub-module instance="generic" 
+                    class="Generic"
+                    from="redmodules.generic"/>
+
+  </red:app>
+</red:code>

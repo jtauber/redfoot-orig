@@ -1,0 +1,23 @@
+<!-- -*- mode: python-*- -->
+<red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
+
+  from redfoot.util import *
+  from redfoot.rdf.objects import *
+
+  <red:module name="OutputRDF">
+
+    <red:facet name="output"><red:exec>
+      subject = resource(self.app.request.get_parameter('subject', None))
+      predicate = resource(self.app.request.get_parameter('predicate', None))
+      object = self.app.request.get_parameter('object', None)
+      if self.app.request.get_parameter('literal_object', 'no') == 'yes':
+          object = literal(object)
+      else:
+          object = resource(object)
+      self.app.response.set_header('Content-Type', 'text/xml')
+      self.app.rednode.local.output(self.app.response, subject=subject, predicate=predicate, object=object)
+    </red:exec></red:facet>
+
+  </red:module>
+
+</red:code>
