@@ -158,7 +158,7 @@ h1 {
   margin:      0px;
 }
 
-h2 {
+h2, h3, h4, h5, h6 {
   font-family: "Trebuchet MS", sans-serif;
   color: <red:eval>self.background</red:eval>;
   margin: 5px 10px;
@@ -169,7 +169,7 @@ p {
   margin: 5px 40px;
 }
 
-dl {
+dl ul {
   margin: 0px 40px;
 }
 
@@ -181,7 +181,7 @@ body div {
   margin: 0px 40px;
 }
 
-body ul {
+body {
   margin-top: 0px;    
 }    
 
@@ -246,7 +246,9 @@ A:hover {
 
     <red:facet name="_body">
     <red:exec>
-      uri = resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
+      uri = resource(self.app.request.get_parameter('uri', None))
+      uri = uri or resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
+      print uri
     </red:exec>
       <h1>
         <red:eval>self.app.rednode.label(uri, '-')</red:eval>
@@ -266,8 +268,6 @@ A:hover {
         <p>
           [
       <red:for item="index" list="xrange(len(links))">
-        <red:if test="index==0">
-        </red:if>
         <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
         <red:if test="index!=last">
             |
