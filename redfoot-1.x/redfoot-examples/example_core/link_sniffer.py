@@ -57,8 +57,8 @@ class Sniffer(object):
         
     def __timer(self):
         while 1:
-            sleep(60*60)
             self.visit(s(self.__mark), (None, TYPE, SNIFFABLE))
+            sleep(60*30)            
 
 
     def sniff(self, url):

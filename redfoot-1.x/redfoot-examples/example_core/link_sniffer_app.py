@@ -1,7 +1,6 @@
 import sys
 sys.path.extend(("../", "../../redfoot-core", "../../redfoot-components"))
 
-from redfoot.rdf.query.functors import sort
 from redfoot.rdf.query.schema import SchemaQuery
 from redfoot.rdf.store.triple import TripleStore
 from redfoot.rdf.store.autosave import AutoSave
