@@ -44,13 +44,13 @@ def get_args():
 class UI:
 
     def __init__(self, location, uri):
-        self.storeNode = RedNode()
+        self.rednode = RedNode()
         import os
         if not os.access(location, os.F_OK):
             # create file
-            self.storeNode.local.save(location, uri)
-        self.storeNode.local.load(location, uri)
-        self.editor = Editor(self.storeNode)
+            self.rednode.local.save(location, uri)
+        self.rednode.local.load(location, uri)
+        self.editor = Editor(self.rednode)
 
     def handle_request(self, request, response):
         self.editor.handle_request(request, response)
