@@ -1,20 +1,39 @@
-2002/04/11
+2002/04/23
 	RELEASE 1.5.1
 
-	Cleaned up mixin classes to be more cooperative; 
-	Cleaned up Rednode's use of mixins 
+	Introduced redfoot.py, a command interface for running Redfoot.
+
+	Added more documentation!
+
+	Renamed top level package name of core library from redfoot to
+	redfootlib.
+
+	Refactored RedNode and the classes which compose it, adding (more)
+	source level documentation along the way. [NOTE: RedNode no longer
+	has a local store but now is the local and contains its
+	neighbourhood and neighbours as attributes. Also, RedNode's visit
+	no longer visits the entire neighbourhood and so rednode.visit
+	will now need to be rednode.neighbourhood.visit.]
+
+	Resource and Literal no longer have .url and .value, as all the
+	old references that did not take advantage of Resource and Literal
+	being subclasses of string have been removed.
+
+	Resource and Literal are no longer being interned. Saving memory
+	and allowing them to be garbage collected.
+	
+	Cleaned up mixin classes to be more cooperative (fixing a number
+	of bugs that would crop up with the classes where mixed in certain
+	ways).
+
+	Neighbour management code is now mixed into RedNode instead of
+	being hard coded into it.
 
 	redfoot.xml.handler.HandlerBase is now subclassed to take care of
 	the different needs of RDF and Redcode parsing
 
-	split off neighbour management code
 
-	Refactored Run / RedNode yet again and... Documented them!
-
-	RedNode no longer has a local, but now is the local and contains
-	its neighbourhood and neighbours as attributes. 
-	
-
+2002/04/13
 	RELEASE 1.5.0
 
 	Replaced Redfoot's own HTTP server code with Medusa.
@@ -30,8 +49,3 @@
 	Removed auto reloading of python and redcode modules.
 
 
-See also:
-	redfoot-core/CHANGELOG
-	redfoot-components/CHANGELOG
-	redfoot-doc/CHANGELOG
-	redfoot-examples/CHANGELOG
