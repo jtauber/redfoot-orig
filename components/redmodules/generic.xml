@@ -140,8 +140,9 @@
           <red:exec>subject = self.app.request.get_parameter('subject', None)</red:exec>
           <red:if test="subject">
             <P CLASS="MENUBAR2">
-              <A HREF='{relative_path}view?subject={encode_URI(subject)}'>VIEW</A>
-              <A HREF='{relative_path}edit?subject={encode_URI(subject)}'>EDIT</A>
+              <A HREF='{relative_path}view?subject={encode_URI(subject)}'>View</A>
+              <A HREF='{relative_path}edit?subject={encode_URI(subject)}'>Full Edit</A>
+              <A HREF='{relative_path}edit_subject?subject={encode_URI(subject)}'>Edit Subject</A>              
             </P>
           </red:if>
 
