@@ -32,6 +32,26 @@ ELSEIF = NS+"elif"
 
 import __builtin__
 
+def create_module(klass, app=None):
+    instance_vars = {}
+    instance = new.instance(klass, instance_vars)
+
+    app = app or instance
+    instance_vars['app'] = app
+
+    instance_vars['modules'] = modules = []
+
+    import sys
+    module = sys.modules[klass.__module__]
+    for (instance_name, class_name) in klass._RF_sub_modules:
+        mod_class = module.__dict__[class_name]
+        mod_instance = create_module(mod_class, app)
+        instance_vars[instance_name] = mod_instance
+        modules.append(mod_instance)
+        
+    getattr(instance, '__init__', lambda :None)()    
+    return instance
+
 def parse_attribute(str):
     open = find(str, '{')
     if open>=0:
@@ -199,7 +219,7 @@ class ModuleHandler(HandlerBase):
     def __init__(self, parser, parent, name, base_classes):
         HandlerBase.__init__(self, parser, parent)
         self.locals = {}
-        self.locals['RF_sub_modules'] = []
+        self.locals['_RF_sub_modules'] = []
         self.globals = self.parent.locals
         self.codestr = ""
         self.name = name
@@ -233,6 +253,7 @@ class ModuleHandler(HandlerBase):
         classobj.__module__ = module.__name__
         module.__dict__[classobj.__name__] = classobj
         module.__dict__['_RF_APP'] = classobj
+        module.__dict__['_RF_get_app'] = lambda app=classobj: create_module(app)
 
 
 class SubModule(HandlerBase):
@@ -252,7 +273,7 @@ class SubModule(HandlerBase):
             self.globals = self.module.__dict__
             self.locals = self.globals
             self._exec("from %s import %s" % (from_str, class_name))
-        parent.locals['RF_sub_modules'].append((instance_name, class_name))
+        parent.locals['_RF_sub_modules'].append((instance_name, class_name))
 
 
     def _exec(self, codestr):

@@ -60,13 +60,12 @@ class RedDaemon(HTTPDaemon):
             module._app_instance.rednode.local.save()
             self.stop()
 
-    def load(self, module, args=()):
+    def load(self, module):
         self.module = module
-        self.args = args
 
-        app_class = module._RF_APP
-        instance = apply(app_class, args)
+        instance = module._RF_get_app()
         module._app_instance = instance
+
         servername, port = self.server_address
         if port==80:
             instance.URI = "http://%s/" % servername
@@ -74,8 +73,6 @@ class RedDaemon(HTTPDaemon):
             instance.URI = "http://%s:%s/" % (servername, port)
             
         handle_request = instance.handle_request
-        instance.create_sub_modules()
-
         self.set_handle_request(handle_request)            
         self.start()
         if port==80:
@@ -83,13 +80,11 @@ class RedDaemon(HTTPDaemon):
         else:
             print "Running at http://%s:%s/" % (servername, port)
 
-        
-
     def notify_me_of_reload(self, module):
         if module.__name__==self.module.__name__:
             self.stop()
             self.module = module            
-            self.load(module, self.args)
+            self.load(module)
 
             import sys
             sys.stderr.write("RELOADED '%s'\n" % module)

@@ -1,6 +1,5 @@
 from string import rfind
 from types import MethodType
-import new
 
 class Module:
 
@@ -76,36 +75,10 @@ class ParentModule(Module):
             if not self.apply_exact(path, modules):
                 self.apply_next(path)
 
-    def create_sub_modules(self):
-        #print "creating submodules for:", self.__class__
-
-        # Initialize modules attribute if not already so
-        self.modules = getattr(self, "modules", [])    
-        for (instance_name, class_name) in self.__class__.RF_sub_modules:
-            import sys
-            module = sys.modules[self.__class__.__module__]
-            mod_class = module.__dict__[class_name]            
-            self.add_module(instance_name, mod_class)
-
     def handle_request(self, request, response):
         for module in self.modules:
             if hasattr(module, 'handle_request'):
                 module.handle_request(request, response)
-
-    def add_module(self, instance_name, klass):
-        #print "adding module (%s) as %s to %s" % (klass, instance_name, self.__class__)
-        
-        instance = new.instance(klass, {'app': self.app})
-        getattr(klass, '__init__', lambda x:None)(instance,)
-        if hasattr(klass, "module_rdf"):
-            for (location, URI) in klass.module_rdf:
-                location = to_URL(klass.__module__, location)
-                self.app.rednode.connect_to(location, URI)
-        if hasattr(instance, 'create_sub_modules'):
-            instance.create_sub_modules()
-        self.__dict__[instance_name] = instance
-        self.modules = getattr(self, "modules", [])
-        self.modules.append(instance)
 
 
 class App(ParentModule):
