@@ -11,92 +11,119 @@ class TripleStore:
 
     def add(self, subject, predicate, object):
         # spo
-        if not self.spo.has_key(subject):
-            self.spo[subject] = {}
+        spo = self.spo
+        if not spo.has_key(subject):
+            spo[subject] = {}
 
-        if not self.spo[subject].has_key(predicate):
-            self.spo[subject][predicate] = {}
+        subjectDictionary = spo[subject]
+        if not subjectDictionary.has_key(predicate):
+            subjectDictionary[predicate] = {}
 
-        self.spo[subject][predicate][object] = 1
+        subjectDictionary[predicate][object] = 1
 
         # pos
-        if not self.pos.has_key(predicate):
-            self.pos[predicate] = {}
+        pos = self.pos
+        if not pos.has_key(predicate):
+            pos[predicate] = {}
 
-        if not self.pos[predicate].has_key(object):
-            self.pos[predicate][object] = {}
+        predicateDictionary = pos[predicate]
+        if not predicateDictionary.has_key(object):
+            predicateDictionary[object] = {}
 
-        self.pos[predicate][object][subject] = 1
+        predicateDictionary[object][subject] = 1
 
     def remove(self, subject=None, predicate=None, object=None):
-        def callback(subject, predicate, object, self=self):
-            del self.spo[subject][predicate][object]
-            del self.pos[predicate][object][subject]
+        
+        def callback(subject, predicate, object, spo=self.spo, pos=self.pos):
+            del spo[subject][predicate][object]
+            del pos[predicate][object][subject]
 
         self.visit(callback, subject, predicate, object)
 
     def visit(self, callback, subject=None, predicate=None, object=None):
         if subject!=None: # subject is given
-            if self.spo.has_key(subject):
+            spo = self.spo
+            if spo.has_key(subject):
+                subjectDictionary = spo[subject]
                 if predicate!=None: # subject+predicate is given
-                    if self.spo[subject].has_key(predicate):
+                    if subjectDictionary.has_key(predicate):
                         if object!=None: # subject+predicate+object is given
-                            if self.spo[subject][predicate].has_key(object):
+                            if subjectDictionary[predicate].has_key(object):
                                 if callback(subject, predicate, object)!=None:
                                     return
                             else: # given object not found
                                 pass
                         else: # subject+predicate is given, object unbound
-                            for o in self.spo[subject][predicate].keys():
+                            for o in subjectDictionary[predicate].keys():
                                 if callback(subject, predicate, o)!=None:
                                     return
                     else: # given predicate not found
                         pass
                 else: # subject given, predicate unbound
-                    for p in self.spo[subject].keys():
+                    for p in subjectDictionary.keys():
                         if object!=None: # object is given
-                            if self.spo[subject][p].has_key(object):
+                            if subjectDictionary[p].has_key(object):
                                 if callback(subject, p, object)!=None:
                                     return
                             else: # given object not found
                                 pass
                         else: # object unbound
-                            for o in self.spo[subject][p].keys():
+                            for o in subjectDictionary[p].keys():
                                 if callback(subject, p, o)!=None:
                                     return
             else: # given subject not found
                 pass
         elif predicate!=None: # predicate is given, subject unbound
-            if self.pos.has_key(predicate):
+            pos = self.pos
+            if pos.has_key(predicate):
+                predicateDictionary = pos[predicate]
                 if object!=None: # predicate+object is given, subject unbound
-                    if self.pos[predicate].has_key(object):
-                        for s in self.pos[predicate][object].keys():
+                    if predicateDictionary.has_key(object):
+                        for s in predicateDictionary[object].keys():
                             if callback(s, predicate, object)!=None:
                                 return
                     else: # given object not found
                         pass
                 else: # predicate is given, object+subject unbound
-                    for o in self.pos[predicate].keys():
-                        for s in self.pos[predicate][o].keys():
+                    for o in predicateDictionary.keys():
+                        for s in predicateDictionary[o].keys():
                             if callback(s, predicate, o)!=None:
                                 return
         elif object!=None: # object is given, subject+predicate unbound
-            for p in self.pos.keys():
-                if self.pos[p].has_key(object):
-                    for s in self.pos[p][object]:
+            pos = self.pos
+            for p in pos.keys():
+                predicateDictionary = pos[p]
+                if predicateDictionary.has_key(object):
+                    for s in predicateDictionary[object].keys():
                         if callback(s, p, object)!=None:
                             return
                 else: # given object not found
                     pass
         else: # subject+predicate+object unbound
-            for s in self.spo.keys():
-                for p in self.spo[s].keys():
-                    for o in self.spo[s][p].keys():
+            spo = self.spo
+            for s in spo.keys():
+                subjectDictionary = spo[s]
+                for p in subjectDictionary.keys():
+                    for o in subjectDictionary[p].keys():
                         if callback(s, p, o)!=None:
                             return
+
+    # TODO: this method might get refactored back into visit
+    def visitSubjects(self, callback):
+        """
+        Experimental -- may change, depend on it at your own risk
+
+        This method differs from visit(aSubject, None, None) in that it will only
+        call the callback once per subject.
+        """
+        for s in self.spo.keys():
+            callback(s)
                     
 
 #~ $Log$
+#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ new release
+#~
 #~ Revision 4.8  2000/12/06 19:40:30  eikeon
 #~ moved get method to query as it can be layered on top of a TripleStore like all the other queries
 #~
