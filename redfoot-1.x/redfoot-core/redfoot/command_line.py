@@ -40,6 +40,14 @@ def process_args():
             uri = "http://%s:%s/" % (hostname, port)
         uri = uri
 
+    # Needed to be able to import redcode Modules
+    from redfoot.redcode import importer
+    importer.install()
+
+    if len(args)==0:
+        usage()
+        sys.exit(-1)
+        
     for arg in args:
         __import__(arg)
     

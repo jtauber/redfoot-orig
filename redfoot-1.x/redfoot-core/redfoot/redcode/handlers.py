@@ -37,7 +37,7 @@ def sub_modules(self):
     import sys        
     list = []
     for (instance_name, class_name) in getattr(self.__class__, '_RF_sub_modules', []):
-        mod_class = redfoot.modules[class_name]
+        mod_class = redfoot.get_module(class_name)
         list.append((instance_name, mod_class))
     return list
 
@@ -251,7 +251,7 @@ class ModuleHandler(HandlerBase):
         classobj = new.classobj(self.name.encode('ascii'), self.base_classes, self.locals )
         classobj.sub_modules = sub_modules
         module = self.module
-        redfoot.modules[self.name] = classobj
+        redfoot.register_module(self.name, classobj)
         module.__dict__[classobj.__name__] = classobj
         module.__dict__['_RF_APP'] = classobj
         module.__dict__['_RF_get_app'] = lambda uri, app_class=classobj: app_class(uri)

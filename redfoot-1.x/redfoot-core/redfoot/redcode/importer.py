@@ -64,5 +64,6 @@ class RedcodeModuleImporter(ModuleImporter):
         self.set_hooks(rh)
 
 def install():
+    # TODO: add check for it already being installed
     importer = RedcodeModuleImporter()
     importer.install()

@@ -44,7 +44,7 @@ class Boot(App):
         response.close()
 
     def root_facet(self, request, response):        
-        app = self.rednode.get_first_value(resource(self.rednode.uri), APP, '')        
+        app_uri = self.rednode.get_first_value(resource(self.rednode.uri), APP, '')        
         response.write("""
 <html><h1>Default Redfoot Bootstrap Application</h1>
   <p>
@@ -53,14 +53,14 @@ class Boot(App):
   </p>
   <h2>Known Applications</h2>
   <ul>""")
-        for module in redfoot.modules.keys():
-            if issubclass(redfoot.modules[module], App):
-                if module==app:
-                    selected = ' selected="true"'
-                else:
-                    selected = ''
-                response.write("""    <li><a href="app?uri=%s">%s</a></li>
-  """ % (encode_URI(module), module))
+        for app in redfoot.get_apps():
+            uri, app_class = app
+            if uri==app_uri:
+                selected = ' selected="true"'
+            else:
+                selected = ''
+            response.write("""    <li><a href="app?uri=%s">%s</a></li>
+  """ % (encode_URI(uri), uri))
             
         response.write("""
   </ul>            
@@ -68,13 +68,13 @@ class Boot(App):
   <h2>App URI:</h2>
   <select type="text" name="app_uri" onChange="config_form.processor.value='update'; config_form.submit()">""")
 
-        for module in redfoot.modules.keys():
-            if issubclass(redfoot.modules[module], App):
-                if module==app:
-                    selected = ' selected="true"'
-                else:
-                    selected = ''
-                response.write("""<option value="%s"%s>%s</option>""" % (module, selected, module))
+        for app in redfoot.get_apps():
+            uri, app_class = app
+            if uri==app_uri:
+                selected = ' selected="true"'
+            else:
+                selected = ''
+            response.write("""<option value="%s"%s>%s</option>""" % (uri, selected, uri))
         response.write("""            
   </select>
   <input type="hidden" name="processor" value="update"></input>
@@ -124,9 +124,10 @@ class Boot(App):
         rednode = self.rednode
         app = rednode.get_first_value(resource(rednode.uri), APP, None)
         if app:
-            app_class = redfoot.modules.get(app, None)
+            app_class = redfoot.get_app(app)
             if not app_class:
                 print "Warning: Module '%s' not found" % app
                 print "... known modules include", redfoot.modules.keys()
         return app_class
         
+redfoot.register_app("http://eikeon.com/2002/04/12/Boot", Boot)

@@ -5,11 +5,11 @@ from redfoot.rdf.query.schema import SchemaQuery
 from redfoot.rdf.store.storeio import StoreIO, TripleStoreIO
 from redfoot.rdf.store.autosave import AutoSaveStoreIO
 
+from redfoot.rdf.const import LABEL, TYPE
 from redfoot.rdf.objects import resource, literal
 
 from redfoot.command_line import process_args
 from redfoot.server import RedServer
-from redfoot import boot
 
 NEIGHBOUR = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")
 CONNECTED = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Connected")
@@ -25,7 +25,6 @@ class Local(SchemaQuery, TripleStoreIO):
 class AutoSaveLocal(SchemaQuery, AutoSaveStoreIO):
     """Like Local but for auto-saving stores."""
     pass
-
 
 
 class MultiStore(SchemaQuery, StoreIO):
@@ -90,14 +89,13 @@ class RedNode(SchemaQuery):
         self.neighbours.add_store(builtin)
 
 
-    #def run(self, address=None, port=8080, Boot=boot.Boot, blocking=1):
+    #def run(self, address=None, port=8080, blocking=1):
     def run(self, **args):
         "This method blocks until the server is shutdown"
         if len(args)==0:
             (uri, rdf, address, port) =  process_args()
-            # TODO: add way to specify Boot
-            Boot = boot.Boot
-            self.load(rdf, uri, 1)
+            apps = redfoot.get_apps()
+            Boot = None
         else:
             # TODO: get defaults from common source instead of keeping
             # them in sync with process_args defaults
@@ -106,7 +104,16 @@ class RedNode(SchemaQuery):
             self.load(rdf, uri, 1)
             address = args.get('address', '')
             port = args.get('port', 8080)
-            Boot = args.get('Boot', boot.Boot)
+            Boot = args.get('Boot', None)
+
+        if not Boot:
+            if len(apps)==0:
+                raise "No Apps Found"
+            else:
+                # TODO: add way to specify Boot
+                uri, app_class = apps[0]
+                Boot = app_class
+            self.load(rdf, uri, 1)
 
         self.server = server = RedServer(address, port)
         server.add_handler(Boot(self))
