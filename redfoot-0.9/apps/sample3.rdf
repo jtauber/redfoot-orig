@@ -11,9 +11,17 @@
     <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
     <rdfs:label>yet another thing i have to do</rdfs:label>
   </rdf:Description>
+  <rdf:Description rdf:about="http://VAIO/2001/04/15/T03/47/31Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>foo</rdfs:label>
+  </rdf:Description>
   <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/23/12Z">
     <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
     <rdfs:label>the other thing i have to do</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/27/45Z">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
+    <rdfs:label>just one thing i have to do</rdfs:label>
   </rdf:Description>
   <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/27/24Z">
     <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
@@ -27,8 +35,8 @@
     <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
     <rdfs:label>Task</rdfs:label>
   </rdf:Description>
-  <rdf:Description rdf:about="http://localhost:8000/2001/04/11/T04/27/45Z">
+  <rdf:Description rdf:about="http://VAIO/2001/04/15/T03/46/16Z">
     <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/#Task"/>
-    <rdfs:label>just one thing i have to do</rdfs:label>
+    <rdfs:label>asdf</rdfs:label>
   </rdf:Description>
 </rdf:RDF>
