@@ -54,7 +54,7 @@ class Editor(Viewer):
         """ % (self.qstore.label(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
 
     def edit(self, subject):
-        if subject[0]=="#":
+        if subject!=None and subject!="" and subject[0]=="#":
             subject = self.qstore.getStore().getStore().URI + subject
 
         self.writer.write("""
@@ -400,6 +400,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 3.2  2000/10/31 05:03:08  eikeon
+# mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
+#
 # Revision 3.1  2000/10/29 01:54:35  eikeon
 # fixed Unknown Attribute property_num bug I introduced just before 0.9.1 ;(
 #
