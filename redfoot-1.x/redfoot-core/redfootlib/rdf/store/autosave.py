@@ -5,6 +5,7 @@ class AutoSave(object):
     def __init__(self):
         super(AutoSave, self).__init__()
         self.dirtyBit = DirtyBit()
+        self.auto_save_min_interval = 60*60
         
     def remove(self, subject=None, predicate=None, object=None):
         self.dirtyBit.set()
@@ -20,14 +21,14 @@ class AutoSave(object):
         self.dirtyBit.clear() # we just loaded... therefore we are clean
         self._start_thread() 
 
-    def _start_thread(self, notMoreOftenThan=60*60):
+    def _start_thread(self):
         """Not more often then is in seconds"""
         import threading
-        t = threading.Thread(target = self._autosave, args = (notMoreOftenThan,))
+        t = threading.Thread(target = self._autosave, args = ())
         t.setDaemon(1)
         t.start()
         
-    def _autosave(self, interval):
+    def _autosave(self):
         while 1:
             try:
                 if self.dirtyBit.value()==1:
@@ -36,9 +37,9 @@ class AutoSave(object):
                     sys.stderr.write("auto saving '%s'\n" % self.location)
                     self.save(self.location, self.uri)
                     self.save("%s-%s" % (self.location, self.date_time_string()), self.uri)
-                    # Do not save a backup more often than interval
+                    # Do not save a backup more often than notMoreOftenThan
                     import time
-                    time.sleep(interval)
+                    time.sleep(self.auto_save_min_interval)
             except:
                 import traceback
                 traceback.print_exc()
