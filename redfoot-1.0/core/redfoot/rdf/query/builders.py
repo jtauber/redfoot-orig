@@ -1,5 +1,4 @@
 
-
 class Statement:
 
     def __init__(self, s, p, o):
@@ -8,20 +7,19 @@ class Statement:
         self.object = o
 
 
-class StatementBuilder:
-    
-    def __init__(self):
-        self.statement = None
-
-    def accept(self, s, p, o):
-        self.statement = Statement(s, p, o)
-
-
 def triple2statement(func):
     return lambda s, p, o, func=func: func(Statement(s, p, o))
 
 def statement2triple(func):
     return lambda st, func=func: func(st.subject, st.predicate, st.object)
+
+
+class ItemBuilder:
+    def __init__(self):
+        self.item = None
+
+    def accept(self, item):
+        self.item = item
 
 
 class ListBuilder:

@@ -5,17 +5,17 @@ from redfoot.rdf.query.builders import *
 class Query:
     
     def exists(self, subject, predicate, object):
-        s = StatementBuilder()
-        self.visit(first(s.accept), (subject, predicate, object))
-        return (s.statement != None)
+        b = ItemBuilder()
+        self.visit(first(triple2statement(b.accept)), (subject, predicate, object))
+        return (b.item != None)
 
     def not_exists(self, subject, predicate, object):
         return not self.exists(subject, predicate, object)
 
     def get_first(self, subject, predicate, object):
-        s = StatementBuilder()
-        self.visit(first(s.accept), (subject, predicate, object))
-        return s.statement
+        b = ItemBuilder()
+        self.visit(first(triple2statement(b.accept)), (subject, predicate, object))
+        return b.item
 
     def get_first_value(self, subject, predicate, default=None):
         s = self.get_first(subject, predicate, None)

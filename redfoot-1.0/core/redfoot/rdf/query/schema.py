@@ -20,12 +20,12 @@ class SchemaQuery(Query):
 
     # TODO: method to return all labels
     def label(self, subject, default=None):
-        b = StatementBuilder()
-        self.visit(first(b.accept), (subject, LABEL, None))
-        if b.statement == None:
+        b = ItemBuilder()
+        self.visit(first(o(b.accept)), (subject, LABEL, None))
+        if b.item == None:
             first_label = None
         else:
-            first_label = b.statement.object
+            first_label = b.item
         if first_label:
             return first_label
         elif default != None:
@@ -34,12 +34,12 @@ class SchemaQuery(Query):
             return subject
 
     def comment(self, subject, default=None):
-        b = StatementBuilder()
-        self.visit(first(b.accept), (subject, COMMENT, None))
-        if b.statement == None:
+        b = ItemBuilder()
+        self.visit(first(o(b.accept)), (subject, COMMENT, None))
+        if b.item == None:
             first_comment = None
         else:
-            first_comment = b.statement.object
+            first_comment = b.item
         if first_comment:
             return first_comment
         elif default != None:

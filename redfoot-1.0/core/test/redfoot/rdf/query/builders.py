@@ -13,10 +13,10 @@ def run():
     store.add(resource("paul"), resource("age"), literal("35"))
     store.add(resource("peter"), resource("age"), literal("35"))
 
-    b = StatementBuilder()
-    store.visit(b.accept, (None, resource("age"), literal("37")))
+    b = ItemBuilder()
+    store.visit(triple2statement(b.accept), (None, resource("age"), literal("37")))
 
-    if b.statement.subject == resource("john"):
+    if b.item.subject == resource("john"):
         print "passed 1"
         passed = passed + 1
     else:
