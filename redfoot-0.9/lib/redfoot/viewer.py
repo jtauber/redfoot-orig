@@ -50,6 +50,8 @@ class Viewer:
             self.css()
         elif path_info == "/view":
             self.view(parameters['uri'])
+        elif path_info == "/test":
+            self.test(parameters['search'])
         else:
             self.response.write("unknown PATH of '%s'" % path_info)
 
@@ -386,8 +388,58 @@ class Viewer:
         </HTML>
         """)
 
+    def test(self, search):
+        self.response.write("""
+        <HTML>
+          <HEAD>
+            <TITLE>Test</TITLE>
+            <LINK REL="STYLESHEET" HREF="css"/>
+          </HEAD>
+          <BODY>
+            <H1>ReDFoot</H1>""")
+        self.menuBar()
+        self.response.write("""
+            <H2>Test</H2>
+         """)
+        subjects = self.qstore.getSubjects()
+        self.response.write("""
+            <INPUT TYPE="TEXT" SIZE="60" NAME="a" onChange="document.all.b.value=document.all.a.value">
+            <SELECT NAME="b" onChange="document.all.a.value=document.all.b.value">
+              <OPTION value="">Select a resource</OPTION>
+        """)
+        for s in subjects:
+            self.response.write("""
+              <OPTION VALUE="%s">%s</OPTION>
+            """ % (s, self.qstore.label(s)))
+        self.response.write("""
+            </SELECT>
+            <FORM ACTION="test" METHOD="GET">
+              <P>Search for <INPUT NAME="search" TYPE="TEXT" VALUE="%s" SIZE="60"><INPUT TYPE="submit">
+            </FORM>
+        """ % search)
+        if search != "":
+            import string
+            upper_search = string.upper(search)
+            self.response.write("""<UL>""")
+            for s in subjects:
+                upper_uri = string.upper(s)
+                upper_label = string.upper(self.qstore.label(s))
+                upper_comment = string.upper(self.qstore.comment(s))
+                if (string.find(upper_uri,upper_search)!=-1) or \
+                   (string.find(upper_label, upper_search)!=-1):
+                       self.response.write("""
+                         <LI><A HREF="javascript:document.all.a.value='%s'">%s</A></LI>
+                       """ % (s, self.qstore.label(s)))
+        self.response.write("""</UL>""")
+        self.response.write("""
+           </BODY>
+        </HTML>
+        """)
 
 #~ $Log$
+#~ Revision 4.1  2000/11/20 21:41:31  jtauber
+#~ download RDF and view Triples now can take subject,predicate,object parameters
+#~
 #~ Revision 4.0  2000/11/06 15:57:34  eikeon
 #~ VERSION 4.0
 #~
