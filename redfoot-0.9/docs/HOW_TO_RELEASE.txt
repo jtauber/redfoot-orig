@@ -1,0 +1,19 @@
+HOW TO RELEASE REDFOOT
+
+* checkout
+* update CHANGELOG (hopefully has been done continuously)
+* tag release:
+	cvs tag Release_X_XX_XX
+* up major revision:
+	cvs commit -m "new release" -r x.0
+	cvs update -A
+* rename directory to redfoot-X.X.X
+* tar
+	tar --exclude=CVS cvzf redfoot-X.X.X.tgz redfoot-X.X.X
+* upload
+	ftp download.sourceforge.net as user ftp
+	put in /incoming
+* release on sourceforge
+* send sourceforge news
+* send freshmeat announcement
+* announce elsewhere (xmlhack, www-rdf-interest)
