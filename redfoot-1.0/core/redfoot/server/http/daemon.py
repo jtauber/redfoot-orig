@@ -90,6 +90,7 @@ class RedDaemon(HTTPDaemon):
             sys.stderr.flush()
 
 
+
 class RDFRedDaemon(HTTPDaemon):
     def __init__(self, serverAddress, app, exact=0):
         if exact:
@@ -110,6 +111,7 @@ class RDFRedDaemon(HTTPDaemon):
         except KeyboardInterrupt:
             print "Shutting down..."
             self.stop()
+            print "Done."
 
     def start(self):
         servername, port = self.server_address
