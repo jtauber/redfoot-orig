@@ -30,11 +30,15 @@ class StoreIO:
         self.output(stream, URI)
         stream.close()
         
+    def input(self, stream, URI=None):
+        from rdf.parser import parse_RDF_stream
+        parse_RDF_stream(self.add, stream, URI)
+
     # TODO: maybe move this method 'down' a bit... as a URI is not
     # required to perform *a* serialization of a TripleStore?
     # Also, this method does not require a location.
     #   StoreIO->PersistantStore?
-    def output(self, stream, URI=None, subject=None, predicate=None, object=None):
+    def output(self, stream, URI=None, subject=None, predicate=None, object=None, absolute=0):
         if URI==None:
             URI = self.URI
 
@@ -42,7 +46,8 @@ class StoreIO:
         serializer = Serializer()
 
         serializer.set_stream(stream)
-        serializer.set_base_URI(URI)
+        if absolute!=1:
+            serializer.set_base_URI(URI)
 
         self.visit(lambda s, p, o, register_property=serializer.register_property: register_property(p), subject, predicate, object)
 
@@ -54,14 +59,16 @@ class StoreIO:
 class TripleStoreIO(StoreIO, TripleStore):
     def __init__(self):
         TripleStore.__init__(self)
-        
+
+
 from threading import RLock
 from threading import Condition
 
 class AutoSaveStoreIO(TripleStoreIO):
     def __init__(self):
         TripleStoreIO.__init__(self)
-
+        self.dirtyBit = DirtyBit()
+        
     def remove(self, subject=None, predicate=None, object=None):
         self.dirtyBit.set()
         TripleStoreIO.remove(self, subject, predicate, object)
@@ -71,7 +78,6 @@ class AutoSaveStoreIO(TripleStoreIO):
         TripleStoreIO.add(self, subject, predicate, object)
 
     def load(self, location, URI=None):
-        self.dirtyBit = DirtyBit()
         TripleStoreIO.load(self, location, URI)
         self.dirtyBit.clear() # we just loaded... therefore we are clean
         self._start_thread() 
@@ -111,6 +117,20 @@ class AutoSaveStoreIO(TripleStoreIO):
         return s
 
 
+from rdf.store import *
+class JournalingStoreIO(StoreIO, JournalingStore):
+
+    def __init__(self):
+        StoreIO.__init__(self)
+        a = AutoSaveStoreIO()
+        a.location = "testing"
+        a.URI = "ASDF"
+        a.dirtyBit.clear() # we just loaded... therefore we are clean
+        a._start_thread() 
+        
+        JournalingStore.__init__(self, a)
+
+
 class DirtyBit:
     def __init__(self):
         self._mon = RLock()
@@ -139,6 +159,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 5.5  2000/12/20 20:37:17  eikeon
+#~ changed mixed case to _ style... all except for query
+#~
 #~ Revision 5.4  2000/12/19 05:48:00  eikeon
 #~ URI defaults to None so that output may be called without one; calling of __init__'s cleaned up
 #~
