@@ -2,7 +2,7 @@
 
 setlocal
 set PYTHONPATH=../lib/
-echo Usage (example): run_redpage.bat sample3.xml
+echo Usage (example): run_.bat foo.xml
 @echo on
 
 python ../lib/redfoot/server.py %*
