@@ -12,8 +12,7 @@ from util import *
 
 from redfoot import redpage
 
-Neighbours = redpage.parse_red_page("neighbours.xml").Neighbours
-
+from redfoot.modules.neighbours import Neighbours
 from redfoot.modules.editor import Editor
 
 from rdf.query import QueryStore
