@@ -1,9 +1,8 @@
 
 class HandlerBase:
-    def __init__(self, parser, parent, globals={}):
+    def __init__(self, parser, parent):
         self.parser = parser
         self.parent = parent
-        self.globals = globals
         self.set_handlers()
 
     def set_handlers(self):
@@ -24,5 +23,4 @@ class HandlerBase:
 class IgnoreHandler(HandlerBase):
     def child(self, name, atts):
         print "Ignoring '%s'" % name
-        IgnoreHandler(self.parser, self, self.globals)
-
+        IgnoreHandler(self.parser, self)

@@ -2,7 +2,14 @@ import new
 import redfoot
 from string import find, split, join, strip, lstrip, whitespace
 
-from redfoot.xml.handler import HandlerBase
+from redfoot.xml.handler import HandlerBase as AbstractHandlerBase
+
+class HandlerBase(AbstractHandlerBase):
+
+    def __init__(self, parser, parent, globals={}):
+        AbstractHandlerBase.__init__(self, parser, parent)
+        self.globals = globals
+
 
 from redfoot.xml.dom import Node, NodeList, TextNode
 from redfoot.xml.dom import HTMLElementNode, ElementNode
