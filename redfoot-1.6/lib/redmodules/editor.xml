@@ -123,6 +123,8 @@
                 <red:exec>
                   self.rednode.neighbourhood.visit_possible_properties_for_subject(self.display_property_option, subject)
                   self.display_property_option(TYPE)
+                  for property in self.rednode.neighbourhood.possible_properties_for_subject(subject):
+                      self.display_property_option(property)
                 </red:exec>        
               </SELECT>
             </TD>
