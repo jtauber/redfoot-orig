@@ -133,43 +133,40 @@
                 href="{'../' * depth}2002/css"/>
         </head>
         <body>
-
 <div class="topnav">
-
   [<a href="{self.app.rednode.uri}">
-                    <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_NAME, 'Home')</red:eval>
-                  </a>
- 
-                  <red:for item="p" list="parts">
-                    <red:if test="p!=''">
-                     <red:exec>
-                       depth = depth - 1
-                       path = '../' * depth
-                     </red:exec>
-                     |
-                     <a href="{path}">
-                       <red:eval>p</red:eval>
-                     </a>
-                    </red:if>
-                  </red:for>
-   ]
+     <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_NAME, 'Home')</red:eval>
+   </a>
+   <red:for item="p" list="parts">
+     <red:if test="p!=''">
+      <red:exec>
+        depth = depth - 1
+        path = '../' * depth
+      </red:exec>
+      |
+      <a href="{path}">
+        <red:eval>p</red:eval>
+      </a>
+     </red:if>
+   </red:for>
+  ]
 </div>
-
 
 <h1><red:eval>self.app.rednode.label(uri, '')</red:eval></h1>
 
+<form id="login" action="" method="post"
+      style="margin: 0px; padding: 0px;">
+  <input name="view" type="hidden" value=""/>
+  <input name="processor" type="hidden" value=""/>  
+</form>    
 
 <div style="float: left;">
 
-<div class="nav" style="float: right; clear: right; width: 10em; border: solid 1px black; padding: 2px 5px; font-size: 8pt;">
+  <div class="nav" style="float: right; clear: right; width: 10em; border: solid 1px black; padding: 2px 5px; font-size: 8pt;">
      <red:if test="self.authentication.authenticated()">
        Welcome, <red:eval>self.authentication.get_username()</red:eval>
      </red:if>
 
-  <form id="login" action="" method="post"
-        style="margin: 0px; padding: 0px;">
-    <input name="view" type="hidden" value=""/>
-    
   <dl>
   <dt>Actions</dt>
                     <red:if test="self.authentication.authenticated()">
@@ -188,7 +185,7 @@
                              type='HIDDEN' 
                              value="{self.module_instance}"/>
                         -->
-                      <input name="processor" type="hidden" value=""/>
+
                      <dd><a href="javascript: form=document.getElementById('login'); form.processor.value='do_logout'; form.submit()">Logout
                       </a></dd>
 
@@ -203,7 +200,7 @@
 
                     </red:if>
         </dl>            
-          </form>
+
       <red:exec>
         lb = ListBuilder()
         self.app.rednode.visit(o(filter(lb.accept, self.visible)), (uri, LINKS_TO, None))        
@@ -223,7 +220,7 @@
         </dl>
       </red:if>
 
-</div>
+  </div>
 
 
       <!-- menu -->
@@ -256,6 +253,7 @@
 
 
 </div>
+
 
 
             <div style="font-size: 8pt; text-align: center; margin: 5px;">
