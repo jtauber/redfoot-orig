@@ -218,6 +218,10 @@ class QueryStore:
         def type(s, p, o, self=self, possibleProperty=possibleProperty):
             self.getPossibleProperties(o, possibleProperty)
         self.visitTypes(type, subject)
+        # all subjects can take the properties that resource can
+        # note: this will definitely lead to duplicates, but they are
+        # possible anyway
+        self.getPossibleProperties(RESOURCE, possibleProperty)
 
     def getRange(self, property):
         statement = self.getFirst(property, RANGE, None)
@@ -227,6 +231,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 5.1  2000/12/09 18:37:15  jtauber
+#~ added typelessResources() query
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
 #~
