@@ -13,7 +13,7 @@ class Triple(object):
             super(Triple, self).remove(s, p, o)
 
     def __iter__(self):
-        return self.triples(ANY, ANY, ANY)
+        return self.triples(None, None, None)
 
     
 from redfootlib.rdf.store.memory import InMemoryStore
