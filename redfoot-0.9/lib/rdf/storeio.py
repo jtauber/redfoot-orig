@@ -118,7 +118,7 @@ class DirtyBit:
         self._mon.release()
 
     def value(self):
-        return self.dirty
+        return self._dirty
 
     def wait(self):
         self._mon.acquire()
@@ -127,6 +127,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 4.16  2000/12/05 22:16:32  jtauber
+#~ changed some class/function names and added some doc
+#~
 #~ Revision 4.15  2000/12/05 07:12:43  eikeon
 #~ fixed date time format option to pad with zero
 #~
