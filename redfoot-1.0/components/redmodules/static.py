@@ -11,7 +11,7 @@ class Static(Module):
         path_info = self.app.request.get_path_info()        
         if name == path_info:
             file = path_info[1:]
-            if os.path.exists(file):
+            if os.path.exists(file) and os.path.isfile(file):
                 return self.static
         raise AttributeError, name
             
