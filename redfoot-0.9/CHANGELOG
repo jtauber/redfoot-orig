@@ -1,5 +1,66 @@
 CHANGELOG
 
+Changes between 0.9.2 and 0.9.3
+
+ - improved documentation
+ - complete refactor of rdf library
+	
+ - rdf.const now houses RDF constants
+ - rdf.literal now had methods for encoding/decoding literals
+ - renamed property/value to predicate/object
+ - changed a number of classes to mix via multiple inheritance rather than
+   wrapping
+	
+ - changed class RDFParser to function parseRDF
+ - refactored common parser handler code into HandlerBase class
+
+ - Added support for cookies and sessions in BNH
+ - Split server.py into server.py, servlet.py and receiver.py
+
+ - added getRange, visitTypes, getPossibleProperties,
+   getPossiblePropertiesForSubject methods to query
+ - factored out common getFirst functionality from label and comment
+ - reify no longer removes original triple
+ - refactored code using get to use calls to visit
+ - moved get method to query
+
+ - serializer has new method for serializing statements that keeps track
+   of subject start/end for you
+ - fixed string index out of range bug in serializer
+
+ - visit will now stop if None is not returned by callback function
+ - refactored+documented visit function
+ - removed put
+ - refactored remove to use callback function
+ - changed visitor classes to functions
+
+ - Added autosave capability
+ - output method now takes query arguments for what to output and is more
+   efficent
+
+ - factored out creation of handler from runServer
+ - in baseui, moved creation of editor to getEditor method so that
+   subclasses can override getEditor to create an editor of their liking
+
+ - renamed StoreNode to RedNode
+ - fixing some of the local / neighbourhood stuff
+
+ - changed redserver to use new server interface
+ - catch and dump exceptions while attempting to load
+ - beginnings of code to support automatic reloading of handlers
+ - factored out creation of handler from runServer
+ - changed to python 2.0 method of getting the fully qualified domain
+   name... as the 1.6 method in some instances would take a long time
+
+ - added a test of new UI for picking resources
+ - download RDF and view Triples now can take subject, predicate, object
+   parameters
+
+ - editor now uses getRange where possible
+ - Now uses the new getPossibleProperties* methods on query
+ - now alphabetically sort possible values for properties
+ - fixed VALIGN=top typo on reify buttons
+	
 Changes between 0.9.1 and 0.9.2
 
  - fixed bug that was causing problems when trying to save when on the
