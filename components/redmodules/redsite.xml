@@ -5,9 +5,12 @@
   from redfoot.version import VERSION
 
   from redfoot.rdf.objects import resource, literal
+  from redfoot.rdf.query.builders import ListBuilder
+  from redfoot.rdf.query.functors import o
 
   SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
   HTML = resource('http://redfoot.sourceforge.net/2001/09/site/html')
+  LINKS_TO = resource('http://redfoot.sourceforge.net/2001/09/site/links_to')  
 
   <red:module name="RedSite">
 
@@ -250,6 +253,29 @@ A:hover {
       <red:exec>
         html = self.app.rednode.get_first_value(uri, HTML, None)
       </red:exec>
+
+      <red:exec>
+        lb = ListBuilder()
+        self.app.rednode.visit(o(lb.accept), (uri, LINKS_TO, None))
+        links = lb.list
+        last = len(links) - 1
+      </red:exec>
+      <red:if test="len(links)>0">
+        <h2>Sections</h2>
+        <p>
+          [
+      <red:for item="index" list="xrange(len(links))">
+        <red:if test="index==0">
+        </red:if>
+        <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
+        <red:if test="index!=last">
+            |
+        </red:if>
+      </red:for>
+          ]
+        </p>  
+      </red:if>      
+      
       <red:if test="html">
         <red:eval encode="None">html</red:eval>
         <red:else>
