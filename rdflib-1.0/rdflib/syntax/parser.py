@@ -84,7 +84,8 @@ class DocumentHandler(object):
             self.child_stack.append(self.container_child)
             self.end_stack.append(self.default_end)
         else:
-            self.typed_node(name, atts)            
+            self.typed_node(name, atts)
+            self.add(self.subject, TYPE, URIRef(name))                    
             self.child_stack.append(self.description_child)
             self.end_stack.append(self.default_end)                
 
@@ -111,13 +112,15 @@ class DocumentHandler(object):
 
     def description(self, name, atts):
         self.typed_node(name, atts)
-        self.add(self.subject, URIRef(TYPE), URIRef(name))
+        self.add(self.subject, TYPE, URIRef(name))
 
     def description_child(self, name, atts):
-        self.property(name, atts)        
-        self.child_stack.append(self.property_child)
-        self.char_stack.append(self.property_char)
-        self.end_stack.append(self.property_end)                        
+        self.li_count = 0        
+        self.container_child(name, atts)
+        #self.property(name, atts)        
+        #self.child_stack.append(self.property_child)
+        #self.char_stack.append(self.property_char)
+        #self.end_stack.append(self.property_end)                        
 
 
     def property(self, name, atts):
@@ -162,7 +165,8 @@ class DocumentHandler(object):
             elif atts.has_key(ID_ATTRIBUTE):
                 self.object = URIRef(self.uri + "#" + atts[ID_ATTRIBUTE])
             else:
-                raise exception.MalformedDescriptionError(name)
+                self.object = BNode()
+                #raise exception.MalformedDescriptionError(name)
             if name==DESCRIPTION_ELEMENT:
                 self.description(name, atts)                
                 self.child_stack.append(self.description_child)
@@ -203,12 +207,20 @@ class DocumentHandler(object):
 
     def bag(self, name, atts):
         self.container(name, atts)
+        BAG = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag")
+        self.add(self.subject, TYPE, Literal(BAG))        
 
     def alt(self, name, atts):
         self.container(name, atts)
+        ALT = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt")
+        self.add(self.subject, TYPE, Literal(ALT))        
+        
 
     def sequence(self, name, atts):
         self.container(name, atts)
+        SEQUENCE = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#Sequence")
+        self.add(self.subject, TYPE, Literal(SEQUENCE))        
+        
 
     def li(self, name, atts):
         if atts.has_key("resource"):
