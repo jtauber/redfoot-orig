@@ -93,9 +93,9 @@ VIA = resource(SESSION_URI+"via")
         if name=='sessions':
             from redfoot.rednode import RedNode
             sessions = RedNode()
-            rdf, uri = ("%s-session.rdf" % self.__module__, "http://localhost:8000/sessions/")
+            rdf, uri = ("%s-session.rdf" % self.app.__module__, "http://localhost:8000/sessions/")
             sessions.URI = uri
-            sessions.local.load(rdf, uri)
+            sessions.local.load(rdf, uri, 1)
             self.app.rednode.neighbours.add_store(sessions.local)    
             self.sessions = sessions
             return sessions
@@ -103,6 +103,7 @@ VIA = resource(SESSION_URI+"via")
 
     
     def handle_request(self, request, response):
+        print "HELLO?"
 
         # TODO: This is on behalf of Authentication module
         self.status = ''
