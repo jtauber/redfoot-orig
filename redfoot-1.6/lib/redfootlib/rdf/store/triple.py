@@ -10,7 +10,7 @@ class Triple(object):
 
     def remove(self, subject=None, predicate=None, object=None):
         for s, p, o in self.triples(subject, predicate, object):
-            super(Query, self).remove(s, p, o)
+            super(Triple, self).remove(s, p, o)
 
     
 from redfootlib.rdf.store.memory import InMemoryStore
