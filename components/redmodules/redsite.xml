@@ -195,7 +195,7 @@
                     to something along the lines of
                     uri?view_with=editor_uri
               -->
-            [ <a href="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), 'TODO: EDITOR', '/editor/')}edit?subject={encode_URI(self.app.rednode.uri+self.app.request.get_path_info()[1:])}">Edit this page</a> ]
+            [ <a href="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), 'TODO: EDITOR', '/editor/')}edit_subject?subject={encode_URI(self.app.rednode.uri+self.app.request.get_path_info()[1:])}">Edit this page</a> ]
           </div>
         <red:else>
           <red:exec>view = self.app.request.get_parameter('view', None)</red:exec>
