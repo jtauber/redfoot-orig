@@ -89,3 +89,11 @@ class Sniffer(object):
         return 0-cmp(str(date_a), str(date_b))
 
         
+
+from redfootlib.rdf.query.schema import SchemaQuery
+from redfootlib.rdf.store.triple import TripleStore
+from redfootlib.rdf.store.autosave import AutoSave
+from redfootlib.rdf.store.storeio import LoadSave
+
+class SnifferNode(Sniffer, SchemaQuery, LoadSave, TripleStore):
+    """Default pre mixed Sniffer Node"""
