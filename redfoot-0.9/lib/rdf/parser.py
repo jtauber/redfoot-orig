@@ -21,7 +21,14 @@ def parse_RDF(adder, location, baseURI=None):
         sys.stderr.flush()
     f.close()
 
-from rdf.const import *
+from rdf.const import RDFNS
+from rdf.const import TYPE
+
+RDF = RDFNS+"RDF"
+DESCRIPTION = RDFNS+"Description"
+ABOUT = RDFNS+"about"
+ID = RDFNS+"ID"
+RESOURCE = RDFNS+"resource"
 
 from rdf.literal import literal, is_literal
 
@@ -50,7 +57,7 @@ class RootHandler(HandlerBase):
         HandlerBase.__init__(self, parser, adder, parent)
 
     def child(self, name, atts):
-        if name==RDFNS+"RDF":
+        if name==RDF:
             RDFHandler(self.parser, self.adder, self)
         else:
             pass
@@ -69,7 +76,7 @@ class RDFHandler(HandlerBase):
         self.parser.EndElementHandler = self.end
 
     def child(self, name, atts):
-        if name==RDFNS+"Description":
+        if name==DESCRIPTION:
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
             TypedNodeHandler(self.parser, self.adder, self, name, atts)
@@ -83,16 +90,16 @@ class DescriptionHandler(HandlerBase):
             self.subject = atts["about"]
         elif atts.has_key("ID"):
             self.subject = self.parser.GetBase() + "#" + atts["ID"]
-        elif atts.has_key(RDFNS+"about"):
-            self.subject = atts[RDFNS+"about"]
-        elif atts.has_key(RDFNS+"ID"):
-            self.subject = self.parser.GetBase() + "#" + atts[RDFNS+"ID"]
+        elif atts.has_key(ABOUT):
+            self.subject = atts[ABOUT]
+        elif atts.has_key(ID):
+            self.subject = self.parser.GetBase() + "#" + atts[ID]
         else:
             import sys
             sys.stderr.write("Descriptions must have either an about or an ID\n")
             
         for att in atts.keys():
-            if att=="about" or att=="ID" or att==RDFNS+"about" or att==RDFNS+"ID":
+            if att=="about" or att=="ID" or att==ABOUT or att==ID:
                 pass
             else:
                 self.adder(self.subject, att, literal(atts[att]))
@@ -109,7 +116,7 @@ class DescriptionHandler(HandlerBase):
 class TypedNodeHandler(DescriptionHandler):
     def __init__(self, parser, adder, parent, name, atts):
         DescriptionHandler.__init__(self, parser, adder, parent, atts)
-        self.adder(self.subject, RDFNS+"type", name)
+        self.adder(self.subject, TYPE, name)
 
 
 class PropertyHandler(HandlerBase):
@@ -125,12 +132,12 @@ class PropertyHandler(HandlerBase):
                     pass
                 else:
                     self.adder(self.object, att, literal(atts[att]))
-        elif atts.has_key(RDFNS+"resource"):
-            self.object = atts[RDFNS+"resource"]
+        elif atts.has_key(RESOURCE):
+            self.object = atts[RESOURCE]
             if self.object[0]=="#":
                 self.object = self.parser.GetBase() + self.object
             for att in atts.keys():
-                if att == RDFNS+"resource":
+                if att == RESOURCE:
                     pass
                 else:
                     self.adder(self.object, att, literal(atts[att]))
@@ -143,7 +150,7 @@ class PropertyHandler(HandlerBase):
         self.parser.EndElementHandler = self.end
 
     def child(self, name, atts):
-        if name==RDFNS+"Description":
+        if name==DESCRIPTION:
             self.object = atts["about"]
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
@@ -157,6 +164,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.3  2000/12/20 20:37:17  eikeon
+#~ changed mixed case to _ style... all except for query
+#~
 #~ Revision 5.2  2000/12/17 21:11:11  eikeon
 #~ changed a couple mixed case names to _ style names
 #~
