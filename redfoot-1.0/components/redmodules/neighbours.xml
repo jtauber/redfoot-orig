@@ -16,7 +16,6 @@
                                 in self.app.rednode.neighbours.stores]
         lb = ListBuilder()
         self.app.rednode.visit(triple2statement(lb.accept), (None, TYPE, NEIGHBOUR))
-        lb.end()
         l = lb.list
         other_known_neighbours = [neighbour.subject for neighbour in 
                                   l if not neighbour.subject in connected_neighbours]
