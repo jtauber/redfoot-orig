@@ -3,6 +3,7 @@ from urlparse import urlparse
 from redfootlib.rdf.syntax.parser import Parser
 from redfootlib.rdf.syntax.serializer import RedSerializer
 
+from threading import Lock
 
 class LoadSave(Parser, RedSerializer, object):
     """LoadSave
@@ -14,7 +15,8 @@ class LoadSave(Parser, RedSerializer, object):
     
     def __init__(self):
         super(LoadSave, self).__init__()
-        self.uri = None        
+        self.uri = None
+        self.lock = Lock()
 
 
     def load(self, location, uri=None, create=0):
@@ -31,9 +33,11 @@ class LoadSave(Parser, RedSerializer, object):
         self.parse_URI(self.location, self.uri)
 
     def save(self, location=None, uri=None):
+        self.lock.acquire()
         location = location or self.location
         uri = uri or self.uri
         stream = open(location, 'wb')
         self.output(stream, uri)
         stream.close()
+        self.lock.release()
         
