@@ -9,9 +9,6 @@ class Viewer:
     def __init__(self, storeNode, path):
         self.storeNode = storeNode
         self.path = path
-        #self.qstore = QueryStore(storeNode)
-        self.qstore = storeNode
-
         self.showNeighbours=0
         
     def handleRequest(self, request, response):
@@ -192,7 +189,7 @@ class Viewer:
         """)
 
         if self.showNeighbours==1:
-            self.qstore.resourcesByClassV(self.displayClass, self.displayResource)
+            self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
         else:
             self.storeNode.local.resourcesByClassV(self.displayClass, self.displayResource)
     
@@ -216,13 +213,13 @@ class Viewer:
         self.response.write("""
             <DIV CLASS="box">
 	""")
-	self.qstore.parentTypesV(root, self.displayParent)
+	self.storeNode.parentTypesV(root, self.displayParent)
 	self.response.write("""
               <DL>
         """)
 
         if self.showNeighbours==1:
-            self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+            self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
         else:
             self.storeNode.local.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
             
@@ -237,7 +234,7 @@ class Viewer:
         self.response.write("""
             <H2>%s</H2>
             <P>%s</P>
-        """ % (self.qstore.label(subject), subject))
+        """ % (self.storeNode.label(subject), subject))
 
     def view(self, subject):
         self.response.write("""
@@ -255,11 +252,11 @@ class Viewer:
             <TABLE>
         """)
 
-        if self.qstore.isKnownResource(subject):
-            self.qstore.propertyValuesV(subject, self.displayPropertyValue)
+        if self.storeNode.isKnownResource(subject):
+            self.storeNode.propertyValuesV(subject, self.displayPropertyValue)
         else:
             self.response.write("<TR><TD>Resource not known of directly</TD></TR>")
-        self.qstore.reifiedV(subject, self.displayReifiedStatements)
+        self.storeNode.reifiedV(subject, self.displayReifiedStatements)
         
         self.response.write("""
             </TABLE>
@@ -270,7 +267,7 @@ class Viewer:
     def displayClass(self, klass):
         self.response.write("""
         <DT>%s</DT>
-        """ % self.qstore.label(klass))
+        """ % self.storeNode.label(klass))
 
     def displayResource(self, resource):
         self.response.write("""
@@ -278,16 +275,16 @@ class Viewer:
         """ % self.link(resource))
 
     def displayParent(self, resource):
-        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.label(resource)))
+        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.storeNode.comment(resource), self.storeNode.label(resource)))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
         self.response.write(3*depth*"&nbsp;")
 
         if recurse==0:
-            self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.qstore.comment(klass)))
+            self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.storeNode.comment(klass)))
 
-        self.response.write("<B>%s</B>" % self.qstore.label(klass))
+        self.response.write("<B>%s</B>" % self.storeNode.label(klass))
 
         if recurse==0:
             self.response.write("</A>")
@@ -301,8 +298,8 @@ class Viewer:
 
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
-     self.qstore.comment(resource),
-     self.qstore.label(resource))
+     self.storeNode.comment(resource),
+     self.storeNode.label(resource))
 
     def displayPropertyValue(self, property, value):
         propertyDisplay = self.link(property)
@@ -327,18 +324,18 @@ class Viewer:
         self.response.write("""
         <TR CLASS="REIFIED"><TD>%s</TD><TD></TD><TD>%s</TD>
         <TD COLSPAN="3">%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
-        self.qstore.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
+        self.storeNode.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
         self.response.write("""
         </TD></TR>""")
 
     def displayReifiedStatementPropertyValue(self, property, value):
-        if property==self.qstore.TYPE:
+        if property==self.storeNode.TYPE:
             return
-        if property==self.qstore.SUBJECT:
+        if property==self.storeNode.SUBJECT:
             return
-        if property==self.qstore.PREDICATE:
+        if property==self.storeNode.PREDICATE:
             return
-        if property==self.qstore.OBJECT:
+        if property==self.storeNode.OBJECT:
             return
         propertyDisplay = self.link(property)
         if len(value)<1:
@@ -377,7 +374,7 @@ class Viewer:
             <H2>Triples</H2>
             <TABLE>
         """)
-        for statement in self.qstore.get(subject, predicate, object):
+        for statement in self.storeNode.get(subject, predicate, object):
             self.response.write("""
               <TR><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>
             """ % (statement[0], statement[1], statement[2]))
@@ -400,7 +397,7 @@ class Viewer:
         self.response.write("""
             <H2>Test</H2>
          """)
-        subjects = self.qstore.getSubjects()
+        subjects = self.storeNode.getSubjects()
         self.response.write("""
             <INPUT TYPE="TEXT" SIZE="60" NAME="a" onChange="document.all.b.value=document.all.a.value">
             <SELECT NAME="b" onChange="document.all.a.value=document.all.b.value">
@@ -409,7 +406,7 @@ class Viewer:
         for s in subjects:
             self.response.write("""
               <OPTION VALUE="%s">%s</OPTION>
-            """ % (s, self.qstore.label(s)))
+            """ % (s, self.storeNode.label(s)))
         self.response.write("""
             </SELECT>
             <FORM ACTION="test" METHOD="GET">
@@ -422,13 +419,13 @@ class Viewer:
             self.response.write("""<UL>""")
             for s in subjects:
                 upper_uri = string.upper(s)
-                upper_label = string.upper(self.qstore.label(s))
-                upper_comment = string.upper(self.qstore.comment(s))
+                upper_label = string.upper(self.storeNode.label(s))
+                upper_comment = string.upper(self.storeNode.comment(s))
                 if (string.find(upper_uri,upper_search)!=-1) or \
                    (string.find(upper_label, upper_search)!=-1):
                        self.response.write("""
                          <LI><A HREF="javascript:document.all.a.value='%s'">%s</A></LI>
-                       """ % (s, self.qstore.label(s)))
+                       """ % (s, self.storeNode.label(s)))
         self.response.write("""</UL>""")
         self.response.write("""
            </BODY>
@@ -436,6 +433,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.8  2000/12/06 23:26:55  eikeon
+#~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
+#~
 #~ Revision 4.7  2000/12/05 22:43:30  eikeon
 #~ moved constants to rdf.const
 #~
