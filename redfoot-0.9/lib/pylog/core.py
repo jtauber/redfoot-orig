@@ -155,5 +155,8 @@ print goal(("human","socrates"))
 print goal(("mortal","socrates"))
 
 # $Log$
+# Revision 1.1  2000/10/31 06:15:45  jtauber
+# initial attempt at prolog-like inference in python
+#
 
 
