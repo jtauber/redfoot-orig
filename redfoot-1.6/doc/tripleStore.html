@@ -17,19 +17,16 @@ place to add, remove and query for triples.
 object where:
     </p>
 
+
+
     <ul>
-      <li>subject and predicate are instances of <CODE>Resource</CODE></li>
-      <li>object is an instance of <CODE>Resource</CODE> or <CODE>Literal</CODE></li>
+      <li>predicate is a uriref</li>
+      <li>subject is either a uriref or a blank node</li>
+      <li>object is either a uriref, a blank node, or a literal</li> 
     </ul>
 
     <p>
-      Resource and Literal are defined in
-redfootlib/rdf/objects.py. These objects are created via <CODE>Resource(<VAR>uri</VAR>)</CODE> and
-<CODE>Literal(<VAR>value</VAR>)</CODE>. <span class="ednote">A document further describing these objects(?) is on the TODO list... as is flushing out anonymous resources etc.</span>
-    </p>
-
-    <p class="ednote">
-      Currently Redfoot's in memory store implementation doesn't care what type of python objects are used for the subject, predicate and object. This has the undesireable effect of finding out the hard way further down the road... as subject, predicate and object are assumed to be of type Resource or Literal elsewhere. Need to figure out where is the best place to enforce the usage of correct object types?
+      URIRef, BNode, and Literal are defined in redfootlib/rdf/objects.py. 
     </p>
 
     <h2>Interface</h2>

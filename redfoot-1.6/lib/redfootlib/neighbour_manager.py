@@ -1,41 +1,40 @@
 from redfootlib.rdf.const import LABEL, TYPE
-from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.nodes import URIRef, Literal
 
-NEIGHBOUR = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")
-CONNECTED = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Connected")
-YES = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
-NO = resource("http://redfoot.sourceforge.net/2000/10/06/builtin#NO")
+NEIGHBOUR = URIRef("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")
+CONNECTED = URIRef("http://redfoot.sourceforge.net/2001/04/neighbour#Connected")
+YES = URIRef("http://redfoot.sourceforge.net/2000/10/06/builtin#YES")
+NO = URIRef("http://redfoot.sourceforge.net/2000/10/06/builtin#NO")
 
-from redfootlib.rdf.store.triple import TripleStore
-from redfootlib.rdf.store.storeio import LoadSave
+from redfootlib.rdf.triple_store import TripleStore
 
-# TODO: neighbours are readonly and so they should only need Load
-class Neighbour(LoadSave, TripleStore): pass
+class Neighbour(TripleStore): pass
 
 class NeighbourManager(object):
 
     def load(self, location, uri, create=0):
         super(NeighbourManager, self).load(location, uri, create)
         # load neighbours that are marked as connected
-        self.visit_by_type(self._connect, NEIGHBOUR, CONNECTED, YES)
+        for subject in self.subjects_by_type(NEIGHBOUR, CONNECTED, YES):
+            self._connect(subject)
 
-    def _connect(self, neighbour, p, o):
+    def _connect(self, neighbour):
         self.connect_to(neighbour)
 
     def connect_to(self, location, uri=None):
         neighbour = Neighbour()        
         neighbour.load(location, uri or location, 0)
-        self.neighbours.add_store(neighbour)
-        self.remove(resource(location), TYPE, NEIGHBOUR)
-        self.add(resource(location), TYPE, NEIGHBOUR)        
-        self.remove(resource(location), CONNECTED, None)
-        self.add(resource(location), CONNECTED, YES)        
+        self.neighbours.append_store(neighbour)
+        self.remove(URIRef(location), TYPE, NEIGHBOUR)
+        self.add(URIRef(location), TYPE, NEIGHBOUR)        
+        self.remove(URIRef(location), CONNECTED, None)
+        self.add(URIRef(location), CONNECTED, YES)        
 
     def disconnect_from(self, uri):
-        for store in [store for store in self.neighbours.stores if store.uri==uri]:
-            self.neighbours.remove_store(store)
-            self.remove(resource(uri), CONNECTED, None)
-            self.add(resource(uri), CONNECTED, NO)
+        for store in [store for store in self.neighbours if store.uri==uri]:
+            self.neighbours.remove(store)
+            self.remove(URIRef(uri), CONNECTED, None)
+            self.add(URIRef(uri), CONNECTED, NO)
             # Do we want to remember our neighbour?
-            if not self.exists(resource(uri), TYPE, NEIGHBOUR):
-                self.add(resource(uri), TYPE, NEIGHBOUR)
+            if not self.exists(URIRef(uri), TYPE, NEIGHBOUR):
+                self.add(URIRef(uri), TYPE, NEIGHBOUR)

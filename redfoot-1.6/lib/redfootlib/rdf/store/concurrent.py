@@ -5,15 +5,14 @@ from threading import Lock
 class ResponsibleGenerator(object):
     """A generator that will help clean up when it is done being used."""
 
-    # TODO: add explicit calling of cleanup? Or should we rely on
-    # __del__ to get called
-    
     __slots__ = ['cleanup', 'gen']
 
     def __init__(self, gen, cleanup):
         self.cleanup = cleanup
         self.gen = gen
  
+    # TODO: add explicit calling of cleanup? Or should we rely on
+    # __del__ to get called
     def __del__(self):
         self.cleanup()
  

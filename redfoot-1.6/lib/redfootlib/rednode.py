@@ -1,30 +1,28 @@
 
-from redfootlib.rdf.store.triple import TripleStore
+from redfootlib.rdf.triple_store import TripleStore
 from redfootlib.rdf.store.neighbourhood import Neighbourhood
-from redfootlib.rdf.store.multi import MultiStore
-from redfootlib.rdf.store.storeio import LoadSave
+from redfootlib.rdf.store.composite import CompositeStore
 from redfootlib.rdf.store.autosave import AutoSave
 from redfootlib.neighbour_manager import NeighbourManager
-from redfootlib.rdf.query.schema import SchemaQuery
-from redfootlib.rdf.query.visit import Visit
+from redfootlib.rdf.model.schema import Schema
 from redfootlib import rdf_files
 
 from redfootlib.node import NodeStore, Node
 
-from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.nodes import URIRef
 
-LISTEN_ON = resource("http://redfoot.net/2002/05/listen_on")
-ADDRESS = resource("http://redfoot.net/2002/05/Address")
-HOST = resource("http://redfoot.net/2002/05/host")
-PORT = resource("http://redfoot.net/2002/05/port")
+LISTEN_ON = URIRef("http://redfoot.net/2002/05/listen_on")
+ADDRESS = URIRef("http://redfoot.net/2002/05/Address")
+HOST = URIRef("http://redfoot.net/2002/05/host")
+PORT = URIRef("http://redfoot.net/2002/05/port")
 
-SERVER = resource("http://redfoot.net/2002/05/server")
-APP = resource("http://redfoot.net/2002/05/app")
-APP_CLASS = resource("http://redfoot.net/2002/05/app_class")
+SERVER = URIRef("http://redfoot.net/2002/05/server")
+APP = URIRef("http://redfoot.net/2002/05/app")
+APP_CLASS = URIRef("http://redfoot.net/2002/05/app_class")
 
 sn = 0
 
-class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
+class RedNode(NeighbourManager, AutoSave, TripleStore):
     """
     A RedNode is a store that is queryable via high level queries, can
     manage its neighbour connections, [automatically] save to RDF/XML
@@ -38,9 +36,9 @@ class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleSt
     def __init__(self):
         super(RedNode, self).__init__()
         neighbours = Neighbours()
-        #neighbours.add_store(rdf_files.schema)
-        #neighbours.add_store(rdf_files.syntax)
-        #neighbours.add_store(rdf_files.builtin)
+        #neighbours.append_store(rdf_files.schema)
+        #neighbours.append_store(rdf_files.syntax)
+        #neighbours.append_store(rdf_files.builtin)
         self.neighbourhood = RedNeighbourhood(self, neighbours)
         self.neighbours = neighbours
 
@@ -49,7 +47,7 @@ class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleSt
         self.node_store = NodeStore(self.node)
         filename, uri = "node.rdf", "http://redfoot.net/2002/05/11/"
         self.node.load(filename, uri, 1)
-        self.neighbours.add_store(self.node_store)
+        self.neighbours.append_store(self.node_store)
 
     def __get_uri(self):
         if not self.__uri:
@@ -64,35 +62,38 @@ class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleSt
     uri = property(__get_uri, __set_uri)
     
     def make_statement(self, context_uri):
-        return lambda s, p, o: self.node.make_statement(resource(context_uri), s, p, o)
+        return lambda s, p, o: self.node.make_statement(URIRef(context_uri), s, p, o)
 
     def retract_statement(self, context_uri):
-        return lambda s, p, o: self.node.retract_statement(resource(context_uri), s, p, o)
+        return lambda s, p, o: self.node.retract_statement(URIRef(context_uri), s, p, o)
 
     def load(self, location, uri=None, create=0):
         super(RedNode, self).load(location, uri, create)
         
-        def _listen_on(s, p, o):
+        def _listen_on(o):
             host = self.get_first_value(o, HOST, None)
             port = self.get_first_value(o, PORT, None)
             if host or host=='' and port:
                 self.node.listen_on(host, int(port))
-        self.visit(_listen_on, (resource(uri), LISTEN_ON, None))
+        for object in self.objects(URIRef(uri), LISTEN_ON):
+            _listen_on(object)
                 
-        def _server(s, p, o):
+        def _server(o):
             host = self.get_first_value(o, HOST, None)
             port = self.get_first_value(o, PORT, None)
             if host or host=='' and port:
                 from redfootlib.server import RedServer                
                 server = RedServer(host, int(port))
                 server.run(background=1)
-                def _add_app(s, p, o):
+                def _add_app(o):
                     app_class = self.get_first_value(o, APP_CLASS, None)
                     if app_class:
                         app = self.get_app_instance(app_class)
                         server.add_app(app)
-                self.visit(_add_app, (o, APP, None))
-        self.visit(_server, (resource(uri), SERVER, None))
+                for object in self.objects(o, APP):
+                    _add_app(object)
+        for object in self.objects(URIRef(uri), SERVER):
+            _server(object)
 
     def save(self, location=None, uri=None):
         super(RedNode, self).save(location, uri)
@@ -115,7 +116,7 @@ class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleSt
         return app
 
     def get_module(self, uri):
-        from redfootlib.rdf.store.module_store import MODULE
+        from redfootlib.module_store import MODULE
         value = self.neighbourhood.first_object(uri, MODULE)
         if value:
             filename = "<%s MODULE>" % uri
@@ -151,17 +152,14 @@ class RedNode(Visit, SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleSt
     
 
 
-class Neighbours(Visit, SchemaQuery, MultiStore):
+class Neighbours(Schema, CompositeStore):
     """
-    A store of the multiple stores, the neighbours, that is queryable
-    via high level queries.
-
-    MultiStore is a store that makes multiple stores look like a
-    single store.
+    A store of the neighbours that is queryable via high level
+    queries.
     """
 
 
-class RedNeighbourhood(Visit, SchemaQuery, Neighbourhood):
+class RedNeighbourhood(Schema, Neighbourhood):
     """
     A store of the neighbourhood that is queryable via high level
     queries.

@@ -7,13 +7,13 @@ class AutoSave(object):
         self.dirtyBit = DirtyBit()
         self.auto_save_min_interval = 60*60
         
-    def remove(self, subject=None, predicate=None, object=None):
-        self.dirtyBit.set()
-        super(AutoSave, self).remove(subject, predicate, object)
-
     def add(self, subject, predicate, object):
         self.dirtyBit.set()
         super(AutoSave, self).add(subject, predicate, object)
+
+    def remove(self, subject, predicate, object):
+        self.dirtyBit.set()
+        super(AutoSave, self).remove(subject, predicate, object)
 
     def load(self, location, uri=None, create=0):
         super(AutoSave, self).load(location, uri, create)
@@ -56,8 +56,6 @@ class AutoSave(object):
 
         year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
         # http://www.w3.org/TR/NOTE-datetime
-        # 1994-11-05T08:15:30-05:00 corresponds to November 5, 1994, 8:15:30 am, US Eastern Standard Time
-        #s = "%0004d-%02d-%2dT%02d:%02d:%02dZ" % ( year, month, day, hh, mm, ss)
         s = "%0004d-%02d-%02dT%02d_%02d_%02dZ" % ( year, month, day, hh, mm, ss)        
         return s
 

@@ -1,3 +1,5 @@
+from redfootlib.rdf.nodes import URIRef, BNode, Literal
+
 def encode_attribute_value(s):
     s = '&amp;'.join(s.split('&'))
     s = '&quot;'.join(s.split('"'))
@@ -105,52 +107,25 @@ class Serializer(object):
         (namespace, localName) = split_property(predicate)   
         prefix = self.namespaces[namespace]
 
-        # TODO: Is this what we want to do if object is None?
-        if object==None or object=="":
-            object = ""
-            literal_object = 1
-            
-        if literal_object:
+        if isinstance(object, Literal):
             self.stream.write( "    <%s:%s>%s</%s:%s>\n" % (prefix, localName, encode_character_data(object), prefix, localName) )
-        else:
+        elif isinstance(object, URIRef):
             if self.baseURI and object[0:len(self.baseURI)+1]==self.baseURI+"#":
                 object = object[len(self.baseURI):]
-            self.stream.write( "    <%s:%s rdf:resource=\"%s\"/>\n" % (prefix, localName, encode_attribute_value(object)) )            
+            self.stream.write( "    <%s:%s rdf:resource=\"%s\"/>\n" % (prefix, localName, encode_attribute_value(object)) )
+        elif isinstance(object, BNode):
+            raise "Not yet Implemented"
+        else:            
+            raise "object is of unexpected type: %s(%s)" % (object, type(object))
 
     # TODO: the following might not work with anonymous containers
-    def triple(self, subject, predicate, object, literal_object):
+    def triple(self, subject, predicate, object):
         if self.current_subject != subject:
             if self.current_subject != None:
                 self.subject_end()
             self.subject_start(subject)
             self.current_subject = subject
-        self.property(predicate, object, literal_object)
-
-
-from redfootlib.rdf.objects import Literal
-
-class RedSerializer(Serializer, object):
-
-    def __init__(self):
-        super(RedSerializer, self).__init__()
-    
-    def triple(self, s, p, o):
-        if isinstance(o, Literal):
-            Serializer.triple(self, s, p, o, 1)
-        else:
-            Serializer.triple(self, s, p, o, 0)
-        
-#         try:
-#             if issubclass(o, Literal):
-#                 Serializer.triple(self, s, p, o, 1)
-#             else:
-#                 Serializer.triple(self, s, p, o, 0)
-#         except:
-#             # TODO: could write out as literal in this case?
-#             print "WARNING: ignoring (%s, %s, %s)" % (s, p, o)
-
-    def register_property(self, s, p, o):
-        return Serializer.register_property(self, p)
+        self.property(predicate, object)
 
     def output(self, stream, URI=None, subject=None, predicate=None, object=None, absolute=0):
         if URI==None:
@@ -160,8 +135,8 @@ class RedSerializer(Serializer, object):
         if absolute!=1:
             self.set_base_URI(URI)
 
-        for s, p, o in self:
-            self.register_property(s, p, o)
+        for p in self.predicates():
+            self.register_property(p)
 
         self.start()
         for s, p, o in self:

@@ -2,7 +2,7 @@
 
 from cmd import Cmd
 from sys import exit
-from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.nodes import URIRef, Literal, BNode
 from redfootlib.rednode import RedNode as RedStore
 from redfootlib.server import RedServer
 from redfootlib.version import VERSION
@@ -47,16 +47,16 @@ class RedCmd(object, Cmd):
         if text == "ANY":
             r = None
         elif text[0] == "<" and text[-1] == ">":
-            r = resource(text[1:-1])
+            r = URIRef(text[1:-1])
         elif text.find(":") != -1:
             prefix, local_name = text.split(":")
             if prefix == "":
                 if self.context.default_uri:
-                    r = resource(self.context.default_uri + local_name)
+                    r = URIRef(self.context.default_uri + local_name)
                 else:
                     return -1 # error
             elif prefix in self.context.prefix_map:
-                r = resource(self.context.prefix_map[prefix] + local_name)
+                r = URIRef(self.context.prefix_map[prefix] + local_name)
             else:
                 return -1 # error
         else:

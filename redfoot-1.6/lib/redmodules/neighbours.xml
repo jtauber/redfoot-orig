@@ -15,7 +15,10 @@
         <H3 CLASS="content_header">Connected</H3>
         <TABLE>
 
-        <red:exec>self.app.rednode.neighbourhood.visit_by_type(self._connected_row, NEIGHBOUR, CONNECTED, YES)</red:exec>        
+        <red:exec>
+          for subject in self.app.rednode.neighbourhood.subjects_by_type(NEIGHBOUR, CONNECTED, YES):
+             self._connected_row(subject)
+        </red:exec>        
         
         </TABLE>
       </DIV>
@@ -62,7 +65,7 @@
       </DIV>
     </red:facet>
 
-    <red:facet name="_connected_row" args="neighbour, p, o">
+    <red:facet name="_connected_row" args="neighbour">
           <FORM name="main" method="POST" style="margin: 0">
             <TR>
               <TD><red:eval>neighbour</red:eval>

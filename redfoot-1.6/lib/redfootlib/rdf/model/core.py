@@ -1,6 +1,6 @@
 from __future__ import generators
 
-from redfootlib.rdf.objects import resource
+from redfootlib.rdf.nodes import URIRef
 
 from time import time, gmtime
 
@@ -23,16 +23,16 @@ def generate_path():
 
 path_generator = generate_path()
 
-class Query(object):
+class Core(object):
 
 
     def generate_uri(self):
         """Return a new unique uri."""
-        return resource(self.uri + path_generator.next())
+        return URIRef(self.uri + path_generator.next())
     
     def remove(self, subject=None, predicate=None, object=None):
         for s, p, o in self.triples(subject, predicate, object):
-            super(Query, self).remove(s, p, o)
+            super(Core, self).remove(s, p, o)
 
     def exists(self, subject, predicate, object):
         for triple in self.triples(subject, predicate, object):

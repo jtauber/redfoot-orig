@@ -1,11 +1,13 @@
 from urlparse import urlparse        
 
 from redfootlib.rdf.syntax.parser import Parser
-from redfootlib.rdf.syntax.serializer import RedSerializer
+from redfootlib.rdf.syntax.serializer import Serializer
+
+from redfootlib.rdf.nodes import URIRef
 
 from threading import Lock
 
-class LoadSave(Parser, RedSerializer, object):
+class LoadSave(Parser, Serializer, object):
     """LoadSave
 
     Mixed-in with a store that implements add and visit and provides
@@ -22,7 +24,7 @@ class LoadSave(Parser, RedSerializer, object):
 
     def load(self, location, uri=None, create=0):
         self.location = location        
-        self.uri = uri or location
+        self.uri = URIRef(uri or location)
 
         scheme, netloc, path, params, query, fragment = urlparse(location)
         if create and netloc=="":
@@ -34,14 +36,24 @@ class LoadSave(Parser, RedSerializer, object):
         self.parse_URI(self.location, self.uri)
 
     def save(self, location=None, uri=None):
-        self.__lock.acquire()
-        location = location or self.location
-        if not location:
-            print "WARNING: not saving as no location has been set"
-            return
-        uri = uri or self.uri
-        stream = open(location, 'wb')
-        self.output(stream, uri)
-        stream.close()
-        self.__lock.release()
+        try:
+            self.__lock.acquire()
+            location = location or self.location
+            if not location:
+                print "WARNING: not saving as no location has been set"
+                return
+            uri = uri or self.uri
+
+            import tempfile, shutil, os
+            name = tempfile.mktemp()            
+            stream = open(name, 'wb')
+            self.output(stream, uri)
+            stream.close()
+
+            if os.path.isfile(location):
+                os.remove(location)
+            shutil.copy(name, location)
+            os.unlink(name)
+        finally:
+            self.__lock.release()
         

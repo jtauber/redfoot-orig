@@ -1,3 +1,6 @@
+from redfootlib.rdf.const import TYPE, STATEMENT
+from redfootlib.rdf.const import SUBJECT, PREDICATE, OBJECT
+
 
 class ReificationStore(object):
     """Mixin to enable reification."""

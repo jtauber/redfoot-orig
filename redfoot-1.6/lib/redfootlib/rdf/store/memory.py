@@ -1,9 +1,10 @@
 from __future__ import generators
+from redfootlib.rdf.store.abstract import AbstractStore
 
 ANY = None
 
 
-class InMemoryStore(object):
+class InMemoryStore(AbstractStore):
     """\
 An in memory implementation of a triple store.
 
@@ -98,13 +99,3 @@ pos[p][o][s] = 1.
                     for o in subjectDictionary[p]:
                         yield s, p, o
 
-    def subjects(self, predicate=None, object=None):
-        for s, p, o in self.triples(None, predicate, object):
-            yield s
-
-    def objects(self, subject=None, predicate=None):
-        for s, p, o in self.triples(subject, predicate, None):
-            yield o
-
-    def __iter__(self):
-        return self.triples(None, None, None)

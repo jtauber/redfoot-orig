@@ -1,6 +1,6 @@
 from __future__ import generators
 
-from redfootlib.rdf.query.core import Query
+from redfootlib.rdf.model.core import Core
 
 from redfootlib.rdf.const import LABEL, COMMENT
 from redfootlib.rdf.const import TYPE, STATEMENT
@@ -8,7 +8,7 @@ from redfootlib.rdf.const import SUBJECT, PREDICATE, OBJECT
 from redfootlib.rdf.const import DOMAIN, SUBCLASSOF
 
 
-class SchemaQuery(Query):
+class Schema(Core):
 
     def label(self, subject, default=None):
         for s, p, o in self.triples(subject, LABEL, None):

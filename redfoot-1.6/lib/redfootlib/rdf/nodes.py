@@ -1,12 +1,4 @@
 
-def resource(uri, anonymous=None):
-    return URIRef(uri)
-
-def literal(value):
-    return Literal(value)
-
-#----------------------
-
 class URIRef(str):
     def n3(self):
         return "<%s>" % str(self)

@@ -1,6 +1,6 @@
 ns_separator = ""
 
-from redfootlib.rdf.objects import URIRef, Literal, BNode
+from redfootlib.rdf.nodes import URIRef, Literal, BNode
 from redfootlib.rdf.const import RDFNS, TYPE
 
 RDF_ELEMENT = RDFNS + ns_separator + "RDF"
@@ -106,11 +106,11 @@ class DocumentHandler(object):
                    att == ABOUT_ATTRIBUTE or att == ID_ATTRIBUTE:
                 pass
             else:
-                self.add(self.subject, att, Literal(atts[att]))
+                self.add(self.subject, URIRef(att), Literal(atts[att]))
 
     def description(self, name, atts):
         self.typed_node(name, atts)
-        self.add(self.subject, str(TYPE), URIRef(name))
+        self.add(self.subject, URIRef(TYPE), URIRef(name))
 
     def description_child(self, name, atts):
         self.property(name, atts)        
@@ -120,21 +120,21 @@ class DocumentHandler(object):
 
 
     def property(self, name, atts):
-        self.predicate = name
+        self.predicate = URIRef(name)
         if atts.has_key("resource"):
-            self.object = self.absolutize(atts["resource"])
+            self.object = URIRef(self.absolutize(atts["resource"]))
             for att in atts.keys():
                 if att == "resource":
                     pass
                 else:
-                    self.add(self.object, att, Literal(atts[att]))
+                    self.add(self.object, URIRef(att), Literal(atts[att]))
         elif atts.has_key(RESOURCE_ATTRIBUTE):
             self.object = URIRef(self.absolutize(atts[RESOURCE_ATTRIBUTE]))
             for att in atts.keys():
                 if att == RESOURCE_ATTRIBUTE:
                     pass
                 else:
-                    self.add(self.object, att, Literal(atts[att]))
+                    self.add(self.object, URIRef(att), Literal(atts[att]))
         else:
             self.object = Literal("")
         
@@ -228,7 +228,7 @@ class DocumentHandler(object):
 
     def li_end(self, name):
         self.li_count = self.li_count + 1
-        predicate = RDFNS + "_" + str(self.li_count)
+        predicate = URIRef(RDFNS + "_" + str(self.li_count))
         self.add(self.subject, predicate, self.value)
         self.child_stack.pop()
         self.char_stack.pop()

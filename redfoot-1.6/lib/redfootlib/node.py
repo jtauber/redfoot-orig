@@ -4,10 +4,7 @@ from redfootlib.util import unique_date_time as date_time
 from redfootlib.util import encode_as_single_line as encode
 from redfootlib.util import decode_from_single_line as decode
 
-from redfootlib.rdf.query.schema import SchemaQuery
-from redfootlib.rdf.query.visit import Visit
-from redfootlib.rdf.store.triple import TripleStore
-from redfootlib.rdf.store.storeio import LoadSave
+from redfootlib.rdf.triple_store import TripleStore
 
 from threading import RLock
 from threading import Condition
@@ -47,19 +44,18 @@ class DirtyBit:
         self._rc.wait()
         self._mon.release()
 
-from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.nodes import URIRef, Literal
 from redfootlib.rdf.const import LABEL, SUBJECT, PREDICATE, OBJECT, TYPE, RESOURCE
 
-from redfootlib.rdf.query.functors import sort
-from redfootlib.rdf.query.functors import remove_duplicates
+#from redfootlib.rdf.query.functors import sort
+#from redfootlib.rdf.query.functors import remove_duplicates
 
-CONTEXT = resource("http://redfoot.net/2002/05/CONTEXT")
-MEANING = resource("http://redfoot.net/2002/05/MEANING")
-TIMESTAMP = resource("http://redfoot.net/2002/05/TIMESTAMP")
-ADD = resource("http://redfoot.net/2002/05/ADD")
-REMOVE = resource("http://redfoot.net/2002/05/REMOVE")
+CONTEXT = URIRef("http://redfoot.net/2002/05/CONTEXT")
+MEANING = URIRef("http://redfoot.net/2002/05/MEANING")
+TIMESTAMP = URIRef("http://redfoot.net/2002/05/TIMESTAMP")
+ADD = URIRef("http://redfoot.net/2002/05/ADD")
+REMOVE = URIRef("http://redfoot.net/2002/05/REMOVE")
 
-from redfootlib.rdf.query.visit import Visit
 
 class NodeStore(TripleStore, object):
     def __init__(self, node):
@@ -91,22 +87,22 @@ class AbstractNode(object):
         return "%s/%s" % (self.uri, date_time())
     
     def make_statement(self, context_id, subject, predicate, object):
-        statement_id = resource(self._generate_id())
+        statement_id = URIRef(self._generate_id())
         self.add(statement_id, CONTEXT, context_id)
         self.add(statement_id, MEANING, ADD)
-        self.add(statement_id, TIMESTAMP, literal(date_time()))
+        self.add(statement_id, TIMESTAMP, Literal(date_time()))
         self.add(statement_id, SUBJECT, subject)
         self.add(statement_id, PREDICATE, predicate)
         self.add(statement_id, OBJECT, object)
 
     def retract_statement(self, context_id, subject, predicate, object):
-        statement_id = resource(self._generate_id())
+        statement_id = URIRef(self._generate_id())
         self.add(statement_id, CONTEXT, context_id)
         self.add(statement_id, MEANING, REMOVE)
-        self.add(statement_id, TIMESTAMP, literal(date_time()))
-        subject = subject or literal("ANY")
-        predicate = predicate or literal("ANY")
-        object = object or literal("ANY")        
+        self.add(statement_id, TIMESTAMP, Literal(date_time()))
+        subject = subject or Literal("ANY")
+        predicate = predicate or Literal("ANY")
+        object = object or Literal("ANY")        
         self.add(statement_id, SUBJECT, subject)
         self.add(statement_id, PREDICATE, predicate)
         self.add(statement_id, OBJECT, object)
@@ -118,31 +114,36 @@ class AbstractNode(object):
     def update(self, context_id, store):
         if self.dirtyBit.value()==1:
             self.dirtyBit.clear()            
-            def chron((s1, p1, o1), (s2, p2, o2)):
-                time_a = self.get_first_value(s1, TIMESTAMP, '')
-                time_b = self.get_first_value(s2, TIMESTAMP, '')
+            def chron(s1, s2):
+                time_a = self.first_object(s1, TIMESTAMP) or ''
+                time_b = self.first_object(s2, TIMESTAMP) or ''
                 return cmp(str(time_a), str(time_b))
         
-            def callback(s, p, o):
-                subject = self.get_first_value(s, SUBJECT)
-                predicate = self.get_first_value(s, PREDICATE)
-                object = self.get_first_value(s, OBJECT)
+            def callback(s):
+                subject = self.first_object(s, SUBJECT)
+                predicate = self.first_object(s, PREDICATE)
+                object = self.first_object(s, OBJECT)
                 if subject and predicate and object:
-                    meaning = self.get_first_value(s, MEANING, None)
+                    meaning = self.first_object(s, MEANING) or None
                     if meaning==ADD:
                         store.add(subject, predicate, object)
                     elif meaning==REMOVE:
-                        if subject==literal("ANY"):
+                        if subject==Literal("ANY"):
                             subject = None
-                        if predicate==literal("ANY"):
+                        if predicate==Literal("ANY"):
                             predicate = None
-                        if object==literal("ANY"):
+                        if object==Literal("ANY"):
                             object = None
                         store.remove(subject, predicate, object)
             #callback = slice(callback, start, end)
-            sort(chron, self.visit)(
-                remove_duplicates(callback, lambda args: args[0]),
-                (None, CONTEXT, context_id))
+            subjects = list(self.subjects(CONTEXT, context_id))
+            # TODO: remove duplicates?
+            subjects.sort(chron)
+            for subject in subjects:
+                callback(subject)
+#             sort(chron, self.visit)(
+#                 remove_duplicates(callback, lambda args: args[0]),
+#                 (None, CONTEXT, context_id))
         
 
 class Neighbours(object): 
@@ -157,8 +158,10 @@ class Neighbours(object):
 
     def add_neighbour(self, neighbour):
         self.neighbours.append(neighbour)
-        neighbour.visit(self.add, (None, None, None))
-        self.visit(neighbour.add, (None, None, None))
+        for s, p, o in neighbour:
+            self.add(s, p, o)
+        for s, p, o in self:
+            neighbour.add(s, p, o)
 
     def remove_neighbour(self, neighbour):
         self.neighbours.remove(neighbour)
@@ -245,7 +248,7 @@ class ProxyNode(Proxy):
 
 
 import asyncore    
-class Node(Neighbours, AbstractNode, Visit, SchemaQuery, LoadSave, TripleStore,
+class Node(Neighbours, AbstractNode, TripleStore,
            asyncore.dispatcher):
     
     def add(self, s, p, o):

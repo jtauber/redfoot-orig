@@ -1,8 +1,7 @@
 #
-from redfootlib.rdf.store.storeio import LoadSave
-from redfootlib.rdf.store.triple import TripleStore
+from redfootlib.rdf.triple_store import TripleStore
 
-class Store(LoadSave, TripleStore):
+class Store(TripleStore):
     def __init__(self):
         super(Store, self).__init__()
 
