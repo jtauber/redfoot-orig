@@ -1,11 +1,5 @@
 # $Header$
 
-def literal(str):
-    return "^"+str
-
-def is_literal(str):
-    return str[0]=="^"
-
 class RDFParser:
     
     def __init__(self):
@@ -176,6 +170,9 @@ class PropertyHandler:
         self.parent.resume()
 
 #~ $Log$
+#~ Revision 4.1  2000/12/03 19:36:45  jtauber
+#~ moved ^ trick to functions
+#~
 #~ Revision 4.0  2000/11/06 15:57:33  eikeon
 #~ VERSION 4.0
 #~
