@@ -1,9 +1,9 @@
-import pyexpat
-
-rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-
 
 class RDFParser:
+    
+    def __init__(self):
+        self.baseURI = None
+        self.baseURI = None
 
     def setBaseURI(self, baseURI):
         self.baseURI = baseURI
@@ -17,8 +17,17 @@ class RDFParser:
         self.adder = adder
 
 
-    def parse(self):
+    def parse(self, URL=None, baseURI=None):
+        if URL!=None:
+            self.URL = URL
+        if baseURI!=None:
+            self.baseURI = baseURI
+        if self.baseURI==None:
+            self.baseURI = self.URL
+            
+        import pyexpat
         parser = pyexpat.ParserCreate(namespace_separator="")
+        
         if self.baseURI!=None:
             parser.SetBase(self.baseURI)
             RootHandler(parser, self.adder, None)
@@ -28,6 +37,9 @@ class RDFParser:
             parser.ParseFile(f)
             f.close()
 
+
+
+rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
 class RootHandler:
     def __init__(self, parser, adder, parent):
