@@ -14,42 +14,70 @@ def __init__(self, rednode):
     #self.rednode = rednode # This should already be done for us...
     #   as we are expecting this to be used as a mixin class.
 
-    self._load_neighbours()
+#    self._load_neighbours()
     self.showNeighbours=1
 
-def _load_neighbours(self):
-    neighbours = self.rednode.get(None, TYPE, NEIGHBOUR)
-    for neighbour in neighbours:
-        location = neighbour[0]
-        location = location.encode('ascii') # TODO: ?
-        self.rednode.connectTo(location)
+# shouldn't do this because we don't want to autoload all neighbours, just
+# those marked for autoloading
+#def _load_neighbours(self):
+#    neighbours = self.rednode.get(None, TYPE, NEIGHBOUR)
+#    for neighbour in neighbours:
+#        location = neighbour[0]
+#        location = location.encode('ascii') # TODO: ?
+#        self.rednode.connectTo(location)
 
 <r:response name="/neighbours">
-<ul>
-<r:for item="neighbour" list="self.rednode.neighbours.stores.stores.keys()">
-<li><r:eval>neighbour.URI</r:eval></li>
+  <H1>Neighbours</H1>
+<r:exec>
+connected_neighbours = [neighbour.URI for neighbour in self.rednode.neighbours.stores.stores.keys()]
+known_neighbours = [neighbour[0] for neighbour in self.rednode.get(None, TYPE, NEIGHBOUR)]
+</r:exec>
+
+  <H2>Connected</H2>
+  <TABLE>
+
+
+<r:for item="neighbour" list="connected_neighbours">
+    <FORM name="main" method="POST" style="margin: 0">
+      <TR>
+        <TD><r:eval>neighbour</r:eval>
+          <INPUT name="uri" value="{neighbour}" type="hidden"/>
+        </TD>
+        <TD align="right">
+          <INPUT value="Disconnect" type="submit"/>
+          <INPUT name="processor" value="disconnect_neighbour" type="hidden"/>
+        </TD>
+      </TR>
+    </FORM>
 </r:for>
-</ul>
-</r:response>
+  </TABLE>
 
-<r:response name="remove_neighbour">
-<r:exec>
-uri = request.getParameters()['uri']
-self.rednode.neighbours.remove_store(uri=uri)
-</r:exec>
-</r:response>
+  <H2>Known</H2>
 
-<r:response name="add_neighbour">
-<r:exec>
-uri = request.getParameters()['uri']
-self.rednode.connectTo(uri)
-</r:exec>
-</r:response>
+<TABLE>
+<r:for item="neighbour" list="known_neighbours">
+    <FORM name="main" method="POST" style="margin: 0">
+      <TR>
+        <TD><r:eval>neighbour</r:eval>
+          <INPUT name="uri" value="{neighbour}" type="hidden"/>
+        </TD>
+        <TD>
+          <INPUT value="Connect" type="submit"/>
+          <INPUT name="processor" value="connect_neighbour" type="hidden"/>
+        </TD>
+        <TD align="right">
+          <INPUT value="Remove" type="submit"/>
+          <INPUT name="processor" value="remove_neighbour" type="hidden"/>
+        </TD>
+      </TR>
+    </FORM>
+</r:for>
+</TABLE>
 
-<r:response name="/add_neighbour">
+
   <DIV class="content_area">
     <SPAN class="content_header">Add Neighbour</SPAN>
-    <FORM name="main" method="POST" style="margin: 0">
+    <FORM name="add" method="POST" action="/neighbours" style="margin: 0">
       <TABLE>
         <TR>
           <TD>URI:</TD>
@@ -57,7 +85,7 @@ self.rednode.connectTo(uri)
         </TR>
         <TR>
           <TD align="right">
-            <INPUT value="Login" type="submit"/>
+            <INPUT value="Add" type="submit"/>
           </TD>
           <TD align="left">
             <INPUT value="Cancel" type="button" onclick="javascript: history.back()"/>
@@ -67,34 +95,36 @@ self.rednode.connectTo(uri)
       </TABLE>
     </FORM>
   </DIV>
+
 </r:response>
 
-
-<r:response name="/remove_neighbour">
-  <DIV class="content_area">
-    <SPAN class="content_header">Remove Neighbour</SPAN>
-
-  <TABLE>
-
-
-<r:for item="neighbour" list="self.rednode.neighbours.stores.stores.keys()">
-    <FORM name="main" method="POST" style="margin: 0">
-      <TR>
-        <TD><r:eval>neighbour.URI</r:eval>
-          <INPUT name="uri" value="{neighbour.URI}" type="hidden"/>
-        </TD>
-        <TD align="right">
-          <INPUT value="remove" type="submit"/>
-          <INPUT name="processor" value="remove_neighbour" type="hidden"/>
-        </TD>
-      </TR>
-    </FORM>
-</r:for>
-  </TABLE>
-  </DIV>
+<r:response name="disconnect_neighbour">
+<r:exec>
+uri = request.getParameters()['uri']
+self.rednode.neighbours.remove_store(uri=uri)
+</r:exec>
 </r:response>
 
+<r:response name="connect_neighbour">
+<r:exec>
+uri = request.getParameters()['uri']
+self.rednode.connectTo(uri)
+</r:exec>
+</r:response>
 
+<r:response name="remove_neighbour">
+<r:exec>
+uri = request.getParameters()['uri']
+self.rednode.local.remove(uri, TYPE, NEIGHBOUR)
+</r:exec>
+</r:response>
+
+<r:response name="add_neighbour">
+<r:exec>
+uri = request.getParameters()['uri']
+self.rednode.local.add(uri, TYPE, NEIGHBOUR)
+</r:exec>
+</r:response>
 
 </r:class>
 

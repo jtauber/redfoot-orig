@@ -24,6 +24,9 @@
     <n6:Z></n6:Z>
     <n7:Z>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)</n7:Z>
   </rdf:Description>
+  <rdf:Description rdf:about="xmlhack.rdf">
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://localhost:8000/2001/04/09/T18/14/43Z">
     <n8:Z>334b473e8c2555d5eb722e0c932df793</n8:Z>
     <rdfs:label>Daniel 'eikeon' Krech</rdfs:label>
@@ -32,5 +35,21 @@
     <n10:Z>79</n10:Z>
     <rdf:type rdf:resource="http://redfoot.sourceforge.net/2000/10/#Person"/>
     <n11:Z>eikeon</n11:Z>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/09/T23/02/28Z">
+    <n2:Z></n2:Z>
+    <n3:Z>2001/04/09T23:02:28Z</n3:Z>
+    <n4:Z>localhost:8000</n4:Z>
+    <n5:Z rdf:resource="http://localhost:8000/2001/04/09/T23/35/47Z"/>
+    <rdf:type rdf:resource="http://eikeon.com/2001/03/27/T17/18/48Z"/>
+    <n6:Z></n6:Z>
+    <n7:Z>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)</n7:Z>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8000/2001/04/09/T23/35/47Z">
+    <n8:Z>69dfd376a5057bb47c33e1770bb5bbc5</n8:Z>
+    <n10:Z>20</n10:Z>
+    <n3:Z>2001/04/09T23:35:47Z</n3:Z>
+    <rdf:type rdf:resource="http://redfoot.sourceforge.net/2000/10/#Person"/>
+    <n11:Z>jtauber</n11:Z>
   </rdf:Description>
 </rdf:RDF>
