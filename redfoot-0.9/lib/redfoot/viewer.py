@@ -192,7 +192,19 @@ class Viewer:
             self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
         else:
             self.storeNode.local.resourcesByClassV(self.displayClass, self.displayResource)
-    
+        firstTypeless = 1
+        if self.showNeighbours==1:
+            for resource in self.storeNode.typelessResources():
+                if firstTypeless==1:
+                    self.response.write("""<DT>Typeless</DT>""")
+                    firstTypeless=0
+                self.displayResource(resource)
+        else:
+            for resource in self.storeNode.local.typelessResources():
+                if firstTypeless==1:
+                    self.response.write("""<DT>Typeless</DT>""")
+                    firstTypeless=0
+                self.displayResource(resource)
         self.response.write("""
               </DL>
             </DIV>
@@ -446,6 +458,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.2  2000/12/09 00:44:59  eikeon
+#~ improved encodeURI function
+#~
 #~ Revision 5.1  2000/12/08 23:02:25  eikeon
 #~ encoding fixes
 #~
