@@ -1,6 +1,8 @@
 #
 
-from redfoot.module import App
+from redfoot.server.module import App
+from redfoot.server import register_app
+
 
 class HelloWorld(App):
 
@@ -15,5 +17,4 @@ class HelloWorld(App):
         response.close()
 
 # 
-from redfoot.server import register_app
 register_app("http://redfoot.net/2002/04/08/HelloWorld", HelloWorld)
