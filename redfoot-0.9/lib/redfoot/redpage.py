@@ -5,7 +5,7 @@ import sys
 import string
 import __builtin__
         
-RF_NS = u"http://redfoot.sourceforge.net/2001/01/"
+RF_NS = u"http://redfoot.sourceforge.net/2001/01/^"
 RF_CLASS = RF_NS+u"class"
 RF_MODULE = RF_NS+u"module"
 RF_EXEC = RF_NS+u"exec"
@@ -27,7 +27,7 @@ def encode_attribute(s):
 
 def parse_red_page(location):
     import pyexpat
-    parser = pyexpat.ParserCreate(namespace_separator="")
+    parser = pyexpat.ParserCreate(namespace_separator="^")
 
     #parser.SetBase(baseURI)
     rfch = Root_Handler(parser, None)
@@ -436,6 +436,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 8.0  2001/04/27 00:52:13  eikeon
+#~ new release
+#~
 #~ Revision 7.10  2001/04/21 04:55:11  eikeon
 #~ removed RF_LOAD as the corresponding load-module tag has already been removed
 #~
