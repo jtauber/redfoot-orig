@@ -10,7 +10,8 @@
 
   SITE_NAME = resource('http://redfoot.sourceforge.net/2001/09/site/name')
   HTML = resource('http://redfoot.sourceforge.net/2001/09/site/html')
-  LINKS_TO = resource('http://redfoot.sourceforge.net/2001/09/site/links_to')  
+  LINKS_TO = resource('http://redfoot.sourceforge.net/2001/09/site/links_to')
+  LIST_LINK = resource('http://redfoot.sourceforge.net/2001/09/site/list_link')
 
   <red:module name="RedSite">
 
@@ -40,6 +41,12 @@
         self.authentication.stop()
         print "saving %s" % self.rednode.local.location
         self.rednode.local.save()
+
+    def alpha_by_label(self, s1, s2):
+        label_a = self.app.rednode.label(s1)
+        label_b = self.app.rednode.label(s2)
+        return cmp(str(label_a), str(label_b))
+        
 
     <red:facet name="/">
       <red:exec>
@@ -248,7 +255,6 @@ A:hover {
     <red:exec>
       uri = resource(self.app.request.get_parameter('uri', None))
       uri = uri or resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
-      print uri
     </red:exec>
       <h1>
         <red:eval>self.app.rednode.label(uri, '-')</red:eval>
@@ -261,6 +267,7 @@ A:hover {
         lb = ListBuilder()
         self.app.rednode.visit(o(lb.accept), (uri, LINKS_TO, None))
         links = lb.list
+        links.sort(self.alpha_by_label)
         last = len(links) - 1
       </red:exec>
       <red:if test="len(links)>0">
@@ -280,6 +287,27 @@ A:hover {
       <red:if test="html">
         <red:eval encode="None">html</red:eval>
       </red:if>
+
+      <red:exec>
+        lb = ListBuilder()
+        self.app.rednode.visit(o(lb.accept), (uri, LIST_LINK, None))
+        links = lb.list
+        links.sort(self.alpha_by_label)        
+        last = len(links) - 1
+      </red:exec>
+      <red:if test="len(links)>0">
+        <dl>
+      <red:for item="index" list="xrange(len(links))">
+        <dt>
+          <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
+        </dt>
+        <dd>
+          <red:eval>self.app.rednode.comment(links[index])</red:eval>
+        </dd>
+      </red:for>
+        </dl>  
+      </red:if>      
+
       <red:exec>self.app.apply()</red:exec>      
     </red:facet>    
     
