@@ -66,7 +66,7 @@ class Processor(object):
     def exact(self):
         state = self.__states[-1]
         path = state.consumed + state.remaining
-        html = self.rednode.get_first_value(resource(path), HTML, None)
+        html = self.rednode.neighbourhood.get_first_value(resource(path), HTML, None)
         if html:
             print "EXACT: %s" % path            
             self.response.write(html)
@@ -91,8 +91,8 @@ class Processor(object):
                             self.destination = destination
                             self.type = p
         cb = _Alias()                            
-        self.rednode.visit(cb, (None, ALIAS_TO, None))
-        self.rednode.visit(cb, (None, CHAIN_TO, None))        
+        self.rednode.neighbourhood.visit(cb, (None, ALIAS_TO, None))
+        self.rednode.neighbourhood.visit(cb, (None, CHAIN_TO, None))        
 
         if cb.source and not cb.source in state.followed:
             print "ALIAS: %s->%s" % (cb.source, cb.destination)            
@@ -114,7 +114,7 @@ class Processor(object):
         l = []
         def _outer(subject, predicate, object):
             l.append(subject)
-        self.rednode.visit(_outer, (None, OUTER_HTML, None))
+        self.rednode.neighbourhood.visit(_outer, (None, OUTER_HTML, None))
         
         l.sort(lambda a, b: len(a)-len(b))
         for o in l:
@@ -125,7 +125,7 @@ class Processor(object):
                     state.remaining = path[len(o):]
                     state.next = self.outer
                     print "OUTER:", o
-                    data = self.rednode.get_first_value(o, OUTER_HTML, None)
+                    data = self.rednode.neighbourhood.get_first_value(o, OUTER_HTML, None)
                     if data:
                         #state.next = self.inner
                         facet = self._parse(data, o)
@@ -140,7 +140,7 @@ class Processor(object):
     def inner(self):
         state = self.__states[-1]
         path = state.consumed + state.remaining
-        html = self.rednode.get_first_value(resource(path), INNER_HTML, None)
+        html = self.rednode.neighbourhood.get_first_value(resource(path), INNER_HTML, None)
         if html:
             print "INNER: %s" % path            
             self.response.write(html)            
