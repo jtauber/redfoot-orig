@@ -15,7 +15,7 @@
         <H3 CLASS="content_header">Connected</H3>
         <TABLE>
 
-        <red:exec>self.app.rednode.visit_by_type(self._connected_row, NEIGHBOUR, CONNECTED, YES)</red:exec>        
+        <red:exec>self.app.rednode.neighbourhood.visit_by_type(self._connected_row, NEIGHBOUR, CONNECTED, YES)</red:exec>        
         
         </TABLE>
       </DIV>
@@ -33,7 +33,7 @@
 
           <red:exec>
             subjects = lambda (s, p, o): s          
-            self.app.rednode.visit(remove_duplicates(filter(self._other_row, s(self.app.rednode.not_exists, CONNECTED, YES)), subjects), (None, TYPE, NEIGHBOUR))
+            self.app.rednode.neighbourhood.visit(remove_duplicates(filter(self._other_row, s(self.app.rednode.neighbourhood.not_exists, CONNECTED, YES)), subjects), (None, TYPE, NEIGHBOUR))
           </red:exec>
             
           </TABLE>
@@ -96,6 +96,18 @@
     def __init__(self, app):
        super(Neighbours, self).__init__(app)
        self.status = {}
+
+    def __getattr__(self, name):
+        if name=="rednode": # default rednode to self.app.rednode
+            self.set_rednode(self.app.rednode)
+            return self.rednode
+        else:
+            raise AttributeError
+        
+    # TODO: does anything in generic/editor/viewer require a rednode
+    # or just a TripleStoreIO
+    def set_rednode(self, rednode):
+        self.rednode = rednode
 
     def do_disconnect_neighbour(self, request, response):
        uri = request.get_parameter('uri')

@@ -1,24 +1,26 @@
+# TODO: remove me using .find instead
 from string import find
 
-class StoreIO(object):
-    """Store I/O.
+from redfoot.rdf.syntax.parser import Parser
+from redfoot.rdf.syntax.serializer import RedSerializer
 
-    Mixed-in with a store that implements add and visit and provides I/O
-    for that class using rdf.syntax.parser and rdf.syntax.serializer
+
+class LoadSave(Parser, RedSerializer, object):
+    """LoadSave
+
+    Mixed-in with a store that implements add and visit and provides
+    I/O for that class. Also, needs to be mixed in with something that
+    provides parse_URI and output methods.
     """
     
     def __init__(self):
-        super(StoreIO, self).__init__()
+        super(LoadSave, self).__init__()
         self.uri = None        
 
 
     def load(self, location, uri=None, create=0):
-        self.location = location
-        if uri==None:
-            # default to location
-            self.uri = self.location
-        else:
-            self.uri = uri
+        self.location = location        
+        self.uri = uri or location
 
         if create and find(location, '://')<0: # is relative
             from urllib import url2pathname
@@ -31,22 +33,9 @@ class StoreIO(object):
         self.parse_URI(self.location, self.uri)
 
     def save(self, location=None, uri=None):
-        if location==None:
-            location = self.location
-        if uri==None:
-            uri = self.uri
+        location = location or self.location
+        uri = uri or self.uri
         stream = open(location, 'wb')
         self.output(stream, uri)
         stream.close()
         
-from redfoot.rdf.store.triple import TripleStore
-from redfoot.rdf.syntax.parser import Parser
-from redfoot.rdf.syntax.serializer import RedSerializer
-
-
-class TripleStoreIO(StoreIO, Parser, RedSerializer, TripleStore):
-    """Mix-in of StoreIO and TripleStore."""
-    
-    def __init__(self):
-        super(TripleStoreIO, self).__init__()
-

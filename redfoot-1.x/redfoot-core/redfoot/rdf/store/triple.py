@@ -127,3 +127,5 @@ class TripleStore(object):
         """
         for s in self.spo.keys():
             callback(s, ANY, ANY)
+
+

@@ -8,7 +8,7 @@
     <red:sub-module instance="editor"
                     class="Editor"
                     from="redmodules.editor"/>
-                    
+
     <red:sub-module instance="neighbours"
                     class="Neighbours"
                     from="redmodules.neighbours"/>

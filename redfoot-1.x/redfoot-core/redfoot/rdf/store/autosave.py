@@ -1,23 +1,23 @@
 from threading import RLock
 from threading import Condition
 
-from redfoot.rdf.store.storeio import TripleStoreIO
+#from redfoot.rdf.store.storeio import TripleStoreIO
 
-class AutoSaveStoreIO(TripleStoreIO):
+class AutoSave(object):
     def __init__(self):
-        super(AutoSaveStoreIO, self).__init__()
+        super(AutoSave, self).__init__()
         self.dirtyBit = DirtyBit()
         
     def remove(self, subject=None, predicate=None, object=None):
         self.dirtyBit.set()
-        TripleStoreIO.remove(self, subject, predicate, object)
+        super(AutoSave, self).remove(subject, predicate, object)
 
     def add(self, subject, predicate, object):
         self.dirtyBit.set()
-        TripleStoreIO.add(self, subject, predicate, object)
+        super(AutoSave, self).add(subject, predicate, object)
 
     def load(self, location, uri=None, create=0):
-        TripleStoreIO.load(self, location, uri, create)
+        super(AutoSave, self).load(location, uri, create)
         print "Done loading '%s'" % location
         self.dirtyBit.clear() # we just loaded... therefore we are clean
         self._start_thread() 

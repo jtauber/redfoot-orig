@@ -1,5 +1,11 @@
 2002/04/11
-	RELEASE 1.5.0
+	RELEASE 1.5.1
+
+	Cleaned up mixin classes to be more cooperative; 
+	Cleaned up Rednode's use of mixins 
+	
+
+	RELEASE 1.5.0	
 
 	Replaced Redfoot's own HTTP server code with Medusa.
 

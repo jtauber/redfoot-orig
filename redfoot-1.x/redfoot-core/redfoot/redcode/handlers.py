@@ -399,7 +399,7 @@ class Visit(ElementHandler):
         else:
             args = "(None, None, None)"
             
-        codestr = "%s(_RF_callback, %s)" % (atts.get('visit', 'self.app.rednode.visit'), args)
+        codestr = "%s(_RF_callback, %s)" % (atts.get('visit', 'self.app.rednode.neighbourhood.visit'), args)
         code = __builtin__.compile(codestr, codestr, "eval")
         self.element.code = code
 

@@ -34,8 +34,8 @@
   <red:module name="News">
 
     def reverse_chron(self, (s1, p1, o1), (s2, p2, o2)):
-        date_a = self.app.rednode.get_first_value(s1, DC_DATE, '')
-        date_b = self.app.rednode.get_first_value(s2, DC_DATE, '')
+        date_a = self.app.rednode.neighbourhood.get_first_value(s1, DC_DATE, '')
+        date_b = self.app.rednode.neighbourhood.get_first_value(s2, DC_DATE, '')
         return 0-cmp(str(date_a), str(date_b))
 
     <red:facet name="">    
@@ -46,7 +46,7 @@
       <dl>
        
        <red:exec>
-         sort(self.reverse_chron, self.app.rednode.visit)(slice(self._news_row, start, end), (None, TYPE, RSS_ITEM))
+         sort(self.reverse_chron, self.app.rednode.neighbourhood.visit)(slice(self._news_row, start, end), (None, TYPE, RSS_ITEM))
        </red:exec>
 
       </dl>
@@ -58,13 +58,13 @@
         <dt>
           <a href="{subject}">
             <red:eval>
-              self.app.rednode.get_first_value(subject, RSS_TITLE, '')
+              self.app.rednode.neighbourhood.get_first_value(subject, RSS_TITLE, '')
             </red:eval>
           </a>
         </dt>
         <dt style="font-size: 8pt">
           <red:exec>
-            o = self.app.rednode.get_first_value(subject, DC_DATE, '')
+            o = self.app.rednode.neighbourhood.get_first_value(subject, DC_DATE, '')
 
             try:
                 parts = o.value.split('-')
@@ -78,12 +78,12 @@
         </dt>
         <dd>
           <red:eval encode="None">
-            self.app.rednode.get_first_value(subject, RSS_DESCRIPTION, '')
+            self.app.rednode.neighbourhood.get_first_value(subject, RSS_DESCRIPTION, '')
           </red:eval>
 	</dd>
 <!--        
         <dd>
-          <a HREF="{self.app.rednode.get_first_value(subject, RSS_LINK, '')}">Read Story</a>
+          <a HREF="{self.app.rednode.neighbourhood.get_first_value(subject, RSS_LINK, '')}">Read Story</a>
         </dd>
 -->        
     </red:facet>

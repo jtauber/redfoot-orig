@@ -15,17 +15,17 @@
         <red:visit match="(None, TYPE, RSS_ITEM)">
           <DT>
             <red:eval>
-              self.app.rednode.get_first_value(subject, RSS_TITLE, '')
+              self.app.rednode.neighbourhood.get_first_value(subject, RSS_TITLE, '')
             </red:eval>
           </DT>
           <DD>
             <DIV>
               <red:eval>
-                self.app.rednode.get_first_value(subject, RSS_DESCRIPTION, '')
+                self.app.rednode.neighbourhood.get_first_value(subject, RSS_DESCRIPTION, '')
               </red:eval>
             </DIV>
             <DIV>
-              <A HREF="{self.app.rednode.get_first_value(subject, RSS_LINK, '')}">Read Story</A>
+              <A HREF="{self.app.rednode.neighbourhood.get_first_value(subject, RSS_LINK, '')}">Read Story</A>
             </DIV>
           </DD>
         </red:visit>
