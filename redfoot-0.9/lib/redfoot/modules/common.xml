@@ -50,6 +50,16 @@ def handle_request(self, request, response):
         return 1
 
 
+<r:response name="/robots.txt">
+  <r:exec>response.setHeader("Content-Type", "text/plain")</r:exec>
+  <r:exec>response.write("""
+User-agent: *
+Disallow: /add
+Disallow: /edit
+""")</r:exec>
+</r:response>
+
+
 <r:response name="upload" args="subject=None">
   <div class="content_area">
     <form name="main" method="post" enctype="multipart/form-data" action="">
