@@ -22,6 +22,7 @@ def __init__(self, node):
         import sys
         from os.path import join, dirname
         from urllib import pathname2url
+        print __name__
         libDir = dirname(sys.modules["redfoot.modules.rss"].__file__)
         return pathname2url(join(libDir, path))
 
@@ -45,21 +46,17 @@ def rss(self, request, response):
 
 
 <r:response name="rss_row" args="triple row">
-<r:exec>
-if row % 2 == 0:
-    color = 'DDDDFF'
-else:
-    color = 'DDFFDD'
-</r:exec>
-<dl style="margin: 0px; padding: 2px 5px; background: #{color};">
-  <dt style="padding: 0px; margin: 0px;">
+<dl class="rss_item_{row%2}">
+  <dt>
       <r:eval>get_property_value(self.rednode, triple[0], RSS_TITLE, '')</r:eval>
   </dt>
-  <dd style="padding-bottom: 10px">
-    <r:eval>get_property_value(self.rednode, triple[0], RSS_DESCRIPTION, '')</r:eval>
-  </dd>
-  <dd style="padding-bottom: 10px">
-    <a href="{get_property_value(self.rednode, triple[0], RSS_LINK, '')}">Read Story</a>
+  <dd>
+    <div>
+      <r:eval>get_property_value(self.rednode, triple[0], RSS_DESCRIPTION, '')</r:eval>
+    </div>
+    <div>
+      <a href="{get_property_value(self.rednode, triple[0], RSS_LINK, '')}">Read Story</a>
+    </div>
   </dd>
 </dl>
 </r:response>
