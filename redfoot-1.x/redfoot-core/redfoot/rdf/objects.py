@@ -28,6 +28,7 @@ def literal(value):
         r = literal_dict[value]
     else:
         r = literal_dict[value] = Literal(value)
+        r.value = value
     return r
 
 
