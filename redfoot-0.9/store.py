@@ -125,14 +125,33 @@ class StoreNode:
         storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
         self.connectTo(storeIO.getStore())
 
-#        storeIO = StoreIO()
-#        storeIO.setStore(TripleStore())
-#        storeIO.load("tests/blueprintSchema.rdf", "http://www.bowstreet.com/2000/08/20")
-#        self.connectTo(storeIO.getStore())
+
+    def _preCacheRemoteStores(self, baseDirectory=None):
+        rstores = self.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://xteam.hq.bowstreet.com/redfoot-builtin#RemoteStore")
+	for rstore in rstores:
+	    locationlist = self.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#location", None)
+            if len(locationlist) == 0:
+                continue
+            location = locationlist[0][2][1:]
+            systemIDlist = self.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#systemID", None)
+            if len(systemIDlist) == 0:
+                systemID = None
+            else:
+                systemID = systemIDlist[0][2][1:]
+            
+            from redfoot.storeio import StoreIO
+
+            storeIO = StoreIO()
+            storeIO.setStore(TripleStore())
+
+            from urllib import basejoin
+            storeIO.load(basejoin(self.store.location, location), systemID)
+            self.connectTo(storeIO.getStore())
 
 
     def setStore(self, store):
         self.store = store
+        self._preCacheRemoteStores()
 
     def getStore(self):
         return self.store
@@ -157,6 +176,9 @@ class StoreNode:
         
 
 # $Log$
+# Revision 1.14  2000/10/01 07:41:09  eikeon
+# fixed missing imports etc from previous premature checkin ;(
+#
 # Revision 1.13  2000/10/01 07:24:26  eikeon
 # moved loading of the rdf-schema and rdf-syntax into StoreNode
 #
