@@ -24,6 +24,9 @@ class TypeCheckError(Error):
         self.type = type(node)
         self.node = node
 
+    def __str__(self):
+        return self.msg
+
 
 class SubjectTypeError(TypeCheckError):
     """Subject of an assertion must be an instance of URIRef."""
