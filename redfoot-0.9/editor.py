@@ -46,7 +46,7 @@ class Editor(Viewer):
             self.qstore.propertyValuesLocalV(subject, self.editProperty)
             self.qstore.propertyValuesNeighbourhoodV(subject, self.displayPropertyValue)
         
-	    self.qstore.reifiedV(subject, self.displayReifiedStatementsInEditMode)
+	    self.qstore.reifiedV(subject, self.displayReifiedStatements)
 
             self.writer.write("""
               <TR>
@@ -151,19 +151,6 @@ class Editor(Viewer):
                 </TD>
               </TR>
         """ % (self.property_num, self.property_num))
-
-    def displayReifiedStatementsInEditMode(self, subject, predicate, object):
-        propertyDisplay = self.link(predicate)
-        if object[0]=="^":
-            valueDisplay = object[1:]
-        else:
-            valueDisplay = self.link(object)
-        self.writer.write("""
-        <TR CLASS="REIFIED"><TD>%s</TD><TD></TD><TD>%s</TD>
-        <TD COLSPAN="3">%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
-        self.qstore.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
-        self.writer.write("""
-        </TD></TR>""")
 
     def add(self, type):
         self.writer.write("""

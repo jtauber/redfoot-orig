@@ -247,7 +247,7 @@ class Viewer:
         else:
             valueDisplay = self.link(value)
         self.writer.write("""
-        <TR><TD>%s</TD><TD>%s</TD></TR>
+        <TR><TD>%s</TD><TD></TD><TD COLSPAN="2">%s</TD></TR>
         """ % (propertyDisplay, valueDisplay))
 
     def displayReifiedStatements(self, subject, predicate, object):
@@ -257,8 +257,8 @@ class Viewer:
         else:
             valueDisplay = self.link(object)
         self.writer.write("""
-        <TR CLASS="REIFIED"><TD>%s</TD><TD>%s</TD>
-        <TD>%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
+        <TR CLASS="REIFIED"><TD>%s</TD><TD></TD><TD>%s</TD>
+        <TD COLSPAN="3">%s<BR>""" % (propertyDisplay, valueDisplay, self.link(subject)))
         self.qstore.propertyValuesV(subject, self.displayReifiedStatementPropertyValue)
         self.writer.write("""
         </TD></TR>""")
@@ -315,6 +315,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.18  2000/10/08 06:19:15  eikeon
+# Changed default view to be the collapsed subclass view
+#
 # Revision 1.17  2000/10/07 02:24:46  jtauber
 # futzed around a little with fonts and colors; if redfoot doesn't have anything about a queried resource, viewer now says so; reified properties now have a link to the statement
 #
