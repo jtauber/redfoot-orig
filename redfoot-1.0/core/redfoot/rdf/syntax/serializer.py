@@ -10,22 +10,14 @@ namestart = ['A','B','C','D','E','F','G','H','I','J','K','L','M',
 namechars = namestart + ['0','1','2','3','4','5','6','7','8','9','-','.']
 
 
-import string
-def split_property(property, namespaces={}):
+def split_property(property):
     property = property
-    keys = namespaces.keys()
-    for namespace in keys:
-        if string.find(property, namespace)==0:
-            return (namespace, property[len(namespace):])
     length = len(property)
-    for i in range(length):
-        if not property[-1-i] in namechars:
-            for j in range(-1-i,length):
-                if property[j] in namestart:
-                    if j==0:
-                        return None
-                    return (property[:j], property[j:])
-    return ("", property)
+    for i in xrange(1, length):
+        if not property[-i-1] in namechars:
+            j = -i
+            return (property[:j], property[j:])
+    raise "Could not split property"
 
 
 class Serializer:
@@ -63,7 +55,7 @@ class Serializer:
         self.baseURI = baseURI
 
     def register_property(self, property):
-        uri = split_property(property, self.namespaces)[0]
+        uri = split_property(property)[0]        
         if not self.namespaces.has_key(uri):
             self.namespaceCount = self.namespaceCount + 1
             prefix = "n%s" % self.namespaceCount
@@ -94,7 +86,7 @@ class Serializer:
         self.stream.write( "  </rdf:Description>\n" )
 
     def property(self, predicate, object, literal_object=0):
-        (namespace, localName) = split_property(predicate, self.namespaces)
+        (namespace, localName) = split_property(predicate)   
         prefix = self.namespaces[namespace]
 
         # TODO: Is this what we want to do if object is None?
