@@ -123,6 +123,8 @@ class JournalingStoreIO(StoreIO, JournalingStore):
     def __init__(self):
         StoreIO.__init__(self)
         JournalingStore.__init__(self)
+        from redfoot.rednode import Local
+        #self.journal = Local()
 
     def load(self, location, URI=None):
         from redfoot.rednode import Local
@@ -135,7 +137,6 @@ class JournalingStoreIO(StoreIO, JournalingStore):
         StoreIO.load(self, location, URI)
 
     def load_journal(self, location, URI=None):
-        from redfoot.rednode import Local
         journal = Local()
         journal.load(location, URI)
         journal.dirtyBit.clear() # we just loaded... therefore we are clean
@@ -181,6 +182,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 6.1  2001/02/26 22:32:00  eikeon
+#~ a bit more work on the journaling store stuff
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
 #~

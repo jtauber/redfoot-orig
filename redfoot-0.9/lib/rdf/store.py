@@ -1,5 +1,36 @@
 # $Header$
+import time
 
+class SN:
+    def __init__(self):
+        self.sn = 0
+        self.time_path = None
+
+    def get_sn(self):
+        self.sn = self.sn + 1
+        return self.sn
+
+    def date_time_path(self, t=None):
+        """."""
+        
+        if t==None:
+            t = time.time()
+
+        year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)           
+        time_path = "%0004d/%02d/%02d/T%02d/%02d/%02dZ" % ( year, month, day, hh, mm, ss)
+
+        if time_path==self.time_path:
+            sn = self.sn
+            self.sn = sn + 1
+        else:
+            self.sn = 0
+            self.time_path = time_path
+
+
+        s = self.time_path + "%.0004s" % self.sn
+        return s
+
+    
 class TripleStore:
 
     def __init__(self):
@@ -123,7 +154,6 @@ class TripleStore:
 from rdf.const import *
 
 from rdf.literal import literal, un_literal, is_literal
-import time
 
 ADD = literal("add")
 DELETE = literal("delete")
@@ -184,9 +214,8 @@ class JournalingStore(TripleStore):
                 TripleStore.remove(self, s, p, o)
 
         
-    def generateURI(self):
-        self.sn = self.sn + 1
-        return "%s#T%s-%s" % (self.URI, time.time(), self.sn)
+    def generateURI(self, sn=SN()):
+        return self.URI + sn.date_time_path()
 
     def add(self, subject, predicate, object):
         TripleStore.add(self, subject, predicate, object)
@@ -198,7 +227,7 @@ class JournalingStore(TripleStore):
         self.journal.add(statement_uri, OBJECT, object)
         self.journal.add(statement_uri, OPERATION, ADD)
 
-        self.journal.add(statement_uri, TIMESTAMP, date_time_filename())        
+        self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
         
     def _remove(self, subject, predicate, object):
         TripleStore._remove(self, subject, predicate, object)
@@ -210,27 +239,13 @@ class JournalingStore(TripleStore):
         self.journal.add(statement_uri, OBJECT, object)
         self.journal.add(statement_uri, OPERATION, DELETE)
 
-        self.journal.add(statement_uri, TIMESTAMP, date_time_filename())        
+        self.journal.add(statement_uri, TIMESTAMP, self.generateURI())        
 
-class SN:
-    def __init__(self):
-        self.sn = 0
 
-    def get_sn(self):
-        self.sn = self.sn + 1
-        return self.sn
-
-def date_time_filename(t=None, sn_generator=SN()):
-    """."""
-    import time
-    if t==None:
-        t = time.time()
-
-    year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
-    sn = sn_generator.get_sn()
-    s = "%0004d-%02d-%02dT%02d_%02d_%02dZ.%0004d" % ( year, month, day, hh, mm, ss, sn)        
-    return s
 
 #~ $Log$
+#~ Revision 6.1  2001/02/26 22:32:00  eikeon
+#~ a bit more work on the journaling store stuff
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
