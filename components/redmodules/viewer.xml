@@ -102,7 +102,7 @@
       <red:exec>
         s = resource(self.app.request.get_parameter('subject')) 
       </red:exec>
-      <H2><red:eval>s</red:eval></H2>
+      <a href="{s}"><H2><red:eval>s</red:eval></H2></a>
       <TABLE>
         <red:if test="self.rednode.exists(s, None, None)">
           <red:exec>
