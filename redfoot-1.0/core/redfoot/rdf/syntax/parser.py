@@ -77,6 +77,14 @@ class RDFHandler(HandlerBase):
             TypedNodeHandler(self.parser, self, self.globals, name, atts)
 
 
+def absolutize(base, uri):
+    if uri == '' or uri[0] == "#":
+        return base + uri
+    else:
+        return uri
+
+
+
 class DescriptionHandler(HandlerBase):
     def __init__(self, parser, parent, globals, atts):
         HandlerBase.__init__(self, parser, parent, globals)
@@ -95,8 +103,7 @@ class DescriptionHandler(HandlerBase):
             self.subject = ANON + generate_uri()
             self.anonymous = 1
 
-        if self.subject[0] == "#": # TODO do this elsewhere too
-            self.subject = self.parser.GetBase() + self.subject
+        self.subject = absolutize(self.parser.GetBase(), self.subject)
 
         for att in atts.keys():
             if att == "about" or att == "ID" or \
@@ -164,12 +171,10 @@ class LIHandler(HandlerBase):
         self.literal = 0
         if atts.has_key("resource"):
             self.value = atts["resource"]
-            if self.value[0] == "#":
-                self.value = self.parser.GetBase() + self.value
+            self.value = absolutize(self.parser.GetBase(), self.value)                
         elif atts.has_key(RESOURCE_ATTRIBUTE):
             self.value = atts[RESOURCE_ATTRIBUTE]
-            if self.value[0] == "#":
-                self.value = self.parser.GetBase() + self.value
+            self.value = absolutize(self.parser.GetBase(), self.value)
         else:
             self.value = ""
             self.literal = 1
@@ -194,8 +199,7 @@ class PropertyHandler(HandlerBase):
         self.anonymous_object = 0
         if atts.has_key("resource"):
             self.object = atts["resource"]
-            if self.object[0] == "#":
-                self.object = self.parser.GetBase() + self.object
+            self.object = absolutize(self.parser.GetBase(), self.object)                                                
             for att in atts.keys():
                 if att == "resource":
                     pass
@@ -205,8 +209,7 @@ class PropertyHandler(HandlerBase):
                                literal_object=1)
         elif atts.has_key(RESOURCE_ATTRIBUTE):
             self.object = atts[RESOURCE_ATTRIBUTE]
-            if self.object[0] == "#":
-                self.object = self.parser.GetBase() + self.object
+            self.object = absolutize(self.parser.GetBase(), self.object)
             for att in atts.keys():
                 if att == RESOURCE_ATTRIBUTE:
                     pass
@@ -236,7 +239,7 @@ class PropertyHandler(HandlerBase):
             elif atts.has_key(ID_ATTRIBUTE):
                 self.object = self.parser.GetBase() + "#" + atts[ID_ATTRIBUTE]
             else:
-                raise "Descriptions must have either an about or an ID"
+                print "Descriptions must have either an about or an ID '%s'" % name
             if name==DESCRIPTION_ELEMENT:
                 DescriptionHandler(self.parser, self, self.globals, atts)
             else:
