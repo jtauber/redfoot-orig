@@ -56,9 +56,11 @@
 
     <red:facet name="_news_row" args="subject, property, object">
         <dt>
-          <red:eval>
-            self.app.rednode.get_first_value(subject, RSS_TITLE, '')
-          </red:eval>
+          <a href="{subject}">
+            <red:eval>
+              self.app.rednode.get_first_value(subject, RSS_TITLE, '')
+            </red:eval>
+          </a>
         </dt>
         <dt style="font-size: 8pt">
           <red:exec>
