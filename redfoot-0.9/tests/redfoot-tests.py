@@ -33,8 +33,6 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         """Serve a GET request."""
 
-        self.wfile.write("<ul>")
-
         tripleStore = TripleStore()
 
         storeIO = StoreIO()
@@ -45,7 +43,6 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         viewer = Viewer(self.wfile, QueryStore(tripleStore))
         viewer.mainPage()
 
-        self.wfile.write("</ul>")
         self.wfile.flush()
         self.wfile.close()
 
