@@ -16,6 +16,8 @@ removes so that the dictionaries can be iterated over directly while
 visiting.
     """    
     def __init__(self):
+        super(TripleStore, self).__init__()
+        
         # indexed by [subject][predicate][object]
         self.__spo = {}
 
