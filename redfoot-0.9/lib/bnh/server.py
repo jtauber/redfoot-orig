@@ -27,7 +27,6 @@ class Server:
         t.start()
 
     def stop(self):
-        self.receiver.stop()
         self.running = 0
 
     def _handleRequest(self, serverConnection):
@@ -41,6 +40,9 @@ class Server:
                 handlerCubby.wait(0.05) # TODO: can we make this wait()?
 
 #~ $Log$
+#~ Revision 5.2  2000/12/13 00:03:37  eikeon
+#~ server now shuts down cleanly
+#~
 #~ Revision 5.1  2000/12/12 22:20:50  eikeon
 #~ added shutdown code... to shutdown cleanly
 #~
