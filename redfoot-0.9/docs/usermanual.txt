@@ -23,9 +23,9 @@ INTRODUCTION
 
 STARTING REDFOOT WITH GENERIC UI
 
-    Just run redfoot.sh or redfoot.bat and Redfoot will start up. By
-    default, Redfoot will be running on port 8000 and will be using
-    local.rdf as the RDF data.
+    Go to the apps directory and run generic.sh or generic.bat and
+    Redfoot will start up. By default, Redfoot will be running on port
+    8000 and will be using local.rdf as the RDF data.
 
     If you open a browser and go to
         http://localhost:8000/
@@ -47,7 +47,7 @@ STARTING REDFOOT WITH A CUSTOM UI
 
     Typically, a custom UI will be provided as a python class which is
     a subclass of BaseUI. A special file will be run to start up
-    Redfoot with that particular UI. See sample/sample.sh for an
+    Redfoot with that particular UI. See apps/sample1.sh for an
     example.
 
     Note that in almost all cases, a Redfoot with a custom UI will
@@ -172,6 +172,9 @@ USING GENERIC UI: ADDING A RESOURCE
 [TODO: PEER stuff]
 
 $Log$
+Revision 1.2  2000/11/04 17:09:58  jtauber
+removed ^Ms
+
 Revision 1.1  2000/11/04 06:14:22  jtauber
 first attempt at a user manual
 
