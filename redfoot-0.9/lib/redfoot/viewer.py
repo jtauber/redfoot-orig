@@ -437,6 +437,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.12  2000/12/13 02:54:11  jtauber
+#~ moved functions in query around and renamed a lot
+#~
 #~ Revision 5.11  2000/12/10 01:19:13  jtauber
 #~ init attempt at generating dot for graphviz
 #~
@@ -472,51 +475,3 @@ class Viewer:
 #~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
-#~
-#~ Revision 4.11  2000/12/08 08:05:58  eikeon
-#~ fixed getByType; fixed references to constants
-#~
-#~ Revision 4.10  2000/12/08 07:02:43  eikeon
-#~ show triple now pays attention to showNeighbours
-#~
-#~ Revision 4.9  2000/12/07 17:54:04  eikeon
-#~ Viewer (and Editor, PeerEditor) no longer have both a qstore and a storeNode
-#~
-#~ Revision 4.8  2000/12/06 23:26:55  eikeon
-#~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
-#~
-#~ Revision 4.7  2000/12/05 22:43:30  eikeon
-#~ moved constants to rdf.const
-#~
-#~ Revision 4.6  2000/12/05 03:49:07  eikeon
-#~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
-#~
-#~ Revision 4.5  2000/12/04 22:07:35  eikeon
-#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
-#~
-#~ Revision 4.4  2000/12/04 22:00:59  eikeon
-#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
-#~
-#~ Revision 4.3  2000/12/04 01:35:40  eikeon
-#~ changed plumbing to new style output method
-#~
-#~ Revision 4.2  2000/11/23 02:34:07  jtauber
-#~ added a test of new UI for picking resources
-#~
-#~ Revision 4.1  2000/11/20 21:41:31  jtauber
-#~ download RDF and view Triples now can take subject,predicate,object parameters
-#~
-#~ Revision 4.0  2000/11/06 15:57:34  eikeon
-#~ VERSION 4.0
-#~
-#~ Revision 3.3  2000/11/03 23:04:08  eikeon
-#~ Added support for cookies and sessions; prefixed a number of methods and variables with _ to indicate they are private; changed a number of methods to mixed case for consistency; added a setHeader method on response -- headers where hardcoded before; replaced writer with response as writer predates and is redundant with repsonse; Added authentication to editor
-#~
-#~ Revision 3.2  2000/11/02 21:48:27  eikeon
-#~ removed old log messages
-#~
-# Revision 3.1  2000/10/31 05:03:08  eikeon
-# mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
-#
-# Revision 3.0  2000/10/27 01:23:10  eikeon
-# bump-ing version to 3.0

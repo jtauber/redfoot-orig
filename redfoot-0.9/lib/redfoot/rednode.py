@@ -151,62 +151,8 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 5.1  2000/12/14 05:15:26  eikeon
+#~ converted to new query interface (for a second time?)
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
-#~
-#~ Revision 4.16  2000/12/08 02:50:11  eikeon
-#~ refactored unused method :(
-#~
-#~ Revision 4.15  2000/12/07 00:21:52  eikeon
-#~ fixed show/hide again after I broke it again when I refactored rednode
-#~
-#~ Revision 4.14  2000/12/06 23:26:55  eikeon
-#~ Made rednode consistently be the local plus neighbourhood; neighbourhood be only the neighbours; and local be only the local part -- much less confusing
-#~
-#~ Revision 4.13  2000/12/06 21:45:13  eikeon
-#~ refactored gets to visits in subClassV and resourcesByClassV
-#~
-#~ Revision 4.12  2000/12/06 21:28:04  eikeon
-#~ added resourcesByClassV and subClassV to rednode as they are effected by show/hide neighbourhood; removed subClassV from neighbourhood we do not wish to override it
-#~
-#~ Revision 4.11  2000/12/06 19:41:37  eikeon
-#~ removed get method as it is now implemented on query
-#~
-#~ Revision 4.10  2000/12/05 22:43:30  eikeon
-#~ moved constants to rdf.const
-#~
-#~ Revision 4.9  2000/12/05 07:11:27  eikeon
-#~ finished refactoring rednode refactor of the local / neighbourhood split
-#~
-#~ Revision 4.8  2000/12/05 05:05:52  eikeon
-#~ Switched RedNode to use AutoSaveStoreIO and fixed up AutoSaveStoreIO to work with new class inheritance
-#~
-#~ Revision 4.7  2000/12/05 03:49:07  eikeon
-#~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
-#~
-#~ Revision 4.6  2000/12/05 03:36:56  eikeon
-#~ reordered classes; renamed StoreNode to RedNode
-#~
-#~ Revision 4.5  2000/12/05 00:02:25  eikeon
-#~ fixing some of the local / neighbourhood stuff
-#~
-#~ Revision 4.4  2000/12/04 22:49:10  eikeon
-#~ refactored *All methods into Neighbourhood class
-#~
-#~ Revision 4.3  2000/12/04 22:07:35  eikeon
-#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
-#~
-#~ Revision 4.2  2000/12/04 22:00:59  eikeon
-#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
-#~
-#~ Revision 4.1  2000/12/04 01:26:44  eikeon
-#~ no more getStore() on StoreIO
-#~
-#~ Revision 4.0  2000/11/06 15:57:34  eikeon
-#~ VERSION 4.0
-#~
-#~ Revision 3.1  2000/11/02 21:48:27  eikeon
-#~ removed old log messages
-#~
-# Revision 3.0  2000/10/27 01:23:10  eikeon
-# bump-ing version to 3.0
