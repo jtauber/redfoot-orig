@@ -64,6 +64,8 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 viewer.deleteProperty(args)
             elif args["processor"][0][0:6] == "reify_":
                 viewer.reifyProperty(args)
+            elif args["processor"][0] == "connect":
+                viewer.connect(args)
 	                
         if path_info == "/":
             viewer.mainPage()
@@ -98,6 +100,8 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             else:
                 type = None
             viewer.add(type)
+        elif path_info == "/connect":
+            viewer.connectPage()
         else:
             # make a proper 404
             self.wfile.write("unknown PATH of '%s'" % path_info)
@@ -145,7 +149,7 @@ def runServer():
 
     storeNode.setStore(storeIO)
 
-    RedfootHTTPRequestHandler.viewer = Editor(None, storeNode)
+    RedfootHTTPRequestHandler.viewer = PeerEditor(None, storeNode)
 
     print "Serving HTTP on port", port, "...\n"
     httpd.serve_forever()
@@ -156,6 +160,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.16  2000/10/08 06:19:15  eikeon
+# Changed default view to be the collapsed subclass view
+#
 # Revision 1.15  2000/10/08 06:05:03  eikeon
 # UNKNOWN PATH now indicates the value of the unknown path
 #
