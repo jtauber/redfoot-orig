@@ -1,4 +1,5 @@
 from rdflib.nodes import URIRef, Literal, BNode
+from rdflib import exception
 
 
 class TypeCheck(object):
@@ -31,14 +32,15 @@ class TypeCheck(object):
 
     def check_subject(self, s):
         if not (isinstance(s, URIRef) or isinstance(s, BNode)):
-            raise "subject must either be a URIRef or BNode: %s(%s)" % (s, type(s))
+            raise exception.SubjectTypeError(s)
+        
     def check_predicate(self, p):
         if not isinstance(p, URIRef):
-            raise "predicate must by a URIRef: %s(%s)" % (p, type(p))
+            raise exception.PredicateTypeError(p)
 
     def check_object(self, o):
         if not (isinstance(o, URIRef) or \
            isinstance(o, Literal) or \
            isinstance(o, BNode)):
-            raise "object must be one of URIRef, Literal or BNode: %s(%s)" % (o, type(o))
+            raise exception.ObjectTypeError(o)
 

@@ -1,16 +1,16 @@
 from __future__ import generators
-
+from rdflib import exception
 
 class AbstractStore(object):
 
     def add(self, subject, predicate, object):
-        raise "Must override"
+        raise exception.NotOverriddenError(self.add)
 
     def remove(self, subject, predicate, object):
-        raise "Must override"
+        raise exception.NotOverriddenError(self.remove)
     
     def triples(self, subject, predicate, object):
-        raise "Must override"
+        raise exception.NotOverriddenError(self.triples)
     
     def subjects(self, predicate=None, object=None):
         for s, p, o in self.triples(None, predicate, object):

@@ -11,7 +11,9 @@
 	do not have a notion of a uri. [Also, with proper bNode support on
 	its way the need for a generate_uri might not be as high.]
 
-	Fixed bug in node's n3 function: URI -> URIRef 
+	Fixed bug in node's n3 function: URI -> URIRef.
+
+	Replaced string based exceptions with class based exceptions.
 	
 	
 2002/04/13

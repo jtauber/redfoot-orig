@@ -1,4 +1,5 @@
 from rdflib.nodes import URIRef, BNode, Literal
+from rdflib import exception
 
 def encode_attribute_value(s):
     s = '&amp;'.join(s.split('&'))
@@ -114,9 +115,9 @@ class Serializer(object):
                 object = object[len(self.baseURI):]
             self.stream.write( "    <%s:%s rdf:resource=\"%s\"/>\n" % (prefix, localName, encode_attribute_value(object)) )
         elif isinstance(object, BNode):
-            raise "Not yet Implemented"
+            raise exception.NotYetImplemented()
         else:            
-            raise "object is of unexpected type: %s(%s)" % (object, type(object))
+            raise exception.UnexpectedTypeError(object)
 
     # TODO: the following might not work with anonymous containers
     def triple(self, subject, predicate, object):

@@ -2,6 +2,7 @@ ns_separator = ""
 
 from rdflib.nodes import URIRef, Literal, BNode
 from rdflib.const import RDFNS, TYPE
+from rdflib import exception
 
 RDF_ELEMENT = RDFNS + ns_separator + "RDF"
 DESCRIPTION_ELEMENT = RDFNS + ns_separator + "Description"
@@ -161,7 +162,7 @@ class DocumentHandler(object):
             elif atts.has_key(ID_ATTRIBUTE):
                 self.object = URIRef(self.uri + "#" + atts[ID_ATTRIBUTE])
             else:
-                raise "Descriptions must have either an about or an ID '%s'" % name
+                raise exception.MalformedDescriptionError(name)
             if name==DESCRIPTION_ELEMENT:
                 self.description(name, atts)                
                 self.child_stack.append(self.description_child)
@@ -174,7 +175,7 @@ class DocumentHandler(object):
     def property_char(self, data):
         if not all_whitespace(data):
             if not isinstance(self.object, Literal):
-                raise "has both character content and a resource attribute"
+                raise exception.ResourceAndCharContentError(self.subject)
             self.object = self.object + data
 
     def property_end(self, name):
@@ -218,12 +219,12 @@ class DocumentHandler(object):
             self.value = Literal("")
 
     def li_child(self, name, atts):
-        raise "Not allowed"
+        raise exception.RdfSeqChildNotAllowedError()
 
     def li_char(self, data):
         if not all_whitespace(data):
             if not isinstance(self.value, Literal):
-                raise "has both character content and a resource attribute"
+                raise exception.ResourceAndCharContentError(self.subject)
             self.value = self.value + data
 
     def li_end(self, name):
