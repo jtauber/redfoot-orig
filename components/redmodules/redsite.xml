@@ -110,6 +110,11 @@
         parts = parts[1:-1]
         self.depth = depth
       </red:exec>
+    <red:exec>
+      uri = uri or resource(self.app.request.get_parameter('uri', None))
+      uri = uri or resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
+    </red:exec>
+      
     
 &lt;!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -125,17 +130,15 @@
                 content="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_KEYWORDS, '')}"/>
           <link rel="STYLESHEET" 
                 type="text/css" 
-                href="{'../' * depth}css"/>
+                href="{'../' * depth}2002/css"/>
         </head>
         <body>
 
-          <form id="login" action="" method="post"
-                style="margin: 0px; padding: 0px 0px 1px 0px;">
+<h1 style="margin-bottom: 0px;"><red:eval>self.app.rednode.label(uri, '-')</red:eval></h1>
 
-            <table class="NAV" width="100%">
-              <tr>
-                <td>
-                  <a href="{self.app.rednode.uri}" style="padding: 0px 10px;">
+<div style="background: white; color: black; border: solid 0px black;padding: 0em 1em 1em 1em; font-weight: bold;">
+
+  <a href="{self.app.rednode.uri}" style="padding: 0px 10px;">
                     <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_NAME, 'Home')</red:eval>
                   </a>
 
@@ -151,14 +154,31 @@
                      </a>
                     </red:if>
                   </red:for>
-                
-                </td>
-                <td align="right">
+</div>                
 
-                  <div style="margin: 0px 10px;">
+
+<div style="float: left; border: solid 0px black;">
+
+<div style="background: white; color: black; float: right;width: 8em; border: solid 1px black; padding: 0px 10px; margin-top: 5px;">
+
+<form id="login" action="" method="post"
+                style="margin: 0px; padding: 0px 0px 1px 0px;">
+
+
+                      <h3>Actions</h3>
+                      
                     <red:if test="self.authentication.authenticated()">
                       Welcome,
-                      <red:eval>self.authentication.get_username()</red:eval> |
+                      <red:eval>self.authentication.get_username()</red:eval>
+                      [ 
+            <!--
+              TODO: remove editor location assumption;
+                    Related: Maybe change the uri's to editor resource
+                    to something along the lines of
+                    uri?view_with=editor_uri
+              -->
+            <a href="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), 'TODO: EDITOR', '/editor/')}edit_subject?subject={encode_URI(self.app.rednode.uri+self.app.request.get_path_info()[1:])}">Edit this page</a> |
+                      
                       <!--
                         This module instance does not directly contain
                         the processors
@@ -168,35 +188,47 @@
                         -->
                       <input name="processor" type="hidden" value=""/>
                       <a href="javascript: form=document.getElementById('login'); form.processor.value='do_logout'; form.submit()">Logout
-                      </a>
+                      </a> ]
 
                       <red:else>             
                         <input name="view" type="hidden" value="login"/>
-                        <a href="javascript: form=document.getElementById('login'); form.view.value='login';form.submit()">
+                        [ <a href="javascript: form=document.getElementById('login'); form.view.value='login';form.submit()">
                         Login</a> |
                         <a href="javascript: form=document.getElementById('login'); form.view.value='create';form.submit()">
-                          Create User
-                        </a>
+                          Create User 
+                        </a> ]
                       </red:else>             
                     </red:if>
-                  </div>
-                </td>
-              </tr>
-            </table>  
+
           </form>
+
+      <red:exec>
+        lb = ListBuilder()
+        self.app.rednode.visit(o(filter(lb.accept, self.visible)), (uri, LINKS_TO, None))        
+        links = lb.list
+        links.sort(self.alpha_by_label)
+        last = len(links) - 1
+      </red:exec>
+      <red:if test="len(links)>0">
+        <h3>Links</h3>
+        <p>
+          [
+      <red:for item="index" list="xrange(len(links))">
+        <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
+        <red:if test="index!=last">
+            |
+        </red:if>
+      </red:for>
+          ]
+        </p>  
+      </red:if>
+
+</div>
+
 
       <!-- menu -->
       <red:if test="self.authentication.authenticated()">
           <red:exec>self._body(uri)</red:exec>
-          <div style="font-size: 8pt; text-align: center;">
-            <!--
-              TODO: remove editor location assumption;
-                    Related: Maybe change the uri's to editor resource
-                    to something along the lines of
-                    uri?view_with=editor_uri
-              -->
-            [ <a href="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), 'TODO: EDITOR', '/editor/')}edit_subject?subject={encode_URI(self.app.rednode.uri+self.app.request.get_path_info()[1:])}">Edit this page</a> ]
-          </div>
         <red:else>
           <red:exec>view = self.app.request.get_parameter('view', None)</red:exec>
           <red:if test="view=='login'">
@@ -216,23 +248,41 @@
         </red:else>
       </red:if>
 
-          
-          <hr/>
-            <div style="font-size: 8pt; text-align: center;">
-              This site is running on <a href="http://redfoot.sourceforge.net/">Redfoot <red:eval>VERSION</red:eval></a> |
-              <a href="http://redfoot.sourceforge.net/doc/versions.html">Redfoot Version Conventions</a> |
 
+<!--
+          <h1>&#160;</h1>
+          <red:exec>self.app.apply()</red:exec>          
+-->
+
+
+</div>
+
+
+            <div style="font-size: 8pt; text-align: center; margin: 5px;">
+              This site is running on <a href="http://redfoot.sourceforge.net/">Redfoot <red:eval>VERSION</red:eval></a> |
+              <a href="http://redfoot.sourceforge.net/doc/versions.html">Redfoot Version Conventions</a> 
+            </div>
+            <div style="text-align: center;">
     <a href="http://validator.w3.org/check/referer"><img
         src="http://www.w3.org/Icons/valid-xhtml10" style="border: 0; vertical-align: middle;"
         alt="Valid XHTML 1.0!" height="31" width="88" /></a>
 
             </div>  
+
+
             
         </body>
 &lt;/html&gt;
     </red:facet>
 
-    <red:facet name="/css">
+    <red:facet name="/2002/css">
+A {
+  color: #000;
+  text-decoration: none;
+}
+    </red:facet>
+    
+    <red:facet name="/css">    
 
 body {
   color: #000;
@@ -321,9 +371,6 @@ A:hover {
     </red:exec>
 
       <red:if test="self.visible(uri)">
-        <h1>
-          <red:eval>self.app.rednode.label(uri, '-')</red:eval>
-        </h1>
         <red:exec>
           html = self.app.rednode.get_first_value(uri, HTML, None)
           comment = self.app.rednode.get_first_value(uri, COMMENT, None)
@@ -337,6 +384,7 @@ A:hover {
       <red:if test="html">
         <red:eval encode="None">html</red:eval>
       </red:if>
+
 
       <red:exec>
         lb = ListBuilder()
@@ -361,33 +409,10 @@ A:hover {
 
       <red:exec>self.app.apply()</red:exec>
 
-      <red:exec>
-        lb = ListBuilder()
-        self.app.rednode.visit(o(filter(lb.accept, self.visible)), (uri, LINKS_TO, None))        
-        links = lb.list
-        links.sort(self.alpha_by_label)
-        last = len(links) - 1
-      </red:exec>
-      <red:if test="len(links)>0">
-        <h2>Links</h2>
-        <p>
-          [
-      <red:for item="index" list="xrange(len(links))">
-        <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
-        <red:if test="index!=last">
-            |
-        </red:if>
-      </red:for>
-          ]
-        </p>  
-      </red:if>
-
-        <red:else>
-          <h1>&#160;</h1>
-          <red:exec>self.app.apply()</red:exec>          
-        </red:else>        
-      </red:if>  
       
+
+      </red:if>  
+
       
     </red:facet>    
     
