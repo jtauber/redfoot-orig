@@ -1,5 +1,7 @@
 from redfoot.store import *
 from redfoot.storeio import *
+from redfoot.viewer import *
+from redfoot.query import *
 
 """redfoot HTTP Server.
 
@@ -37,19 +39,15 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         storeIO = StoreIO()
         storeIO.setStore(tripleStore)
-        storeIO.load("rdfSchema.rdf")
+        storeIO.load("rdfSchema.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
+        storeIO.load("rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
 
-        class Visitor:
-            def __init__(self, wfile):
-                self.wfile = wfile
-                
-            def callback(self, subject, property, value):
-                self.wfile.write("<li>s:%s</li><li>-p:%s</li><li>--v:%s</li>" % (subject, property, value))
-
-        visitor = Visitor(self.wfile)
-        tripleStore.visit(visitor, None, None, None)
+        viewer = Viewer(self.wfile, QueryStore(tripleStore))
+        viewer.mainPage()
 
         self.wfile.write("</ul>")
+        self.wfile.flush()
+        self.wfile.close()
 
     def do_HEAD(self):
         """Serve a HEAD request."""
@@ -74,7 +72,14 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 def runServer(HandlerClass = SimpleHTTPRequestHandler,
          ServerClass = BaseHTTPServer.HTTPServer):
 
-    port = 80
+#    port = 8000
+#    server_address = ('', port)
+
+    import sys
+    if sys.argv[1:]:
+        port = string.atoi(sys.argv[1])
+    else:
+        port = 8000
     server_address = ('', port)
 
     httpd = ServerClass(server_address, HandlerClass)
