@@ -30,7 +30,7 @@ def _start_thread(notMoreOftenThan=15):
         
 LASTRETRIEVED = "http://redfoot.sourceforge.net/2001/01/30/#lastRetrieved"
 
-SELF = "http://localhost:8001/"
+SELF = "http://eikeon.com/test/"
 FRIEND = "http://localhost:8002/"
 
 def _pull(interval):
@@ -72,7 +72,7 @@ def _pull(interval):
 from redfoot.rednode import RedNode
 storeNode = RedNode()
 local = JournalingStoreLocal()
-local.load("sample2.rdf", SELF)
+local.load_journal("sample2-J.rdf", SELF)
 storeNode.set_local(local)
 bookkeeping = Local()
 bookkeeping.load("bookkeeping.rdf", SELF)
@@ -80,7 +80,7 @@ storeNode.neighbours.addNeighbour(bookkeeping)
 
 _start_thread()
 
-port = 8001
+port = 8009
 optlist, args = getopt.getopt(sys.argv[1:], 'p:')
 for optpair in optlist:
     opt, value = optpair

@@ -74,9 +74,8 @@ class Editor(Viewer):
 	copy = parameters['copy']
 
 	if copy!=None and copy=="copy":
-   	    print "copying"
             subject = self.storeNode.local.URI + self.generateURI()
-	    self.update(parameters, subject)
+	    self.update(parameters, subject, copy=1)
         if subject==None or subject=="":
             subject = self.storeNode.local.URI + self.generateURI()
         if type!=None and type!="":
@@ -268,7 +267,7 @@ class Editor(Viewer):
         """ % type)
         self.footer()
 
-    def update(self, parameters, subject=None):
+    def update(self, parameters, subject=None, copy=0):
 	if subject==None:
 	    subject = parameters['uri']
         count = parameters['prop_count']
@@ -282,7 +281,9 @@ class Editor(Viewer):
             if isLiteral == "yes":
                 value = literal(value)
                 orig = literal(orig)
-            if value!=orig:
+            if copy:
+                self.storeNode.local.add(subject, property, value)
+            elif value!=orig:
                 self.storeNode.local.remove(subject, property, orig)
                 self.storeNode.local.add(subject, property, value)
         newProperty = parameters['newProperty']
@@ -371,6 +372,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 6.4  2001/03/13 19:55:44  eikeon
+#~ orig was not getting set for things of type resource... now it is
+#~
 #~ Revision 6.3  2001/02/27 20:55:07  eikeon
 #~ update no longer removes and re-adds properties who's values are unchanged; generateURI changed
 #~
