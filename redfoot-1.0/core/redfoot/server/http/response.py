@@ -48,13 +48,15 @@ class Response:
             if self.head_sent==0:
                 self.head_sent = 1
                 self._send_head()
-                
             self._wfile.write(str.encode('Latin-1', 'replace'))
         except IOError:
             raise BadRequestError("write failed")                            
 
     def flush(self):
         try:
+            if self.head_sent==0:
+                self.head_sent = 1
+                self._send_head()
             self._wfile.flush()
         except IOError:
             raise BadRequestError("flush failed")
