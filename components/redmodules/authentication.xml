@@ -95,7 +95,7 @@
                 md5_hex_digest = md5(password).hexdigest()
 
                 # Create identity
-                uri = resource(self.session.sessions.URI + generate_uri())
+                uri = resource(self.session.sessions.uri + generate_uri())
                 self.session.sessions.add(uri, TYPE, PERSON)
                 self.session.sessions.add(uri, MD5_HEX_DIGEST, literal(md5_hex_digest))
                 self.session.sessions.add(uri, USERNAME, literal(username))

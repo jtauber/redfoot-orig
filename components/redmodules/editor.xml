@@ -34,11 +34,11 @@
         copy = self.app.request.get_parameter("copy", None)
         
         if copy == "true":
-            subject = self.app.rednode.local.URI + generate_uri()
+            subject = self.app.rednode.local.uri + generate_uri()
             self.update(resource(subject), 1)
         else:
             if subject == None or subject == "":
-                subject = self.app.rednode.local.URI + generate_uri()
+                subject = self.app.rednode.local.uri + generate_uri()
 
         subject = resource(subject)
 

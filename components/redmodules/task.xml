@@ -82,7 +82,7 @@
     # TODO: create processor tag for these to use
     def add_task(self):
         task = self.app.request.get_parameter('new_task')    
-        uri = resource(self.app.rednode.local.URI + generate_uri())
+        uri = resource(self.app.rednode.local.uri + generate_uri())
         self.app.rednode.add(uri, TYPE, TASK)
         self.app.rednode.add(uri, LABEL, literal(task))
         self.app.rednode.add(uri, COMMENT, literal(''))        
