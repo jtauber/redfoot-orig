@@ -103,7 +103,7 @@ self.display_subclass(request, response, root, 0)
 </r:exec>
 </r:response>
 
-<r:response name="display_subclass" args="root, recurse=1">
+<r:response name="display_subclass" args="root recurse=1">
 <r:exec>self.header("Subclass View")</r:exec>
 <DIV CLASS="box">
 <r:exec>self.rednode.visitParentTypes(self.displayParent, root)</r:exec>
@@ -156,7 +156,7 @@ def displayParent(self, resource):
 
 # TODO: rewrite to use lists
 def displaySCClass(self, klass, depth, recurse):
-    self.response.write(3*depth*"&nbsp;")
+    self.response.write(3*depth*"&amp;nbsp;")
 
     if recurse==0:
         self.response.write("""&lt;A HREF="subclass?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.encodeAttributeValue(self.rednode.comment(klass))))
@@ -170,7 +170,7 @@ def displaySCClass(self, klass, depth, recurse):
 
 # TODO: rewrite to use lists
 def displaySCResource(self, resource, depth, recurse):
-    self.response.write(3*(depth+1)*"&nbsp;")
+    self.response.write(3*(depth+1)*"&amp;nbsp;")
     self.response.write(self.link(resource)+"&lt;BR>")
 
 def link(self, resource):
@@ -265,7 +265,7 @@ if o=="": o=None
 node = self.getNodeInScope()
 node.output(response, None, s, p, o)
 </r:exec>
-</r:reponse>
+</r:response>
 
 <r:response name="/journal">
 <r:exec>
