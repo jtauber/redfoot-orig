@@ -41,3 +41,13 @@ def date_time():
     year, month, day, hh, mm, ss, wd, y, z = gmtime(t)
     s = "%0004d/%02d/%02dT%02d:%02d:%02dZ" % ( year, month, day, hh, mm, ss)
     return s
+
+def to_URL(module_name, path):
+    import sys, urlparse
+    from os.path import join, dirname
+    from urllib import pathname2url
+    if urlparse.urlparse(path)[0] == '':
+        libDir = dirname(sys.modules[module_name].__file__)
+        return pathname2url(join(libDir, path))
+    else: # path is absolute URL
+        return path

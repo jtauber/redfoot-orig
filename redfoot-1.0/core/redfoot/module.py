@@ -1,6 +1,8 @@
 from string import rfind
 from types import MethodType
 
+from redfoot.util import to_URL
+
 class Module:
     def __init__(self, app):
         self.app = app
@@ -46,16 +48,18 @@ class Module:
             #print "first: '%s'  path: '%s'" % (first, path)            
             self.apply(first)
 
-# TODO refactor into util.py along with version in rednode.py
-def to_URL(module_name, path):
-    import sys, urlparse
-    from os.path import join, dirname
-    from urllib import pathname2url
-    if urlparse.urlparse(path)[0] == '':
-        libDir = dirname(sys.modules[module_name].__file__)
-        return pathname2url(join(libDir, path))
-    else: # path is absolute URL
-        return path
+    def create_rednode(self, uri=None):
+        mod_class = self.__class__
+        from redfoot.rednode import RedNode
+        uri = "http://redfoot.sourceforge.net/2001/09/module/%s/" % mod_class.__module__
+        mod_rednode = RedNode(uri)
+        rdf = "%s.rdf" % mod_class.__module__.split('.')[-1]
+        rdf = to_URL(mod_class.__module__, rdf)
+
+        mod_rednode.load(rdf, uri, 1)
+
+        return mod_rednode            
+
 
 class ParentModule(Module):
     def __init__(self, app):
@@ -105,6 +109,11 @@ class ParentModule(Module):
 
 class App(ParentModule):
 
+    def __init__(self, uri):
+        self.app = self        
+        self.rednode = self.create_rednode(uri)
+        ParentModule.__init__(self, self)
+
     def handle_request(self, request, response):
         ParentModule.handle_request(self, request, response)
 
@@ -118,6 +127,7 @@ class App(ParentModule):
         response.flush()
 
     def stop(self):
-        print "saving rednode"
-        self.rednode.local.save()
         ParentModule.stop(self)
+        print "saving %s" % self.rednode.local.location
+        self.rednode.local.save()
+        
