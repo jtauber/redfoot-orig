@@ -26,7 +26,7 @@ object where:
     </ul>
 
     <p>
-      URIRef, BNode, and Literal are defined in redfootlib/rdf/objects.py. 
+      URIRef, BNode, and Literal are defined in rdflib/nodes.py. 
     </p>
 
     <h2>Interface</h2>
@@ -38,7 +38,7 @@ object where:
     <p>
       The core layer contains the methods a triple store backend must
 implement. Currently Redfoot has an <a
-href="../lib/redfootlib/rdf/store/memory.py">in memory triple store
+href="../lib/rdflib/store/memory.py">in memory triple store
 backend</a> and a Berkeley DB backed triple store in the works.
     </p>
 
@@ -111,38 +111,38 @@ the store backend.
       This layer contains the Schema related methods.
     </p>
     <dl>
-      <dt><code>label(self, subject, default=None)</code></dt>
+      <dt><code>label(<var>subject</var>, <var>default</var>=None)</code></dt>
       <dd>Returns the first label found for subject or default if no label is found for subject.</dd>
 
-      <dt><code>comment(self, subject, default=None)</code></dt>
+      <dt><code>comment(<var>subject</var>, <var>default</var>=None)</code></dt>
       <dd>Returns the first comment found for subject or default if no comment is found for subject.</dd>
         
-      <dt><code>is_of_type(self, subject, type)</code></dt>
+      <dt><code>is_of_type(<var>subject</var>, <var>type</var>)</code></dt>
       <dd>Returns 1 if subject is of type</dd>
 
-      <dt><code>typeless_resources(self)</code>
+      <dt><code>typeless_resources()</code>
           <span class="ednote">typeless_subjects?</span>
       </dt>
       <dd>A generator over all resources that have no type specified.</dd>
 
-      <dt><code>subjects_by_type(self, type, predicate, object)</code></dt>
+      <dt><code>subjects_by_type(<var>type</var>, <var>predicate</var>, <var>object</var>)</code></dt>
       <dd>A generator over all subjects of type and that match predicate, object.</dd>
 
-      <dt><code>get_statement_uri(self, subject, predicate, object)</code>
-          <span class="ednote">statement_uri?</span>
+      <dt><code>get_statement_uri(<var>subject</var>, <var>predicate</var>, <var>object</var>)</code>
+          <span class="ednote">first_statement_uri?</span>
       </dt>
       <dd>returns the (first) statement uri for the reified statement of subject, predicate, object.</dd>
 
-      <dt><code>possible_properties(self, type)</code></dt>
+      <dt><code>possible_properties(<var>type</var>)</code></dt>
       <dd>A generator for all possible properties for type.</dd>
         
-      <dt><code>possible_properties_for_subject(self, subject)</code></dt>
+      <dt><code>possible_properties_for_subject(<var>subject</var>)</code></dt>
       <dd>A generator for all possible properties for subject.</dd>
 
-      <dt><code>root_classes(self)</code></dt>
-      <dt><code>parent_types(self, type)</code></dt>
-      <dt><code>ranges(self, property)</code></dt>               
-      <dt><code>possible_values(self, property)</code></dt>
+      <dt><code>root_classes()</code></dt>
+      <dt><code>parent_types(<var>type</var>)</code></dt>
+      <dt><code>ranges(<var>property</var>)</code></dt>               
+      <dt><code>possible_values(<var>property</var>)</code></dt>
 
     </dl>  
 
@@ -155,13 +155,16 @@ from rdflib.nodes import URIRef, Literal
 from rdflib.const import LABEL
 
 store = TripleStore()
+store.load("example.rdf", "http://redfoot.net/2002/06/05/", 1)
 store.add(URIRef("http://redfoot.net/"), LABEL, Literal("Redfoot Network Website"))
 
 for s, p, o in store: 
     print s, p, o
 
-for predicate in store.predicates(URIRef("http://redfoot.net/"), None)
+for predicate in store.predicates(URIRef("http://redfoot.net/"), None):
     print predicate
+
+store.save()
     </PRE>
 
     <p class="cvs_id">$Id$</p>
