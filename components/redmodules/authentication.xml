@@ -142,7 +142,12 @@
           <table>
             <tr>
               <td>Username:</td>
-              <td><input name="username" type="text"/></td>
+              <td>
+                <input name="username" type="text"/>
+                <script language="javascript">
+                  document.getElementById('main').username.focus()
+                </script>
+              </td>
             </tr>
             <tr>
               <td>Password:</td>
@@ -186,7 +191,12 @@
           <table>
             <tr>
               <td>Username:</td>
-              <td><input name="username" type="text"/></td>
+              <td>
+                <input name="username" type="text"/>
+                <script language="javascript">
+                  document.getElementById('main').username.focus()
+                </script>
+              </td>              
             </tr>
             <tr>
               <td>Password:</td>
