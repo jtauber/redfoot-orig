@@ -457,17 +457,8 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 7.1  2001/04/09 17:25:02  eikeon
+#~ storeNode -> rednode
+#~
 #~ Revision 7.0  2001/03/26 23:41:05  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.3  2001/03/22 01:10:27  jtauber
-#~ refactor of apps and the way servers are started by them
-#~
-#~ Revision 6.2  2001/02/27 21:14:05  eikeon
-#~ made path optional
-#~
-#~ Revision 6.1  2001/02/26 22:41:04  eikeon
-#~ removed old log messages
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release

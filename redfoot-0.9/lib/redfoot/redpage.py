@@ -182,6 +182,30 @@ class RF_CLASS_Handler(HandlerBase):
         HandlerBase.end(self, name)
         exec self.codestr+"\n" in self.globals, self.locals
 
+class RF_PROCESSOR_Handler(HandlerBase):
+    def __init__(self, parser, parent, name, base_classes):
+        HandlerBase.__init__(self, parser, parent)
+
+        #self.locals = self.parent.locals
+        self.classobj = new.classobj(name.encode('ascii'), base_classes, {})
+        self.locals = self.classobj.__dict__
+        self.globals = self.parent.locals
+        self.codestr = ""
+            
+    def child(self, name, atts):
+        if name==RF_RESPONSE:
+            nh = RF_RESPONSE_Handler(self.parser, self, atts['name'], atts)
+        else:
+            sys.stderr.write("Ignoring '%s'\n" % name)
+            sys.stderr.flush()
+
+    def char(self, data):
+        self.codestr = self.codestr + data
+
+    def end(self, name):
+        HandlerBase.end(self, name)
+        exec self.codestr+"\n" in self.globals, self.locals
+
 
 class RF_EVAL_Handler(HandlerBase):
     def __init__(self, parser, parent):
@@ -437,6 +461,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.6  2001/04/14 16:43:43  eikeon
+#~ the args attribute of the response tag now takes space separated args
+#~
 #~ Revision 7.5  2001/04/13 03:35:11  eikeon
 #~ probably should not be checking this in since it is incomplete, but am so that it will serve as a reminder to finish (or start again)
 #~

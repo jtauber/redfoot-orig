@@ -189,20 +189,8 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 7.1  2001/04/03 03:34:15  eikeon
+#~ added a message to stderr when auto saving; added a try catch around auto save so that thread does not die when there is an error saving (like disk being full:)
+#~
 #~ Revision 7.0  2001/03/26 23:41:04  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.4  2001/03/26 20:18:01  eikeon
-#~ removed old log messages
-#~
-#~ Revision 6.3  2001/03/13 02:12:05  eikeon
-#~ added missing import
-#~
-#~ Revision 6.2  2001/02/27 22:31:59  eikeon
-#~ fixed up subject URI's used in Journal Store and fixed up timestamps used in Journal Store
-#~
-#~ Revision 6.1  2001/02/26 22:32:00  eikeon
-#~ a bit more work on the journaling store stuff
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release

@@ -250,20 +250,5 @@ class JournalingStore:
 
         
 #~ $Log$
-#~ Revision 6.5  2001/03/02 19:24:01  eikeon
-#~ fixes for JournalingStore / Sample2
-#~
-#~ Revision 6.4  2001/03/02 15:47:40  eikeon
-#~ added SOURCE property to journal statements
-#~
-#~ Revision 6.3  2001/03/02 06:22:23  eikeon
-#~ JournalingStore no longer has TripleStore as a base
-#~
-#~ Revision 6.2  2001/02/27 22:31:59  eikeon
-#~ fixed up subject URI's used in Journal Store and fixed up timestamps used in Journal Store
-#~
-#~ Revision 6.1  2001/02/26 22:32:00  eikeon
-#~ a bit more work on the journaling store stuff
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE

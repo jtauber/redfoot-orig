@@ -369,6 +369,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 7.3  2001/04/12 09:06:48  jtauber
+#~ added TODO
+#~
 #~ Revision 7.2  2001/04/11 16:05:10  jtauber
 #~ seemed to miss a few storeNode->rednode
 #~
@@ -377,24 +380,3 @@ class PeerEditor(Editor):
 #~
 #~ Revision 7.0  2001/03/26 23:41:05  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.7  2001/03/20 21:49:08  jtauber
-#~ encoding of prop_orig now consistent
-#~
-#~ Revision 6.5  2001/03/15 16:47:51  eikeon
-#~ The recent change to update broke copy... it is now fixed.
-#~
-#~ Revision 6.4  2001/03/13 19:55:44  eikeon
-#~ orig was not getting set for things of type resource... now it is
-#~
-#~ Revision 6.3  2001/02/27 20:55:07  eikeon
-#~ update no longer removes and re-adds properties who's values are unchanged; generateURI changed
-#~
-#~ Revision 6.2  2001/02/26 22:41:03  eikeon
-#~ removed old log messages
-#~
-#~ Revision 6.1  2001/02/20 19:10:47  eikeon
-#~ added missing 'self.'
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release

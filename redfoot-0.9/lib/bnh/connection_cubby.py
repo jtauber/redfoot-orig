@@ -84,9 +84,8 @@ class ConnectionCubby:
         self.mon.release()
 
 #~ $Log$
+#~ Revision 7.1  2001/04/14 03:58:34  eikeon
+#~ removed unused code and added LICENSE to top of source files
+#~
 #~ Revision 7.0  2001/03/26 23:41:04  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.1  2001/03/26 20:19:00  eikeon
-#~ removed old header
-#~

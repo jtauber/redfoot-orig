@@ -285,6 +285,9 @@ def _date_time_string():
 
 
 #~ $Log$
+#~ Revision 7.4  2001/04/14 03:58:34  eikeon
+#~ removed unused code and added LICENSE to top of source files
+#~
 #~ Revision 7.3  2001/04/13 23:51:19  eikeon
 #~ modified date_time_string to not generate string more than once per second; also added _ prefix to indicate private
 #~
@@ -296,12 +299,3 @@ def _date_time_string():
 #~
 #~ Revision 7.0  2001/03/26 23:41:04  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.2  2001/03/26 20:19:01  eikeon
-#~ removed old header
-#~
-#~ Revision 6.1  2001/03/13 04:02:50  eikeon
-#~ fixed cookies so that they persist a very long time; changed default max inactive time to 10 years
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release

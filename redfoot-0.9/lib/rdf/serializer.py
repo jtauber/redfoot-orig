@@ -109,14 +109,5 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
-#~ Revision 6.3  2001/03/26 20:12:08  eikeon
-#~ fixed bug introduced since last release
-#~
-#~ Revision 6.2  2001/02/27 21:02:36  eikeon
-#~ fixed small bug introduced since last release
-#~
-#~ Revision 6.1  2001/02/26 22:30:24  eikeon
-#~ optimized split_property a bit by adding a cache lookup; also hard coded the rdf prefix
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE

@@ -196,17 +196,8 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.1  2001/04/13 03:20:25  eikeon
+#~ Can now run a RedServer by 'running' redfoot.server -- as RedServer now created a RedNode and runs a redpage give a redpage name
+#~
 #~ Revision 7.0  2001/03/26 23:41:05  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.3  2001/03/26 20:20:42  eikeon
-#~ added run_redpage and _load_redpage
-#~
-#~ Revision 6.2  2001/03/22 01:10:27  jtauber
-#~ refactor of apps and the way servers are started by them
-#~
-#~ Revision 6.1  2001/02/26 22:41:03  eikeon
-#~ removed old log messages
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release

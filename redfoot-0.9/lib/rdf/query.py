@@ -356,20 +356,5 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
-#~ Revision 6.5  2001/03/26 20:18:01  eikeon
-#~ removed old log messages
-#~
-#~ Revision 6.4  2001/03/13 19:43:03  eikeon
-#~ one line bug fix
-#~
-#~ Revision 6.3  2001/03/13 02:13:48  eikeon
-#~ small refactor
-#~
-#~ Revision 6.2  2001/03/03 01:20:18  jtauber
-#~ refactored out lambdas that pull s and o from triple
-#~
-#~ Revision 6.1  2001/03/03 01:05:50  jtauber
-#~ refactored the way Query objects take args so you don't have to make pre/post distinction
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE

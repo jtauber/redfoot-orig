@@ -80,14 +80,11 @@ class Server:
                 connection_cubby.wait() 
 
 #~ $Log$
+#~ Revision 7.2  2001/04/14 03:58:34  eikeon
+#~ removed unused code and added LICENSE to top of source files
+#~
 #~ Revision 7.1  2001/04/12 22:52:18  eikeon
 #~ removed management of session objects; BNH now only deals with the setting/getting of the EBNH_session cookie
 #~
 #~ Revision 7.0  2001/03/26 23:41:04  eikeon
 #~ NEW RELEASE
-#~
-#~ Revision 6.1  2001/03/26 20:19:01  eikeon
-#~ removed old header
-#~
-#~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
