@@ -106,12 +106,12 @@ class AutoReloadModuleImporter(ModuleImporter):
         self.set_loader(AutoReloadModuleLoader())
 
     def import_module(self, name, globals={}, locals={}, fromlist=[]):
-        importing_module = globals['__name__']
-
         module = ModuleImporter.import_module(self, name, globals, locals, fromlist)
-        self.get_loader().add(module.__name__, importing_module)
-        if fromlist:
-            for mod_name in fromlist:
-                self.get_loader().add("%s.%s" % (module.__name__, mod_name), importing_module)
+        importing_module = globals.get('__name__', None)
+        if importing_module:
+            self.get_loader().add(module.__name__, importing_module)
+            if fromlist:
+                for mod_name in fromlist:
+                    self.get_loader().add("%s.%s" % (module.__name__, mod_name), importing_module)
         return module
 
