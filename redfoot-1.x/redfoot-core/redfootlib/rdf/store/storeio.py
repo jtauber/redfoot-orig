@@ -1,5 +1,4 @@
-# TODO: remove me using .find instead
-from string import find
+from urlparse import urlparse        
 
 from redfootlib.rdf.syntax.parser import Parser
 from redfootlib.rdf.syntax.serializer import RedSerializer
@@ -22,9 +21,8 @@ class LoadSave(Parser, RedSerializer, object):
         self.location = location        
         self.uri = uri or location
 
-        if create and find(location, '://')<0: # is relative
-            from urllib import url2pathname
-            path = url2pathname(location) 
+        scheme, netloc, path, params, query, fragment = urlparse(location)
+        if create and netloc=="":
             import os
             # TODO: is this equiv to os.path.exists?            
             if not os.access(path, os.F_OK): 
