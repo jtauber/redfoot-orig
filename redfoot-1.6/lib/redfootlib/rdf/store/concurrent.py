@@ -61,7 +61,7 @@ class Concurrent(object):
                 yield s, p, o
 
         for (s, p, o) in self.__pending_adds:
-            if (subject==ANY or subject==s) and (predicate==ANY or predicate==p) and (object==ANY or object==o):
+            if (subject==None or subject==s) and (predicate==None or predicate==p) and (object==None or object==o):
                 yield s, p, o
 
     def __begin_read(self):
