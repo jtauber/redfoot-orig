@@ -106,6 +106,8 @@ class RedNode(StoreIO, QueryStore):
     def output(self, stream, URI=None, subject=None, predicate=None, object=None):
         self.local.output(stream, URI, subject, predicate, object)
 
+    def getTypelessResources(self):
+        return self.local.getTypelessResources()
 
 
 class Local(QueryStore, AutoSaveStoreIO):
@@ -151,6 +153,9 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
+#~ Revision 5.3  2000/12/19 06:04:04  eikeon
+#~ Moved the 'local in context of neighbourhood' methods to RedNode... else we where overriding the corresponding methods on local, which someone may care about
+#~
 #~ Revision 5.2  2000/12/17 23:41:58  eikeon
 #~ removed of log messages
 #~
