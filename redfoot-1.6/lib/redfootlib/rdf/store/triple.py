@@ -77,10 +77,12 @@ Add a triple to the store of triples.
         self.__visit_count = self.__visit_count + 1
         # Acquire lock for indices so that they will not change while
         # we iterate over them
-        lock.acquire() 
-        stop = self.__visit(cb, (subject, predicate, object))
-        lock.release()        
-        self.__visit_count = self.__visit_count - 1                    
+        lock.acquire()
+        try:
+            stop = self.__visit(cb, (subject, predicate, object))
+        finally:
+            lock.release()        
+            self.__visit_count = self.__visit_count - 1                    
 
         if stop:
             return stop
