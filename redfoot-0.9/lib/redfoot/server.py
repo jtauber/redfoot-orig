@@ -93,7 +93,7 @@ class RedServer:
             except KeyboardInterrupt:
                 sys.exit()
 
-    def keepReloading(lm):
+    def keepReloading(self, lm):
         from os.path import getmtime
         rollbackImporter = None
         m = None
@@ -103,12 +103,20 @@ class RedServer:
                     rollbackImporter.uninstall()
                 rollbackImporter = RollbackImporter()
         
-                m = lm(server)
+                try:
+                    m = lm(self)
+                except:
+	            import traceback
+                    traceback.print_exc()
+                    sys.stderr.flush()
+	            import threading
+                    threading.Event().wait(1)
+                    continue
             
                 mtime = getmtime(m.__file__)
-                sys.stderr.write("added '%s' @ '%s'\n" % (m.__name__, mtime))
+                sys.stderr.write("added '%s' @ '%s' '%s'\n" % (m.__name__, mtime, m.__file__))
 
-            if getmtime(m.__file__) > mtime+1:
+            if m!=None and getmtime(m.__file__) > mtime+1:
                 handler = m.h
                 if handler!=None:
                     handler.stop()
@@ -124,6 +132,7 @@ class RedServer:
 
 import string
 import sys
+import __builtin__
 
 from redfoot.server import Server
 
@@ -161,6 +170,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.4  2000/11/07 18:48:40  eikeon
+#~ keepReloading now a method on server
+#~
 #~ Revision 4.3  2000/11/07 18:31:17  eikeon
 #~ code to support automatic reloading of handlers... badly needs refactoring
 #~
