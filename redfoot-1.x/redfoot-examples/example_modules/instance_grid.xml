@@ -15,8 +15,8 @@
         def instance_callback(instance, callback=callback, column_list=column_list):
             callback(instance, column_list)
 
-        self.app.rednode.visit(s(recursive_callback), (None, SUBCLASSOF, root))
-        self.app.rednode.visit(s(instance_callback), (None, TYPE, root))
+        self.app.rednode.neighbourhood.visit(s(recursive_callback), (None, SUBCLASSOF, root))
+        self.app.rednode.neighbourhood.visit(s(instance_callback), (None, TYPE, root))
 
     <red:facet name="">
       <red:exec>self.class_list()</red:exec>
@@ -24,6 +24,7 @@
 
     <red:facet name="class_list">
       <UL>
+        <!-- TODO: only visits local... is this what we want here? -->
         <red:visit match="(None, TYPE, CLASS)">
           <LI>
             <A HREF="grid_view?class={encode_URI(subject)}"
@@ -45,7 +46,7 @@
           <TH></TH>
           <red:exec>
             b = SetBuilder()
-            self.app.rednode.visit_possible_properties(b.accept, klass)
+            self.app.rednode.neighbourhood.visit_possible_properties(b.accept, klass)
             b.visit(self.heading)
             column_list = b.set
           </red:exec>
