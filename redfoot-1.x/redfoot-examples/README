@@ -1,10 +1,12 @@
-REDFOOT APPS README
+REDFOOT EXAMPLES README
 
-  To start a Redfoot application, go to the apps directory and type:
+  To start a Redfoot application, type:
 
-    python run.py <app-name>
+    python run.py <module-names>
 
-  where <app-name> is the application filename without the .py or .xml extension
+  where <module-names> are the python module names (without the.py or
+xml extension) of Redfoot Apps/Modules. The modules will be imported
+and available to run from within Redfoot.
 
   For example:
 
