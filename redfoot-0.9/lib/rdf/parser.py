@@ -19,30 +19,45 @@ rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
 from rdf.literal import literal, is_literal
 
-class RootHandler:
+class HandlerBase:
     def __init__(self, parser, adder, parent):
         self.parser = parser
         self.adder = adder
         self.parent = parent
-        self.parser.StartElementHandler = self.child
-        
+        self.setHandlers()
+
+    def setHandlers(self):
+        pass
+
+    def char(self, data):
+        pass
+
+    def child(self, name, atts):
+        pass
+    
+    def end(self, name):
+        self.parent.setHandlers()
+
+    
+class RootHandler(HandlerBase):
+    def __init__(self, parser, adder, parent):
+        HandlerBase.__init__(self, parser, adder, parent)
+
     def child(self, name, atts):
         if name==rdfns+"RDF":
             RDFHandler(self.parser, self.adder, self)
         else:
             pass
 
-    def resume(self):
-        pass
+    def setHandlers(self):
+        self.parser.StartElementHandler = self.child
 
-class RDFHandler:
+
+class RDFHandler(HandlerBase):
     def __init__(self, parser, adder, parent):
-        self.parser = parser
-        self.adder = adder
-        self.parent = parent
-        self.resume()
+        HandlerBase.__init__(self, parser, adder, parent)
 
-    def resume(self):
+    def setHandlers(self):
         self.parser.StartElementHandler = self.child
         self.parser.CharacterDataHandler = self.char
         self.parser.EndElementHandler = self.end
@@ -52,18 +67,11 @@ class RDFHandler:
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
             TypedNodeHandler(self.parser, self.adder, self, name, atts)
+
         
-    def char(self, data):
-        pass
-
-    def end(self, name):
-        self.parent.resume()
-
-class DescriptionHandler:
+class DescriptionHandler(HandlerBase):
     def __init__(self, parser, adder, parent, atts):
-        self.parser = parser
-        self.adder = adder
-        self.parent = parent
+        HandlerBase.__init__(self, parser, adder, parent)
         self.subject = None
         if atts.has_key("about"):
             self.subject = atts["about"]
@@ -78,9 +86,8 @@ class DescriptionHandler:
                 pass
             else:
                 self.adder(self.subject, att, literal(atts[att]))
-        self.resume()
 
-    def resume(self):
+    def setHandlers(self):
         self.parser.StartElementHandler = self.child
         self.parser.CharacterDataHandler = self.char
         self.parser.EndElementHandler = self.end
@@ -88,22 +95,16 @@ class DescriptionHandler:
     def child(self, name, atts):
         PropertyHandler(self.parser, self.adder, self, name, atts)
                         
-    def char(self, data):
-        pass
-
-    def end(self, name):
-        self.parent.resume()
 
 class TypedNodeHandler(DescriptionHandler):
     def __init__(self, parser, adder, parent, name, atts):
         DescriptionHandler.__init__(self, parser, adder, parent, atts)
         self.adder(self.subject, rdfns+"type", name)
 
-class PropertyHandler:
+
+class PropertyHandler(HandlerBase):
     def __init__(self, parser, adder, parent, name, atts):    
-        self.parser = parser
-        self.adder = adder
-        self.parent = parent
+        HandlerBase.__init__(self, parser, adder, parent)
         self.predicate = name
         if atts.has_key("resource"):
             self.object = atts["resource"]
@@ -125,9 +126,8 @@ class PropertyHandler:
                     self.adder(self.object, att, literal(atts[att]))
         else:
             self.object = literal("")
-        self.resume()
 
-    def resume(self):
+    def setHandlers(self):
         self.parser.StartElementHandler = self.child
         self.parser.CharacterDataHandler = self.char
         self.parser.EndElementHandler = self.end
@@ -144,9 +144,12 @@ class PropertyHandler:
 
     def end(self, name):
         self.adder(self.parent.subject, self.predicate, self.object)
-        self.parent.resume()
+        self.parent.setHandlers()
 
 #~ $Log$
+#~ Revision 4.4  2000/12/03 22:24:10  jtauber
+#~ no longer checks for baseURI=None; uses rdf.literal
+#~
 #~ Revision 4.3  2000/12/03 22:12:12  jtauber
 #~ changed class RDFParser to function parseRDF
 #~
