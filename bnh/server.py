@@ -30,6 +30,8 @@ class Server:
             try:
                 clientSocket, client_address = self.socket.accept()
             except socket.error:
+                import traceback
+                traceback.print_exc()
                 break
 
             try:
@@ -57,12 +59,17 @@ class ServerConnection:
             self.request.setClientSocket(clientSocket)
             self.response.setClientSocket(clientSocket)
             self.handler.handleRequest(self.request, self.response)
+            self.response.close()
         except:
             import traceback
             traceback.print_exc()
             
-        self.response.close()
-        clientSocket.shutdown(1)
+        try:
+            clientSocket.shutdown(1)
+        except:
+            import traceback
+            traceback.print_exc()
+
         clientSocket.close()
 
 
@@ -72,9 +79,6 @@ class Request:
         rfile = clientSocket.makefile('rb', 0)
 
         firstline = rfile.readline()
-
-        sys.stderr.write("FIRSTLINE: %s" % firstline)
-        sys.stderr.flush()
 
         words = string.split(firstline)
         if len(words) == 3:
@@ -164,6 +168,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 1.4  2000/10/13 05:03:10  eikeon
+# catching a few more exception
+#
 # Revision 1.3  2000/10/13 04:45:27  eikeon
 # changed Server header value
 #
