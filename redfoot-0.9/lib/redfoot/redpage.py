@@ -271,9 +271,11 @@ class RF_RESPONSE_Handler(RF_Element):
             args = args + ", %s" % atts['args']
         
         codestr = """\
-def %s(self, %s):
-    __nodes__['%s'].write(globals(), locals())""" % (self.name, args, self.name) + "\n\n"
+def __tmp__(self, %s):
+    __nodes__['%s'].write(globals(), locals())""" % (args, self.name) + "\n\n"
         exec codestr in self.globals, self.locals
+        self.locals[self.name.encode('ascii')] = self.locals['__tmp__']
+        
 
 
 class Node:
@@ -371,6 +373,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:05  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.1  2001/03/26 20:20:01  eikeon
 #~ removed ^M's
 #~
