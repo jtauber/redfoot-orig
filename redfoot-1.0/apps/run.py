@@ -67,7 +67,7 @@ if not hostname:
     from socket import getfqdn
     hostname = getfqdn()
 
-if len(args)<1:
+if len(args)!=1:
     usage()
 
 module = args[0]
