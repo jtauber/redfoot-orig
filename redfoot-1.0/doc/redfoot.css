@@ -63,3 +63,8 @@ div.NAV A {
 div.NAV A:hover {
   color: #FFF;
 }
+
+.ednote {
+  color: #999;
+  font-style: italic;
+}
