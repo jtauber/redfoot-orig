@@ -14,7 +14,7 @@ def get_args():
 
     # set default values
     port = 8000
-    location = "local.rdf"
+    location = "generic.rdf"
     uri = None
     path = ""
 
