@@ -1,74 +1,27 @@
 # $Header$
 
-from redfoot.store import *
-from redfoot.storeio import *
-from redfoot.viewer import *
-from redfoot.query import *
-from redfoot.editor import *
-
-"""redfoot HTTP Server.
-
-This module builds on BaseHTTPServer...
-
+"""
+Redfoot specific server code.
 """
 
+__version__ = "$Revision$"
 
-__version__ = "0.0"
-
-
-import os
+from bnh.server import Server, ServerConnection
 import string
-import posixpath
-import BaseHTTPServer
-import urllib
-import cgi
-from StringIO import StringIO
-import getopt
 
+class RedfootHandler:
 
-class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    def __init__(self):
+        import threading
+        self.lock = threading.Lock()
 
-    """
+    def handleRequest(self, request, response):
+        args = request.parameters
+        path_info = request.path_info
 
-    """
-
-    server_version = "RedfootHTTP/" + __version__
-
-    def do_POST(self):
-        length = int(self.headers.getheader('content-length'))
-        data = self.rfile.read(length)
-
-        i = string.find(self.path, "?")
-        if i==-1:
-            path_info = self.path
-        else:
-            path_info = self.path[:i]
-            
-        args = cgi.parse_qs(data)
-
-        self.send_head()
-        self.process(args, path_info)
-
-    def do_GET(self):
-        """Serve a GET request."""
-
-        self.send_head()
-
-        i = string.find(self.path, "?")
-        if i==-1:
-            path_info = self.path
-            query_string = ""
-        else:
-            path_info = self.path[:i]
-            query_string = self.path[i+1:]
-            
-        args = cgi.parse_qs(query_string)
-        self.process(args, path_info)
-        
-    def process(self, args, path_info):
-
+        self.lock.acquire()
         viewer = self.viewer
-        viewer.setWriter(self.wfile)
+        viewer.setWriter(response)
 
         if args.has_key("processor"):
             if args["processor"][0] == "update":
@@ -124,31 +77,26 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             viewer.connectPage()
         else:
             # make a proper 404
-            self.wfile.write("unknown PATH of '%s'" % path_info)
-
-        self.wfile.flush()
-        self.wfile.close()
-
-    def do_HEAD(self):
-        """Serve a HEAD request."""
-
-        self.send_head()
-
-    def send_head(self):
-        """Common code for GET and HEAD commands.
-
-        This sends the response code and MIME headers.
-        """
-
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.send_header("Expires", "-1")
-        self.end_headers()
+            response.write("unknown PATH of '%s'" % path_info)
+        self.lock.release()            
 
 
-def runServer():
+class ServerConnectionFactory:
 
-    # defaults
+    def __init__(self, handler):
+        self.handler = handler
+
+    def createServerConnection(self):
+        return ServerConnection(self.handler)
+    
+
+from redfoot.store import *
+from redfoot.storeio import *
+from redfoot.viewer import *
+from redfoot.query import *
+from redfoot.editor import *
+
+if __name__ == '__main__':
 
     port = 8000
     location = "local.rdf"
@@ -157,6 +105,7 @@ def runServer():
     
     import sys
 
+    import getopt
     optlist, args = getopt.getopt(sys.argv[1:], 'i:l:p:u:')
     for optpair in optlist:
         opt, value = optpair
@@ -176,8 +125,6 @@ def runServer():
 
     server_address = ('', port)
 
-    httpd = BaseHTTPServer.HTTPServer(server_address, RedfootHTTPRequestHandler)
-
     from redfoot.rednode import StoreNode
     storeNode = StoreNode()
 
@@ -187,20 +134,27 @@ def runServer():
 
     storeNode.setStore(storeIO)
 
-    RedfootHTTPRequestHandler.viewer = eval("%s(None, storeNode)" % interface)
+    redfootHandler = RedfootHandler()
+    redfootHandler.viewer = eval("%s(None, storeNode)" % interface)
 
-    print "REDFOOT: serving %s (%s) with %s on port %s..." % (location, uri, interface, port)
-    httpd.serve_forever()
+    serverConnectionFactory =  ServerConnectionFactory(redfootHandler)
+    
+    server = Server(server_address, serverConnectionFactory.createServerConnection)
+    
+    import threading
+    t = threading.Thread(target = server.start,
+                         args = ())
+    t.setDaemon(1)
+    t.start()
 
-
-if __name__ == '__main__':
-    runServer()
+    while 1:
+        try:
+            threading.Event().wait(100)
+        except KeyboardInterrupt:
+            sys.exit()
 
 
 # $Log$
-# Revision 1.25  2000/10/10 05:58:21  jtauber
-# removed send_head from do_POST
-#
 # Revision 1.24  2000/10/10 05:20:54  eikeon
 # added show/hide neighbour logic
 #
