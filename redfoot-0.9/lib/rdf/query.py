@@ -356,6 +356,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 6.4  2001/03/13 19:43:03  eikeon
+#~ one line bug fix
+#~
 #~ Revision 6.3  2001/03/13 02:13:48  eikeon
 #~ small refactor
 #~
@@ -366,52 +369,4 @@ class QueryStore(QueryBase):
 #~ refactored the way Query objects take args so you don't have to make pre/post distinction
 #~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
-#~
-#~ Revision 5.15  2001/02/09 21:51:28  eikeon
-#~ Fixed but in visitTransitiveSubTypes and visitPossibleValues
-#~
-#~ Revision 5.14  2000/12/20 04:20:28  jtauber
-#~ added TODO
-#~
-#~ Revision 5.13  2000/12/20 03:59:53  jtauber
-#~ visitResourcesByType will now visit resources whose type is an unknown class
-#~
-#~ Revision 5.12  2000/12/17 20:56:08  eikeon
-#~ renamed visitSubjects to visit_subjects
-#~
-#~ Revision 5.11  2000/12/14 05:14:39  eikeon
-#~ removed unused gets
-#~
-#~ Revision 5.10  2000/12/14 00:22:37  eikeon
-#~ fixed up *Transitive* methods
-#~
-#~ Revision 5.9  2000/12/13 02:54:11  jtauber
-#~ moved functions in query around and renamed a lot
-#~
-#~ Revision 5.8  2000/12/13 00:43:11  eikeon
-#~ half baked changes
-#~
-#~ Revision 5.7  2000/12/10 07:44:59  eikeon
-#~ refactored label to use new query method; still have a few thoughts before we go nuts and convert everything over
- #~
-#~ Revision 5.6  2000/12/10 06:54:39  eikeon
-#~ refactored getFirst to use new query method
-#~
-#~ Revision 5.5  2000/12/10 06:39:52  eikeon
-#~ refactored get to use new query method
-#~
-#~ Revision 5.4  2000/12/10 06:27:32  eikeon
-#~ added adapter method query
-#~
-#~ Revision 5.3  2000/12/09 23:48:30  eikeon
-#~ Added visitSubjects subject for conv. and efficiency
-#~
-#~ Revision 5.2  2000/12/09 21:32:16  jtauber
-#~ all subjects can take the properties that RESOURCE can
-#~
-#~ Revision 5.1  2000/12/09 18:37:15  jtauber
-#~ added typelessResources() query
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release

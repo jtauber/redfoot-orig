@@ -183,6 +183,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 6.3  2001/03/13 02:12:05  eikeon
+#~ added missing import
+#~
 #~ Revision 6.2  2001/02/27 22:31:59  eikeon
 #~ fixed up subject URI's used in Journal Store and fixed up timestamps used in Journal Store
 #~
@@ -190,25 +193,4 @@ class DirtyBit:
 #~ a bit more work on the journaling store stuff
 #~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
-#~ new release
-#~
-#~ Revision 5.6  2001/02/09 21:50:46  eikeon
-#~ Added JournalingStoreIO and an input method
-#~
-#~ Revision 5.5  2000/12/20 20:37:17  eikeon
-#~ changed mixed case to _ style... all except for query
-#~
-#~ Revision 5.4  2000/12/19 05:48:00  eikeon
-#~ URI defaults to None so that output may be called without one; calling of __init__'s cleaned up
-#~
-#~ Revision 5.3  2000/12/17 21:12:46  eikeon
-#~ fixed typo
-#~
-#~ Revision 5.2  2000/12/17 21:11:11  eikeon
-#~ changed a couple mixed case names to _ style names
-#~
-#~ Revision 5.1  2000/12/17 20:41:22  eikeon
-#~ removed log message prior to currently worked on release
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release

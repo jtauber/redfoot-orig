@@ -195,38 +195,5 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
-#~ Revision 5.11  2001/02/09 21:48:40  eikeon
-#~ added method for parsing RDF from a stream
-#~
-#~ Revision 5.10  2000/12/23 04:50:04  eikeon
-#~ removed at most one rdf:RDF element constraint
-#~
-#~ Revision 5.9  2000/12/23 04:01:19  eikeon
-#~ Why did this get in there?!?! -- still have no clue how these got checked in!
-#~
-#~ Revision 5.8  2000/12/23 03:59:24  eikeon
-#~ Why did this get in there?!?!
-#~
-#~ Revision 5.7  2000/12/23 03:58:06  eikeon
-#~ Why did this get in there?!?!
-#~
-#~ Revision 5.6  2000/12/23 02:30:17  eikeon
-#~ added warnings and test cases for when there is no RDF root element (or when there is more than one RDF element)
-#~
-#~ Revision 5.5  2000/12/23 01:23:56  eikeon
-#~ added warnings and test cases for when there is no RDF root element (or when there is more than one RDF element)
-#~
-#~ Revision 5.4  2000/12/22 22:25:35  eikeon
-#~ moved definition and calculation of RDF (xml vocab) constants out of 'inner parsing loop'
-#~
-#~ Revision 5.3  2000/12/20 20:37:17  eikeon
-#~ changed mixed case to _ style... all except for query
-#~
-#~ Revision 5.2  2000/12/17 21:11:11  eikeon
-#~ changed a couple mixed case names to _ style names
-#~
-#~ Revision 5.1  2000/12/17 20:40:47  eikeon
-#~ started adding exception handling code around parse
-#~
-#~ Revision 5.0  2000/12/08 08:34:52  eikeon
+#~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
