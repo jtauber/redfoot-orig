@@ -4,7 +4,7 @@ from sys import modules, stderr
 from threading import Thread
 from traceback import print_exc
 from time import sleep
-from os.path import getmtime
+from os.path import getmtime, isdir
 
 
 class AutoReloadModuleLoader(ModuleLoader):
@@ -31,7 +31,7 @@ class AutoReloadModuleLoader(ModuleLoader):
         module = ModuleLoader.load_module(self, name, stuff)
         file, filename, info = stuff
 
-        if filename:
+        if filename and not isdir(filename):
             last = getmtime(filename)
             self.mod_info[name] = (stuff, last)
 
