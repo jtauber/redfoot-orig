@@ -30,12 +30,12 @@ class Viewer:
             root = parameters['uri']
             if root=="":
                 root = RESOURCE
-            self.fullsubclass(root)
+            self.subclass(root)
         elif path_info == "/subclass":
             root = parameters['uri']
             if root=="":
                 root = RESOURCE
-            self.fullsubclass(root, 0)
+            self.subclass(root, 0)
         elif path_info == "/classList":
             self.classList()
         elif path_info == "/triples":
@@ -170,7 +170,7 @@ class Viewer:
         """)
 
     def mainPage(self):
-        self.fullsubclass(RESOURCE, 0)
+        self.subclass(RESOURCE, 0)
 
     def classList(self):
         self.response.write("""
@@ -212,7 +212,7 @@ class Viewer:
         </HTML>
         """)
 
-    def fullsubclass(self, root, recurse=1):
+    def subclass(self, root, recurse=1):
         self.response.write("""
         <HTML>
           <HEAD>
@@ -458,6 +458,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.5  2000/12/09 22:16:00  jtauber
+#~ RDF -> rdf; Triples -> triple
+#~
 #~ Revision 5.4  2000/12/09 22:05:04  jtauber
 #~ subclass -> fullsubclass; subclassNR -> subclass
 #~
