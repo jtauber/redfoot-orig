@@ -77,7 +77,7 @@ class Serializer:
     def subject_start(self, subject):
         self.stream.write( "  <rdf:Description" )
 #        if self.baseURI and subject[0:len(self.baseURI)+1]==self.baseURI+"#":
-        if self.baseURI and string.find(subject, self.baseURI)==0:
+        if self.baseURI and string.find(subject, self.baseURI+"#")==0:
             self.stream.write( " rdf:ID=\"%s\">\n" % subject[len(self.baseURI)+1:])       
         else:
             self.stream.write( " rdf:about=\"%s\">\n" % encode(subject) )            
@@ -110,6 +110,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 6.1  2001/02/26 22:30:24  eikeon
+#~ optimized split_property a bit by adding a cache lookup; also hard coded the rdf prefix
+#~
 #~ Revision 6.0  2001/02/19 05:01:23  jtauber
 #~ new release
 #~
