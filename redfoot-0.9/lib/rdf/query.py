@@ -300,7 +300,7 @@ class QueryStore(QueryBase):
 
     def visitParentTypes(self, callback, type):
         query = Query(callback, (_o_,))                                 
-        self.visit(query, type, SUBCLASSOF, None)
+        self.query(query, type, SUBCLASSOF, None)
 
     def visitSubclasses(self, class_callback, instance_callback, type, currentDepth=0, recurse=1):
         class_callback(type, currentDepth, recurse)
@@ -356,6 +356,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 6.3  2001/03/13 02:13:48  eikeon
+#~ small refactor
+#~
 #~ Revision 6.2  2001/03/03 01:20:18  jtauber
 #~ refactored out lambdas that pull s and o from triple
 #~
