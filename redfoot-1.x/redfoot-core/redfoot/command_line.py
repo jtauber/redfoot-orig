@@ -3,13 +3,15 @@ from getopt import getopt as get_options, GetoptError
 
 def process_args():
     uri = None
+    rdf = "rednode.rdf"    
+    address = ''
     port = 8080
-    rdf_filename = "rednode.rdf"
     
     try:
         optlist, args = get_options(sys.argv[1:],
-                                    'u:h:p:r:',
-                                    ["uri=", "help", "port=", "rdf="])
+                                    'u:h:a:p:r:',
+                                    ["uri=", "help", "address=",
+                                     "port=", "rdf="])
     except GetoptError, msg:
         print msg
         usage()
@@ -20,10 +22,12 @@ def process_args():
             uri = value
         elif opt=="-h" or opt=="--help":            
             usage()
+        elif opt=="-a" or opt=="--address":
+            address = value
         elif opt=="-p" or opt=="--port":
             port = string.atoi(value)
         elif opt=="-r" or opt=="--rdf":
-            rdf_filename = value
+            rdf = value
         else:
             usage()
 
@@ -35,8 +39,11 @@ def process_args():
         else:
             uri = "http://%s:%s/" % (hostname, port)
         uri = uri
+
+    for arg in args:
+        __import__(arg)
     
-    return (uri, rdf_filename, port)
+    return (uri, rdf, address, port)
 
 
 def usage():
@@ -44,17 +51,20 @@ def usage():
 USAGE: run.py <options> <app name>
 
     options:
-           [-h,--hostname <host name>]
+           [-u,--uri <uri>]
+           [-r,--rdf <filename>]
+           [-a,--address <address>]
            [-p,--port <port number>]
-           [--exact]
-           [--help]
+           [-h,--help]
 
-    hostname
-        Defaults to the computer's fully qualified name. 
+    uri
+        Defaults to a computed URI using socket's getfqdn call
+    rdf
+        Defaults to rednode.rdf
+    address
+        Defaults to listening on all addresses 
     port
-        Defaults to 8000.
-    exact
-        If exact server will listen to request coming to host via the exact host name only. Else listens to all request coming to host regaurdless of what name they come in on.
+        Defaults to 8080.
 """    
     sys.exit(-1)
 

@@ -9,7 +9,7 @@ from redfoot.rdf.objects import resource, literal
 
 from redfoot.command_line import process_args
 from redfoot.server import RedServer
-from redfoot.boot import Boot
+from redfoot import boot
 
 NEIGHBOUR = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Neighbour")
 CONNECTED = resource("http://redfoot.sourceforge.net/2001/04/neighbour#Connected")
@@ -90,16 +90,24 @@ class RedNode(SchemaQuery):
         self.neighbours.add_store(builtin)
 
 
-    #def run(self, address=None, port=8080, Boot=Boot, blocking=1):
+    #def run(self, address=None, port=8080, Boot=boot.Boot, blocking=1):
     def run(self, **args):
+        "This method blocks until the server is shutdown"
         if len(args)==0:
-            (uri, rdf_filename, port) =  process_args()
-            address='' # TODO: add to process_args
-            self.load(rdf_filename, uri, 1)
+            (uri, rdf, address, port) =  process_args()
+            # TODO: add way to specify Boot
+            Boot = boot.Boot
+            self.load(rdf, uri, 1)
         else:
+            # TODO: get defaults from common source instead of keeping
+            # them in sync with process_args defaults
+            uri = args.get('uri', 'TODO: compute')
+            rdf = args.get('rdf', 'rednode.rdf')
+            self.load(rdf, uri, 1)
             address = args.get('address', '')
             port = args.get('port', 8080)
-            blocking = args.get('blocking', 1)
+            Boot = args.get('Boot', boot.Boot)
+
         self.server = server = RedServer(address, port)
         server.add_handler(Boot(self))
         server.run()
