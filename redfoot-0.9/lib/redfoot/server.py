@@ -21,6 +21,13 @@ class RedServer(Server):
             except KeyboardInterrupt:
                 sys.exit()
 
+    def _getFilename(self, module):
+        file = module.__file__
+        if file[-3:]=="pyc":
+            file = file[:-1]
+        return file
+        
+
     def keepReloading(self, lm):
         from os.path import getmtime
         rollbackImporter = None
@@ -33,6 +40,7 @@ class RedServer(Server):
         
                 try:
                     m = lm(self)
+                    filename = self._getFilename(m)
                 except:
 	            import traceback
                     traceback.print_exc()
@@ -40,18 +48,18 @@ class RedServer(Server):
                     threading.Event().wait(1)
                     continue
             
-                mtime = getmtime(m.__file__)
-                sys.stderr.write("added '%s' @ '%s' '%s'\n" % (m.__name__, mtime, m.__file__))
+                mtime = getmtime(filename)
+                sys.stderr.write("added '%s' @ '%s' '%s'\n" % (m.__name__, mtime, filename))
                 sys.stderr.flush()
 
-            if m!=None and getmtime(m.__file__) > mtime+1:
+            if m!=None and getmtime(filename) > mtime+1:
                 if self.handler!=None:
                     self.stop()
                     sys.stderr.write("removed '%s' @ '%s'\n" % (m.__name__, mtime))
                     sys.stderr.flush()
                     m = None
                 else:
-                    sys.stderr.write("'%s': '%s' -- '%s'\n" % (m.__file__, getmtime(m.__file__), mtime))
+                    sys.stderr.write("'%s': '%s' -- '%s'\n" % (filename, getmtime(filename), mtime))
                     sys.stderr.flush()
             else:
                 threading.Event().wait(1)
@@ -81,11 +89,15 @@ class RollbackImporter:
         for modname in self.newModules.keys():
             if not self.previousModules.has_key(modname):
                 # Force reload when modname next imported
-                del(sys.modules[modname])
+                if sys.modules.has_key(modname):
+                    del(sys.modules[modname])
         __builtin__.__import__ = self.realImport
     
 
 #~ $Log$
+#~ Revision 4.15  2000/12/07 22:39:36  eikeon
+#~ added missing else
+#~
 #~ Revision 4.14  2000/12/07 20:19:07  eikeon
 #~ fixing up autoreload after server refactors
 #~
