@@ -42,9 +42,10 @@ class SampleUI:
             self.writer.write("<LI>%s</LI>" % self.qstore.label(s[0]))
         self.writer.write("""
             </UL>
+            <P><A HREF="%s/classList">Go to editor</A>
           </BODY>
         </HTML>
-        """)
+        """% self.path)
 
     def view(self):
         self.writer.write("""
@@ -59,6 +60,9 @@ class SampleUI:
         """)
 
 # $Log$
+# Revision 1.2  2000/10/17 03:42:45  jtauber
+# included rdf file for sample ui and added a page that does a query
+#
 # Revision 1.1  2000/10/17 02:31:10  jtauber
 # beginnings of a sample UI
 #
