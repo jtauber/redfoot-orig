@@ -1,7 +1,7 @@
 # $Header$
 
 """
-Bare Naked HTTP Server
+eikeon's Bare Naked HTTP Server
 """
 
 __version__ = "$Revision$"
@@ -180,6 +180,9 @@ def date_time_string():
 
 
 # $Log$
+# Revision 2.1  2000/10/17 18:33:43  eikeon
+# Yet again... better exception handling; No longer prints out tracebacks of 'non fatal' exceptions
+#
 # Revision 2.0  2000/10/14 01:13:34  jtauber
 # next version
 #
