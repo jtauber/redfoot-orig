@@ -304,7 +304,7 @@ class Viewer:
 
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
-                                                                 self.encodeAttributeValues(self.storeNode.comment(resource)),
+                                                                 self.encodeAttributeValue(self.storeNode.comment(resource)),
                                                                  self.encodeCharacterData(self.storeNode.label(resource)))
 
     def displayPropertyValue(self, property, value):
@@ -369,7 +369,7 @@ class Viewer:
                     res.append(c)
         return string.joinfields(res, '')
 
-    def encodeAttributeValues(self, s):
+    def encodeAttributeValue(self, s):
         import string
         s = string.join(string.split(s, '&'), '&amp;')
         s = string.join(string.split(s, '"'), '&quot;')
@@ -452,6 +452,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.15  2000/12/20 03:14:48  jtauber
+#~ added encoding of special chars in attribute values and character data
+#~
 #~ Revision 5.14  2000/12/19 06:04:04  eikeon
 #~ Moved the 'local in context of neighbourhood' methods to RedNode... else we where overriding the corresponding methods on local, which someone may care about
 #~

@@ -152,7 +152,7 @@ class Editor(Viewer):
             else:
                 self.response.write("""
                 <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">
-                """ % (self.property_num, self.encodeAttributeValues(un_literal(value))))
+                """ % (self.property_num, self.encodeAttributeValue(un_literal(value))))
             self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
@@ -197,7 +197,7 @@ class Editor(Viewer):
                 #TODO 
                 self.response.write("""
                     <INPUT TYPE="TEXT" SIZE="60" NAME="prop%s_value" VALUE="%s">***
-                """ % (self.property_num, encodeAttributeValues(value)))
+                """ % (self.property_num, encodeAttributeValue(value)))
         self.response.write("""
                 </TD>""")
         if exists:
@@ -410,6 +410,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.10  2000/12/20 03:35:28  jtauber
+#~ can now delete empty properties of range LITERAL
+#~
 #~ Revision 5.9  2000/12/20 03:14:48  jtauber
 #~ added encoding of special chars in attribute values and character data
 #~
