@@ -129,7 +129,14 @@ class QueryStore:
                 result.append(s)
         self.visit(callback, None, None, None)
         return result
-    
+
+    def typelessResourcesV(self, callback):
+        """returns those resources that don't have a type"""
+        def adaptor(s, callback=callback, self=self):
+            if self.getFirst(s, TYPE, None)==None:
+                callback(s)
+        self.visitSubjects(adaptor)
+
     # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
         def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
@@ -231,6 +238,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 5.2  2000/12/09 21:32:16  jtauber
+#~ all subjects can take the properties that RESOURCE can
+#~
 #~ Revision 5.1  2000/12/09 18:37:15  jtauber
 #~ added typelessResources() query
 #~
