@@ -16,13 +16,14 @@ else:
 Warning: Redfoot requires a bug fix from 2.2.1 in order to run correctly
 """
 
-try:
-    import xml.parsers.expat
-except:
-    print """\
-Could not import xml.parsers.expat which Redfoot requires.
-"""
-    sys.exit(-1)
+# TODO: Test does not work... as it finds redfootlib.xml instead :(
+# try:
+#     import xml.parsers.expat
+# except:
+#     print """\
+# Could not import xml.parsers.expat which Redfoot requires.
+# """
+#     sys.exit(-1)
 
 try:
     import threading
