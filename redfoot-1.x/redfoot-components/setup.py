@@ -14,14 +14,9 @@ from glob import glob
 from types import *
 
 class build_py_rc(build_py):
-    def get_module_outfile (self, build_dir, package, module):
-        outfile_path = [build_dir] + list(package) + [module + ".xml"]
-        return apply(os.path.join, outfile_path)
-    
     def find_package_modules (self, package, package_dir):
         self.check_package(package, package_dir)
-        module_files = glob(os.path.join(package_dir, "*.py"))
-        module_files = glob(os.path.join(package_dir, "*.xml"))        
+        module_files = glob(os.path.join(package_dir, "*.py")) + glob(os.path.join(package_dir, "*.xml"))        
         modules = []
         setup_script = os.path.abspath(self.distribution.script_name)
 
@@ -51,8 +46,6 @@ class build_py_rc(build_py):
         self.mkpath(dir)
         return self.copy_file(module_file, outfile, preserve_mode=0)
 
-    def ___byte_compile (self, files):
-        pass
 
 class RedcodeDistribution(Distribution):
     def get_command_class (self, command):
