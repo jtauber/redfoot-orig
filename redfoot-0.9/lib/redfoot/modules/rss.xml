@@ -1,5 +1,7 @@
 <r:module name="rss" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
 
+from rdf.const import *
+
 RSS_ITEM = "http://purl.org/rss/1.0/item"
 RSS_TITLE = "http://purl.org/rss/1.0/title"
 
@@ -38,7 +40,8 @@ def load_rss(self, request, response):
 
 
 def rss(self, request, response):
-    self.subclass(request, response, RSS_ITEM, self.rss_row)
+    triples = self.rednode.get(None, TYPE, RSS_ITEM)
+    self.list(request, response, triples, self.rss_row)
 
 
 <r:response name="rss_row" args="triple row">
