@@ -79,9 +79,8 @@ class Editor(Viewer):
         self.property_num = 0
 
         if self.qstore.isKnownResource(subject):
-            # self.qstore.propertyValuesV(subject, self.editProperty)
-            self.qstore.propertyValuesLocalV(subject, self.editProperty)
-            self.qstore.propertyValuesNeighbourhoodV(subject, self.displayPropertyValue)
+            self.qstore.propertyValuesV(subject, self.editProperty)
+            self.qstore.neighbourhood.propertyValuesV(subject, self.displayPropertyValue)
         
 	    self.qstore.reifiedV(subject, self.displayReifiedStatements)
 
@@ -93,12 +92,20 @@ class Editor(Viewer):
                     <OPTION value="">Select a new Property to add</OPTION>
             """)
 
-            for type in self.qstore.get(subject, self.qstore.TYPE, None):
-                for superType in self.qstore.transitiveSuperTypes(type[2]):
-                    for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
+            for type in self.qstore.neighbourhood.get(subject, self.qstore.TYPE, None):
+                for superType in self.qstore.neighbourhood.transitiveSuperTypes(type[2]):
+                    for domain in self.qstore.neighbourhood.get(None, self.qstore.DOMAIN, superType):
                         self.response.write("""
                         <OPTION value="%s">%s</OPTION>
                         """ % (domain[0], self.qstore.neighbourhood.label(domain[0])))
+
+            def option(s, p, o, write=self.response.write, neighbourhood=self.qstore.neighbourhood):
+                write("""
+                        <OPTION value="%s">%s</OPTION>
+                      """ % (p, neighbourhood.label(p)))
+
+            # call to non existant visitor version goes here
+    
                         
             self.response.write("""
                   </SELECT>
@@ -145,7 +152,7 @@ class Editor(Viewer):
                   </TD>
                   <TD COLSPAN="2">
         """)
-        if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL):
+        if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.neighbourhood.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL):
             uitype = self.qstore.get(property, self.UITYPE, None)
             if len(uitype) > 0 and uitype[0][2]==self.TEXTAREA:
                 self.response.write("""
@@ -159,7 +166,7 @@ class Editor(Viewer):
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
         else:
-            rangelist = self.qstore.get(property, self.qstore.RANGE, None) # already did this above
+            rangelist = self.qstore.neighbourhood.get(property, self.qstore.RANGE, None) # already did this above
             if len(rangelist) > 0:
                 self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="no">
@@ -174,7 +181,7 @@ class Editor(Viewer):
                     # we use a key of 'label + s' to insure uniqness of key
                     possibleValues[label+s] = s 
 
-                self.qstore.getPossibleValuesV(property, possibleValue)
+                self.qstore.neighbourhood.getPossibleValuesV(property, possibleValue)
 
                 pvs = possibleValues.keys()
                 pvs.sort()
@@ -420,6 +427,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.4  2000/12/04 22:07:35  eikeon
+# got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
+#
 # Revision 4.3  2000/12/04 22:00:59  eikeon
 # got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #

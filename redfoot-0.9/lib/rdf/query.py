@@ -1,5 +1,6 @@
 # $Header$
-
+from rdf.literal import literal, un_literal, is_literal
+        
 class QueryStore:
 
     TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -17,12 +18,16 @@ class QueryStore:
     PREDICATE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"
     OBJECT = "http://www.w3.org/1999/02/22-rdf-syntax-ns#object"
 
-    def label(self, subject):
+    
+    def label(self, subject, default=None):
         l = self.get(subject, QueryStore.LABEL, None)
         if len(l) > 0:
-            return l[0][2][1:]     # TODO: currently only returns first label
+            return literal(l[0][2])     # TODO: currently only returns first label
         else:
-            return subject
+            if default==None:
+                return subject
+            else:
+                return default
 
     def comment(self, subject):
         c = self.get(subject, QueryStore.COMMENT, None)
@@ -126,17 +131,7 @@ class QueryStore:
         def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
             processPropertyValue(p, o)            
         self.visit(callbackAdaptor, subject, None, None)
-            
-    def propertyValuesLocalV(self, subject, processPropertyValue):
-        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
-            processPropertyValue(p, o)
-        self.visit(callbackAdaptor, subject, None, None)
 
-    def propertyValuesNeighbourhoodV(self, subject, processPropertyValue):
-        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
-            processPropertyValue(p, o)
-        self.stores.visit(callbackAdaptor, subject, None, None)
-        
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
         def subclassStatement(s, p, o, \
@@ -200,6 +195,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.3  2000/12/04 22:00:57  eikeon
+#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
+#~
 #~ Revision 4.2  2000/11/27 19:39:08  eikeon
 #~ editor now alphabetically sort possible values for properties
 #~

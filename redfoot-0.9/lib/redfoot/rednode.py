@@ -30,6 +30,9 @@ class MultiStore:
         
 	return visitor.list
         
+
+from rdf.literal import literal, un_literal, is_literal
+
 class Neighbourhood:
     # could this also be a subclass instead of a wrapper?
     def __init__(self, rednode):
@@ -42,7 +45,6 @@ class Neighbourhood:
     def visit(self, callback, subject=None, property=None, value=None):
         self.rednode.visit(callback, subject, property, value);
         self.stores.visit(callback, subject, property, value)
-
 
     def get(self, subject=None, property=None, value=None):
         class Visitor:
@@ -57,10 +59,15 @@ class Neighbourhood:
         return visitor.list
 
     def label(self, subject, default=None):
-        l = self.get(subject, QueryStore.LABEL, None)
+        list = []
+        def callback(subject, property, value, list=list):
+            list.append((subject, property, value))
+            return 0 # tell the visitor to stop
+        
+        self.visit(callback, subject, QueryStore.LABEL, None)
 
-        if len(l) > 0:
-            return l[0][2][1:]     # TODO: currently only returns first label
+        if len(list) > 0:
+            return un_literal(list[0][2])     # TODO: currently only returns first label
         else:
             return subject
 
@@ -76,7 +83,6 @@ class Neighbourhood:
                     first = 0
                 processResource(resource[0])
 
-
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         from rdf.query import QueryStore
         processClass(type, currentDepth, recurse)
@@ -87,6 +93,40 @@ class Neighbourhood:
                 processClass(subclassStatement[0], currentDepth+1, recurse)
         for instanceStatement in self.get(None, QueryStore.TYPE, type):
             processInstance(instanceStatement[0], currentDepth, recurse)
+
+    def propertyValuesV(self, subject, processPropertyValue):
+        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
+            processPropertyValue(p, o)
+        self.stores.visit(callbackAdaptor, subject, None, None)
+        
+    def transitiveSuperTypes(self, type):
+        set = {}
+        set[type] = 1
+
+        for subclassStatement in self.get(type, QueryStore.SUBCLASSOF, None):
+            for item in self.transitiveSuperTypes(subclassStatement[2]):
+                set[item] = 1
+
+        return set.keys()
+
+    def transitiveSubTypes(self, type):
+        set = {}
+        set[type] = 1
+
+        for subclassStatement in self.get(None, QueryStore.SUBCLASSOF, type):
+            for item in self.transitiveSubTypes(subclassStatement[0]):
+                set[item] = 1
+
+        return set.keys()
+
+    # callback may be called more than once for the same possibleValue... user
+    # of this method will have to remove duplicates
+    def getPossibleValuesV(self, property, possibleValue):        
+        def rangeitem(s, p, o, self=self, possibleValue=possibleValue):
+            for type in self.transitiveSubTypes(o):
+                self.visit(possibleValue, None, QueryStore.TYPE, type)
+
+        self.visit(rangeitem, property, QueryStore.RANGE, None)
 
             
 from rdf.store import TripleStore
@@ -143,6 +183,9 @@ class StoreNode(QueryStore, StoreIO, TripleStore):
         self.neighbourhood.addNeighbour(store)
 
 #~ $Log$
+#~ Revision 4.4  2000/12/04 22:49:10  eikeon
+#~ refactored *All methods into Neighbourhood class
+#~
 #~ Revision 4.3  2000/12/04 22:07:35  eikeon
 #~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #~
