@@ -98,7 +98,16 @@ class StoreNode:
 
 	return visitor.list
 
+    def remove(self, subject=None, property=None, value=None):
+        self.store.remove(subject, property, value)
+
+    def add(self, subject, property, value):
+        self.store.add(subject, property, value)
+
 # $Log$
+# Revision 1.2  2000/10/03 22:12:57  eikeon
+# Fixed up ^
+#
 # Revision 1.1  2000/10/03 06:01:50  jtauber
 # moved MultiStore and StoreNode to rednode.py
 #
