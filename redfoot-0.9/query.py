@@ -108,6 +108,14 @@ class QueryStore:
             for resource in self.store.get(None, QueryStore.TYPE, klass[0]):
                 result[klass[0]].append(resource[0])
         return result
+
+    def rootClasses(self):
+        """returns those classes that aren't a subclass of anything"""
+        result = []
+        for klass in self.store.get(None, QueryStore.TYPE, QueryStore.CLASS):
+            if len(self.store.get(klass[0], QueryStore.SUBCLASSOF, None))==0:
+                result.append(klass[0])
+        return result
                 
     # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
@@ -121,3 +129,13 @@ class QueryStore:
             property = statement[1]
             value = statement[2]
             processPropertyValue(property,value)
+        
+    def subClassV(self, type, processClass, processInstance, currentDepth=1, recurse=1):
+        processClass(type, currentDepth)
+        for subclassStatement in self.store.get(None, QueryStore.SUBCLASSOF, type):
+            if recurse:
+                self.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
+            else:
+                processClass(subclassStatement[0], currentDepth+1)
+        for instanceStatement in self.store.get(None, QueryStore.TYPE, type):
+            processInstance(instanceStatement[0], currentDepth)

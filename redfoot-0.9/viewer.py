@@ -84,6 +84,8 @@ class Viewer:
           <BODY>
             <H1>ReDFoot</H1>
             <P><A HREF=".">Class List</A>
+             | <A HREF="subclass">Full Subclass View</A>
+             | <A HREF="subclassNR">Collapsed Subclass View</A>
              | <A HREF="RDF">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
             </P>
@@ -93,6 +95,60 @@ class Viewer:
 
         self.qstore.resourcesByClassV(self.displayClass, self.displayResource)
     
+        self.writer.write("""
+              </DL>
+            </DIV>
+          </BODY>
+        </HTML>
+        """)
+
+    def subclass(self, root):
+        self.writer.write("""
+        <HTML>
+          <HEAD>
+            <TITLE>ReDFoot Subclass View</TITLE>
+            <LINK REL="STYLESHEET" HREF="css"/>
+          </HEAD>
+          <BODY>
+            <H1>ReDFoot</H1>
+            <P><A HREF=".">Class List</A>
+             | <A HREF="subclass">Full Subclass View</A>
+             | <A HREF="subclassNR">Collapsed Subclass View</A>
+             | <A HREF="RDF">Download RDF</A>
+             | <A HREF="Triples">Show Triples</A>
+            </P>
+            <DIV CLASS="box">
+              <DL>
+        """)
+
+        self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource)
+        self.writer.write("""
+              </DL>
+            </DIV>
+          </BODY>
+        </HTML>
+        """)
+
+    def subclassNonRecursive(self, root):
+        self.writer.write("""
+        <HTML>
+          <HEAD>
+            <TITLE>ReDFoot Subclass View</TITLE>
+            <LINK REL="STYLESHEET" HREF="css"/>
+          </HEAD>
+          <BODY>
+            <H1>ReDFoot</H1>
+            <P><A HREF=".">Class List</A>
+             | <A HREF="subclass">Full Subclass View</A>
+             | <A HREF="subclassNR">Collapsed Subclass View</A>
+             | <A HREF="RDF">Download RDF</A>
+             | <A HREF="Triples">Show Triples</A>
+            </P>
+            <DIV CLASS="box">
+              <DL>
+        """)
+
+        self.qstore.subClassV(root, self.displaySCNRClass, self.displaySCResource, recurse=0)
         self.writer.write("""
               </DL>
             </DIV>
@@ -110,6 +166,8 @@ class Viewer:
           <BODY>
             <H1>ReDFoot</H1>
             <P><A HREF=".">Class List</A>
+             | <A HREF="subclass">Full Subclass View</A>
+             | <A HREF="subclassNR">Collapsed Subclass View</A>
              | <A HREF="RDF">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
             </P>
@@ -134,6 +192,23 @@ class Viewer:
         self.writer.write("""
         <DD>%s<BR></DD>
         """ % self.link(resource))
+
+    # TODO: rewrite to use lists
+    def displaySCClass(self, klass, depth):
+        self.writer.write(3*depth*"&nbsp;")
+        self.writer.write("<B>%s</B><BR>" % self.qstore.label(klass))
+
+    # TODO: rewrite to use lists
+    def displaySCNRClass(self, klass, depth):
+        self.writer.write(3*depth*"&nbsp;")
+        self.writer.write("""
+        <A HREF="subclassNR?uri=%s" TITLE="%s"><B>%s</B></A><BR>
+        """ % (self.encodeURI(klass), self.qstore.comment(klass), self.qstore.label(klass)))
+
+    # TODO: rewrite to use lists
+    def displaySCResource(self, resource, depth):
+        self.writer.write(3*(depth+1)*"&nbsp;")
+        self.writer.write(self.link(resource)+"<BR>")
 
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
@@ -167,6 +242,8 @@ class Viewer:
           <BODY>
             <H1>ReDFoot</H1>
             <P><A HREF=".">Class List</A>
+             | <A HREF="subclass">Full Subclass View</A>
+             | <A HREF="subclassNR">Collapsed Subclass View</A>
              | <A HREF="RDF">Download RDF</A>
              | <A HREF="Triples">Show Triples</A>
             </P>

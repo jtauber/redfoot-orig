@@ -41,10 +41,15 @@ print qstore.transitiveSuperTypes("car")
 
 print qstore.transitiveSubTypes("vehicle")
 
-def cDisplay(c):
-    print c
+def cDisplay(c,indent=0):
+    print indent*"  ","-", c
 
-def rDisplay(r):
-    print "   ",r
+def rDisplay(r,indent=0):
+    print indent*"  ","  *",r
 
 print qstore.resourcesByClassV(cDisplay, rDisplay)
+
+print "root classes: ", qstore.rootClasses()
+
+print 79*"-"
+print qstore.subClassV(qstore.RESOURCE, cDisplay, rDisplay)

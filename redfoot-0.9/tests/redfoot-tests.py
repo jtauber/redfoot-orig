@@ -55,6 +55,18 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         if path_info == "/":
             viewer.mainPage()
+        elif path_info == "/subclass":
+            if args.has_key("uri"):
+                root = args["uri"][0] # TODO: check why values of args are lists
+            else:
+                root = QueryStore.RESOURCE
+            viewer.subclass(root)
+        elif path_info == "/subclassNR":
+            if args.has_key("uri"):
+                root = args["uri"][0] # TODO: check why values of args are lists
+            else:
+                root = QueryStore.RESOURCE
+            viewer.subclassNonRecursive(root)
         elif path_info == "/RDF":
             viewer.RDF()
         elif path_info == "/Triples":
