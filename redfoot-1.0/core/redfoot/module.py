@@ -43,6 +43,13 @@ class Module:
             #print "first: '%s'  path: '%s'" % (first, path)            
             self.apply(first)
 
+# TODO refactor into util.py along with version in rednode.py
+def to_relative_URL(module_name, path):
+    import sys
+    from os.path import join, dirname
+    from urllib import pathname2url
+    libDir = dirname(sys.modules[module_name].__file__)
+    return pathname2url(join(libDir, path))
 
 class ParentModule(Module):
 
@@ -84,6 +91,10 @@ class ParentModule(Module):
         #print "adding module (%s) as %s to %s" % (klass, instance_name, self.__class__)
         instance = klass()
         instance.app = self.app
+        if hasattr(klass, "module_rdf"):
+            for (location, URI) in klass.module_rdf:
+                location = to_relative_URL(klass.__module__, location)
+                self.app.rednode.connect_to(location, URI)
         if hasattr(instance, 'create_sub_modules'):
             instance.create_sub_modules()
         self.__dict__[instance_name] = instance
