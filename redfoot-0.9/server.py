@@ -147,7 +147,7 @@ if __name__ == '__main__':
     t.setDaemon(1)
     t.start()
 
-    sys.stderr.write("REDFOOT: serving %s (%s) with %s on port %s..." % (location, uri, interface, port))
+    sys.stderr.write("REDFOOT: serving %s (%s) with %s on port %s...\n" % (location, uri, interface, port))
     sys.stderr.flush()
         
 
@@ -159,6 +159,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.28  2000/10/13 04:23:23  eikeon
+# added startup message that shows port number etc back in
+#
 # Revision 1.27  2000/10/13 04:10:43  eikeon
 # now depends on BNH server... as we where having stability problems with BaseHTTPServer and company that we could not track down
 #
