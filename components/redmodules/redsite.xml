@@ -134,14 +134,12 @@
         </head>
         <body>
 
-<h1 style="margin-bottom: 0px;"><red:eval>self.app.rednode.label(uri, '-')</red:eval></h1>
+<div class="topnav">
 
-<div style="background: white; color: black; border: solid 0px black;padding: 0em 1em 1em 1em; font-weight: bold;">
-
-  <a href="{self.app.rednode.uri}" style="padding: 0px 10px;">
+  [<a href="{self.app.rednode.uri}">
                     <red:eval>self.app.rednode.get_first_value(resource(self.app.rednode.uri), SITE_NAME, 'Home')</red:eval>
                   </a>
-
+ 
                   <red:for item="p" list="parts">
                     <red:if test="p!=''">
                      <red:exec>
@@ -154,30 +152,33 @@
                      </a>
                     </red:if>
                   </red:for>
-</div>                
+   ]
+</div>
+
+
+<h1><red:eval>self.app.rednode.label(uri, '-')</red:eval></h1>
 
 
 <div style="float: left; border: solid 0px black;">
 
-<div style="background: white; color: black; float: right;width: 8em; border: solid 1px black; padding: 0px 10px; margin-top: 5px;">
+<div class="nav" style="background: white; color: black; float: right; clear: right;width: 8em; border: solid 1px black; padding: 0px 10px; margin-top: 5px; font-size: 8pt;">
+  <dl>
+  <dt>Actions</dt>
 
-<form id="login" action="" method="post"
-                style="margin: 0px; padding: 0px 0px 1px 0px;">
-
-
-                      <h3>Actions</h3>
+  <form id="login" action="" method="post"
+        style="margin: 0px; padding: 0px 0px 1px 0px;">
                       
                     <red:if test="self.authentication.authenticated()">
+
                       Welcome,
                       <red:eval>self.authentication.get_username()</red:eval>
-                      [ 
             <!--
               TODO: remove editor location assumption;
                     Related: Maybe change the uri's to editor resource
                     to something along the lines of
                     uri?view_with=editor_uri
               -->
-            <a href="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), 'TODO: EDITOR', '/editor/')}edit_subject?subject={encode_URI(self.app.rednode.uri+self.app.request.get_path_info()[1:])}">Edit this page</a> |
+            <dd><a href="{self.app.rednode.get_first_value(resource(self.app.rednode.uri), 'TODO: EDITOR', '/editor/')}edit_subject?subject={encode_URI(self.app.rednode.uri+self.app.request.get_path_info()[1:])}">Edit this page</a></dd>
                       
                       <!--
                         This module instance does not directly contain
@@ -187,20 +188,23 @@
                              value="{self.module_instance}"/>
                         -->
                       <input name="processor" type="hidden" value=""/>
-                      <a href="javascript: form=document.getElementById('login'); form.processor.value='do_logout'; form.submit()">Logout
-                      </a> ]
+                     <dd><a href="javascript: form=document.getElementById('login'); form.processor.value='do_logout'; form.submit()">Logout
+                      </a></dd>
+
 
                       <red:else>             
                         <input name="view" type="hidden" value="login"/>
-                        [ <a href="javascript: form=document.getElementById('login'); form.view.value='login';form.submit()">
-                        Login</a> |
-                        <a href="javascript: form=document.getElementById('login'); form.view.value='create';form.submit()">
+                        <dd><a href="javascript: form=document.getElementById('login'); form.view.value='login';form.submit()">
+                        Login</a> </dd>
+                        <dd><a href="javascript: form=document.getElementById('login'); form.view.value='create';form.submit()">
                           Create User 
-                        </a> ]
-                      </red:else>             
+                        </a> </dd>
+                      </red:else>
+
                     </red:if>
 
           </form>
+        </dl>            
 
       <red:exec>
         lb = ListBuilder()
@@ -210,17 +214,15 @@
         last = len(links) - 1
       </red:exec>
       <red:if test="len(links)>0">
-        <h3>Links</h3>
-        <p>
-          [
+        <dl>
+        <dt>Links</dt>
       <red:for item="index" list="xrange(len(links))">
-        <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
-        <red:if test="index!=last">
+        <dd><a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a></dd>
+<!--        <red:if test="index!=last">
             |
-        </red:if>
+        </red:if>-->
       </red:for>
-          ]
-        </p>  
+        </dl>
       </red:if>
 
 </div>
@@ -276,10 +278,39 @@
     </red:facet>
 
     <red:facet name="/2002/css">
+
+BODY {
+  margin: 6% 10%;
+}
+
 A {
   color: #000;
   text-decoration: none;
+  font-weight: bold;
 }
+
+DIV.nav DT {
+  font-size: 10pt;
+  font-weight: bold;
+}
+DIV.nav DD {
+  margin-left: 2em;
+}
+DIV.nav A {
+  font-weight: normal;
+}
+
+DIV.topnav {
+  position: absolute;
+  top: 0em;
+  font-size: 8pt;
+  color: #999;
+}
+
+DIV.topnav A {
+  color: #999;
+}
+
     </red:facet>
     
     <red:facet name="/css">    
