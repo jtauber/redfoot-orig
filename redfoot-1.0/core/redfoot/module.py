@@ -96,6 +96,7 @@ class ParentModule(Module):
         #print "adding module (%s) as %s to %s" % (klass, instance_name, self.__class__)
         
         instance = new.instance(klass, {'app': self.app})
+        getattr(klass, '__init__', lambda x:None)(instance,)
         if hasattr(klass, "module_rdf"):
             for (location, URI) in klass.module_rdf:
                 location = to_URL(klass.__module__, location)
