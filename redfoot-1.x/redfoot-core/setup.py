@@ -62,13 +62,15 @@ setup(
     author_email = "eikeon@eikeon.com, jtauber@jtauber.com",
     url = "http://redfoot.sourceforge.net/",
 
-    packages = ['redfoot',
-                'redfoot.rdf' ,
-                'redfoot.rdf_files' ,                
-                'redfoot.rdf.query' ,'redfoot.rdf.store', 'redfoot.rdf.syntax',
-                'redfoot.redcode',
-                'redfoot.server',
-                'redfoot.xml'],
+    packages = ['redfootlib',
+                'redfootlib.rdf' ,
+                'redfootlib.rdf_files' ,                
+                'redfootlib.rdf.query' ,
+                'redfootlib.rdf.store',
+                'redfootlib.rdf.syntax',
+                'redfootlib.redcode',
+                'redfootlib.server',
+                'redfootlib.xml'],
     )
 
 

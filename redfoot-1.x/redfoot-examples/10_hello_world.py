@@ -1,7 +1,7 @@
 #
 
-from redfoot.server.module import App
-from redfoot.server import register_app
+from redfootlib.server.module import App
+from redfootlib.server import register_app
 
 
 class HelloWorld(App):

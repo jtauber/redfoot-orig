@@ -1,6 +1,6 @@
 #
-from redfoot.rdf.store.storeio import LoadSave
-from redfoot.rdf.store.triple import TripleStore
+from redfootlib.rdf.store.storeio import LoadSave
+from redfootlib.rdf.store.triple import TripleStore
 
 class Store(LoadSave, TripleStore):
     def __init__(self):
@@ -12,7 +12,7 @@ def to_relative_URL(path):
     import sys
     from os.path import join, dirname
     from urllib import pathname2url
-    libDir = dirname(sys.modules["redfoot.rdf_files"].__file__)
+    libDir = dirname(sys.modules["redfootlib.rdf_files"].__file__)
     return pathname2url(join(libDir, path))
 
 

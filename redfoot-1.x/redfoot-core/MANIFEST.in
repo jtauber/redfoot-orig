@@ -1,4 +1,4 @@
 include LICENSE
 include MANIFEST.in
 include README
-include redfoot/rdf_files/*.rdf
+include redfootlib/rdf_files/*.rdf
