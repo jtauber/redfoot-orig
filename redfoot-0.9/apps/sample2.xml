@@ -23,6 +23,7 @@ def __init__(self, rednode):
     self.rednode = rednode
     Authentication.__init__(self, rednode)
     Editor.__init__(self, rednode)
+    RSS.__init__(self, rednode)
     #Common.__init__(self, rednode)
     self.editor = None
 

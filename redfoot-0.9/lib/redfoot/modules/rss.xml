@@ -1,4 +1,4 @@
-<r:module name="eikeon" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
+<r:module name="rss" xmlns:r="http://redfoot.sourceforge.net/2001/01/">
 
 RSS_ITEM = "http://purl.org/rss/1.0/item"
 RSS_TITLE = "http://purl.org/rss/1.0/title"
@@ -26,6 +26,19 @@ CREATED = "http://eikeon.com/2000/11/2001/03/25/T00/34/45Z"
 from redfoot.util import *
 
 <r:class name="RSS">
+
+def __init__(self, node):
+
+    def toRelativeURL(path):
+        import sys
+        from os.path import join, dirname
+        from urllib import pathname2url
+        libDir = dirname(sys.modules["redfoot.modules.rss"].__file__)
+        return pathname2url(join(libDir, path))
+
+    node.connectTo(toRelativeURL("rssSchema.rdf"), None)
+    node.connectTo(toRelativeURL("dces.xml"), None)    
+
 
 def load_rss(self, request, response):
     if hasattr(self, 'rss_store') and self.rss_store:
