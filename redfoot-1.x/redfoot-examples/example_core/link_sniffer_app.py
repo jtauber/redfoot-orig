@@ -13,6 +13,13 @@ from redcmd import RedCmd
 class SnifferNode(RedCmd, Sniffer, SchemaQuery, LoadSave, TripleStore):
     ""
 
+    def do_quit(self, arg):
+        """Quit the Redfoot Command Line"""
+        print "Saving RDF..."
+        self.save()
+        print "...Done"
+        super(SnifferNode, self).do_quit(arg)
+
     def print_link(self, s, p, o):
         label = self.label(s)
         sniffed_on = self.get_first_value(s, SNIFFED_ON, '??')
@@ -36,9 +43,9 @@ sniffer.do_prefix("rdfs:<http://www.w3.org/2000/01/rdf-schema#>")
 sniffer.do_prefix("rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>")
 
 import threading
-t = threading.Thread(target = sniffer.cmdloop(), args = ())
-t.setDaemon(1)
-#t.start()
+t = threading.Thread(target = sniffer.cmdloop, args = ())
+t.setDaemon(0)
+t.start()
 
 
 
@@ -132,4 +139,9 @@ app = LinkApp(sniffer)
 server.add_app(app)
 
 # Run the App
-server.run() # blocks until server is shutdown
+#server.run() # blocks until server is shutdown
+
+import threading
+t = threading.Thread(target = server.run, args = ())
+t.setDaemon(1)
+t.start()
