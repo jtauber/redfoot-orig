@@ -202,13 +202,23 @@ class QueryStore:
 
         self.visit(rangeitem, property, RANGE, None)
         
-    def getPossibleProperties(self, subject, possibleProperty):
+    def getPossibleProperties(self, type, possibleProperty):
+        for superType in self.transitiveSuperTypes(type):
+            self.visit(possibleProperty, None, DOMAIN, superType)
+
+    def getTypes(self, subject, callback):
+        self.visit(callback, subject, TYPE, None)
+
+    def getPossiblePropertiesForSubject(self, subject, possibleProperty):
         def type(s, p, o, self=self, possibleProperty=possibleProperty):
-            for superType in self.transitiveSuperTypes(o):
-                self.visit(possibleProperty, None, DOMAIN, superType)
-        self.visit(type, subject, TYPE, None)
+            self.getPossibleProperties(o, possibleProperty)
+        self.getTypes(subject, type)
+        
             
 #~ $Log$
+#~ Revision 4.13  2000/12/06 20:10:04  eikeon
+#~ added getPossibleProperties method
+#~
 #~ Revision 4.12  2000/12/06 19:42:39  eikeon
 #~ moved get method to query as it can be layered on top of a TripleStore like all the other queries; reimplemented transitive{Super,Sub}Types to use visit
 #~
