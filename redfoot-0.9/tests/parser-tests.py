@@ -1,7 +1,8 @@
 import pyexpat
 
 # TODO shouldn't be hardcoded -jkt
-execfile(r"D:\home\projects\cvs-work\redfoot\parser\rdfparser.py")
+#execfile(r"D:\home\projects\cvs-work\redfoot\parser\rdfparser.py")
+from redfoot.parser import *
 
 def add(subject, predicate, object):
     print "s : %s\np : %s\no : %s\n" % (subject, predicate, object)
