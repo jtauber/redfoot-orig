@@ -3,6 +3,7 @@
 from rdf.store import TripleStore
 from rdf.query import QueryStore
 from rdf.storeio import AutoSaveStoreIO
+from rdf.const import *
 
 class RedNode(QueryStore, AutoSaveStoreIO):
     ""
@@ -54,6 +55,30 @@ class RedNode(QueryStore, AutoSaveStoreIO):
     def _connectTo(self, store):
         self.neighbourhood.addNeighbour(store)
 
+    def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
+        processClass(type, currentDepth, recurse)
+        # show classes in neighbourhood as well
+        for subclassStatement in self.neighbourhood.get(None, SUBCLASSOF, type): 
+            if recurse:
+                self.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
+            else:
+                processClass(subclassStatement[0], currentDepth+1, recurse)
+        # only show local instances 
+        for instanceStatement in self.get(None, TYPE, type):
+            processInstance(instanceStatement[0], currentDepth, recurse)
+
+    def resourcesByClassV(self, processClass, processResource):
+        def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
+            if self.getFirst(None, TYPE, s)!=None:
+                processClass(s)
+            def resource(s, p, o, processClass=processClass,\
+                         processResource=processResource, self=self):
+                processResource(s)
+            # only show local instances
+            self.visit(resource, None, TYPE, s)
+        # show classes in neighbourhod as well as in local store
+        self.neighbourhood.visit(klass, None, TYPE, CLASS)
+
 
 from rdf.literal import literal, un_literal, is_literal
 
@@ -75,16 +100,6 @@ class Neighbourhood(QueryStore):
 
     def remove(self, subject=None, predicate=None, object=None):
         raise "Can not remove from Neighbourhood store!"
-
-    def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
-        processClass(type, currentDepth, recurse)
-        for subclassStatement in self.get(None, SUBCLASSOF, type):
-            if recurse:
-                self.rednode.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
-            else:
-                processClass(subclassStatement[0], currentDepth+1, recurse)
-        for instanceStatement in self.get(None, TYPE, type):
-            processInstance(instanceStatement[0], currentDepth, recurse)
 
             
 class MultiStore(QueryStore):
@@ -119,6 +134,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.11  2000/12/06 19:41:37  eikeon
+#~ removed get method as it is now implemented on query
+#~
 #~ Revision 4.10  2000/12/05 22:43:30  eikeon
 #~ moved constants to rdf.const
 #~
