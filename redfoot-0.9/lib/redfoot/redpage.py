@@ -8,7 +8,6 @@ import __builtin__
 RF_NS = u"http://redfoot.sourceforge.net/2001/01/"
 RF_CLASS = RF_NS+u"class"
 RF_MODULE = RF_NS+u"module"
-RF_LOAD_MODULE = RF_NS+u"load-module"
 RF_EXEC = RF_NS+u"exec"
 RF_CALL = RF_NS+u"call"
 RF_EVAL = RF_NS+u"eval"
@@ -135,27 +134,6 @@ class RF_MODULE_Handler(HandlerBase):
         HandlerBase.end(self, name)
         exec self.codestr+"\n" in self.globals, self.locals
 
-class RF_LOAD_MODULE_Handler(HandlerBase):
-    def __init__(self, parser, parent, atts, globals, locals):
-        self.globals = globals
-        self.locals = locals
-        HandlerBase.__init__(self, parser, parent)
-        if atts.has_key('class'):
-            self.klass = atts['class']
-        else:
-            sys.stderr.write("load-module had no class attribute")
-            sys.stderr.flush()
-            return # ignore
-        if atts.has_key('location'):
-            self.location = atts['location']
-        else:
-            sys.stderr.write("load-module had no location attribute")
-            sys.stderr.flush()
-            return # ignore
-
-    def end(self, name):
-        HandlerBase.end(self, name)
-        exec "from redfoot import redpage; %s = redpage.parse_red_page('%s').%s\n" % (self.klass, self.location, self.klass) in self.globals, self.locals
 
 class RF_CLASS_Handler(HandlerBase):
     def __init__(self, parser, parent, name, base_classes):
@@ -460,6 +438,9 @@ class URIEncodedEvalNode(EvalNode):
 
 
 #~ $Log$
+#~ Revision 7.8  2001/04/15 03:37:38  eikeon
+#~ now opening redpages as files instead of urls
+#~
 #~ Revision 7.7  2001/04/14 23:10:28  eikeon
 #~ removed old log messages
 #~
