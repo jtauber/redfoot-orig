@@ -17,6 +17,9 @@ def parse_RDF(adder, location, baseURI=None):
         parser.ParseFile(f)
     except: # pyexpat.error:
         import sys
+        import traceback
+        traceback.print_exc()
+        sys.stderr.flush()
         sys.stderr.write(u"Error parsing file at line '%s' and column '%s'\n" % (parser.ErrorLineNumber, parser.ErrorColumnNumber) )
         sys.stderr.flush()
     f.close()
@@ -36,6 +39,9 @@ def parse_RDF_stream(adder, stream, baseURI=None):
         parser.ParseFile(stream)
     except: # pyexpat.error:
         import sys
+        import traceback
+        traceback.print_exc()
+        sys.stderr.flush()
         sys.stderr.write(u"Error parsing file at line '%s' and column '%s'\n" % (parser.ErrorLineNumber, parser.ErrorColumnNumber) )
         sys.stderr.flush()
     stream.close()
@@ -112,6 +118,19 @@ class RDFHandler(HandlerBase):
         else:
             TypedNodeHandler(self.parser, self.adder, self, name, atts)
 
+class IgnoreHandler(HandlerBase):
+    def __init__(self, parser, adder, parent):
+        HandlerBase.__init__(self, parser, adder, parent)
+
+    def set_handlers(self):
+        self.parser.StartElementHandler = self.child
+        self.parser.CharacterDataHandler = self.char
+        self.parser.EndElementHandler = self.end
+
+    def child(self, name, atts):
+        print "Ignoring '%s'" % name
+        IgnoreHandler(self.parser, self.adder, self)
+
         
 class DescriptionHandler(HandlerBase):
     def __init__(self, parser, adder, parent, atts):
@@ -185,7 +204,7 @@ class PropertyHandler(HandlerBase):
             self.object = atts[u"about"]
             DescriptionHandler(self.parser, self.adder, self, atts)
         else:
-            pass
+            IgnoreHandler(self.parser, self.adder, self)
 
     def char(self, data):
         self.object = self.object + data
@@ -195,6 +214,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.1  2001/03/26 20:18:01  eikeon
 #~ removed old log messages
 #~
