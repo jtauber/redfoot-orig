@@ -47,8 +47,6 @@ t = threading.Thread(target = sniffer.cmdloop, args = ())
 t.setDaemon(0)
 t.start()
 
-
-
 ####
 from redfoot.server.module import App
 from redfoot.rdf.objects import resource, literal

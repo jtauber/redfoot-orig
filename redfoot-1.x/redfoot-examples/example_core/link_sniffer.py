@@ -1,11 +1,13 @@
 import sys
 from time import sleep
-from urlparse import urlparse, urlunparse, urljoin
-
+from urlparse import urlparse        
 
 from redfoot.rdf.store.urigen import generate_uri as get_timestamp
 from redfoot.rdf.objects import resource, literal
 from redfoot.rdf.const import TYPE, LABEL, COMMENT
+from redfoot.rdf.query.functors import s
+
+from link_sniffer_parser import SnifferHTMLParser
 
 SNIFFED = resource("http://redfoot.net/2002/04/17/sniff/ed")
 SNIFFABLE = resource("http://redfoot.net/2002/04/17/sniff/able")
@@ -13,66 +15,10 @@ SNIFFED_ON = resource("http://redfoot.net/2002/04/17/sniff/date")
 SNIFFED_FROM = resource("http://redfoot.net/2002/04/17/sniff/source")
 RUN = resource("http://redfoot.net/2002/04/17/sniff/run")
 
-from htmllib import HTMLParser
-import formatter
-
-hostname_cache = {}
-import socket
-def get_hostname(host):
-    hostname = hostname_cache.get(host, None)
-    if not hostname:
-        try:
-            hostname = socket.gethostbyaddr(host)[0]
-        except socket.error:
-            hostname = host
-        hostname_cache[host] = hostname            
-    return hostname
-
-class SnifferHTMLParser(HTMLParser):
-    def __init__(self, store):
-        HTMLParser.__init__(self, formatter.NullFormatter(), 0)
-        self.store = store
-
-    def anchor_bgn(self, href, name, type):
-        self.save_bgn()        
-        self.anchor = href
-
-    def anchor_end(self):
-        if self.anchor:
-            href=self.anchor
-            self.anchorText = self.save_end()
-            scheme, netloc, url, params, query, fragment = urlparse(href)
-
-            if netloc=="":
-                href = urljoin(self.uri_base, href)
-            else:
-                netloc = get_hostname(netloc)
-                href = urlunparse((scheme, netloc, url, params, query, fragment))
-
-            if not self.store.ignore(href):
-                uri = resource(href)
-                if not self.store.exists(uri, None, None):
-                    print "ADDED:", href, self.anchorText
-                    try:
-                        label = literal(self.anchorText.encode('ascii'))
-                    except:
-                        print "TODO: Am having encoding issues"
-                        label = literal('TODO: encoding issue')
-                    self.store.add(uri, LABEL, label)
-                    self.store.add(uri, TYPE, SNIFFED)
-                    timestamp = literal(get_timestamp())
-                    self.store.add(uri, SNIFFED_ON, timestamp)
-                    self.store.add(uri, SNIFFED_FROM, resource(self.sniffed_from))
-                
-            self.anchor = None
-        
-
-from redfoot.rdf.query.functors import s
 
 class Sniffer(object):
     def __init__(self):
         super(Sniffer, self).__init__()
-        self.parser = SnifferHTMLParser(self)
         self.ignore_list = ["www.google.com"]
                 
     def run(self):
@@ -84,6 +30,18 @@ class Sniffer(object):
         t = threading.Thread(target = self.__timer, args = ())
         t.setDaemon(1)
         t.start()
+        
+    def add_sniffed(self, href, label, sniffed_from):
+        if not self.ignore(href):
+            uri = resource(href)
+            label = literal(label)
+            if not self.exists(uri, None, None):
+                print "ADDED:", href, label
+                self.add(uri, LABEL, label)
+                self.add(uri, TYPE, SNIFFED)
+                timestamp = literal(get_timestamp())
+                self.add(uri, SNIFFED_ON, timestamp)
+                self.add(uri, SNIFFED_FROM, resource(sniffed_from))
         
 
     def __sniff(self):
@@ -107,15 +65,9 @@ class Sniffer(object):
         self.__unmark(url)        
         print "sniffing '%s'" % url
         sys.stdout.flush()
-        from urllib import urlopen, quote
-
-        f = urlopen(url)
-        # TOD: refactor
-        self.parser.sniffed_from = url        
-        scheme, netloc, url, params, query, fragment = urlparse(url)
-        self.parser.uri_base = "%s://%s" % (scheme, netloc)
-        self.parser.feed(f.read())
-        self.parser.close()
+        adder = lambda href, label: self.add_sniffed(href, label, url)
+        parser = SnifferHTMLParser(adder)
+        parser.parse(url)
         print "Saving..."
         sys.stdout.flush()
         self.save()
