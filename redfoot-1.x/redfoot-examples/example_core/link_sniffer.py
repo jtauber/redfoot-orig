@@ -2,10 +2,10 @@ import sys
 from time import sleep
 from urlparse import urlparse        
 
-from redfoot.rdf.store.urigen import generate_uri as get_timestamp
-from redfoot.rdf.objects import resource, literal
-from redfoot.rdf.const import TYPE, LABEL, COMMENT
-from redfoot.rdf.query.functors import s
+from redfootlib.rdf.store.urigen import generate_uri as get_timestamp
+from redfootlib.rdf.objects import resource, literal
+from redfootlib.rdf.const import TYPE, LABEL, COMMENT
+from redfootlib.rdf.query.functors import s
 
 from link_sniffer_parser import SnifferHTMLParser
 
