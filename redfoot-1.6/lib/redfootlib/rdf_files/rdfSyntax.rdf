@@ -25,24 +25,24 @@
 <s:Class rdf:ID="Alt"
   s:comment="A collection of alternatives" />
 
-<Property ID="predicate"
+<Property rdf:ID="predicate"
   s:comment="Identifies the property used in a statement when representing the statement in reified form">
   <s:domain rdf:resource="#Statement" />
   <s:range rdf:resource="#Property" />
 </Property>
 
-<Property ID="subject"
+<Property rdf:ID="subject"
   s:comment="Identifies the resource that a statement is describing when representing the statement in reified form">
   <s:domain rdf:resource="#Statement" />
 </Property>
 
-<Property ID="object"
+<Property rdf:ID="object"
   s:comment="Identifies the object of a statement when representing the statement in reified form" />
 
-<Property ID="type"
+<Property rdf:ID="type"
   s:comment="Identifies the Class of a resource" />
 
-<Property ID="value"
+<Property rdf:ID="value"
   s:comment="Identifies the principal value (usually a string) of a property when the property value is a structured resource" />
 
 </RDF>

@@ -27,7 +27,7 @@
     <rdfs:range rdf:resource="#UIType"/>
   </rdf:Description>
 
-  <rdf:Description about="http://www.w3.org/2000/01/rdf-schema#comment">
+  <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#comment">
     <b:uiType rdf:resource="#TEXTAREA"/>
   </rdf:Description>
 
