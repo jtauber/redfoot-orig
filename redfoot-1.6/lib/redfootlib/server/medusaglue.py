@@ -73,31 +73,34 @@ class RedServer:
             print """\
 WARNING: Running multiple servers may be problematic, as it has not yet been tested."""  
             return 
-        running = 1
         if background:
             import threading
-            t = threading.Thread(target = self.__run, args = ())
+            t = threading.Thread(target = _run, args = ())
             t.setDaemon(daemon)
             t.start()
         else:
-            self.__run()
+            _run()
 
-    def __run(self):
-        try:
-            become_nobody()
-        except:
-            # TODO: 
-            print "WARNING: exception trying to become nobody;"
+def _run():
+    try:
+        become_nobody()
+    except:
+        # TODO: 
+        print "WARNING: exception trying to become nobody;"
 
-        # Finally, start up the server loop!  This loop will not exit until
-        # all clients and servers are closed.  You may cleanly shut the system
-        # down by sending SIGINT (a.k.a. KeyboardInterrupt).
-        try:
+    # Finally, start up the server loop!  This loop will not exit until
+    # all clients and servers are closed.  You may cleanly shut the system
+    # down by sending SIGINT (a.k.a. KeyboardInterrupt).
+    try:
+        global running
+        if not running:
+            running = 1
             loop(1.0)
-        except KeyboardInterrupt:
-            for app in self.hs.handlers:
-                apply(getattr(app, "stop", lambda :None), ())
-            print "Shut down."
+        running = 0
+    except KeyboardInterrupt:
+        #for app in self.hs.handlers:
+        #    apply(getattr(app, "stop", lambda :None), ())
+        print "Shut down."
         
         
 def become_nobody():

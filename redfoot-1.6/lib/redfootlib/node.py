@@ -193,13 +193,12 @@ class Proxy(ForwardProxy, ReverseProxy, asynchat.async_chat):
         
     def _run(self):
         """Run asyncore loop if not already running"""
-        return # TODO: Already have one running... need to figure out how we are going to deal with running asyncore's loop
     
-        if not Proxy.loop_thread or not Proxy.loop_thread.isAlive():
-            from threading import Thread
-            Proxy.loop_thread = Thread(target = asyncore.loop, args = (1.0,))
-            Proxy.loop_thread.setDaemon(1)
-            Proxy.loop_thread.start()
+        from redfootlib.server.medusaglue import _run
+        from threading import Thread
+        t = Thread(target = _run, args = ())
+        t.setDaemon(1)
+        t.start()
 
     def outward(self, host, port):
         asynchat.async_chat.__init__(self)
