@@ -74,6 +74,10 @@ class RedCmd(object, Cmd):
                 return None # error
         return (subject, property, value)
 
+    def emptyline(self):
+        # over ride not to repeat last command
+        pass
+
     def default(self, line):
         if line and line[0]!="#":
             super(RedCmd, self).default(line)
