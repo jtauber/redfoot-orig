@@ -78,6 +78,9 @@ class TripleStore:
 	return list
 
 # $Log$
+# Revision 1.16  2000/10/03 06:01:50  jtauber
+# moved MultiStore and StoreNode to rednode.py
+#
 # Revision 1.15  2000/10/01 16:42:44  eikeon
 # added a preCacheRemoteStores method that looks for and wholesale caches any RemoteStores if finds
 #
@@ -95,3 +98,4 @@ class TripleStore:
 #
 # Revision 1.10  2000/10/01 02:18:05  eikeon
 # MultiStore now has both visit and get methods; Added a StoreNode class; added Header and Log CVS keywords
+
