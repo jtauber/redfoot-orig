@@ -409,7 +409,7 @@
         subject = self.app.request.get_parameter("subject")
         if subject == "":
             raise "TODO: invalid subject"
-        self.rednode.remove(resource(subject), None, None)
+        self.rednode.remove_triples(resource(subject), None, None)
 
     def do_delete_property(self, request, response):
         property_num = self.app.request.get_parameter("del_num")

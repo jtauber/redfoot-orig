@@ -5,7 +5,8 @@
 
   from redfootlib.util import *
   from redfootlib.rdf.query.functors import *
-  from redfootlib.rdf.objects import resource, literal, Literal
+  from redfootlib.rdf.objects import resource, literal 
+  from rdflib.nodes import Literal
   from redfootlib.rdf.const import *
 
   <red:module name="Viewer">

@@ -119,7 +119,7 @@ class RedNode(Visit, NeighbourManager, AutoSave, TripleStore):
 
     def get_module(self, uri):
         from redfootlib.module_store import MODULE
-        value = self.neighbourhood.first_object(uri, MODULE)
+        value = self.neighbourhood.first_object(URIRef(uri), MODULE)
         if value:
             return self._exec_module(value)
         else:
