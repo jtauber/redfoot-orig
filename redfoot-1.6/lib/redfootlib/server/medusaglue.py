@@ -96,7 +96,7 @@ def _run():
         if not running:
             running = 1
             loop(1.0)
-        running = 0
+            running = 0            
     except KeyboardInterrupt:
         #for app in self.hs.handlers:
         #    apply(getattr(app, "stop", lambda :None), ())
