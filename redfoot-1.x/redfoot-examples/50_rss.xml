@@ -2,7 +2,7 @@
 
   <red:app name="RSSTest">
 
-    <red:sub-module instance="rss" class="RSS" from="redmodules.rss"/>
+    <red:sub-module instance="rss" class="RSS" from="example_modules.rss"/>
     <red:sub-module instance="neighbours" class="Neighbours" from="redmodules.neighbours"/>
 
     <red:facet name="/">
