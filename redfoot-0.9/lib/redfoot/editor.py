@@ -49,7 +49,7 @@ class Editor(Viewer):
         elif path_info == "/connect":
             self.connectPage()
         else:
-            request.setPathInfo(path_info)
+            request.setPathInfo(path_info) #TODO what is this for??
             Viewer.handle_request(self, request, response)
 
     def menuBar(self):
@@ -369,6 +369,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 7.2  2001/04/11 16:05:10  jtauber
+#~ seemed to miss a few storeNode->rednode
+#~
 #~ Revision 7.1  2001/04/09 17:25:02  eikeon
 #~ storeNode -> rednode
 #~
