@@ -118,8 +118,8 @@ class RedNode(StoreIO, QueryStore):
                 self.local.visit(resource, None, TYPE, klass)
 
 
-    def output(self, stream, URI=None, subject=None, predicate=None, object=None, absolute=0):
-        self.local.output(stream, URI, subject, predicate, object, absolute)
+    def output(self, stream, URI=None, subject=None, predicate=None, object=None):
+        self.local.output(stream, URI, subject, predicate, object)
 
     def getTypelessResources(self):
         return self.local.getTypelessResources()
@@ -129,6 +129,19 @@ class RedNode(StoreIO, QueryStore):
 #class Local(QueryStore, JournalingStoreIO):
 #    def __init__(self):
 #        JournalingStoreIO.__init__(self)
+
+#    def load(self, location, URI=None):
+#        self.location = location
+#        if URI==None:
+#            # default to location
+#            self.URI = self.location
+#        else:
+#            self.URI = URI
+
+#        from rdf.parser import parse_RDF
+#        parse_RDF(self.add, self.location, self.URI)
+#        self.journal.location = "%s-J.rdf" % self.location[:-4]
+        
 
 class Local(QueryStore, AutoSaveStoreIO):
     def __init__(self):

@@ -122,7 +122,7 @@ class TripleStore:
 
 from rdf.const import *
 
-from rdf.literal import literal
+from rdf.literal import literal, un_literal, is_literal
 import time
 
 ADD = literal("add")
@@ -130,12 +130,49 @@ DELETE = literal("delete")
 OPERATION = "http://redfoot.sourceforge.net/2001/01/30/#operation"
 TIMESTAMP = "http://redfoot.sourceforge.net/2001/01/30/#timestamp"
 
+#from rdf.query import QueryStore
+#class JournalingStore(TripleStore, QueryStore):
 class JournalingStore(TripleStore):
 
     def __init__(self, journal):
         TripleStore.__init__(self)
         self.journal = journal
         self.sn = 0
+
+    def chron(self, a, b):
+        date_a = self.journal.getFirst(a[0], TIMESTAMP, None)
+        if date_a!=None:
+            date_a = un_literal(date_a[2])
+        else:
+            date_a = ''
+
+        date_b = self.journal.getFirst(b[0], TIMESTAMP, None)
+        if date_b!=None:
+            date_b = un_literal(date_b[2])
+        else:
+            date_b = ''
+
+        return cmp(date_a, date_b)
+
+
+    def set_journal(self, journal):
+        self.journal = journal
+        statements = self.journal.get(None, TYPE, STATEMENT)
+        statements.sort(self.chron)
+        for statement in statements:
+            subject = statement[0]
+            print "s: %s -- ts: %s" % (subject, self.journal.getFirst(subject, TIMESTAMP, None)[2])
+            s = self.journal.getFirst(subject, SUBJECT, None)[2]
+            p = self.journal.getFirst(subject, PREDICATE, None)[2]
+            o = self.journal.getFirst(subject, OBJECT, None)[2]
+            operation = self.journal.getFirst(subject, OPERATION, None)
+            if operation!=None:
+                operation = operation[2]
+            if operation==ADD:
+                TripleStore.add(self, s, p, o)
+            elif operation==DELETE:
+                TripleStore.remove(self, s, p, o)
+
         
     def generateURI(self):
         self.sn = self.sn + 1
@@ -165,14 +202,23 @@ class JournalingStore(TripleStore):
 
         self.journal.add(statement_uri, TIMESTAMP, date_time_filename())        
 
-def date_time_filename(t=None):
+class SN:
+    def __init__(self):
+        self.sn = 0
+
+    def get_sn(self):
+        self.sn = self.sn + 1
+        return self.sn
+
+def date_time_filename(t=None, sn_generator=SN()):
     """."""
     import time
     if t==None:
         t = time.time()
 
     year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
-    s = "%0004d-%02d-%02dT%02d_%02d_%02dZ" % ( year, month, day, hh, mm, ss)        
+    sn = sn_generator.get_sn()
+    s = "%0004d-%02d-%02dT%02d_%02d_%02dZ.%0004d" % ( year, month, day, hh, mm, ss, sn)        
     return s
 
 #~ $Log$
