@@ -214,25 +214,29 @@ rootClasses()
     returns a list of those classes that aren't a subclass of anything
 
 resourcesByClassV(classProcessor,resourceProcessor)
-    TODO
+    for each class, calls classProcessor(uri) and then for each
+    instance of that class, calls resourceProcessor(uri)
 
 propertyValuesV(subject,propertyValueProcessor)
-    TODO
+    calls propertyValueProcessor(property,value) for each of the
+    property-value pairs the given subject has
 
 subClassV(type,classProcessor,instanceProcessor,currentDepth,recurse)
     TODO
 
 reifiedV(subject,statementProcessor)
-    TODO
+    calls processStatement(statement_uri,predicate,object) for every
+    reified statement made about the given subject
 
 reify(statement_uri,subject,predicate,object)
-    TODO
+    reified the given subject,predicate,object triple into a Statement
+    with the given uri and removes the original statement
 
 dereify(statement_uri)
-    TODO
+    turns the given Statement into a statement
 
 getPossibleValues(property)
-    TODO
+    returns a list of the possible values the given property can take
 
 CLASS STOREIO (storeio.py)
 
@@ -274,6 +278,9 @@ TODO
 
 
 $Log$
+Revision 1.2  2000/10/07 02:12:40  jtauber
+filled out a few more descriptions of classes and methods and fixed the odd typo
+
 Revision 1.1  2000/10/03 07:27:08  jtauber
 first go at Developer Manual
 
