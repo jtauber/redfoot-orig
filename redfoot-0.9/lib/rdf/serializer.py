@@ -9,6 +9,14 @@ namestart = ['A','B','C','D','E','F','G','H','I','J','K','L','M',
 
 namechars = namestart + ['0','1','2','3','4','5','6','7','8','9','-','.']
 
+def encode(s):
+    import string
+    s = string.join(string.split(s, '&'), '&amp;')
+    s = string.join(string.split(s, '<'), '&lt;')
+    s = string.join(string.split(s, '>'), '&gt;')
+    s = string.join(string.split(s, '"'), '&quot;')
+    return s
+
 def splitProperty(property):
     for i in range(len(property)):
         if not property[-1-i] in namechars:
@@ -63,21 +71,13 @@ class Serializer:
         if subject[0:len(self.baseURI)+1]==self.baseURI+"#":
             self.stream.write( " %s:ID=\"%s\">\n" % (self.namespaces[self.rdfns], subject[len(self.baseURI)+1:]) )
         else:
-            self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], subject) )
+            self.stream.write( " %s:about=\"%s\">\n" % (self.namespaces[self.rdfns], encode(subject)) )
 
     def subjectEnd(self):
         self.currentSubject = None
         self.stream.write( "  </%s:Description>\n" % self.namespaces[self.rdfns] )
 
     def property(self, predicate, object):
-        def encode(s):
-            import string
-            s = string.join(string.split(s, '&'), '&amp;')
-            s = string.join(string.split(s, '<'), '&lt;')
-            s = string.join(string.split(s, '>'), '&gt;')
-            s = string.join(string.split(s, '"'), '&quot;')
-            return s
-
         (namespace, localName) = splitProperty(predicate)
 
         # TODO: Is this what we want to do if object is None?
@@ -100,6 +100,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 5.1  2000/12/08 23:02:23  eikeon
+#~ encoding fixes
+#~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
 #~
