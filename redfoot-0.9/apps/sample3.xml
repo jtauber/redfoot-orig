@@ -2,13 +2,12 @@
 
 
 from redfoot.modules.base import Base
-
-<r:load-module class="Common" location="common.xml"/>
+from redfoot.modules.common import Common
 
 
 from rdf.const import *
 from rdf.literal import *
-from util import *
+from redfoot.util import *
 
 TASK = "http://redfoot.sourceforge.net/2001/04/#Task"
 
