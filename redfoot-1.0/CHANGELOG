@@ -1,3 +1,26 @@
+Not/yet/released
+	RELEASE 1.1.1
+
+	Session module no longer fails to create
+	redmodules.session-session.rdf
+	
+	Processors are now involked on all sub modules with a matching
+	processor.
+
+	Calling load with create set to true so that session file gets
+	created when it does not exist... currently it is failing in this
+	case.
+
+	RedDaemon now calls stop on the app when it is stopped. It used to
+	call save on the app's rednode, but an app may want to do other
+	things as well.
+
+	App now calls save on ParentModule which calls save on all sub
+	modules that have save
+
+	Session module now has save that saves the session store
+
+	
 2001/09/07
 	RELEASE 1.0.0
 
