@@ -81,7 +81,7 @@ class Editor(Viewer):
 
         if self.qstore.isKnownResource(subject):
             self.qstore.propertyValuesV(subject, self.editProperty)
-            self.qstore.neighbourhood.propertyValuesV(subject, self.displayPropertyValue)
+            self.qstore.neighbourhood.stores.propertyValuesV(subject, self.displayPropertyValue)
         
 	    self.qstore.reifiedV(subject, self.displayReifiedStatements)
 
@@ -99,6 +99,7 @@ class Editor(Viewer):
                         self.response.write("""
                         <OPTION value="%s">%s</OPTION>
                         """ % (domain[0], self.qstore.neighbourhood.label(domain[0])))
+
 
             def option(s, p, o, write=self.response.write, neighbourhood=self.qstore.neighbourhood):
                 write("""
@@ -147,14 +148,14 @@ class Editor(Viewer):
 
         def callback(s, p, o, self=self):
             self.response.write("%s<BR>" % self.qstore.neighbourhood.label(o))
-        self.qstore.visit(callback, property, self.qstore.RANGE, None)
+        self.qstore.neighbourhood.visit(callback, property, self.qstore.RANGE, None)
 
         self.response.write("""
                   </TD>
                   <TD COLSPAN="2">
         """)
         if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.neighbourhood.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL):
-            uitype = self.qstore.get(property, self.UITYPE, None)
+            uitype = self.qstore.neighbourhood.get(property, self.UITYPE, None)
             if len(uitype) > 0 and uitype[0][2]==self.TEXTAREA:
                 self.response.write("""
                 <TEXTAREA NAME="prop%s_value" ROWS="5" COLS="60">%s</TEXTAREA>
@@ -260,7 +261,7 @@ class Editor(Viewer):
             self.response.write("""
                   <SELECT SIZE="1" NAME="type">
             """)
-            for klass in self.qstore.get(None, self.qstore.TYPE, self.qstore.CLASS):
+            for klass in self.qstore.neighbourhood.get(None, self.qstore.TYPE, self.qstore.CLASS):
                 self.response.write("""
                     <OPTION VALUE="%s">%s</OPTION>
                 """ % (klass[0], self.qstore.neighbourhood.label(klass[0])))
@@ -274,10 +275,10 @@ class Editor(Viewer):
             """ % (type, self.link(type)))
 
             # TODO: make this a func... getProperties for subject?
-            for superType in self.qstore.transitiveSuperTypes(type):
-                for domain in self.qstore.get(None, self.qstore.DOMAIN, superType):
+            for superType in self.qstore.neighbourhood.transitiveSuperTypes(type):
+                for domain in self.qstore.neighbourhood.get(None, self.qstore.DOMAIN, superType):
                     property = domain[0]
-                    if len(self.qstore.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
+                    if len(self.qstore.neighbourhood.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
                         self.editProperty(property, "", 0)
             
         self.response.write("""
@@ -327,7 +328,7 @@ class Editor(Viewer):
         property = parameters['prop%s_name' % property_num]
         vName = "prop%s_value" % property_num
         value = parameters[vName]
-        if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
+        if self.qstore.neighbourhood.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
         self.qstore.remove(subject, property, value)
 
@@ -336,7 +337,7 @@ class Editor(Viewer):
         subject = parameters['uri']
         property = parameters['prop%s_name' % property_num]
         value = parameters['prop%s_value' % property_num]
-        if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
+        if self.qstore.neighbourhood.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
         self.qstore.reify(self.storeNode.URI+self.generateURI(), subject, property, value)
 
@@ -428,6 +429,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.6  2000/12/05 03:49:07  eikeon
+# changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
+#
 # Revision 4.5  2000/12/05 00:02:25  eikeon
 # fixing some of the local / neighbourhood stuff
 #

@@ -45,7 +45,7 @@ class TripleStoreIO(StoreIO, TripleStore):
         TripleStore.add(self, subject, predicate, object)
 
     def remove(self, subject=None, predicate=None, object=None):
-        TripleStore.remove(self, subject=None, predicate=None, object=None)
+        TripleStore.remove(self, subject, predicate, object)
         
         
 from threading import RLock
@@ -128,6 +128,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.13  2000/12/05 05:05:52  eikeon
+#~ Switched RedNode to use AutoSaveStoreIO and fixed up AutoSaveStoreIO to work with new class inheritance
+#~
 #~ Revision 4.12  2000/12/04 22:00:57  eikeon
 #~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #~

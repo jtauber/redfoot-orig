@@ -4,7 +4,7 @@ from rdf.store import TripleStore
 from rdf.query import QueryStore
 from rdf.storeio import AutoSaveStoreIO
 
-class RedNode(QueryStore, AutoSaveStoreIO, TripleStore):
+class RedNode(QueryStore, AutoSaveStoreIO):
     ""
 
     def __init__(self):
@@ -57,7 +57,7 @@ class RedNode(QueryStore, AutoSaveStoreIO, TripleStore):
 
 from rdf.literal import literal, un_literal, is_literal
 
-class Neighbourhood:
+class Neighbourhood(QueryStore):
     # could this also be a subclass instead of a wrapper?
     def __init__(self, rednode):
         self.rednode = rednode
@@ -66,9 +66,8 @@ class Neighbourhood:
     def addNeighbour(self, store):
         self.stores.addStore(store)
 
-    def visit(self, callback, subject=None, property=None, value=None):
-        self.rednode.visit(callback, subject, property, value);
-        self.stores.visit(callback, subject, property, value)
+    def add(self, subject, predicate, object):
+        raise "Can not write to Neighbourhood store!"
 
     def get(self, subject=None, property=None, value=None):
         class Visitor:
@@ -82,33 +81,14 @@ class Neighbourhood:
         self.visit(visitor.callback, subject, property, value);
         return visitor.list
 
-    def label(self, subject, default=None):
-        list = []
-        def callback(subject, property, value, list=list):
-            list.append((subject, property, value))
-            return 0 # tell the visitor to stop
-        
-        self.visit(callback, subject, QueryStore.LABEL, None)
+    def visit(self, callback, subject=None, property=None, value=None):
+        self.rednode.visit(callback, subject, property, value);
+        self.stores.visit(callback, subject, property, value)
 
-        if len(list) > 0:
-            return un_literal(list[0][2])     # TODO: currently only returns first label
-        else:
-            return subject
-
-    # TODO: move rednode specific queries to a rednode wrapper class
-
-    def resourcesByClassV(self, processClass, processResource):
-        from rdf.query import QueryStore
-        for klass in self.get(None, QueryStore.TYPE, QueryStore.CLASS):
-            first = 1
-            for resource in self.get(None, QueryStore.TYPE, klass[0]):
-                if first:
-                    processClass(klass[0])
-                    first = 0
-                processResource(resource[0])
+    def remove(self, subject=None, predicate=None, object=None):
+        raise "Can not remove from Neighbourhood store!"
 
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
-        from rdf.query import QueryStore
         processClass(type, currentDepth, recurse)
         for subclassStatement in self.get(None, QueryStore.SUBCLASSOF, type):
             if recurse:
@@ -118,42 +98,8 @@ class Neighbourhood:
         for instanceStatement in self.get(None, QueryStore.TYPE, type):
             processInstance(instanceStatement[0], currentDepth, recurse)
 
-    def propertyValuesV(self, subject, processPropertyValue):
-        def callbackAdaptor(s, p, o, processPropertyValue=processPropertyValue):
-            processPropertyValue(p, o)
-        self.stores.visit(callbackAdaptor, subject, None, None)
-        
-    def transitiveSuperTypes(self, type):
-        set = {}
-        set[type] = 1
-
-        for subclassStatement in self.get(type, QueryStore.SUBCLASSOF, None):
-            for item in self.transitiveSuperTypes(subclassStatement[2]):
-                set[item] = 1
-
-        return set.keys()
-
-    def transitiveSubTypes(self, type):
-        set = {}
-        set[type] = 1
-
-        for subclassStatement in self.get(None, QueryStore.SUBCLASSOF, type):
-            for item in self.transitiveSubTypes(subclassStatement[0]):
-                set[item] = 1
-
-        return set.keys()
-
-    # callback may be called more than once for the same possibleValue... user
-    # of this method will have to remove duplicates
-    def getPossibleValuesV(self, property, possibleValue):        
-        def rangeitem(s, p, o, self=self, possibleValue=possibleValue):
-            for type in self.transitiveSubTypes(o):
-                self.visit(possibleValue, None, QueryStore.TYPE, type)
-
-        self.visit(rangeitem, property, QueryStore.RANGE, None)
-
             
-class MultiStore:
+class MultiStore(QueryStore):
     ""
     
     def __init__(self):
@@ -185,6 +131,9 @@ class MultiStore:
         
 
 #~ $Log$
+#~ Revision 4.8  2000/12/05 05:05:52  eikeon
+#~ Switched RedNode to use AutoSaveStoreIO and fixed up AutoSaveStoreIO to work with new class inheritance
+#~
 #~ Revision 4.7  2000/12/05 03:49:07  eikeon
 #~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
 #~
