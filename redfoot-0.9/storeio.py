@@ -83,3 +83,6 @@ class StoreIO:
 
 
 # $Log$
+# Revision 1.11  2000/10/01 03:04:10  eikeon
+# added visit and get method so that StoreIOs can be treated as Stores; changed output to use self.URI if no URI is passed in; added Header and Log CVS keywords
+#

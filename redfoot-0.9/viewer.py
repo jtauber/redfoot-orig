@@ -297,3 +297,6 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.14  2000/10/01 03:07:23  eikeon
+# changed viewer to now take a StoreNode; RDF now only outputs the RDF for the StoreNode's store; added Header and Log CVS keywords
+#

@@ -139,6 +139,8 @@ class StoreNode:
         
 
 # $Log$
-# Revision 1.10  2000/10/01 02:18:05  eikeon
-# MultiStore now has both visit and get methods; Added a StoreNode class; Added CVS keywords $Id$ and $Log$
+# Revision 1.11  2000/10/01 02:23:06  eikeon
+# Changing Id to Header
 #
+# Revision 1.10  2000/10/01 02:18:05  eikeon
+# MultiStore now has both visit and get methods; Added a StoreNode class; added Header and Log CVS keywords

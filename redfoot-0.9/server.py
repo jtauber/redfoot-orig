@@ -143,6 +143,8 @@ if __name__ == '__main__':
 
 
 # $Log$
-# Revision 1.4  2000/10/01 02:25:09  eikeon
-# modified to use the new StoreNode class; added $Header$ and $Log$
+# Revision 1.5  2000/10/01 03:13:18  eikeon
+# storeNode now contains a storeIO as its store; a StoreNode now gets passed in to the Editor's constructor... as Viewers (hence an Editor) now take storeNodes
 #
+# Revision 1.4  2000/10/01 02:25:09  eikeon
+# modified to use the new StoreNode class; added Header and Log CVS keywords

@@ -164,3 +164,6 @@ class QueryStore:
 
 
 # $Log$
+# Revision 1.22  2000/10/01 02:12:01  eikeon
+# subClassV now uses a zero based depth (was one based); added Header and Log CVS keywords
+#
