@@ -4,7 +4,8 @@
   from string import split
   from redfoot.version import VERSION
 
-  from redfoot.rdf.objects import resource, literal
+  from redfoot.rdf.const import COMMENT
+  from redfoot.rdf.objects import resource, literal  
   from redfoot.rdf.query.builders import ListBuilder
   from redfoot.rdf.query.functors import o
 
@@ -261,29 +262,14 @@ A:hover {
       </h1>
       <red:exec>
         html = self.app.rednode.get_first_value(uri, HTML, None)
+        comment = self.app.rednode.get_first_value(uri, COMMENT, None)
       </red:exec>
 
-      <red:exec>
-        lb = ListBuilder()
-        self.app.rednode.visit(o(lb.accept), (uri, LINKS_TO, None))
-        links = lb.list
-        links.sort(self.alpha_by_label)
-        last = len(links) - 1
-      </red:exec>
-      <red:if test="len(links)>0">
-        <h2>Links</h2>
-        <p>
-          [
-      <red:for item="index" list="xrange(len(links))">
-        <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
-        <red:if test="index!=last">
-            |
-        </red:if>
-      </red:for>
-          ]
-        </p>  
-      </red:if>      
-      
+      <red:if test="comment">
+        <h2>Introduction</h2>
+        <p><red:eval encode="None">comment</red:eval></p>
+      </red:if>
+
       <red:if test="html">
         <red:eval encode="None">html</red:eval>
       </red:if>
@@ -308,7 +294,29 @@ A:hover {
         </dl>  
       </red:if>      
 
-      <red:exec>self.app.apply()</red:exec>      
+      <red:exec>self.app.apply()</red:exec>
+
+      <red:exec>
+        lb = ListBuilder()
+        self.app.rednode.visit(o(lb.accept), (uri, LINKS_TO, None))
+        links = lb.list
+        links.sort(self.alpha_by_label)
+        last = len(links) - 1
+      </red:exec>
+      <red:if test="len(links)>0">
+        <h2>Links</h2>
+        <p>
+          [
+      <red:for item="index" list="xrange(len(links))">
+        <a href="{links[index]}"><red:eval>self.app.rednode.label(links[index])</red:eval></a>
+        <red:if test="index!=last">
+            |
+        </red:if>
+      </red:for>
+          ]
+        </p>  
+      </red:if>      
+      
     </red:facet>    
     
     <red:facet name="/robots.txt" content_type="text/plain">
