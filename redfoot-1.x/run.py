@@ -7,13 +7,13 @@ import dev_hack # Needed only when developing redfoot-core
 
 #### IMPORTS
 
-from redfoot.rednode import RedNode
-from redfoot.server import RedServer
-from redfoot.server import get_apps as get_app_classes
-from redfoot.command_line import process_args
-from redfoot import redcode # Installs redcode imported
+from redfootlib.rednode import RedNode
+from redfootlib.server import RedServer
+from redfootlib.server import get_apps as get_app_classes
+from command_line import process_args
+from redfootlib import redcode # Installs redcode imported
 
-# Let redfoot.command_line process_args for us
+# Let redfootlib.command_line process_args for us
 (uri, location, address, port) =  process_args()
 
 # Create a RedNode
