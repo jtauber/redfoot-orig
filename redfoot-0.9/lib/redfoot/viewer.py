@@ -329,13 +329,13 @@ class Viewer:
         </TD></TR>""")
 
     def displayReifiedStatementPropertyValue(self, property, value):
-        if property==self.storeNode.TYPE:
+        if property==TYPE:
             return
-        if property==self.storeNode.SUBJECT:
+        if property==SUBJECT:
             return
-        if property==self.storeNode.PREDICATE:
+        if property==PREDICATE:
             return
-        if property==self.storeNode.OBJECT:
+        if property==OBJECT:
             return
         propertyDisplay = self.link(property)
         if len(value)<1:
@@ -440,6 +440,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.10  2000/12/08 07:02:43  eikeon
+#~ show triple now pays attention to showNeighbours
+#~
 #~ Revision 4.9  2000/12/07 17:54:04  eikeon
 #~ Viewer (and Editor, PeerEditor) no longer have both a qstore and a storeNode
 #~

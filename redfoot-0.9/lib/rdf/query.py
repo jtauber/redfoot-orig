@@ -49,7 +49,7 @@ class QueryStore:
     def getByType(self, type, predicate, object):
         statements = []
         def add(subject, predicate, object, statements=statements):
-            statements.extend((subject, predicate, object))
+            statements.append((subject, predicate, object))
         def subjects(s, p, o, predicate=predicate, object=object, add=add, store=self):
             store.visit(add, s, predicate, object)
         self.visit(subjects, None, TYPE, type)
@@ -218,6 +218,9 @@ class QueryStore:
             return None
             
 #~ $Log$
+#~ Revision 4.19  2000/12/08 07:46:01  jtauber
+#~ fixed bug in reification (part 1)
+#~
 #~ Revision 4.18  2000/12/08 07:25:52  jtauber
 #~ fixed bug in reification where add needed to be local.add
 #~
