@@ -48,12 +48,11 @@ class QueryStore:
         return statements
 
     def isKnownResource(self, resource):
-        # TODO: can be made more efficient if can access hash directly
-        if len(self.getProperties(resource)) > 0:
+        if self.getFirst(resource, None, None)!=None:
             return 1
         else:
             return 0
-
+        
     # TODO: should we have a version of this that answers for subclasses too?
     def isOfType(self, resource, type):
         for s in self.get(resource, TYPE, None):
@@ -200,6 +199,9 @@ class QueryStore:
 
 
 #~ $Log$
+#~ Revision 4.8  2000/12/05 23:40:32  eikeon
+#~ reimplemented getByType to use visit
+#~
 #~ Revision 4.7  2000/12/05 23:12:00  eikeon
 #~ factored out common getFirst functionality from label and comment
 #~
