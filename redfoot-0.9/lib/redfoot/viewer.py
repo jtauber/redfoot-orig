@@ -358,11 +358,7 @@ class Viewer:
             return string.join(string.split(s,'#'),'%23')
 
     def RDF(self, subject=None, predicate=None, object=None):
-        if subject==None and predicate==None and object==None:
-            # more efficient
-            self.storeNode.getStore().output(self.response)
-        else:
-            self.storeNode.getStore().output_query(subject, predicate, object, self.response)
+        self.storeNode.getStore().output(self.response, subject, predicate, object)
 
     def Triples(self, subject=None, predicate=None, object=None):
         self.response.write("""
@@ -437,6 +433,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.2  2000/11/23 02:34:07  jtauber
+#~ added a test of new UI for picking resources
+#~
 #~ Revision 4.1  2000/11/20 21:41:31  jtauber
 #~ download RDF and view Triples now can take subject,predicate,object parameters
 #~
