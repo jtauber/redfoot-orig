@@ -83,6 +83,11 @@ class ParentModule(Module):
             if hasattr(module, 'handle_request'):
                 module.handle_request(request, response)
 
+    def stop(self):
+        for module in self.modules:
+            if hasattr(module, 'stop'):
+                module.stop()
+
 
 class App(ParentModule):
 
@@ -114,4 +119,5 @@ class App(ParentModule):
 
     def stop(self):
         print "saving rednode"
-        self.rednode.local.save()        
+        self.rednode.local.save()
+        ParentModule.stop(self)
