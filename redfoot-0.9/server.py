@@ -33,29 +33,6 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     server_version = "RedfootHTTP/" + __version__
 
-    storeNode = StoreNode()
-
-    storeIO = StoreIO()
-    storeIO.setStore(TripleStore())
-    storeIO.load("tests/rdfSchema.rdf", "http://www.w3.org/2000/01/rdf-schema")
-
-    storeNode.connectTo(storeIO.getStore())
-        
-    storeIO = StoreIO()
-    storeIO.setStore(TripleStore())
-    storeIO.load("tests/rdfSyntax.rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns")
-
-    storeNode.connectTo(storeIO.getStore())
-
-    storeIO = StoreIO()
-    storeIO.setStore(TripleStore())
-    storeIO.load("tests/example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
-
-    storeNode.setStore(storeIO)
-
-    viewer = Editor(None, storeNode)
-
-
     def do_GET(self):
         """Serve a GET request."""
 
@@ -134,6 +111,19 @@ def runServer():
 
     httpd = BaseHTTPServer.HTTPServer(server_address, RedfootHTTPRequestHandler)
 
+    storeNode = StoreNode()
+
+    storeIO = StoreIO()
+    storeIO.setStore(TripleStore())
+    if sys.argv[3:]:
+        storeIO.load(sys.argv[2], sys.argv[3])
+    else:
+        storeIO.load("tests/example.rdf", "http://redfoot.sourceforge.net/2000/09/24")
+
+    storeNode.setStore(storeIO)
+
+    RedfootHTTPRequestHandler.viewer = Editor(None, storeNode)
+
     print "Serving HTTP on port", port, "...\n"
     httpd.serve_forever()
 
@@ -143,6 +133,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.6  2000/10/01 03:58:10  eikeon
+# fixed up all the places where I put CVS keywords as keywords in omments... duh
+#
 # Revision 1.5  2000/10/01 03:13:18  eikeon
 # storeNode now contains a storeIO as its store; a StoreNode now gets passed in to the Editor's constructor... as Viewers (hence an Editor) now take storeNodes
 #
