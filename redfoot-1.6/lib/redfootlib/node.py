@@ -9,30 +9,14 @@ from redfootlib.rdf.store.storeio import LoadSave
 from threading import RLock
 from threading import Condition
 
-class Dirty(object):
-    def __init__(self):
-        super(Dirty, self).__init__()
-        self.dirtyBit = DirtyBit()
-        
-    def remove(self, subject=None, predicate=None, object=None):
-        self.dirtyBit.set()
-        super(Dirty, self).remove(subject, predicate, object)
-
-    def add(self, subject, predicate, object):
-        self.dirtyBit.set()
-        super(Dirty, self).add(subject, predicate, object)
-
-    def load(self, location, uri=None, create=0):
-        super(Dirty, self).load(location, uri, create)
-        print "Done loading '%s'" % location
-        self.dirtyBit.clear() # we just loaded... therefore we are clean
-
-#     def visit(self, callback, (subject, predicate, object)):
-#         if self.dirtyBit.value()==1:
-#             self.dirtyBit.clear()            
-#             self.update()
-#         super(Dirty, self).visit(callback, (subject, predicate, object))
-            
+def _run():
+    """Run asyncore loop if not already running"""
+    
+    from redfootlib.server.medusaglue import _run
+    from threading import Thread
+    t = Thread(target = _run, args = ())
+    t.setDaemon(1)
+    t.start()
 
 class DirtyBit:
     def __init__(self):
@@ -70,7 +54,7 @@ CONTEXT = resource("http://redfoot.net/2002/05/CONTEXT")
 MEANING = resource("http://redfoot.net/2002/05/MEANING")
 TIMESTAMP = resource("http://redfoot.net/2002/05/TIMESTAMP")
 ADD = resource("http://redfoot.net/2002/05/ADD")
-
+REMOVE = resource("http://redfoot.net/2002/05/REMOVE")
 
 class NodeStore(TripleStore, object):
     def __init__(self, node):
@@ -83,10 +67,19 @@ class NodeStore(TripleStore, object):
         return super(NodeStore, self).visit(callback, (subject, predicate, object))
 
 
-class AbstractNode(Dirty, object):
+class AbstractNode(object):
     def __init__(self):
         super(AbstractNode, self).__init__()
         self.uri = "TODO"
+        self.dirtyBit = DirtyBit()
+        
+    def add(self, subject, predicate, object):
+        self.dirtyBit.set()
+        super(AbstractNode, self).add(subject, predicate, object)
+
+    def remove(self, subject=None, predicate=None, object=None):
+        self.dirtyBit.set()
+        super(AbstractNode, self).remove(subject, predicate, object)
 
     def _generate_id(self):
         return "%s/%s" % (self.uri, date_time())
@@ -96,6 +89,18 @@ class AbstractNode(Dirty, object):
         self.add(statement_id, CONTEXT, context_id)
         self.add(statement_id, MEANING, ADD)
         self.add(statement_id, TIMESTAMP, literal(date_time()))
+        self.add(statement_id, SUBJECT, subject)
+        self.add(statement_id, PREDICATE, predicate)
+        self.add(statement_id, OBJECT, object)
+
+    def retract_statement(self, context_id, subject, predicate, object):
+        statement_id = resource(self._generate_id())
+        self.add(statement_id, CONTEXT, context_id)
+        self.add(statement_id, MEANING, REMOVE)
+        self.add(statement_id, TIMESTAMP, literal(date_time()))
+        subject = subject or literal("ANY")
+        predicate = predicate or literal("ANY")
+        object = object or literal("ANY")        
         self.add(statement_id, SUBJECT, subject)
         self.add(statement_id, PREDICATE, predicate)
         self.add(statement_id, OBJECT, object)
@@ -117,7 +122,17 @@ class AbstractNode(Dirty, object):
                 predicate = self.get_first_value(s, PREDICATE)
                 object = self.get_first_value(s, OBJECT)
                 if subject and predicate and object:
-                    store.add(subject, predicate, object)
+                    meaning = self.get_first_value(s, MEANING, None)
+                    if meaning==ADD:
+                        store.add(subject, predicate, object)
+                    elif meaning==REMOVE:
+                        if subject==literal("ANY"):
+                            subject = None
+                        if predicate==literal("ANY"):
+                            predicate = None
+                        if object==literal("ANY"):
+                            object = None
+                        store.remove(subject, predicate, object)
             #callback = slice(callback, start, end)
             sort(chron, self.visit)(
                 remove_duplicates(callback, lambda args: args[0]),
@@ -186,34 +201,24 @@ class ReverseProxy(object):
 import asynchat, socket
 
 class Proxy(ForwardProxy, ReverseProxy, asynchat.async_chat):
-    loop_thread = None
     
     def __init__(self):
         super(Proxy, self).__init__()
         
-    def _run(self):
-        """Run asyncore loop if not already running"""
-    
-        from redfootlib.server.medusaglue import _run
-        from threading import Thread
-        t = Thread(target = _run, args = ())
-        t.setDaemon(1)
-        t.start()
-
     def outward(self, host, port):
         asynchat.async_chat.__init__(self)
         self.set_terminator("\r\n")        
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((host, port))
         self.set_reuse_addr()
-        self._run()        
+        _run()        
         print "connection to", host, port
 
     def inward(self, (conn, addr)):
         self.set_terminator("\r\n")
         asynchat.async_chat.__init__(self, conn)
         self.set_reuse_addr()
-        self._run()        
+        _run()        
         print "connection from", addr
 
 
@@ -253,11 +258,13 @@ class Node(Neighbours, AbstractNode, SchemaQuery, LoadSave, TripleStore,
         self.set_reuse_addr()
         self.bind(addr)
         self.listen(5)
+        _run()
 
     def handle_accept(self):
         proxy = ProxyNode()
         proxy.reverse = self        
         proxy.inward(self.accept())        
         self.add_neighbour(proxy)
+
 
 
