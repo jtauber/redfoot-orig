@@ -92,9 +92,8 @@ VIA = resource(SESSION_URI+"via")
     def __getattr__(self, name):
         if name=='sessions':
             from redfoot.rednode import RedNode
-            sessions = RedNode()
-
             uri = self.app.rednode.uri + "session/"
+            sessions = RedNode(uri)
             rdf = "%s-session.rdf" % self.app.__module__
             sessions.local.load(rdf, uri, 1)
 
