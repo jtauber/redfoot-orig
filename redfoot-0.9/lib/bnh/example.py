@@ -21,11 +21,7 @@ class ExampleHandler:
         headers = request.getHeaders()
         cookies = request.getCookies()
 
-        session = request.getSession()
-        if not hasattr(session, 'count'):
-            session.count = 0
-        else:
-            session.count = session.count + 1
+        session_uri = request.get_session_uri()
 
         self.lock.acquire()
         try:
@@ -40,8 +36,7 @@ class ExampleHandler:
 
             response.write("<H2>Session: </H2>")
             response.write("<DL>")
-            response.write("<DT>session object</DT><DD>%s</DD>" % session)
-            response.write("<DT>session count</DT><DD>%s</DD>" % session.count)
+            response.write("<DT>session uri</DT><DD>%s</DD>" % session_uri)
             response.write("</DL>")            
                 
             response.write("<H2>Parameters:</H2>")
@@ -99,6 +94,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.1  2001/03/26 20:19:00  eikeon
 #~ removed old header
 #~

@@ -6,12 +6,11 @@ import string
 
 class ServerConnection:
 
-    def __init__(self, handler, context):
+    def __init__(self, handler):
         self.request = Request(self)
         self.response = Response(self)
         self.handler = handler
-        self.context = context
-        
+
     def handle_request(self, server, client_socket):
         try:
             try:
@@ -145,22 +144,6 @@ class Request:
             session_uri = None
         return session_uri
 
-    def getSession(self):
-        context = self.connection.context
-        cookies = self.getCookies()
-        if cookies.has_key('EBNH_session'):
-            session_key = cookies['EBNH_session'].value
-            session = context.get_session(session_key)
-            if session!=None:
-                session._setLastAccessedTime(time.time())
-                return session
-                                
-        new_session = self.connection.context.create_session()
-        # TODO: find better way to do this
-        self.connection.response._new_session_ID = new_session.getId()
-
-        return new_session
-
     def close(self):
         try:
             self._rfile.close()
@@ -270,6 +253,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 7.1  2001/04/03 03:15:43  eikeon
+#~ added get_session_uri method
+#~
 #~ Revision 7.0  2001/03/26 23:41:04  eikeon
 #~ NEW RELEASE
 #~

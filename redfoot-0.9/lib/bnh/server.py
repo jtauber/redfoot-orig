@@ -7,13 +7,11 @@ __version__ = "$Revision$"
 
 from bnh.receiver import Receiver
 from bnh.connection_cubby import ConnectionCubby
-from bnh.server_context import ServerContext
 
 from bnh.servlet import ServerConnection
 
 class Server:
     def __init__(self, serverAddress):
-        self.context = ServerContext()
         self.connection_cubby = ConnectionCubby(5)
 
         # Listen for requests and queue up the connections in the ConnectionCubby
@@ -24,7 +22,7 @@ class Server:
         self.handler = handler
 
     def start(self):
-        server_connection = ServerConnection(self.handler, self.context)
+        server_connection = ServerConnection(self.handler)
         import threading
         t = threading.Thread(target = self._handle_request, args = (server_connection,))
         self.thread = t
@@ -47,6 +45,9 @@ class Server:
                 connection_cubby.wait() 
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.1  2001/03/26 20:19:01  eikeon
 #~ removed old header
 #~
