@@ -8,5 +8,6 @@ prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 load links.rdf "http://redfoot.net://2002/04/21/"
 
+server :8080
 add_app link_app.LinkApp
 

@@ -1,2 +1,3 @@
 redcode on
+server :9090 
 add_app static.StaticApp
