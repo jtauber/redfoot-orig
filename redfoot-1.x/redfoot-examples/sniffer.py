@@ -55,9 +55,12 @@ class Sniffer(object):
     def __unmark(self, subject):
         self.remove(resource(subject), RUN, None)
         
+    def mark(self, subject=None):
+        self.visit(s(self.__mark), (None, TYPE, SNIFFABLE))        
+
     def __timer(self):
         while 1:
-            self.visit(s(self.__mark), (None, TYPE, SNIFFABLE))
+            self.mark(None)
             sleep(60*30)            
 
 
