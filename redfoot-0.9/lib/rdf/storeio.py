@@ -48,7 +48,7 @@ class StoreIO:
         self.visit(lambda s, p, o, serializer=serializer: serializer.registerProperty(p), subject, predicate, object)
 
         serializer.start()
-        self.visit(serializer.triple, None, None, None)
+        self.visit(serializer.triple, subject, predicate, object)
         serializer.end()
 
 
@@ -134,6 +134,9 @@ class Dirty:
 
 
 #~ $Log$
+#~ Revision 4.10  2000/12/04 02:36:29  jtauber
+#~ cleaned up code
+#~
 #~ Revision 4.9  2000/12/04 02:28:32  jtauber
 #~ serializer now keeps track of subject start/end state; query store no longer needed for output
 #~
