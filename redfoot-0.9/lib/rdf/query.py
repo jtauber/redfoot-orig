@@ -1,13 +1,10 @@
 # $Header$
 from rdf.literal import literal, un_literal, is_literal
-
 from rdf.const import *
 
-
 class QueryStore:
+    # TODO: method to return all labels
 
-     # TODO: method to return all labels
-     
     def comment(self, subject, default=None):
         statement = self.getFirst(subject, COMMENT, None)
         if statement!=None:
@@ -16,15 +13,6 @@ class QueryStore:
             return default
         else:
             return self.label(subject)
-
-    def getByType(self, type, predicate, object):
-        statements = []
-        def add(subject, predicate, object, statements=statements):
-            statements.append((subject, predicate, object))
-        def subjects(s, p, o, predicate=predicate, object=object, add=add, store=self):
-            store.visit(add, s, predicate, object)
-        self.visit(subjects, None, TYPE, type)
-        return statements
 
     def isKnownResource(self, resource):
         if self.getFirst(resource, None, None)!=None:
@@ -40,48 +28,25 @@ class QueryStore:
         else:
             return 0
 
-    def getSubjects(self):
-        result = {}
-        def subject(s, p, o, result=result):
-            result[s] = 1
-        self.visit(subject, None, None, None)
-        return result.keys()
-
-    def getProperties(self, subject=None):
-        result = {}
-        def property(s, p, o, result=result):
-            result[p] = 1
-        self.visit(property, subject, None, None)
-        return result.keys()
-
-    def getValues(self, subject=None, property=None):
-        result = {}
-        def object(s, p, o, result=result):
-            result[o] = 1
-        self.visit(object, subject, property, None)
-        return result.keys()
-
     def transitiveSuperTypes(self, type):
-        set = {}
-        set[type] = 1
+        objectSetBuilder = ObjectSetBuilder()
+        objectSetBuilder.set[type] = 1
+        query = Query(self.query, (objectSetBuilder,), lambda s, p, o: (o, SUBCLASSOF, None))
+        self.superTypeV(query, type)
+        return objectSetBuilder.set.keys()
 
-        def callback(s, p, o, set=set, self=self):
-            for item in self.transitiveSuperTypes(o):
-                set[item] = 1
-        self.visit(callback, type, SUBCLASSOF, None)
-
-        return set.keys()
+    def superTypeV(self, visitor, type):
+        self.query(visitor, type, SUBCLASSOF, None)
 
     def transitiveSubTypes(self, type):
-        set = {}
-        set[type] = 1
+        subjectSetBuilder = SubjectSetBuilder()
+        subjectSetBuilder.set[type] = 1
+        query = Query(self.query, (subjectSetBuilder,), lambda s, p, o: (None, SUBCLASSOF, s))
+        self.subTypeV(query, type)
+        return subjectSetBuilder.set.keys()
 
-        def callback(s, p, o, set=set, self=self):
-            for item in self.transitiveSubTypes(s):
-                set[item] = 1
-        self.visit(callback, None, SUBCLASSOF, type)
-
-        return set.keys()
+    def subTypeV(self, visitor, type):
+        self.query(visitor, None, SUBCLASSOF, type)
 
     def rootClasses(self):
         """returns those classes that aren't a subclass of anything"""
@@ -110,16 +75,19 @@ class QueryStore:
 
     # visitor pattern
     def resourcesByClassV(self, processClass, processResource):
-        def klass(s, p, o, processClass=processClass, processResource=processResource, self=self):
-            if self.getFirst(None, TYPE, s)!=None:
-                processClass(s)
-            def resource(s, p, o, processClass=processClass,\
-                         processResource=processResource, self=self):
-                processResource(s)
-            self.visit(resource, None, TYPE, s)
-        self.visit(klass, None, TYPE, CLASS)
-                
+        processResourceV = Query(processResource, (), lambda s, p, o: (s,))
+        queryV = Query(self.query, (processResourceV,), lambda s, p, o: (None, TYPE, s))
 
+        processClassV = Query(processClass, (), lambda s, p, o: (s,))
+
+        first = Query(self.query, (If(First(), processClassV),),\
+                      lambda s, p, o: (None, TYPE,  s))
+
+        #classVisitor = And(first, queryV)
+        classVisitor = And(processClassV, queryV)
+
+        self.query(classVisitor, None, TYPE, CLASS)
+        
     def parentTypesV(self, type, processType):
         self.visit(lambda s, p, o, processType=processType: processType(o),\
                    type, SUBCLASSOF, None)
@@ -131,19 +99,16 @@ class QueryStore:
 
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
-        def subclass(s, p, o, self=self, currentDepth=currentDepth, recurse=recurse,\
-                     processClass=processClass, processInstance=processInstance):
-            if recurse:
-                self.subClassV(s, processClass, processInstance, currentDepth+1)
-            else:
-                processClass(s, currentDepth+1, recurse)
-        # show classes in neighbourhood as well
-        self.visit(subclass, None, SUBCLASSOF, type)
-        def instance(s, p, o, processInstance=processInstance, \
-                     currentDepth=currentDepth, recurse=recurse):
-            processInstance(s, currentDepth, recurse)
-        # only show local instances
-        self.visit(instance, None, TYPE, type)
+
+        if recurse:
+            query = Query(self.subClassV, (), lambda s, p, o: (s,), (processClass, processInstance, currentDepth+1))
+        else:
+            query = Query(processClass, (), lambda s, p, o: (s,), (currentDepth+1, 0))
+        self.query(query, None, SUBCLASSOF, type)
+        
+        instanceQuery = Query(processInstance, (), lambda s, p, o: (s,), (currentDepth, recurse))
+        self.query(instanceQuery, None, TYPE, type)
+
 
     # REIFICATION STUFF
 
@@ -183,7 +148,10 @@ class QueryStore:
             for type in qstore.transitiveSubTypes(o):
                 qstore.visit(possibleValue, None, TYPE, type)
 
-        self.visit(rangeitem, property, RANGE, None)
+        query = Query(rangeitem, (), lambda s, p, o: (s, p, o), (self, self, possibleValue))
+
+        self.query(query, property, RANGE, None)
+        #self.visit(rangeitem, property, RANGE, None)
         
     def getPossibleProperties(self, type, possibleProperty):
         for superType in self.transitiveSuperTypes(type):
@@ -217,6 +185,12 @@ class QueryStore:
         self.query(listBuilder, subject, predicate, object)
 	return listBuilder.list
 
+    def getByType(self, type, predicate, object):
+        listBuilder = ListBuilder()
+        query = Query(self.query, (listBuilder,), lambda s, p, o: (s,), (predicate, object))
+        self.query(query, None, TYPE, type)
+        return listBuilder.list
+
     def label(self, subject, default=None):
         statement = Statement()
         self.query(First(statement), subject, LABEL, None)
@@ -237,11 +211,12 @@ class QueryStore:
             return None
 
 class First:
-    def __init__(self, visitor):
+    def __init__(self, visitor=None):
         self.visitor = visitor
     
     def visit(self, s, p, o):
-        self.visitor.visit(s, p, o)
+        if self.visitor:
+            return self.visitor.visit(s, p, o)
         return 1 # tell visitor to stop
 
     def flush(self):
@@ -274,7 +249,91 @@ class ListBuilder:
         pass
 
 
+class SubjectSetBuilder:
+    def __init__(self):
+        self.set = {}
+
+    def visit(self, s, p, o):
+        print s
+        self.set[s] = 1
+
+    def flush(self):
+        pass
+
+class ObjectSetBuilder:
+    def __init__(self):
+        self.set = {}
+
+    def visit(self, s, p, o):
+        self.set[o] = 1
+
+    def flush(self):
+        pass
+
+class Query:
+    def __init__(self, query, pre, adapter, post=()):
+        self.query = query
+        self.adapter = adapter
+        self.pre = pre
+        self.post = post
+
+    def visit(self, s, p, o):
+        return apply(self.query, self.pre + self.adapter(s, p, o) + self.post)
+
+    def flush(self):
+        if hasattr(self.query, 'flush'):
+            self.query.flush()
+
+class And:
+    def __init__(self, first, second): 
+        self.first = first 
+        self.second = second 
+
+    def visit(self, s, p, o):
+        self.first.visit(s, p, o)
+        self.second.visit(s, p, o)
+
+    def flush(self):
+        pass
+
+class If:
+    def __init__(self, first, second): 
+        self.first = first 
+        self.second = second 
+
+    def visit(self, s, p, o):
+        if self.first.visit(s, p, o)==None:
+            return self.second.visit(s, p, o)
+        else:
+            return 1 # stop
+
+    def flush(self):
+        pass
+
+class Alpha:
+    def __init__(self, query, pre, adapter, post, label):
+        self.query = query
+        self.adapter = adapter
+        self.pre = pre
+        self.post = post
+        self.statements = {}
+        self.label = label
+
+    def visit(self, s, p, o):
+        label = self.label(s, '')
+        self.statements[label+s] = (s, p, o)
+
+    def flush(self):
+        keys = self.statements.keys()
+        keys.sort()
+        for k in keys:
+            s, p, o = self.statements[k]
+            apply(self.query, self.pre + self.adapter(s, p, o) + self.post)
+
 #~ $Log$
+#~ Revision 5.7  2000/12/10 07:44:59  eikeon
+#~ refactored label to use new query method; still have a few thoughts before we go nuts and convert everything over
+#~
 #~ Revision 5.6  2000/12/10 06:54:39  eikeon
 #~ refactored getFirst to use new query method
 #~
@@ -295,66 +354,3 @@ class ListBuilder:
 #~
 #~ Revision 5.0  2000/12/08 08:34:52  eikeon
 #~ new release
-#~
-#~ Revision 4.20  2000/12/08 08:08:52  eikeon
-#~ fixed getByType; fixed references to constants
-#~
-#~ Revision 4.19  2000/12/08 07:46:01  jtauber
-#~ fixed bug in reification (part 1)
-#~
-#~ Revision 4.18  2000/12/08 07:25:52  jtauber
-#~ fixed bug in reification where add needed to be local.add
-#~
-#~ Revision 4.17  2000/12/07 19:57:03  eikeon
-#~ changed getTypes to visitTypes and made argument order etc more consistent with others
-#~
-#~ Revision 4.16  2000/12/06 21:45:13  eikeon
-#~ refactored gets to visits in subClassV and resourcesByClassV
-#~
-#~ Revision 4.15  2000/12/06 21:22:40  eikeon
-#~ added getRange function
-#~
-#~ Revision 4.14  2000/12/06 20:49:38  eikeon
-#~ decomposed getPossibleProperties into two methods... one that takes a subject and the other that takes a type... also added a getTypes method
-#~
-#~ Revision 4.13  2000/12/06 20:10:04  eikeon
-#~ added getPossibleProperties method
-#~
-#~ Revision 4.12  2000/12/06 19:42:39  eikeon
-#~ moved get method to query as it can be layered on top of a TripleStore like all the other queries; reimplemented transitive{Super,Sub}Types to use visit
-#~
-#~ Revision 4.11  2000/12/06 06:00:02  eikeon
-#~ minor fix to unused methods
-#~
-#~ Revision 4.10  2000/12/06 05:51:05  eikeon
-#~ refactored some more gets to visits
-#~
-#~ Revision 4.9  2000/12/06 01:35:59  eikeon
-#~ reimplemented isKnownResource
-#~
-#~ Revision 4.8  2000/12/05 23:40:32  eikeon
-#~ reimplemented getByType to use visit
-#~
-#~ Revision 4.7  2000/12/05 23:12:00  eikeon
-#~ factored out common getFirst functionality from label and comment
-#~
-#~ Revision 4.6  2000/12/05 22:09:36  jtauber
-#~ moved constants to new file
-#~
-#~ Revision 4.5  2000/12/05 03:49:07  eikeon
-#~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
-#~
-#~ Revision 4.4  2000/12/05 00:02:25  eikeon
-#~ fixing some of the local / neighbourhood stuff
-#~
-#~ Revision 4.3  2000/12/04 22:00:57  eikeon
-#~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
-#~
-#~ Revision 4.2  2000/11/27 19:39:08  eikeon
-#~ editor now alphabetically sort possible values for properties
-#~
-#~ Revision 4.1  2000/11/21 17:34:31  jtauber
-#~ reify no longer removes original triple
-#~
-#~ Revision 4.0  2000/11/06 15:57:33  eikeon
-#~ VERSION 4.0
