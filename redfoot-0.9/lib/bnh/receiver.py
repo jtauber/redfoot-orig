@@ -17,12 +17,29 @@ class Receiver:
         self.server_address = server_address
         self.handlerCubby = HandlerCubby(5)
 
-    def _acceptRequests(self):
+    def _getSocket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
-        self.socket.bind(self.server_address)
+        while 1:
+            try:
+                sys.stderr.write("Attempting to bind to socket")
+                sys.stderr.flush()
+                self.socket.bind(self.server_address)
+                break
+            except:
+                sys.stderr.write(".")
+                sys.stderr.flush()
+                import time
+                time.sleep(1)
+                continue
+        sys.stderr.write("\nSuccessfully bound to socket\n")
+        sys.stderr.flush()
         self.socket.listen(5)
-        serverSocket = self.socket
+        return self.socket
+        
+
+    def _acceptRequests(self):
+        serverSocket = self._getSocket()
         handlerCubby = self.handlerCubby
         while 1:
             try:
@@ -96,6 +113,9 @@ class HandlerCubby:
     
 
 #~ $Log$
+#~ Revision 5.2  2000/12/13 00:03:37  eikeon
+#~ server now shuts down cleanly
+#~
 #~ Revision 5.1  2000/12/12 22:20:50  eikeon
 #~ added shutdown code... to shutdown cleanly
 #~
