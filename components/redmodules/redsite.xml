@@ -8,6 +8,8 @@
   from redfoot.rdf.objects import resource, literal  
   from redfoot.rdf.query.builders import ListBuilder
   from redfoot.rdf.query.functors import o
+  from redfoot.rdf.query.functors import filter
+  
 
   from redfoot.module import ParentModule
 
@@ -24,6 +26,14 @@
   LIST_LINK = resource('http://redfoot.sourceforge.net/2001/09/site/list_link')
 
   PROCESSOR = resource('http://redfoot.sourceforge.net/2001/10/18/processor')
+
+  SITE_PAGE = resource('http://redfoot.info/2001/10/22/site_page')
+  VISIBLE_TO = resource('http://redfoot.info/2001/10/22/visible_to')  
+  ANONYMOUS = resource('http://redfoot.info/2001/10/22/anonymous')
+  IS_MEMBER_OF = resource('http://redfoot.info/2001/10/22/is_member_of')
+  GROUP = resource('http://redfoot.info/2001/10/22/Group')
+  SUB_GROUP_OF = resource('http://redfoot.info/2001/10/22/sub_group_of')
+  SUPER_USER = resource('http://redfoot.info/2001/10/22/super_user')
 
   <red:module name="RedSite">
 
@@ -78,7 +88,20 @@
         label_a = self.app.rednode.label(s1)
         label_b = self.app.rednode.label(s2)
         return cmp(str(label_a), str(label_b))
-        
+
+    def visible(self, uri):
+        identity = self.authentication.get_identity() or ANONYMOUS
+        def is_member_of(group, self=self, identity=identity):
+            if self.app.rednode.exists(identity, IS_MEMBER_OF, group):
+                return 1
+                
+        if self.app.rednode.visit(o(is_member_of), (uri, VISIBLE_TO, None))==1:
+            return 1
+        else:
+            if is_member_of(SUPER_USER):
+                return 1
+            else:
+                return 0
 
     <red:facet name="/" args="uri=None">
       <red:exec>
@@ -296,13 +319,15 @@ A:hover {
       uri = uri or resource(self.app.request.get_parameter('uri', None))
       uri = uri or resource(self.app.rednode.uri+self.app.request.get_path_info()[1:])
     </red:exec>
-      <h1>
-        <red:eval>self.app.rednode.label(uri, '-')</red:eval>
-      </h1>
-      <red:exec>
-        html = self.app.rednode.get_first_value(uri, HTML, None)
-        comment = self.app.rednode.get_first_value(uri, COMMENT, None)
-      </red:exec>
+
+      <red:if test="self.visible(uri)">
+        <h1>
+          <red:eval>self.app.rednode.label(uri, '-')</red:eval>
+        </h1>
+        <red:exec>
+          html = self.app.rednode.get_first_value(uri, HTML, None)
+          comment = self.app.rednode.get_first_value(uri, COMMENT, None)
+        </red:exec>
 
       <red:if test="comment">
         <h2>Introduction</h2>
@@ -315,7 +340,7 @@ A:hover {
 
       <red:exec>
         lb = ListBuilder()
-        self.app.rednode.visit(o(lb.accept), (uri, LIST_LINK, None))
+        self.app.rednode.visit(o(filter(lb.accept, self.visible)), (uri, LIST_LINK, None))
         links = lb.list
         links.sort(self.alpha_by_label)        
         last = len(links) - 1
@@ -338,7 +363,7 @@ A:hover {
 
       <red:exec>
         lb = ListBuilder()
-        self.app.rednode.visit(o(lb.accept), (uri, LINKS_TO, None))
+        self.app.rednode.visit(o(filter(lb.accept, self.visible)), (uri, LINKS_TO, None))        
         links = lb.list
         links.sort(self.alpha_by_label)
         last = len(links) - 1
@@ -355,7 +380,14 @@ A:hover {
       </red:for>
           ]
         </p>  
-      </red:if>      
+      </red:if>
+
+        <red:else>
+          <h1>&#160;</h1>
+          <red:exec>self.app.apply()</red:exec>          
+        </red:else>        
+      </red:if>  
+      
       
     </red:facet>    
     
