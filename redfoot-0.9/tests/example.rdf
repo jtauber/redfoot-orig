@@ -10,6 +10,10 @@
     <rdf:type rdf:resource="#Person"></rdf:type>
     <rdfs:label>James Tauber</rdfs:label>
   </rdf:Description>
+  <rdf:Description rdf:ID="eikeon">
+    <rdf:type rdf:resource="#Person"></rdf:type>
+    <rdfs:label>Daniel Krech</rdfs:label>
+  </rdf:Description>
   <rdf:Description rdf:ID="MyCar">
     <rdf:type rdf:resource="#Car"></rdf:type>
     <rdfs:label>My Car</rdfs:label>
