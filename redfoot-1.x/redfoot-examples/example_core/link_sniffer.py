@@ -1,7 +1,4 @@
 import sys
-sys.path.extend(("../../redfoot-core", "../../redfoot-components"))
-
-
 from time import sleep
 from urlparse import urlparse, urlunparse, urljoin
 
@@ -12,10 +9,11 @@ from redfoot.rdf.store.urigen import generate_uri as get_timestamp
 from redfoot.rdf.objects import resource, literal
 from redfoot.rdf.const import TYPE, LABEL, COMMENT
 
-SNIFFED = resource("http://eikeon.com/2002/03/27/sniffed-1")
-SNIFFABLE = resource("http://redfoot.net/04/17/sniffable")
-SNIFFED_ON = resource("http://redfoot.net/2002/04/17/sniffer/sniffed_on")
-SNIFFED_FROM = resource("http://redfoot.net/2002/04/17/sniffer/sniffed_from")
+SNIFFED = resource("http://redfoot.net/2002/04/17/sniff/ed")
+SNIFFABLE = resource("http://redfoot.net/2002/04/17/sniff/able")
+SNIFFED_ON = resource("http://redfoot.net/2002/04/17/sniff/date")
+SNIFFED_FROM = resource("http://redfoot.net/2002/04/17/sniff/source")
+RUN = resource("http://redfoot.net/2002/04/17/sniff/run")
 
 from htmllib import HTMLParser
 import formatter
@@ -81,28 +79,35 @@ class Sniffer(object):
                 
     def run(self):
         import threading
-        t = threading.Thread(target = self.__run, args = ())
+        t = threading.Thread(target = self.__sniff, args = ())
+        t.setDaemon(1)
+        t.start()
+        import threading
+        t = threading.Thread(target = self.__timer, args = ())
         t.setDaemon(1)
         t.start()
         
 
-    def __run(self):
+    def __sniff(self):
         while 1:
-            # TODO: change to keep running once every n hours
-            print "Sniffing for new links..."
-            sys.stdout.flush()            
-            self.visit(s(self.sniff), (None, TYPE, SNIFFABLE))
-            print "Done sniffing for new links"
-            sys.stdout.flush()
-            # TODO: check that store has a save
-            print "Saving..."
-            sys.stdout.flush()
-            self.save()
-            print "Done saving"
-            sys.stdout.flush()            
+            self.visit_by_type(s(self.sniff), SNIFFABLE, RUN, literal("1"))
+            sleep(5)
+
+    def __mark(self, subject):
+        self.add(subject, RUN, literal("1"))
+
+    def __mark(self, subject):
+        self.remove(subject, RUN, None)
+        
+    def __timer(self):
+        while 1:
             sleep(60*15)
+            self.visit(s(self.mark), (None, TYPE, SNIFFABLE))
+
 
     def sniff(self, url):
+        print "sniffing '%s'" % url
+        sys.stdout.flush()
         from urllib import urlopen, quote
 
         f = urlopen(url)
@@ -112,6 +117,12 @@ class Sniffer(object):
         self.parser.uri_base = "%s://%s" % (scheme, netloc)
         self.parser.feed(f.read())
         self.parser.close()
+        self.__unmark(self, resource(url))
+        print "Saving..."
+        sys.stdout.flush()
+        self.save()
+        print "Done saving"
+        
 
     def ignore(self, href):
         scheme, netloc, url, params, query, fragment = urlparse(href)
@@ -125,128 +136,3 @@ class Sniffer(object):
         return 0-cmp(str(date_a), str(date_b))
 
         
-#from redfoot.rednode import RedNode
-from redfoot.rdf.query.schema import SchemaQuery
-from redfoot.rdf.store.triple import TripleStore
-from redfoot.rdf.store.autosave import AutoSave
-from redfoot.rdf.store.storeio import LoadSave
-
-
-class SnifferNode(Sniffer, SchemaQuery, LoadSave, TripleStore):
-    ""
-
-    def print_link(self, s, p, o):
-        label = self.label(s)
-        sniffed_on = self.get_first_value(s, SNIFFED_ON, '??')
-        sniffed_from = self.get_first_value(s, SNIFFED_FROM, '??')        
-        print """\
-%s:
-  URI: %s
-  SNIFFED_ON: %s
-  SNIFFED_FROM: %s  
-""" % (label, s, sniffed_on, sniffed_from)
-
-
-
-
-sniffer = SnifferNode()
-sniffer.load("link_sniffer.rdf", "http://eikeon.com", 1)
-
-from redfoot.rdf.query.functors import sort
-
-#sniffer.add(resource("http://rdfig.xmlhack.com/index.html"), TYPE, SNIFFABLE)
-#sites = [] # ["http://freshmeat.net/"]
-#for site in sites:
-#    sniffer.add(resource(site), TYPE, SNIFFABLE)    
-#sort(sniffer.reverse_chron, sniffer.visit)(slice(sniffer.print_link, 0, 30), (None, TYPE, SNIFFED))
-
-sniffer.run()
-
-
-
-####
-from redfoot.server.module import App
-
-class LinkApp(App):
-
-    def display_link(self, request, response, s, p, o):
-        rednode = self.rednode
-        label = rednode.label(s)
-        sniffed_on = rednode.get_first_value(s, SNIFFED_ON, '??')
-        sniffed_from = rednode.get_first_value(s, SNIFFED_FROM, None)
-        if sniffed_from:
-            sniffed_from = rednode.label(sniffed_from)
-        else:
-            sniffed_from = "unknown"
-
-        response.write("""\
-    <p>
-      <div><a href="%s">%s</a></div>
-      <div class="small">%s</div>
-      <div class="small">
-        <span class="label">from:</span>&nbsp;%s <span class="label">on:</span>&nbsp;%s
-      </div>      
-    </p>""" % (s, label, s, sniffed_from, sniffed_on))
-    
-    def handle_request(self, request, response):
-        start = int(request.get_parameter("start", "0"))
-        end = int(request.get_parameter("end", "30"))
-        sniffer = self.rednode
-        response.write("""\
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-     "DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <title>Link Sniffer</title>
-    <style>
-      body { 
-        margin: 2% 4%; 
-        background:  #FFF;
-        color:       #000;
-        font-family: "Trebuchet MS", sans-serif;
-        font-size:   10pt;
-      }
-      a { 
-        color: #000;
-        text-decoration: underline; 
-        font-weight: bold; 
-      }
-      a:hover {
-        color: #333;
-        text-decoration: underline; 
-      }
-      .small {
-        font-size: 8pt;
-      }
-      .label {
-	color: #999
-      }
-    </style>
-  </head>
-  <h1>Links</h1>
-  <ul>
-""")
-        callback = lambda s, p, o: self.display_link(request, response, s, p, o)
-        sort(sniffer.reverse_chron, sniffer.visit)(slice(callback, start, end), (None, TYPE, SNIFFED))
-
-        response.write("""\
-  </ul>        
-</html>
-""");
-        response.close()
-    
-
-
-from redfoot.server import RedServer
-
-# Create a RedServer listening on address, port
-server = RedServer('', 9090)
-
-# Create an instance of AppClass to add to our RedServer
-app = LinkApp(sniffer)
-server.add_app(app)
-
-# Run the App
-server.run() # blocks until server is shutdown
