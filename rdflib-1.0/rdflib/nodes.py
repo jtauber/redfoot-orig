@@ -1,14 +1,17 @@
+from urlparse import urljoin
 
 class URIRef(str):
     def __add__(self, val):
-        return URIRef(str(self) + val)
+        uri = urljoin(self, val)
+        return URIRef(uri)
 
     def n3(self):
         return "<%s>" % self
 
 class Literal(str):
     def __add__(self, val):
-        return Literal(str(self) + val)
+        s = "".join([self,val])
+        return Literal(s)
     
     def n3(self):
         return '"%s"' % self
