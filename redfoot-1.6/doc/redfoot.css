@@ -51,12 +51,12 @@ pre.code_sample {
 
 dt {
   font-weight: bold;
+  color: #990000;
 }
 
 dl {
   margin-left: 3em;
   font-family: "Trebuchet MS", sans-serif;
-  color: #990000;
 }
 
 td {
