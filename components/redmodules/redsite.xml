@@ -159,9 +159,9 @@
 <h1><red:eval>self.app.rednode.label(uri, '')</red:eval></h1>
 
 
-<div style="float: left; border: solid 0px black;">
+<div style="float: left;">
 
-<div class="nav" style="background: white; color: black; float: right; clear: right;width: 10em; border: solid 1px black; padding: 0px 10px; margin-top: 5px; font-size: 8pt;">
+<div class="nav" style="float: right; clear: right; width: 10em; border: solid 1px black; padding: 2px 5px; font-size: 8pt;">
      <red:if test="self.authentication.authenticated()">
        Welcome, <red:eval>self.authentication.get_username()</red:eval>
      </red:if>
