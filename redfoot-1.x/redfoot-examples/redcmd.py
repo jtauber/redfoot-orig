@@ -6,33 +6,6 @@ from cmd import Cmd
 from sys import exit
 from redfoot.rdf.objects import resource, literal
 
-def get_triple(text):
-    subj_start = text.find("<", 0) + 1
-    subj_end = text.find(">", subj_start)
-    subject = resource(text[subj_start:subj_end])
-    property_start = text.find("<", subj_end) + 1
-    property_end = text.find(">", property_start)
-    property = resource(text[property_start: property_end])
-    value_start_if_literal = text.find('"', property_end) + 1
-    if value_start_if_literal:
-        value_start = value_start_if_literal
-        value_end = text.rfind('"', value_start)
-        value = literal(text[value_start:value_end])
-    else:
-        value_start = text.find("<", property_end) + 1
-        value_end = text.find(">", value_start)
-        value = resource(text[value_start:value_end])
-    return (subject, property, value)
-
-def get_triple(text):
-    parts = text.split(" ", 2)
-    subject = resource(parts[0][1:-1])
-    property = resource(parts[1][1:-1])
-    if parts[2][1]=='"':
-        value = literal(parts[2][1:-1])
-    else:
-        value = resource(parts[2][1:-1])
-    return (subject, property, value)
 
 class RedCmd(object, Cmd):
     """
@@ -44,7 +17,39 @@ class RedCmd(object, Cmd):
 
     def __init__(self):
         super(RedCmd, self).__init__()
+        self.prefix_map = {}
+
+    def process_resource(self, text):
+        if text == "ANY":
+            r = None
+        elif text[0] == "<" and text[-1] == ">":
+            r = resource(text[1:-1])
+        elif text.find(":") != -1:
+            prefix, local_name = text.split(":")
+            if prefix in self.prefix_map:
+                r = resource(self.prefix_map[prefix] + local_name)
+            else:
+                return -1 # error
+        else:
+            return -1 # error
+        return r
         
+    def get_triple(self, text):
+        parts = text.split(" ", 2)
+        subject = self.process_resource(parts[0])
+        if subject == -1:
+            return None # error
+        property = self.process_resource(parts[1])
+        if property == -1:
+            return None # error
+        if parts[2][1] == '"' and parts[2][-1] == '"':
+            value = literal(parts[2][1:-1])
+        else:
+            value = self.process_resource(parts[2])
+            if value == -1:
+                return None # error
+        return (subject, property, value)
+
     def do_quit(self, arg):
         """Quit the Redfoot Command Line"""
         print "Bye"
@@ -52,15 +57,21 @@ class RedCmd(object, Cmd):
 
     def do_add(self, arg):
         """add <subject> <predicate> (<object>|"object")"""
-        s, p, o = get_triple(arg)
-        self.add(s, p, o)
-        print "added", s, p, o
+        st = self.get_triple(arg)
+        if st:
+            self.add(st[0], st[1], st[2])
+            print "added", st
+        else:
+            print "syntax error"
 
     def do_remove(self, arg):
         """remove <subject> <predicate> (<object>|"object")"""
-        s, p, o = get_triple(arg)
-        self.remove(s, p, o)
-        print "removed", s, p, o
+        st = self.get_triple(arg)
+        if st:
+            self.remove(st[0], st[1], st[2])
+            print "removed", st
+        else:
+            print "syntax error"
         
     def do_shell(self, arg):
         """! <python-statement>"""
@@ -73,12 +84,21 @@ class RedCmd(object, Cmd):
         """visit <subject> <predicate> (<object>|"object")"""
         def print_triple(s, p, o):
             print s, p, o
-        s, p, o = get_triple(arg)
-        self.visit(print_triple, (s, p, o))
+        st = self.get_triple(arg)
+        if st:
+            self.visit(print_triple, st)
+        else:
+            print "syntax error"
+
+    def do_prefix(self, arg):
+        prefix, uri = arg.split()
+        self.prefix_map[prefix] = uri
+        print "mapped prefix", prefix, "to", uri
 
 from redfoot.rdf.store.triple import TripleStore
-    
+
 class RedCmdStore(RedCmd, TripleStore): pass
 
-red_cmd = RedCmdStore()
-red_cmd.cmdloop()
+if __name__ == "__main__":
+    red_cmd = RedCmdStore()
+    red_cmd.cmdloop()
