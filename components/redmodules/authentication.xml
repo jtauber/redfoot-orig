@@ -35,11 +35,6 @@
         self.status = ''
         ParentModule.handle_request(self, request, response)
 
-    def create_link(self):
-        # TODO: this could be done instead by telling Authentication
-        # module where it has been 'installed' (part before /create)
-        return "/create"    
-
     def set_identity(self, identity):
         self.session.sessions.remove(resource(self.session.session_uri), IDENTITY, None)
         self.session.sessions.add(resource(self.session.session_uri), IDENTITY, identity)
@@ -97,7 +92,7 @@
                 self.session.sessions.add(uri, MD5_HEX_DIGEST, literal(md5_hex_digest))
                 self.session.sessions.add(uri, USERNAME, literal(username))
                 time = date_time()
-                self.app.rednode.add(uri, CREATED, literal(time))
+                self.session.sessions.add(uri, CREATED, literal(time))
                 
                 self.set_identity(uri)
                 self.status = "Welcome, %s" % username

@@ -93,7 +93,7 @@ VIA = resource(SESSION_URI+"via")
         if name=='sessions':
             from redfoot.rednode import RedNode
             sessions = RedNode()
-            rdf, uri = ("%s-session.rdf" % self.app.__module__, "http://localhost:8000/sessions/")
+            rdf, uri = ("%s-session.rdf" % self.app.__module__, self.app.URI + "session/")
             sessions.URI = uri
             sessions.local.load(rdf, uri, 1)
             self.app.rednode.neighbours.add_store(sessions.local)    
@@ -113,18 +113,15 @@ VIA = resource(SESSION_URI+"via")
         sessions = self.sessions.local
 
         session_uri = request.get_session_uri()
-        if not session_uri or not sessions.exists(resource(session_uri), TYPE, SESSION):
+        print session_uri
+        if not session_uri:
             session_uri = sessions.URI + generate_uri()
             response.set_session_uri(session_uri)
 
-            headers = request.get_headers()
+        if not sessions.exists(resource(session_uri), TYPE, SESSION):
             sessions.add(resource(session_uri), TYPE, SESSION)
             sessions.add(resource(session_uri), CREATED, literal(date_time()))
-            #sessions.add(session_uri, USER_AGENT, literal(headers['user-agent']))
-            #sessions.add(session_uri, REFERER, request.get_header('referer'))
-            #sessions.add(session_uri, HOST, literal(headers['host']))
-            #sessions.add(session_uri, VIA, literal(headers['via']))
-
+     
         self.session_uri = session_uri
 
   </red:module>
