@@ -296,8 +296,11 @@ class Editor(Viewer):
                 value = literal(value)
             self.storeNode.local.add(subject, property, value)
         newProperty = parameters['newProperty']
+        newPropertyValue = ""
+        if self.storeNode.getRange(newProperty)==LITERAL:
+            newPropertyValue = literal(newPropertyValue)
         if newProperty!="":
-            self.storeNode.local.add(subject, newProperty, "")
+            self.storeNode.local.add(subject, newProperty, newPropertyValue)
 
     def delete(self, parameters):
         subject = parameters['uri']
@@ -407,6 +410,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.9  2000/12/20 03:14:48  jtauber
+#~ added encoding of special chars in attribute values and character data
+#~
 #~ Revision 5.8  2000/12/19 16:35:41  eikeon
 #~ changed neighbourhood to neighbours in one place
 #~
