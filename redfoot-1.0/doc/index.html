@@ -18,105 +18,12 @@
     </UL>
 
     <UL>
-      <LI><A HREF="#architecture">Architecture</A></LI>
-      <LI><A HREF="#writing_queries">Writing queries</A></LI>
-      <LI><A HREF="#writing_redcode">Writing redcode</A></LI>
-      <LI><A HREF="#writing_modules">Writing modules</A></LI>
+      <LI><A HREF="architecture.html">Architecture</A></LI>
+      <LI><A HREF="queries.html">Writing queries</A></LI>
+      <LI><A HREF="modules.html">Writing modules</A></LI>
       <LI><A HREF="#writing_connectors">Writing connectors</A></LI>
       <LI><A HREF="#writing_apps">Writing apps</A></LI>
     </UL>
-
-    <H2><A NAME="architecture">Architecture</A></H2>
-
-    <P>See <A HREF="architecture.html">separate document about architecture</A>.</P>
-
-    <H2><A NAME="writing_queries">Writing Queries</A></H2>
-
-    <P>See <A HREF="queries.html">separate document about writing queries</A>.</P>
-
-    <H2><A NAME="writing_redcode">Writing Redcode</A></H2>
-
-    <P><B>Redcode</B> is an XML vocabulary for combining XML (and in particular XHTML) with 
-       Python code.</P>
-
-    <DL>
-      <DT><CODE>red:code</CODE></DT>
-      <DD>The top-level element that contains an <CODE>red:app</CODE> or <CODE>red:module</CODE> element and raw python code.</DD>
-      <DT><CODE>red:exec</CODE></DT>
-      <DD>Within a <I>facet</I>, executes the enclosed python code.</DD>
-      <DT><CODE>red:eval</CODE></DT>
-      <DD>Within a <I>facet</I>, executes the enclosed python code.</DD>
-      <DT><CODE>{...} in attributes</CODE></LI>
-      <DD>Evaluates enclose python code with XHTML attributes.</DD>
-    </DL>
-
-    <H2><A NAME="writing_modules">Writing Modules</A></H2>
-    
-    <H3>Example Module</H3>
-    <PRE CLASS="code_sample">
-&lt;red:code name="pop" xmlns:red="http://redfoot.sourceforge.net/2001/06/">
-
-  from redfoot.rdf.const import LABEL, TYPE
-  from redfoot.rdf.objects import resource, literal
-  from redconnectors.pop_connector import *
-  from redfoot.rdf.query.functors import s
-  from redfoot.util import encode_URI
-
-  &lt;red:module name="POP">
-
-    &lt;red:facet name="messages">
-      &lt;H1>Messages&lt;/H1>
-      &lt;TABLE>
-        &lt;red:exec>
-          self.app.rednode.visit(s(self.message_list_item), (None, TYPE, MESSAGE))
-        &lt;/red:exec>
-      &lt;/TABLE>
-    &lt;/red:facet>
-
-    &lt;red:facet name="message_list_item" args="message">
-      &lt;TR>
-        &lt;TD>
-          &lt;A HREF="message?uri={encode_URI(message)}">
-            &lt;red:eval>self.app.rednode.get_first_value(message, SUBJECT, "unknown")&lt;/red:eval>
-          &lt;/A>
-        &lt;/TD>
-        &lt;TD>&lt;red:eval>self.app.rednode.get_first_value(message, FROM, "unknown")&lt;/red:eval>&lt;/TD>
-        &lt;TD>&lt;red:eval>self.app.rednode.get_first_value(message, DATE, "unknown")&lt;/red:eval>&lt;/TD>
-      &lt;/TR>
-    &lt;/red:facet>
-
-    &lt;red:facet name="pop_connect">
-      &lt;H2>Connect to POP&lt;/H2>
-      &lt;FORM name="main" method="POST" ACTION="messages">
-        &lt;P>host &lt;INPUT NAME="host" VALUE="pop.example.com" TYPE="TEXT"/>&lt;/P>
-        &lt;P>username &lt;INPUT NAME="username" TYPE="TEXT"/>&lt;/P>
-        &lt;P>password &lt;INPUT NAME="password" TYPE="PASSWORD"/>&lt;/P>
-        &lt;INPUT VALUE="Retrieve" TYPE="SUBMIT"/>
-        &lt;INPUT NAME="processor" VALUE="connect_pop" TYPE="hidden"/>
-      &lt;/FORM>
-    &lt;/red:facet>
-
-    &lt;red:facet name="message">
-      &lt;red:exec>
-        msg = resource(self.app.request.get_parameter('uri'))
-      &lt;/red:exec>
-      &lt;H1>Message&lt;/H1>
-      &lt;H2>
-        &lt;red:eval>self.app.rednode.get_first_value(msg, SUBJECT, "unknown subject")&lt;/red:eval>
-      &lt;/H2>
-      &lt;PRE>
-        &lt;red:eval>self.app.rednode.get_first_value(msg, BODY, "unknown")&lt;/red:eval>&lt;/PRE>
-      &lt;P>&lt;A HREF="messages">Back to Message List&lt;/A>&lt;/P>
-    &lt;/red:facet>
-
-    def connect_pop(self):
-        host = self.app.request.get_parameter('host')
-        username = self.app.request.get_parameter('username')
-        password = self.app.request.get_parameter('password')
-        self.app.rednode.neighbours.add_store(POP_Connector(host, username, password))
-
-  &lt;/red:module>
-&lt;/red:code></PRE>
 
     <H2><A NAME="writing_connectors">Writing Connectors</A></H2>
 
