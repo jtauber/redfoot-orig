@@ -20,6 +20,12 @@ class ExampleHandler:
         parameters = request.getParameters()
         headers = request.getHeaders()
         cookies = request.getCookies()
+
+        session = request.getSession()
+        if not hasattr(session, 'count'):
+            session.count = 0
+        else:
+            session.count = session.count + 1
         
         path_info = request.path_info
 
@@ -34,6 +40,12 @@ class ExampleHandler:
 <H1>Example</H1>
 """)
 
+            response.write("<H2>Session: </H2>")
+            response.write("<DL>")
+            response.write("<DT>session object</DT><DD>%s</DD>" % session)
+            response.write("<DT>session count</DT><DD>%s</DD>" % session.count)
+            response.write("</DL>")            
+                
             response.write("<H2>Parameters:</H2>")
             response.write("<DL>")
             for arg in parameters.keys():
@@ -89,6 +101,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 3.3  2000/11/02 21:48:26  eikeon
+#~ removed old log messages
+#~
 # Revision 3.2  2000/10/31 05:03:07  eikeon
 # mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
 #

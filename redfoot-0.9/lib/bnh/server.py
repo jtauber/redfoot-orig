@@ -45,7 +45,8 @@ class Server:
         class Handler:
             def __init__(self, server, handler):
                 self.server = server
-                self.handler = ServerConnection(handler)
+                context = ServerContext()
+                self.handler = ServerConnection(handler, context)
         
             def start(self):
                 while 1:
@@ -61,10 +62,11 @@ class Server:
 
 class ServerConnection:
 
-    def __init__(self, handler):
-        self.request = Request()
-        self.response = Response()
+    def __init__(self, handler, context):
+        self.request = Request(self)
+        self.response = Response(self)
         self.handler = handler
+        self.context = context
         
     def handleRequest(self, server, clientSocket):
 
@@ -101,7 +103,19 @@ class BadRequestError(Error):
         self.message = msg
 
 
+class ServerContext:
+
+    def __init__(self):
+        self.sessions = {}
+
+class Session:
+    pass
+
+
 class Request:
+
+    def __init__(self, connection):
+        self.connection = connection
 
     def setClientSocket(self, clientSocket):
         rfile = clientSocket.makefile('rb', 0)
@@ -162,20 +176,40 @@ class Request:
         cookies.load(cookieStr)
         return cookies
 
-#    def getSession(self):
-#        cookies = self.getCookies()
-#        cookies['
+    def getSession(self):
+        self.connection.session = None
+        
+        sessions = self.connection.context.sessions
+        cookies = self.getCookies()
+
+        if cookies.has_key('EBNH_session'):
+            session = cookies['EBNH_session'].value
+            if sessions.has_key(session):
+                return sessions[session]
+
+        # Create a new session
+        from whrandom import random
+        rn = random()
+        import time
+        session = "%s#T%s" % (rn, time.time())
+        self.connection.session = session
+
+        if sessions.has_key(session):
+            raise "TODO: exception"
+
+        sessions[session] = Session()
+
+        return sessions[session]
 
 
 class Response:
 
+    def __init__(self, connection):
+        self.connection = connection
+
     def setClientSocket(self, clientSocket):
         self.wfile = clientSocket.makefile('wb', 0)
 
-        # TODO: look into char encoding issues at some point in time
-        #from encodings.utf_8 import StreamWriter
-        #self.wfile = StreamWriter(self.wfile)
-        
         self.write("%s %s %s\r\n" % ("HTTP/1.1", "200", "OK"))
         self.send_header('Server', "eikeon's Bare Naked HTTP Server")
         self.send_header('Date', date_time_string())
@@ -183,13 +217,13 @@ class Response:
         self.send_header('Connection', "close")
         import Cookie
         cookie = Cookie.SmartCookie()
-        cookie['foo'] = "bar"
-        cookie['foo']['path'] = "/"
-        cookie['foo']['Version'] = "1"
-        cookie['biz'] = "baz"
-        cookie['biz']['path'] = "/"
-        cookie['biz']['Version'] = "1"
+        if hasattr(self.connection, 'session'):
+            if self.connection.session!=None:
+                cookie['EBNH_session'] = self.connection.session
+                cookie['EBNH_session']['path'] = "/"
+                cookie['EBNH_session']['Version'] = "1"
         self.write(cookie.output())
+
         self.write("\r\n")
 
     
@@ -259,6 +293,9 @@ def date_time_string():
 
 
 #~ $Log$
+#~ Revision 3.3  2000/11/02 21:48:26  eikeon
+#~ removed old log messages
+#~
 # Revision 3.2  2000/10/31 05:03:07  eikeon
 # mainly Refactored how parameters are accessed (no more [0]'s); some cookie code; a few minor changes regaurding plumbing
 #
