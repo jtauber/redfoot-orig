@@ -23,11 +23,11 @@ class RedNode(SchemaQuery, NeighbourManager, AutoSave, LoadSave, TripleStore):
     def __init__(self):
         super(RedNode, self).__init__()
         neighbours = Neighbours()
-        neighbours.add_store(rdf_files.schema)
-        neighbours.add_store(rdf_files.syntax)
-        neighbours.add_store(rdf_files.builtin)
+        #neighbours.add_store(rdf_files.schema)
+        #neighbours.add_store(rdf_files.syntax)
+        #neighbours.add_store(rdf_files.builtin)
         self.neighbourhood = RedNeighbourhood(self, neighbours)
-        self.neighbours = neighbours        
+        self.neighbours = neighbours
 
 
 class Neighbours(SchemaQuery, MultiStore):
