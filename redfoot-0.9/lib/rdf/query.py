@@ -48,6 +48,9 @@ class QueryBase:
             if self.getFirst(s, TYPE, None)==None:
                 result.append(s)
         self.visit(callback, None, None, None)
+
+#        query = Query(
+#        self.query(
         return result
 
     def visitTypelessResources(self, callback):
@@ -75,16 +78,12 @@ class QueryBase:
         for klass in types:
             if self.getFirst(None, TYPE, klass)!=None:
                 processClass(klass)
-                def resource(s, p, o, processClass=processClass,\
-                             processResource=processResource, self=self):
-                    processResource(s)
-                self.visit(resource, None, TYPE, klass)
+                query = Query(processResource, (_s_,))
+                self.query(query, None, TYPE, klass)
 
-        
     def visitPredicateObjectPairsForSubject(self, predicateObject_callback, subject):
-        def callbackAdaptor(s, p, o, predicateObject_callback=predicateObject_callback):
-            predicateObject_callback(p, o)            
-        self.visit(callbackAdaptor, subject, None, None)
+        query = Query(predicateObject_callback, (lambda s, p, o: [p, o],))
+        self.query(query, subject, None, None)
 
     # REIFICATION STUFF
 
@@ -185,12 +184,6 @@ class Query:
                 else:
                     self.post.append(arg)
 
-#    def __init__(self, query, pre, adapter, post=()):
-#        self.query = query
-#        self.adapter = adapter
-#        self.pre = pre
-#        self.post = post
-
     def visit(self, s, p, o):
         return apply(self.query, self.pre + self.adapter(s, p, o) + self.post)
 
@@ -240,14 +233,6 @@ class Alpha:
                     self.pre.append(arg)
                 else:
                     self.post.append(arg)
-
-#    def __init__(self, query, pre, adapter, post, label):
-#        self.query = query
-#        self.adapter = adapter
-#        self.pre = pre
-#        self.post = post
-#        self.statements = {}
-#        self.label = label
 
     def visit(self, s, p, o):
         label = self.label(s, '')
@@ -314,8 +299,8 @@ class QueryStore(QueryBase):
         return result
 
     def visitParentTypes(self, callback, type):
-        self.visit(lambda s, p, o, callback=callback: callback(o),\
-                   type, SUBCLASSOF, None)
+        query = Query(callback, (_o_,))                                 
+        self.visit(query, type, SUBCLASSOF, None)
 
     def visitSubclasses(self, class_callback, instance_callback, type, currentDepth=0, recurse=1):
         class_callback(type, currentDepth, recurse)
@@ -371,6 +356,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 6.2  2001/03/03 01:20:18  jtauber
+#~ refactored out lambdas that pull s and o from triple
+#~
 #~ Revision 6.1  2001/03/03 01:05:50  jtauber
 #~ refactored the way Query objects take args so you don't have to make pre/post distinction
 #~
