@@ -7,7 +7,9 @@
   from redfoot.rednode import NEIGHBOUR, CONNECTED, YES, NO
 
   <red:module name="Neighbours">
-    def __init__(self):
+    def __init__(self, app):
+       from redfoot.module import ParentModule
+       ParentModule.__init__(self, app)
        self.status = {}
 
     <red:facet name="neighbours">

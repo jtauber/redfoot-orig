@@ -60,8 +60,19 @@ def create_module(klass, app=None, rednode=None):
         instance_vars[instance_name] = mod_instance
         modules.append(mod_instance)
         
-    getattr(instance, '__init__', lambda :None)()    
+    getattr(instance, '__init__', lambda app: None)(app)    
     return instance
+
+# TODO: this is specific to redcode.handlers
+def sub_modules(self):
+    import sys        
+    module = sys.modules[self.__class__.__module__]
+    list = []
+    for (instance_name, class_name) in getattr(self.__class__, '_RF_sub_modules', []):
+        mod_class = module.__dict__[class_name]
+        list.append((instance_name, mod_class))
+    return list
+
 
 def parse_attribute(str):
     open = find(str, '{')
@@ -260,6 +271,7 @@ class ModuleHandler(HandlerBase):
         HandlerBase.end(self, name)
         self._exec(adjust_indent(self.codestr)+"\n")
         classobj = new.classobj(self.name.encode('ascii'), self.base_classes, self.locals )
+        classobj.sub_modules = sub_modules
         module = self.module
         classobj.__module__ = module.__name__
         module.__dict__[classobj.__name__] = classobj
