@@ -17,6 +17,8 @@
               margin:      10px;
               font-family: "Trebuchet MS", sans-serif;
               font-size:   10pt;
+              color:       #000;
+              background:  #FFF;
             }
 
             h1 {

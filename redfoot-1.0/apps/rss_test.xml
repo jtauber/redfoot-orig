@@ -12,6 +12,8 @@
           <STYLE>
             body {
               font-family: sans-serif;
+              color: #000;
+              background; #FFF;
             }
             dt {
               font-weight: bold;
