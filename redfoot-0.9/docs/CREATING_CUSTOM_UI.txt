@@ -1,0 +1,113 @@
+$Header$
+
+
+CREATING CUSTOM UI IN REDFOOT
+
+    Redfoot is a framework for building web applications and sites
+    that are driven by RDF and are possibly peer-to-peer.
+
+INTRODUCTION
+
+    Typically, an application or site will consist of:
+        - Redfoot itself
+        - Custom UI (written in Python)
+        - RDF data
+
+    This manual describes how to build the custom UI of your
+    Redfoot-based application.
+
+    If all you are interested in doing is viewing and editing RDF, you
+    don't need any custom UI. Redfoot includes a generic,
+    browser-based viewer and editor.
+
+BASICS
+
+    A custom UI has two components:
+        - a subclass of BaseUI (in module redfoot.baseUI)
+        - a script that invokes a RedServer
+
+THE UI CLASS
+
+    The core part of a custom UI is the UI class which must be
+    a subclass of BaseUI in module redfoot.baseUI.
+
+    The only method that the subclass must implement is
+
+        handleRequest(request,response)
+
+    Typically this method will grab the parameters and path_info via
+
+        parameters = request.getParameters()
+        path_info = request.getPathInfo()
+
+    and then will serve up the appropriate page given the value of
+    path_info and the parameters.
+
+RETURNING A CONSTRUCTED PAGE
+
+    To generate a page, simply use
+
+        response.write("...")
+
+    to append to the response.
+
+TODO: how does BNH know to flush the response stream?
+
+PROVIDING HTTP TO THE UNDERLYING REDFOOT
+
+    In most cases, the custom UI should pass URIs referring to the
+    underlying Redfoot straight through to that Redfoot. To achieve
+    this, the handleRequest method should include something along
+    the lines of:
+
+        if self.path_match(path_info):
+            self.call_editor(request, response)
+
+    path_match is a boolean function that determines whether the
+    given path_info refers to the underlying Redfoot or not
+
+    call_editor passes the handling of the request to the underlying
+    Redfoot
+
+    TODO: should this function be called call_editor or something
+          like call_redfoot
+
+TODO
+
+
+
+STARTING REDFOOT WITH A CUSTOM UI
+
+    Typically, a custom UI will be provided as a python class which is
+    a subclass of BaseUI. A special file will be run to start up
+    Redfoot with that particular UI. See sample/sample.sh for an
+    example.
+
+    Note that in almost all cases, a Redfoot with a custom UI will
+    have the -P path specified. The generic Redfoot UI will then be
+    available at that path with the rest of server's URI space
+    available for the custom UI.
+
+    Often, the generic UI will be retained for editing the RDF,
+    although the custom UI may provide custom editing as well as
+    custom views.
+
+STARTUP COMMANDLINE OPTIONS
+
+    The following options may be passed to the Redfoot server on the
+    commandline at startup:
+
+        -l location of RDF file to use as local
+           (eg myrdf.rdf. defaults to local.rdf)
+
+        -u uri to treat that file as
+           (eg http://redfoot.sourceforge.net/2000/10/.
+            defaults to http://hostname.domain:port/path)
+
+        -p port number to run on
+           (defaults to 8000)
+
+        -P path from server root to actual RDF
+           (eg /2000/10/redfoot. defaults to /)
+
+$Log$
