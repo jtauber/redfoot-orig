@@ -95,7 +95,16 @@ Can not run redfoot with Python verion:
   '%s'""" % sys.version
     print "Redfoot requires Python 2.0 or higher to run. "
     sys.exit(-1)
-
+else:
+    if sys.version_info[1]<2:
+        print """\
+Warning: Redfoot not tested or known to run with Python version less than 2.2
+"""
+    elif sys.version_info[2]<1:
+        print """\
+Warning: Redfoot requires a bug fix from 2.2.1 in order to run correctly
+"""
+        
 
 try:
     import threading
