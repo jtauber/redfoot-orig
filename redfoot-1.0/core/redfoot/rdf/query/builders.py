@@ -60,7 +60,14 @@ class SetBuilder:
         self.dict[item] = 1
 
     def end(self):
-        self.set = self.dict.keys()
+        pass
+
+    def __getattr__(self, attr):
+        if attr == "set":
+            self.set = self.dict.keys()
+            return self.set
+        else:
+            raise AttributeError
 
     def sort(self, func):
         d = {}
