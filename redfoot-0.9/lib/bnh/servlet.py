@@ -137,6 +137,14 @@ class Request:
         cookies.load(cookieStr)
         return cookies
 
+    def get_session_uri(self):
+        cookies = self.getCookies()
+        if cookies.has_key('EBNH_session'):
+            session_uri = cookies['EBNH_session'].value            
+        else:
+            session_uri = None
+        return session_uri
+
     def getSession(self):
         context = self.connection.context
         cookies = self.getCookies()
@@ -173,20 +181,23 @@ class Response:
                        'Expires': "-1",
                        'Content-Type': "text/html",
                        'Connection': "close" }
-        self._new_session_ID = None
+        self._new_session_uri = None
             
         
+    def set_session_uri(self, session_uri):
+        self._new_session_uri = session_uri
+
     def _send_head(self):
         self.write("%s %s %s\r\n" % ("HTTP/1.1", "200", "OK"))
 
         for key in self._header.keys():
             self.write("%s: %s\r\n" % (key, self._header[key]))
 
-        if self._new_session_ID!=None:
+        if self._new_session_uri!=None:
             import Cookie
             cookie = Cookie.SmartCookie()
             TTL = 3600*24*10000 # time to live in seconds (a long time)
-            cookie['EBNH_session'] = self._new_session_ID
+            cookie['EBNH_session'] = self._new_session_uri
             cookie['EBNH_session']['path'] = "/"
             cookie['EBNH_session']['Version'] = "1"
             cookie['EBNH_session']['expires'] = Cookie._getdate(TTL)
@@ -259,6 +270,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 7.0  2001/03/26 23:41:04  eikeon
+#~ NEW RELEASE
+#~
 #~ Revision 6.2  2001/03/26 20:19:01  eikeon
 #~ removed old header
 #~
