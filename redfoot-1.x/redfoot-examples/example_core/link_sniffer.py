@@ -94,9 +94,10 @@ class Sniffer(object):
             self.visit(s(self.sniff), (None, TYPE, SNIFFABLE))
             print "Done sniffing for new links"
             sys.stdout.flush()
+            # TODO: check that store has a save
             print "Saving..."
-            sys.stdout.flush()            
-            sniffer.save()
+            sys.stdout.flush()
+            self.save()
             print "Done saving"
             sys.stdout.flush()            
             sleep(60*15)
@@ -151,11 +152,12 @@ class SnifferNode(Sniffer, SchemaQuery, LoadSave, TripleStore):
 sniffer = SnifferNode()
 sniffer.load("link_sniffer.rdf", "http://eikeon.com", 1)
 
+from redfoot.rdf.query.functors import sort
+
 #sniffer.add(resource("http://rdfig.xmlhack.com/index.html"), TYPE, SNIFFABLE)
 #sites = [] # ["http://freshmeat.net/"]
 #for site in sites:
 #    sniffer.add(resource(site), TYPE, SNIFFABLE)    
-#from redfoot.rdf.query.functors import sort
 #sort(sniffer.reverse_chron, sniffer.visit)(slice(sniffer.print_link, 0, 30), (None, TYPE, SNIFFED))
 
 sniffer.run()
