@@ -1,5 +1,6 @@
-
+# TODO: document!
 # candidate to move into core
+
 class slice:
     def __init__(self, callback, start=None, end=None):
         self.callback = callback

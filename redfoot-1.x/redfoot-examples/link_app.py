@@ -5,6 +5,9 @@ from redfootlib.rdf.const import TYPE, LABEL, COMMENT
 from redfootlib.rdf.query.functors import sort
 from sniffer import SNIFFED, SNIFFABLE, SNIFFED_ON, SNIFFED_FROM
 
+# functors is currently in redfoot-examples/example_core/
+from functors import slice  
+
 class LinkApp(App):
 
     def display_link(self, request, response, s, p, o):
@@ -67,7 +70,6 @@ class LinkApp(App):
   <ul>
 """)
         callback = lambda s, p, o: self.display_link(request, response, s, p, o)
-        from functors import slice        
         sort(sniffer.reverse_chron, sniffer.visit)(slice(callback, start, end), (None, TYPE, SNIFFED))
 
         response.write("""\
