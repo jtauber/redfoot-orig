@@ -290,11 +290,17 @@ class Response:
 
         import Cookie
         cookie = Cookie.SmartCookie()
+
+        import time
+        TTL = 60*60*24 # time to live in seconds
+        expire = time.time()+TTL
+
         if hasattr(self.connection, 'session'):
             if self.connection.session!=None:
                 cookie['EBNH_session'] = self.connection.session
                 cookie['EBNH_session']['path'] = "/"
                 cookie['EBNH_session']['Version'] = "1"
+                cookie['EBNH_session']['expires'] = date_time_string(expire)
         self.write(cookie.output())
 
         self.write("\r\n")
@@ -349,26 +355,25 @@ class Headers(UserDict):
             return ""
 
 
-def date_time_string():
+def date_time_string(t=None):
     """Return the current date and time formatted for a message header."""
-
+    import time
     weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-    monthname = [None,
-                 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    monthname = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    
+    if t==None:
+        t = time.time()
 
-    import time
-    now = time.time()
-    year, month, day, hh, mm, ss, wd, y, z = time.gmtime(now)
-    s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % (
-        weekdayname[wd],
-        day, monthname[month], year,
-        hh, mm, ss)
+    year, month, day, hh, mm, ss, wd, y, z = time.gmtime(t)
+    s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % ( weekdayname[wd], day, monthname[month], year, hh, mm, ss)
     return s
 
 
 #~ $Log$
+#~ Revision 4.0  2000/11/06 15:57:33  eikeon
+#~ VERSION 4.0
+#~
 #~ Revision 3.6  2000/11/06 01:11:29  eikeon
 #~ added ability to stop a 'handler'; introduced a HandlerCubby to manage state between the server and handlers
 #~
