@@ -69,17 +69,6 @@ class SetBuilder:
         else:
             raise AttributeError
 
-    def sort(self, func):
-        d = {}
-        for item in self.set:
-            i = func(item)
-            if not d.has_key(i):
-                d[i] = []
-            d[i].append(item)
-        x = d.keys()
-        x.sort()
-        z = []
-        for y in x:
-            for m in d[y]:
-              z.append(m)  
-        return z
+    def sort(self, comparator):
+        self.set.sort(comparator)
+
