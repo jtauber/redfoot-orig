@@ -1,7 +1,6 @@
 <red:code xmlns:red="http://redfoot.sourceforge.net/2001/06/">
 
   from redfootlib.rdf.const import *
-  from redfootlib.rdf.store.urigen import generate_uri
   from redfootlib.rdf.query.functors import *
   from redfootlib.rdf.query.builders import *
   from redfootlib.rdf.objects import *
@@ -60,11 +59,11 @@
         s_subject = request.get_parameter('s_subject', '')
 
         if copy == "true":
-            subject = self.rednode.uri + generate_uri()
+            subject = self.rednode.generate_uri()
             self.do_update(request, response, resource(subject), 1)
         else:
             if subject == None or subject == "":
-                subject = self.rednode.uri + generate_uri()
+                subject = self.rednode.generate_uri()
 
         subject = resource(subject)
 
@@ -186,7 +185,7 @@
 -->
         <!-- display edit widget cell -->
         <TD COLSPAN="2">
-          <red:if test="(value and value.is_literal()) or (not value and self.rednode.neighbourhood.exists(property, RANGE, LITERAL))">
+          <red:if test="(value and isinstance(value, Literal)) or (not value and self.rednode.neighbourhood.exists(property, RANGE, LITERAL))">
             <!-- LITERAL -->
             <red:if test="self.rednode.neighbourhood.exists(property, UI_TYPE, TEXT_AREA)">
               <TEXTAREA NAME="prop{self.property_num}_value" ROWS="5" COLS="60"><red:eval>value</red:eval></TEXTAREA>
@@ -302,7 +301,7 @@
         self.property_num = self.property_num + 1
       </red:exec>
             <INPUT TYPE="HIDDEN" NAME="prop{self.property_num}_name" VALUE="{property}"/>                    
-          <red:if test="(value and value.is_literal()) or (not value and self.rednode.neighbourhood.exists(property, RANGE, LITERAL))">
+          <red:if test="(value and isinstance(value, Literal)) or (not value and self.rednode.neighbourhood.exists(property, RANGE, LITERAL))">
             <INPUT TYPE="HIDDEN" NAME="prop{self.property_num}_is_literal" VALUE="yes"/>
           </red:if>              
         <INPUT TYPE="HIDDEN" NAME="prop{self.property_num}_orig"
@@ -323,7 +322,7 @@
         <red:if test="exists">
           <TD VALIGN="TOP">
             <INPUT TYPE="BUTTON" VALUE="edit"
-                   ONCLICK="edit_triple_form.subject.value='{subject}'; edit_triple_form.predicate.value='{property}'; edit_triple_form.object.value='{escape_newlines(value)}'; edit_triple_form.is_literal.value='{value.is_literal()}'; edit_triple_form.submit();"/>
+                   ONCLICK="edit_triple_form.subject.value='{subject}'; edit_triple_form.predicate.value='{property}'; edit_triple_form.object.value='{escape_newlines(value)}'; edit_triple_form.is_literal.value='{isinstance(value, Literal)}'; edit_triple_form.submit();"/>
           </TD>
           <TD VALIGN="TOP">
             <INPUT TYPE="BUTTON" VALUE="delete"

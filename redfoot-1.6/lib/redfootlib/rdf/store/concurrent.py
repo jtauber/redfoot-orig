@@ -82,7 +82,7 @@ class Concurrent(object):
             pending_adds = self.__pending_adds                
             while pending_adds:
                 (s, p, o) = pending_adds.pop()
-                self.add(s, p, o)
+                super(Concurrent, self).add(s, p, o)
         lock.release()                        
 
 

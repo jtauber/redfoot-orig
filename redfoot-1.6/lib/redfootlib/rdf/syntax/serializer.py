@@ -115,20 +115,27 @@ class Serializer(object):
         self.property(predicate, object, literal_object)
 
 
+from redfootlib.rdf.objects import Literal
+
 class RedSerializer(Serializer, object):
 
     def __init__(self):
         super(RedSerializer, self).__init__()
     
     def triple(self, s, p, o):
-        try:
-            if o.is_literal():
-                Serializer.triple(self, s, p, o, 1)
-            else:
-                Serializer.triple(self, s, p, o, 0)
-        except:
-            # TODO: could write out as literal in this case?
-            print "WARNING: ignoring (%s, %s, %s)" % (s, p, o)
+        if isinstance(o, Literal):
+            Serializer.triple(self, s, p, o, 1)
+        else:
+            Serializer.triple(self, s, p, o, 0)
+        
+#         try:
+#             if issubclass(o, Literal):
+#                 Serializer.triple(self, s, p, o, 1)
+#             else:
+#                 Serializer.triple(self, s, p, o, 0)
+#         except:
+#             # TODO: could write out as literal in this case?
+#             print "WARNING: ignoring (%s, %s, %s)" % (s, p, o)
 
     def register_property(self, s, p, o):
         return Serializer.register_property(self, p)

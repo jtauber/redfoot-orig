@@ -1,7 +1,38 @@
 from __future__ import generators
 
+from redfootlib.rdf.objects import resource
+
+from time import time, gmtime
+
+def generate_path():
+    sn = 0
+    last_time_path = None
+    while 1:
+        t = time()
+        year, month, day, hh, mm, ss, wd, y, z = gmtime(t)           
+        time_path = "%0004d/%02d/%02d/T%02d/%02d/%02dZ" % ( year, month, day, hh, mm, ss)
+
+        if time_path==last_time_path:
+            sn = sn + 1
+        else:
+            sn = 0
+            last_time_path = time_path
+
+        path = time_path + "%.004d" % sn
+        yield path
+
+path_generator = generate_path()
 
 class Query(object):
+
+
+    def generate_uri(self):
+        """Return a new unique uri."""
+        return resource(self.uri + path_generator.next())
+    
+    def remove(self, subject=None, predicate=None, object=None):
+        for s, p, o in self.triples(subject, predicate, object):
+            super(Query, self).remove(s, p, o)
 
     def exists(self, subject, predicate, object):
         for triple in self.triples(subject, predicate, object):

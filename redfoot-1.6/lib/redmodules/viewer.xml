@@ -5,7 +5,7 @@
 
   from redfootlib.util import *
   from redfootlib.rdf.query.functors import *
-  from redfootlib.rdf.objects import resource, literal
+  from redfootlib.rdf.objects import resource, literal, Literal
   from redfootlib.rdf.const import *
 
   <red:module name="Viewer">
@@ -85,7 +85,7 @@
     </red:facet>    
 
     <red:facet name="view_link" args="res">
-      <red:if test="res.is_literal()">
+      <red:if test="isinstance(res, Literal)">
         <red:eval>res</red:eval>
         <red:else>
           <A HREF='view?subject={encode_URI(res)}'

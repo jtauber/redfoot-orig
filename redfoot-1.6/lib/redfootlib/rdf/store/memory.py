@@ -106,3 +106,5 @@ pos[p][o][s] = 1.
         for s, p, o in self.triples(subject, predicate, None):
             yield o
 
+    def __iter__(self):
+        return self.triples(None, None, None)
