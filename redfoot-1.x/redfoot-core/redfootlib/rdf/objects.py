@@ -12,10 +12,8 @@ def resource(uri, anonymous=None):
     else:
         if anonymous:
             r = resources_dict[uri] = AnonymousResource(uri)
-            r.uri = uri
         else:
             r = resources_dict[uri] = Resource(uri)
-            r.uri = uri
 
     return r
 
@@ -28,7 +26,6 @@ def literal(value):
         r = literal_dict[value]
     else:
         r = literal_dict[value] = Literal(value)
-        r.value = value
     return r
 
 
