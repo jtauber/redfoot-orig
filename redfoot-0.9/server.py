@@ -78,8 +78,10 @@ class RedfootHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 root = args["uri"][0] # TODO: check why values of args are lists
             else:
                 root = QueryStore.RESOURCE
-#            viewer.subclassNonRecursive(root)
             viewer.subclass(root, 0)
+        elif path_info == "/classList":
+            viewer.classList()
+            
         elif path_info == "/RDF":
             viewer.RDF()
         elif path_info == "/Triples":
@@ -154,6 +156,9 @@ if __name__ == '__main__':
 
 
 # $Log$
+# Revision 1.15  2000/10/08 06:05:03  eikeon
+# UNKNOWN PATH now indicates the value of the unknown path
+#
 # Revision 1.14  2000/10/07 02:22:16  jtauber
 # added handling of processor HTTP parameter for deletion and reification buttons
 #

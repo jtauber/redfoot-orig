@@ -113,7 +113,7 @@ class Viewer:
 
     def menuBar(self):
         self.writer.write("""
-            <P CLASS="MENUBAR"><A HREF=".">Class List</A>
+            <P CLASS="MENUBAR"><A HREF="classList">Class List</A>
              | <A HREF="subclass">Full Subclass View</A>
              | <A HREF="subclassNR">Collapsed Subclass View</A>
              | <A HREF="RDF">Download RDF</A>
@@ -122,6 +122,9 @@ class Viewer:
         """)
 
     def mainPage(self):
+        self.subclass(QueryStore.RESOURCE, 0)
+
+    def classList(self):
         self.writer.write("""
         <HTML>
           <HEAD>
@@ -312,6 +315,9 @@ class Viewer:
 
 
 # $Log$
+# Revision 1.17  2000/10/07 02:24:46  jtauber
+# futzed around a little with fonts and colors; if redfoot doesn't have anything about a queried resource, viewer now says so; reified properties now have a link to the statement
+#
 # Revision 1.16  2000/10/05 19:32:03  jtauber
 # refactored out HTML for resource header
 #
