@@ -57,8 +57,7 @@ class DescriptionHandler:
         elif atts.has_key(rdfns+"ID"):
             self.subject = self.parser.GetBase() + "#" + atts[rdfns+"ID"]
         for att in atts.keys():
-            if att=="about" or att=="ID" or
-            att==rdfns+"about" or att==rdfns+"ID":
+            if att=="about" or att=="ID" or att==rdfns+"about" or att==rdfns+"ID":
                 pass
             else:
                 self.adder(self.subject, att, "^"+atts[att])
