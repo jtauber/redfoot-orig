@@ -51,6 +51,13 @@ class QueryStore:
             l.extend(self.get(s[0], predicate, object))
         return l
 
+    def isKnownResource(self, resource):
+        # TODO: can be made more efficient if can access hash directly
+        if len(self.getProperties(resource)) > 0:
+            return 1
+        else:
+            return 0
+
     # TODO: should we have a version of this that answers for subclasses too?
     def isOfType(self, resource, type):
         for s in self.store.get(resource, QueryStore.TYPE, None):
@@ -76,6 +83,7 @@ class QueryStore:
             result[s[2]] = 1
         return result.keys()
 
+    #TODO: remove typeInh as it is no longer being used
     def typeInh(self, t):
         l = []
         for s in self.get(t, QueryStore.SUBCLASSOF, None):
@@ -165,6 +173,9 @@ class QueryStore:
 
 
 # $Log$
+# Revision 1.24  2000/10/05 00:39:00  jtauber
+# added TODO about extending isOfType function
+#
 # Revision 1.23  2000/10/01 03:58:10  eikeon
 # fixed up all the places where I put CVS keywords as keywords in omments... duh
 #
