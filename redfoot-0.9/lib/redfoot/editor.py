@@ -3,6 +3,8 @@
 from redfoot.viewer import Viewer
 from rdf.literal import literal, un_literal, is_literal
 
+from rdf.const import *
+
 class Editor(Viewer):
 
     def handleRequest(self, request, response):
@@ -93,9 +95,9 @@ class Editor(Viewer):
                     <OPTION value="">Select a new Property to add</OPTION>
             """)
 
-            for type in self.qstore.neighbourhood.get(subject, self.qstore.TYPE, None):
+            for type in self.qstore.neighbourhood.get(subject, TYPE, None):
                 for superType in self.qstore.neighbourhood.transitiveSuperTypes(type[2]):
-                    for domain in self.qstore.neighbourhood.get(None, self.qstore.DOMAIN, superType):
+                    for domain in self.qstore.neighbourhood.get(None, DOMAIN, superType):
                         self.response.write("""
                         <OPTION value="%s">%s</OPTION>
                         """ % (domain[0], self.qstore.neighbourhood.label(domain[0])))
@@ -148,13 +150,13 @@ class Editor(Viewer):
 
         def callback(s, p, o, self=self):
             self.response.write("%s<BR>" % self.qstore.neighbourhood.label(o))
-        self.qstore.neighbourhood.visit(callback, property, self.qstore.RANGE, None)
+        self.qstore.neighbourhood.visit(callback, property, RANGE, None)
 
         self.response.write("""
                   </TD>
                   <TD COLSPAN="2">
         """)
-        if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.neighbourhood.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL):
+        if (len(value) > 0 and value[0]=="^") or (len(value)==0 and self.qstore.neighbourhood.get(property, RANGE, None)[0][2]==LITERAL):
             uitype = self.qstore.neighbourhood.get(property, self.UITYPE, None)
             if len(uitype) > 0 and uitype[0][2]==self.TEXTAREA:
                 self.response.write("""
@@ -168,7 +170,7 @@ class Editor(Viewer):
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="yes">
             """ % self.property_num)
         else:
-            rangelist = self.qstore.neighbourhood.get(property, self.qstore.RANGE, None) # already did this above
+            rangelist = self.qstore.neighbourhood.get(property, RANGE, None) # already did this above
             if len(rangelist) > 0:
                 self.response.write("""
                     <INPUT TYPE="HIDDEN" NAME="prop%s_isLiteral" VALUE="no">
@@ -261,7 +263,7 @@ class Editor(Viewer):
             self.response.write("""
                   <SELECT SIZE="1" NAME="type">
             """)
-            for klass in self.qstore.neighbourhood.get(None, self.qstore.TYPE, self.qstore.CLASS):
+            for klass in self.qstore.neighbourhood.get(None, TYPE, CLASS):
                 self.response.write("""
                     <OPTION VALUE="%s">%s</OPTION>
                 """ % (klass[0], self.qstore.neighbourhood.label(klass[0])))
@@ -276,7 +278,7 @@ class Editor(Viewer):
 
             # TODO: make this a func... getProperties for subject?
             for superType in self.qstore.neighbourhood.transitiveSuperTypes(type):
-                for domain in self.qstore.neighbourhood.get(None, self.qstore.DOMAIN, superType):
+                for domain in self.qstore.neighbourhood.get(None, DOMAIN, superType):
                     property = domain[0]
                     if len(self.qstore.neighbourhood.get(property, self.REQUIREDPROPERTY, "http://redfoot.sourceforge.net/2000/10/06/builtin#YES"))>0:
                         self.editProperty(property, "", 0)
@@ -328,7 +330,7 @@ class Editor(Viewer):
         property = parameters['prop%s_name' % property_num]
         vName = "prop%s_value" % property_num
         value = parameters[vName]
-        if self.qstore.neighbourhood.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
+        if self.qstore.neighbourhood.get(property, RANGE, None)[0][2]==LITERAL:
             value = "^" + value
         self.qstore.remove(subject, property, value)
 
@@ -337,7 +339,7 @@ class Editor(Viewer):
         subject = parameters['uri']
         property = parameters['prop%s_name' % property_num]
         value = parameters['prop%s_value' % property_num]
-        if self.qstore.neighbourhood.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
+        if self.qstore.neighbourhood.get(property, RANGE, None)[0][2]==LITERAL:
             value = "^" + value
         self.qstore.reify(self.storeNode.URI+self.generateURI(), subject, property, value)
 
@@ -355,8 +357,8 @@ class Editor(Viewer):
 
 
         # TODO: what to do in the case it already exists?
-        self.qstore.add(subject, self.qstore.LABEL, "^"+parameters['label'])
-        self.qstore.add(subject, self.qstore.TYPE, parameters['type'])
+        self.qstore.add(subject, LABEL, "^"+parameters['label'])
+        self.qstore.add(subject, TYPE, parameters['type'])
 
         count = parameters["prop_count"]
         if count=="":
@@ -429,6 +431,9 @@ class PeerEditor(Editor):
 
 
 # $Log$
+# Revision 4.7  2000/12/05 07:11:27  eikeon
+# finished refactoring rednode refactor of the local / neighbourhood split
+#
 # Revision 4.6  2000/12/05 03:49:07  eikeon
 # changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
 #

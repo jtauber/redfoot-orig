@@ -3,6 +3,8 @@
 from rdf.query import QueryStore
 from redfoot.baseUI import BaseUI
 
+from rdf.const import *
+
 class SampleUI(BaseUI):
 
     def handleRequest(self, request, response):
@@ -28,7 +30,7 @@ class SampleUI(BaseUI):
             <P>These are the people I know about:</P>
             <UL>
         """)
-        for s in self.qstore.get(None, QueryStore.TYPE, "http://redfoot.sourceforge.net/2000/10/#Person"):
+        for s in self.qstore.get(None, TYPE, "http://redfoot.sourceforge.net/2000/10/#Person"):
             response.write("<LI>%s</LI>" % self.qstore.label(s[0]))
         response.write("""
             </UL>
@@ -100,6 +102,9 @@ if __name__ == '__main__':
     redfoot.keepRunning()
 
 # $Log$
+# Revision 4.2  2000/12/04 05:21:24  eikeon
+# Split server.py into server.py, servlet.py and receiver.py
+#
 # Revision 4.1  2000/11/07 16:55:33  eikeon
 # factored out creation of handler from runServer
 #

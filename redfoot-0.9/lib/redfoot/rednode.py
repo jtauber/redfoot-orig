@@ -90,12 +90,12 @@ class Neighbourhood(QueryStore):
 
     def subClassV(self, type, processClass, processInstance, currentDepth=0, recurse=1):
         processClass(type, currentDepth, recurse)
-        for subclassStatement in self.get(None, QueryStore.SUBCLASSOF, type):
+        for subclassStatement in self.get(None, SUBCLASSOF, type):
             if recurse:
                 self.rednode.subClassV(subclassStatement[0], processClass, processInstance, currentDepth+1)
             else:
                 processClass(subclassStatement[0], currentDepth+1, recurse)
-        for instanceStatement in self.get(None, QueryStore.TYPE, type):
+        for instanceStatement in self.get(None, TYPE, type):
             processInstance(instanceStatement[0], currentDepth, recurse)
 
             
@@ -131,6 +131,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.9  2000/12/05 07:11:27  eikeon
+#~ finished refactoring rednode refactor of the local / neighbourhood split
+#~
 #~ Revision 4.8  2000/12/05 05:05:52  eikeon
 #~ Switched RedNode to use AutoSaveStoreIO and fixed up AutoSaveStoreIO to work with new class inheritance
 #~

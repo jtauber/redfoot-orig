@@ -2,6 +2,7 @@
 
 from rdf.query import QueryStore
 from rdf.literal import literal, un_literal, is_literal
+from rdf.const import *
 
 class Viewer:
 
@@ -31,12 +32,12 @@ class Viewer:
         elif path_info == "/subclass":
             root = parameters['uri']
             if root=="":
-                root = QueryStore.RESOURCE
+                root = RESOURCE
             self.subclass(root)
         elif path_info == "/subclassNR":
             root = parameters['uri']
             if root=="":
-                root = QueryStore.RESOURCE
+                root = RESOURCE
             self.subclass(root, 0)
         elif path_info == "/classList":
             self.classList()
@@ -172,7 +173,7 @@ class Viewer:
         """)
 
     def mainPage(self):
-        self.subclass(QueryStore.RESOURCE, 0)
+        self.subclass(RESOURCE, 0)
 
     def classList(self):
         self.response.write("""
@@ -435,6 +436,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.6  2000/12/05 03:49:07  eikeon
+#~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
+#~
 #~ Revision 4.5  2000/12/04 22:07:35  eikeon
 #~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #~
