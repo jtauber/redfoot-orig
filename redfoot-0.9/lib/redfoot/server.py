@@ -63,7 +63,7 @@ class RedServer:
         from redfoot.rednode import RedNode
 
         storeNode = RedNode()
-        storeNode.load(location, uri)
+        storeNode.local.load(location, uri)
         
     
         server = Server(('', port))
@@ -163,6 +163,9 @@ if __name__ == '__main__':
     redserver.keepRunning()
 
 #~ $Log$
+#~ Revision 4.10  2000/12/05 03:36:56  eikeon
+#~ reordered classes; renamed StoreNode to RedNode
+#~
 #~ Revision 4.9  2000/12/04 22:00:59  eikeon
 #~ got rid of all the getStore().getStore() stuff by using Multiple inheritance and mixin classes instead of all the classes being wrapper classes
 #~

@@ -192,9 +192,9 @@ class Viewer:
         """)
 
         if self.showNeighbours==1:
-            self.qstore.neighbourhood.resourcesByClassV(self.displayClass, self.displayResource)
+            self.qstore.resourcesByClassV(self.displayClass, self.displayResource)
         else:
-            self.storeNode.resourcesByClassV(self.displayClass, self.displayResource)
+            self.storeNode.local.resourcesByClassV(self.displayClass, self.displayResource)
     
         self.response.write("""
               </DL>
@@ -222,9 +222,9 @@ class Viewer:
         """)
 
         if self.showNeighbours==1:
-            self.qstore.neighbourhood.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+            self.qstore.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
         else:
-            self.storeNode.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
+            self.storeNode.local.subClassV(root, self.displaySCClass, self.displaySCResource, recurse=recurse)
             
         self.response.write("""
               </DL>
@@ -237,7 +237,7 @@ class Viewer:
         self.response.write("""
             <H2>%s</H2>
             <P>%s</P>
-        """ % (self.qstore.neighbourhood.label(subject), subject))
+        """ % (self.qstore.label(subject), subject))
 
     def view(self, subject):
         self.response.write("""
@@ -270,7 +270,7 @@ class Viewer:
     def displayClass(self, klass):
         self.response.write("""
         <DT>%s</DT>
-        """ % self.qstore.neighbourhood.label(klass))
+        """ % self.qstore.label(klass))
 
     def displayResource(self, resource):
         self.response.write("""
@@ -278,7 +278,7 @@ class Viewer:
         """ % self.link(resource))
 
     def displayParent(self, resource):
-        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.neighbourhood.label(resource)))
+        self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource), self.qstore.comment(resource), self.qstore.label(resource)))
 
     # TODO: rewrite to use lists
     def displaySCClass(self, klass, depth, recurse):
@@ -287,7 +287,7 @@ class Viewer:
         if recurse==0:
             self.response.write("""<A HREF="subclassNR?uri=%s" TITLE="%s">""" % (self.encodeURI(klass), self.qstore.comment(klass)))
 
-        self.response.write("<B>%s</B>" % self.qstore.neighbourhood.label(klass))
+        self.response.write("<B>%s</B>" % self.qstore.label(klass))
 
         if recurse==0:
             self.response.write("</A>")
@@ -302,7 +302,7 @@ class Viewer:
     def link(self, resource):
         return """<A HREF="view?uri=%s" TITLE="%s">%s</A>"""  % (self.encodeURI(resource),
      self.qstore.comment(resource),
-     self.qstore.neighbourhood.label(resource))
+     self.qstore.label(resource))
 
     def displayPropertyValue(self, property, value):
         propertyDisplay = self.link(property)
@@ -361,7 +361,7 @@ class Viewer:
             return string.join(string.split(s,'#'),'%23')
 
     def RDF(self, subject=None, predicate=None, object=None):
-        self.storeNode.output(self.response, subject, predicate, object)
+        self.storeNode.local.output(self.response, subject, predicate, object)
 
     def Triples(self, subject=None, predicate=None, object=None):
         self.response.write("""
@@ -409,7 +409,7 @@ class Viewer:
         for s in subjects:
             self.response.write("""
               <OPTION VALUE="%s">%s</OPTION>
-            """ % (s, self.qstore.neighbourhood.label(s)))
+            """ % (s, self.qstore.label(s)))
         self.response.write("""
             </SELECT>
             <FORM ACTION="test" METHOD="GET">
@@ -422,13 +422,13 @@ class Viewer:
             self.response.write("""<UL>""")
             for s in subjects:
                 upper_uri = string.upper(s)
-                upper_label = string.upper(self.qstore.neighbourhood.label(s))
+                upper_label = string.upper(self.qstore.label(s))
                 upper_comment = string.upper(self.qstore.comment(s))
                 if (string.find(upper_uri,upper_search)!=-1) or \
                    (string.find(upper_label, upper_search)!=-1):
                        self.response.write("""
                          <LI><A HREF="javascript:document.all.a.value='%s'">%s</A></LI>
-                       """ % (s, self.qstore.neighbourhood.label(s)))
+                       """ % (s, self.qstore.label(s)))
         self.response.write("""</UL>""")
         self.response.write("""
            </BODY>
@@ -436,6 +436,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 4.7  2000/12/05 22:43:30  eikeon
+#~ moved constants to rdf.const
+#~
 #~ Revision 4.6  2000/12/05 03:49:07  eikeon
 #~ changed all the hardcoded [1:] etc stuff to use un_literal is_literal etc
 #~

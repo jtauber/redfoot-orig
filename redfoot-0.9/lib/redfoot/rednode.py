@@ -5,12 +5,11 @@ from rdf.query import QueryStore
 from rdf.storeio import AutoSaveStoreIO
 from rdf.const import *
 
-class RedNode(QueryStore, AutoSaveStoreIO):
+class RedNode(QueryStore):
     ""
 
     def __init__(self):
-        TripleStore.__init__(self)
-        AutoSaveStoreIO.__init__(self)
+        pass
         
         def toRelativeURL(path):
             import sys
@@ -19,21 +18,27 @@ class RedNode(QueryStore, AutoSaveStoreIO):
             libDir = dirname(sys.modules["redfoot.rednode"].__file__)
             return pathname2url(join(libDir, path))
 
-        self.neighbourhood = Neighbourhood(self)
+        self.local = Local()
+        self.neighbourhood = Neighbourhood()
 
         self.connectTo(toRelativeURL("rdfSchema.rdf"), "http://www.w3.org/2000/01/rdf-schema")
         self.connectTo(toRelativeURL("rdfSyntax.rdf"), "http://www.w3.org/1999/02/22-rdf-syntax-ns")
         self.connectTo(toRelativeURL("builtin.rdf"), "http://redfoot.sourceforge.net/2000/10/06/builtin")
 
+    def visit(self, callback, subject=None, property=None, value=None):
+        # todo: order?
+        self.local.visit(callback, subject, property, value)
+        self.neighbourhood.visit(callback, subject, property, value)
+
     # TODO: when to call... used to call on setStore()
     def _preCacheRemoteStores(self, baseDirectory=None):
-        rstores = self.neighbourhood.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://redfoot.sourceforge.net/2000/10/06/builtin#RemoteStore")
+        rstores = self.get(None, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://redfoot.sourceforge.net/2000/10/06/builtin#RemoteStore")
 	for rstore in rstores:
-	    locationlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#location", None)
+	    locationlist = self.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#location", None)
             if len(locationlist) == 0:
                 continue
             location = un_literal(locationlist[0][2])
-            systemIDlist = self.neighbourhood.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#systemID", None)
+            systemIDlist = self.get(rstore[0], "http://xteam.hq.bowstreet.com/redfoot-builtin#systemID", None)
             if len(systemIDlist) == 0:
                 systemID = None
             else:
@@ -64,12 +69,12 @@ class RedNode(QueryStore, AutoSaveStoreIO):
             else:
                 processClass(s, currentDepth+1, recurse)
         # show classes in neighbourhood as well
-        self.neighbourhood.visit(subclass, None, SUBCLASSOF, type)
+        self.visit(subclass, None, SUBCLASSOF, type)
         def instance(s, p, o, processInstance=processInstance, \
                      currentDepth=currentDepth, recurse=recurse):
             processInstance(s, currentDepth, recurse)
         # only show local instances
-        self.visit(instance, None, TYPE, type)
+        self.local.visit(instance, None, TYPE, type)
 
 
     def resourcesByClassV(self, processClass, processResource):
@@ -80,17 +85,21 @@ class RedNode(QueryStore, AutoSaveStoreIO):
                          processResource=processResource, self=self):
                 processResource(s)
             # only show local instances
-            self.visit(resource, None, TYPE, s)
+            self.local.visit(resource, None, TYPE, s)
         # show classes in neighbourhod as well as in local store
-        self.neighbourhood.visit(klass, None, TYPE, CLASS)
+        self.visit(klass, None, TYPE, CLASS)
 
 
 from rdf.literal import literal, un_literal, is_literal
 
+
+class Local(QueryStore, AutoSaveStoreIO):
+    pass
+
+
 class Neighbourhood(QueryStore):
     # could this also be a subclass instead of a wrapper?
-    def __init__(self, rednode):
-        self.rednode = rednode
+    def __init__(self):
         self.stores = MultiStore()
 
     def addNeighbour(self, store):
@@ -100,13 +109,12 @@ class Neighbourhood(QueryStore):
         raise "Can not write to Neighbourhood store!"
 
     def visit(self, callback, subject=None, property=None, value=None):
-        self.rednode.visit(callback, subject, property, value);
         self.stores.visit(callback, subject, property, value)
 
     def remove(self, subject=None, predicate=None, object=None):
         raise "Can not remove from Neighbourhood store!"
 
-            
+
 class MultiStore(QueryStore):
     ""
     
@@ -139,6 +147,9 @@ class MultiStore(QueryStore):
         
 
 #~ $Log$
+#~ Revision 4.13  2000/12/06 21:45:13  eikeon
+#~ refactored gets to visits in subClassV and resourcesByClassV
+#~
 #~ Revision 4.12  2000/12/06 21:28:04  eikeon
 #~ added resourcesByClassV and subClassV to rednode as they are effected by show/hide neighbourhood; removed subClassV from neighbourhood we do not wish to override it
 #~
