@@ -264,7 +264,7 @@ class Editor(Viewer):
         value = params["prop%s_value" % property_num][0]
         if self.qstore.get(property, self.qstore.RANGE, None)[0][2]==self.qstore.LITERAL:
             value = "^" + value
-        self.qstore.reify(self.generateURI(), subject, property, value)
+        self.qstore.reify(self.storeNode.getStore().URI+self.generateURI(), subject, property, value)
 
     def generateURI(self):
 	import time
