@@ -195,6 +195,9 @@ class PropertyHandler(HandlerBase):
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.11  2001/02/09 21:48:40  eikeon
+#~ added method for parsing RDF from a stream
+#~
 #~ Revision 5.10  2000/12/23 04:50:04  eikeon
 #~ removed at most one rdf:RDF element constraint
 #~

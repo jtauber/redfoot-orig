@@ -344,6 +344,9 @@ class PeerEditor(Editor):
 
 
 #~ $Log$
+#~ Revision 5.19  2001/01/08 21:16:37  eikeon
+#~ fixed required property functionality just added to edit
+#~
 #~ Revision 5.18  2001/01/08 20:38:32  eikeon
 #~ edit now adds required properties if they are not already present
 #~

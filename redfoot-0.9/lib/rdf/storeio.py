@@ -159,6 +159,9 @@ class DirtyBit:
 
 
 #~ $Log$
+#~ Revision 5.6  2001/02/09 21:50:46  eikeon
+#~ Added JournalingStoreIO and an input method
+#~
 #~ Revision 5.5  2000/12/20 20:37:17  eikeon
 #~ changed mixed case to _ style... all except for query
 #~

@@ -99,6 +99,9 @@ class RollbackImporter:
     
 
 #~ $Log$
+#~ Revision 5.2  2000/12/17 23:49:42  eikeon
+#~ fixed typo
+#~
 #~ Revision 5.1  2000/12/17 23:41:58  eikeon
 #~ removed of log messages
 #~

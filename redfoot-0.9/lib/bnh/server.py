@@ -47,6 +47,9 @@ class Server:
                 connection_cubby.wait() 
 
 #~ $Log$
+#~ Revision 5.7  2000/12/20 21:22:07  eikeon
+#~ converted many mixedCase names to _ style names
+#~
 #~ Revision 5.6  2000/12/17 23:35:53  eikeon
 #~ split off ServerConnection and company into their own module
 #~

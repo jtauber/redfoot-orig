@@ -186,6 +186,9 @@ class MultiStore(StoreIO, QueryStore):
 
 
 #~ $Log$
+#~ Revision 5.7  2001/02/09 22:33:57  eikeon
+#~ checked in what I meant to check in prior version
+#~
 #~ Revision 5.5  2000/12/20 03:59:53  jtauber
 #~ visitResourcesByType will now visit resources whose type is an unknown class
 #~

@@ -116,6 +116,9 @@ class Sample1UI:
              
 
 # $Log$
+# Revision 5.2  2000/12/23 03:54:45  eikeon
+# fixed missed handleRequest in prior name change
+#
 # Revision 5.1  2000/12/20 21:22:07  eikeon
 # converted many mixedCase names to _ style names
 #

@@ -71,6 +71,9 @@ class Receiver:
     
 
 #~ $Log$
+#~ Revision 5.7  2000/12/20 21:22:07  eikeon
+#~ converted many mixedCase names to _ style names
+#~
 #~ Revision 5.6  2000/12/17 22:33:10  eikeon
 #~ changing names to _ style names; moved ConnectionCubby to its own module
 #~

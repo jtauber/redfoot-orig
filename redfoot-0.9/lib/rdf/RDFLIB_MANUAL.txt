@@ -295,6 +295,9 @@ getRange
     TODO
 
 $Log$
+Revision 5.0  2000/12/08 08:34:52  eikeon
+new release
+
 Revision 1.2  2000/12/07 19:56:04  jtauber
 updated manual to reflect new structure, classes, methods
 

@@ -148,3 +148,6 @@ class Cubby:
 
 
 #~ $Log$
+#~ Revision 5.1  2000/12/17 23:35:53  eikeon
+#~ split off ServerConnection and company into their own module
+#~

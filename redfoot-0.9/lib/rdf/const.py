@@ -21,6 +21,9 @@ DOMAIN = RDFSNS+u"domain"
 LITERAL = RDFSNS+u"Literal"
 
 # $Log$
+# Revision 5.2  2000/12/23 02:30:17  eikeon
+# added warnings and test cases for when there is no RDF root element (or when there is more than one RDF element)
+#
 # Revision 5.1  2000/12/17 20:41:22  eikeon
 # removed log message prior to currently worked on release
 #

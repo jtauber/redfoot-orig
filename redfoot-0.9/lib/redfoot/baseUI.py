@@ -26,6 +26,9 @@ class BaseUI:
         self.getEditor().handle_request(request, response)
 
 #~ $Log$
+#~ Revision 5.2  2000/12/20 21:22:08  eikeon
+#~ converted many mixedCase names to _ style names
+#~
 #~ Revision 5.1  2000/12/17 23:41:58  eikeon
 #~ removed of log messages
 #~

@@ -348,6 +348,9 @@ class QueryStore(QueryBase):
             return None
 
 #~ $Log$
+#~ Revision 5.15  2001/02/09 21:51:28  eikeon
+#~ Fixed but in visitTransitiveSubTypes and visitPossibleValues
+#~
 #~ Revision 5.14  2000/12/20 04:20:28  jtauber
 #~ added TODO
 #~

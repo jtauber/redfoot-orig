@@ -102,6 +102,9 @@ class Serializer:
         self.property(predicate, object)
 
 #~ $Log$
+#~ Revision 5.6  2000/12/20 20:37:17  eikeon
+#~ changed mixed case to _ style... all except for query
+#~
 #~ Revision 5.5  2000/12/19 05:37:08  eikeon
 #~ Serializer will now also work with no baseURI
 #~

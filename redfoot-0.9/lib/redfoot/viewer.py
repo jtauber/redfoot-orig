@@ -452,6 +452,9 @@ class Viewer:
         """)
 
 #~ $Log$
+#~ Revision 5.18  2001/02/07 17:27:44  eikeon
+#~ bug fix... query parameters to output were not being passed correctly
+#~
 #~ Revision 5.17  2000/12/20 21:22:08  eikeon
 #~ converted many mixedCase names to _ style names
 #~

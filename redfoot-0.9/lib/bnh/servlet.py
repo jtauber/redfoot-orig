@@ -262,6 +262,9 @@ def date_time_string(t=None):
 
 
 #~ $Log$
+#~ Revision 5.8  2000/12/22 22:26:14  eikeon
+#~ changed some mixed case to _ style
+#~
 #~ Revision 5.7  2000/12/20 21:22:07  eikeon
 #~ converted many mixedCase names to _ style names
 #~

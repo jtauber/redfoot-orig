@@ -222,6 +222,9 @@ def date_time_filename(t=None, sn_generator=SN()):
     return s
 
 #~ $Log$
+#~ Revision 5.5  2001/02/09 22:38:27  eikeon
+#~ checked in what I meant to check in prior version
+#~
 #~ Revision 5.3  2000/12/17 20:56:09  eikeon
 #~ renamed visitSubjects to visit_subjects
 #~
