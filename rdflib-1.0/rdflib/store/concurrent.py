@@ -47,7 +47,7 @@ class Concurrent(object):
 
     def remove(self, subject, predicate, object):
         if self.__visit_count==0:
-            super(Concurrent, self).remove(s, p, o)            
+            super(Concurrent, self).remove(subject, predicate, object)
         else:
             self.__pending_removes.append((subject, predicate, object))
 
