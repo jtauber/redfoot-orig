@@ -1,6 +1,5 @@
 redcode on
 
-# testing
 load generic.rdf http://redfoot.net/2002/04/22/
 
 server :9090
