@@ -56,7 +56,10 @@ class ObjectTypeError(TypeCheckError):
 
 class ParserError(Error):
     """RDF Parser error."""
-    pass
+
+    def __str__(self):
+        return self.msg
+
 
 
 class MalformedDescriptionError(ParserError):
@@ -75,7 +78,7 @@ class ResourceAndCharContentError(ParserError):
         self.msg = "%s has character content and resource attribute" % self.name
 
 
-class RdfSeqChildNotAllowedError(ParserError):
+class RDFSeqChildNotAllowedError(ParserError):
     """RDF li child not allowed."""
 
     def __init__(self):

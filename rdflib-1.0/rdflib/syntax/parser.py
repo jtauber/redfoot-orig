@@ -117,11 +117,6 @@ class DocumentHandler(object):
     def description_child(self, name, atts):
         self.li_count = 0        
         self.container_child(name, atts)
-        #self.property(name, atts)        
-        #self.child_stack.append(self.property_child)
-        #self.char_stack.append(self.property_char)
-        #self.end_stack.append(self.property_end)                        
-
 
     def property(self, name, atts):
         self.predicate = URIRef(name)
@@ -131,15 +126,21 @@ class DocumentHandler(object):
                 if att == "resource":
                     pass
                 else:
-                    self.add(self.object, URIRef(att), Literal(atts[att]))
+                    if len(att)>2 and att[0:3].lower()=='xml': 
+                        self.add(self.object, URIRef(att), Literal(atts[att]))
         elif atts.has_key(RESOURCE_ATTRIBUTE):
             self.object = URIRef(self.absolutize(atts[RESOURCE_ATTRIBUTE]))
             for att in atts.keys():
                 if att == RESOURCE_ATTRIBUTE:
                     pass
                 else:
-                    self.add(self.object, URIRef(att), Literal(atts[att]))
+                    if len(att)>2 and att[0:3].lower()=='xml':
+                        self.add(self.object, URIRef(att), Literal(atts[att]))
         else:
+            for att in atts:
+                if att != "resource" and att != RESOURCE_ATTRIBUTE:
+                    if len(att)>2 and att[0:3].lower()=='xml':
+                        self.add(self.subject, URIRef(att), Literal(atts[att]))
             self.object = Literal("")
         
     def property_child(self, name, atts):
@@ -231,7 +232,7 @@ class DocumentHandler(object):
             self.value = Literal("")
 
     def li_child(self, name, atts):
-        raise exception.RdfSeqChildNotAllowedError()
+        raise exception.RDFSeqChildNotAllowedError()
 
     def li_char(self, data):
         if not all_whitespace(data):
