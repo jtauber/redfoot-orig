@@ -13,6 +13,12 @@ class Editor(Viewer):
             </P>
         """)
 
+    def resourceHeader(self, subject):
+        self.writer.write("""
+            <H2>%s</H2>
+            <P>%s - <A HREF="view?uri=%s">view</A>|<A HREF="edit?uri=%s">edit</A>
+        """ % (self.qstore.label(subject), subject, self.encodeURI(subject), self.encodeURI(subject)))
+
     def edit(self, subject):
         if subject[0]=="#":
             subject = self.qstore.getStore().getStore().URI + subject
@@ -26,13 +32,12 @@ class Editor(Viewer):
             <BODY>
               <H1>ReDFoot</H1>""")
         self.menuBar()
+        self.resourceHeader(subject)
         self.writer.write("""
-            <H2>%s</H2>
-            <P>%s</P>
             <FORM NAME="form" ACTION="edit?uri=%s" METHOD="GET">
               <INPUT NAME="uri" TYPE="HIDDEN" VALUE="%s">
               <TABLE BORDER="1">
-        """ % (self.qstore.label(subject), subject, subject, subject))
+        """ % (subject, subject))
         self.property_num = 0
         self.qstore.propertyValuesV(subject, self.editProperty)
 
