@@ -134,7 +134,7 @@ class DescriptionHandler(HandlerBase):
 class TypedNodeHandler(DescriptionHandler):
     def __init__(self, parser, adder, parent, name, atts):
         DescriptionHandler.__init__(self, parser, adder, parent, atts)
-        self.adder(self.subject, TYPE, u"name")
+        self.adder(self.subject, TYPE, name)
 
 
 class PropertyHandler(HandlerBase):
@@ -179,10 +179,12 @@ class PropertyHandler(HandlerBase):
 
     def end(self, name):
         self.adder(self.parent.subject, self.predicate, self.object)
-        #self.adder(self.parent.subject, self.predicate, u"self.object")
         self.parent.set_handlers()
 
 #~ $Log$
+#~ Revision 5.8  2000/12/23 03:59:24  eikeon
+#~ Why did this get in there?!?!
+#~
 #~ Revision 5.7  2000/12/23 03:58:06  eikeon
 #~ Why did this get in there?!?!
 #~
