@@ -100,6 +100,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 1.1.1.1  2001/08/14 22:29:57  eikeon
+#~ TRANSFER FROM EIKCO
+#~
 #~ Revision 1.6  2001/08/11 17:22:28  jtauber
 #~ removed references to bnh
 #~
