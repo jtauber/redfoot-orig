@@ -177,14 +177,41 @@ class RollbackImporter:
     
 
 
+import redpage
+import os
+import __builtin__
+real_import = __builtin__.__import__
+
+def _import(name, globals=None, locals=None, fromlist=[]):
+    try:
+        result = apply(real_import, (name, globals, locals, fromlist))
+        return result
+    except ImportError, e:
+        from string import split, join
+        parts = split(name, '.')
+        fullname = join(parts, '/')
+        location = fullname + ".xml"
+        for path in sys.path:
+            abs_fullname = "%s/%s" % (path,location)            
+            if os.access(abs_fullname, os.F_OK):
+                result = redpage.parse_red_page(abs_fullname)
+                return result
+        raise e
+        
+__builtin__.__import__ = _import
 
 if __name__ == '__main__':
+
     import socket
     hostname = socket.getfqdn('localhost')
     port = 80
 
     import getopt    
     optlist, args = getopt.getopt(sys.argv[1:], 'h:p:')
+#    if len(optlist)==0:
+#        sys.stderr.write("REDFOOT: usage -h hostname -p port\n" % port)
+#        sys.stderr.flush()
+        
     for optpair in optlist:
         opt, value = optpair
         if opt=="-h":
@@ -196,6 +223,9 @@ if __name__ == '__main__':
 
 
 #~ $Log$
+#~ Revision 7.2  2001/04/14 23:10:28  eikeon
+#~ removed old log messages
+#~
 #~ Revision 7.1  2001/04/13 03:20:25  eikeon
 #~ Can now run a RedServer by 'running' redfoot.server -- as RedServer now created a RedNode and runs a redpage give a redpage name
 #~
