@@ -13,6 +13,19 @@
                     class="Neighbours"
                     from="redmodules.neighbours"/>
 
+    def __getattr__(self, name):
+        if name=="rednode": # default rednode to self.app.rednode
+            self.set_rednode(self.app.rednode)
+            return self.rednode
+        else:
+            raise AttributeError
+        
+    # TODO: does anything in generic/editor/viewer require a rednode
+    # or just a TripleStoreIO
+    def set_rednode(self, rednode):
+        self.rednode = rednode
+        self.editor.set_rednode(rednode)
+
     <red:facet name="/">
       <HTML>
         <HEAD>
@@ -130,7 +143,7 @@
     <red:facet name="/output"
                content-type="text/rdf" >
       <red:exec>
-        self.app.rednode.local.output(self.app.response)
+        self.rednode.local.output(self.app.response)
       </red:exec>
     </red:facet>
 

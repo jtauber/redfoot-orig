@@ -10,10 +10,20 @@
 
   <red:module name="Viewer">
 
+    def __getattr__(self, name):
+        if name=="rednode": # default rednode to self.app.rednode
+            self.set_rednode(self.app.rednode)
+            return self.rednode
+        else:
+            raise AttributeError
+
+    def set_rednode(self, rednode):
+        self.rednode = rednode
+
     <red:facet name="class_list">
       <DL>
         <red:exec>
-          self.app.rednode.visit_resources_by_type(self.display_class, self.display_resource)
+          self.rednode.visit_resources_by_type(self.display_class, self.display_resource)
         </red:exec>
       </DL>
     </red:facet>
@@ -22,7 +32,7 @@
       <DT>
         <SPAN CLASS="CLASS">
           <red:eval>
-            self.app.rednode.label(klass)
+            self.rednode.label(klass)
           </red:eval>
         </SPAN>
       </DT>
@@ -47,13 +57,13 @@
     <red:facet name="subclass_tree" args="root">
       <SPAN CLASS="CLASS">
         <red:eval>
-          self.app.rednode.label(root)
+          self.rednode.label(root)
         </red:eval>
       </SPAN>
       <UL>
         <red:exec>
-          self.app.rednode.visit(self.subclass, (None, SUBCLASSOF, root))
-          self.app.rednode.visit(s(self.subclass_resource), (None, TYPE, root))
+          self.rednode.visit(self.subclass, (None, SUBCLASSOF, root))
+          self.rednode.visit(s(self.subclass_resource), (None, TYPE, root))
         </red:exec>
       </UL>
     </red:facet>
@@ -79,9 +89,9 @@
         <red:eval>res</red:eval>
         <red:else>
           <A HREF='view?subject={encode_URI(res)}'
-             TITLE='{self.app.rednode.comment(res)}'>
+             TITLE='{self.rednode.comment(res)}'>
             <red:eval>
-              self.app.rednode.label(res)
+              self.rednode.label(res)
             </red:eval>
            </A>
         </red:else>        
@@ -94,9 +104,9 @@
       </red:exec>
       <H2><red:eval>s</red:eval></H2>
       <TABLE>
-        <red:if test="self.app.rednode.exists(s, None, None)">
+        <red:if test="self.rednode.exists(s, None, None)">
           <red:exec>
-            self.app.rednode.visit(po(self.display_property_value), (s, None, None))
+            self.rednode.visit(po(self.display_property_value), (s, None, None))
           </red:exec>
           <red:else>
             <TR>
@@ -133,25 +143,25 @@
       </red:exec>
       <H2>
         <red:eval>
-          self.app.rednode.label(root)
+          self.rednode.label(root)
         </red:eval>
       </H2>
       <DIV>
         Super classes:
         <red:exec>
-          self.app.rednode.neighbourhood.visit_parent_types(o(self.parent), root)
+          self.rednode.neighbourhood.visit_parent_types(o(self.parent), root)
         </red:exec>
       </DIV>
       Sub classes:
       <UL>
         <red:exec>
-          self.app.rednode.visit(s(self.partial_subclass_class), (None, SUBCLASSOF, root))
+          self.rednode.visit(s(self.partial_subclass_class), (None, SUBCLASSOF, root))
         </red:exec>    
       </UL>
       Instances:
       <UL>
         <red:exec>
-          self.app.rednode.visit(s(self.subclass_resource), (None, TYPE, root))
+          self.rednode.visit(s(self.subclass_resource), (None, TYPE, root))
         </red:exec>
       </UL>
     </red:facet>
@@ -159,7 +169,7 @@
     <red:facet name="parent" args="klass">
       <A HREF='partial_subclass_tree?root={encode_URI(klass)}'>
         <red:eval>
-          self.app.rednode.label(klass)
+          self.rednode.label(klass)
         </red:eval>
       </A>&amp;nbsp;
     </red:facet>
@@ -168,7 +178,7 @@
       <LI>
         <A HREF='partial_subclass_tree?root={encode_URI(klass)}'>
           <red:eval>
-            self.app.rednode.label(klass)
+            self.rednode.label(klass)
           </red:eval>
         </A>
       </LI>

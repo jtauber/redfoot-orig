@@ -3,9 +3,11 @@
 
   <red:app name="GenericApp">
 
+
     <red:sub-module instance="generic"
                     class="Generic"
                     from="redmodules.generic"/>
+    
   </red:app>
 
 </red:code>
